@@ -13,3 +13,4 @@ deploy:
   app: progressmap
   on:
     repo: VihavaisenKurpitsat/ProgressMap
+  run: "rake db:migrate"
