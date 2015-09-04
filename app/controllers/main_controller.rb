@@ -1,15 +1,17 @@
 class MainController < ApplicationController
 	
-	def index
-		#@course = Course.first
-		#@students = @course.users
-		#@assignments = Course.assignments
-		#@locations = []
+	def map
+		course = Course.first
 
-		#@assignments.each do |assignment|
-		#	@locations << assignment.location
-		#end
+		if course
 
+			@participants = course.participants
+			@assignments = course.assignments
+			@locations = []
+
+			@assignments.each { |assignment| @locations << assignment.location }
+		end
 		render :map
 	end
+
 end
