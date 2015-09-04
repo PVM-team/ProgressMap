@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   resources :users
-  get '/', to: 'main#index'
+  get 'main/map', to: 'main#map'
 
 
   # The priority is based upon order of creation: first created -> highest priority.
