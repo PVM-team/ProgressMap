@@ -3,8 +3,8 @@ Progress Visualization Map
 
 Ajankäyttö: https://docs.google.com/spreadsheets/d/1uSZrRSVjGdinSfTB5AiUNV2NFqXXDwEZjiPDRvmksyA/edit?usp=sharing
 
-Heroku:
+Heroku: http://progressmap.herokuapp.com/
 
-Travis:
+Travis: https://travis-ci.org/VihavaisenKurpitsat/ProgressMap/
 
 Trello: https://trello.com/pvm5
