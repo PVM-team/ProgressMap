@@ -1,0 +1,19 @@
+<h1>Summary of completed assignments</h1>
+
+<table>
+  <thead>
+  <tr>
+   <th>Student number</th>
+   <th>Completed assigments</th>
+  </tr>
+  </thead>
+  
+  <tbody>
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.id %></td>
+      <td><%= user.completedAssigments %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
