@@ -12,5 +12,4 @@ class MainController < ApplicationController
 			@assignments.each { |assignment| @locations << assignment.location }
 		end
 	end
-
 end
