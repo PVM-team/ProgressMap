@@ -9,10 +9,10 @@
   </thead>
   
   <tbody>
-  <% @users.each do |user| %>
+  <% @course.participants.each do |participant| %>
     <tr>
-      <td><%= user.id %></td>
-      <td><%= user.completedAssigments %></td>
+      <td><%= participant.id %></td>
+      <td><%= participant.completed_assignments(@course) %></td>
     </tr>
   <% end %>
   </tbody>
