@@ -1,7 +1,7 @@
 receta = angular.module('receta',[
   'templates',
   'ngRoute',
-  'controllers',
+  'controllers'
 ])
 
 receta.config([ '$routeProvider',
