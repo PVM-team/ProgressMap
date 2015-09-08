@@ -1,10 +1,10 @@
-var ProgressApp = angular.module('ProgressApp',['ngRoute', 'templates'])
+var ProgressApp = angular.module('ProgressApp',['ngRoute', 'templates', 'ngResource'])
 
 ProgressApp.config(function($routeProvider){
    $routeProvider
        .when('/', {
-           controller: 'AbcController',
-           templateUrl: 'templates/test.html'
+           controller: 'MapController',
+           templateUrl: 'templates/map.html'
        })
        .when('/test',{
            controller: 'MainController'

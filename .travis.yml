@@ -14,4 +14,4 @@ deploy:
   on:
     repo: VihavaisenKurpitsat/ProgressMap
   run: "rake db:migrate"
-  run: "rake db:reset db:seed"
+  run: "rake db:seed"

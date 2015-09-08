@@ -1,7 +1,7 @@
 ProgressApp.controller('MainController', [
    '$scope',
    function($scope){
-       $scope.message = 'moi kaikki'
+       $scope.message = 'moi kaikki';
        $scope.test = 'Hello World';
        $scope.lista = [
            'post 1',
