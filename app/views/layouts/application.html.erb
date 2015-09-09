@@ -8,7 +8,8 @@
 </head>
 
 <body ng-app="ProgressApp">
-	<div ng-controller="MainController">
+	
+	<!-- <div ng-controller="MainController">
 		<div>{{test}}</div>
 	
 		<div ng-repeat="item in lista">
@@ -18,9 +19,15 @@
 		<div>{{message}}</div>
 	
 		<button ng-click="addPost('testi')">Test</button>
+	</div> -->
+
+	<div ng-controller="MapController">
+		<button ng-click="addStudent(' + {{ course }} + ')">Add student</button>
 	</div>
 
 	<div ng-view></div>
+
+	<!-- Muuttujat laitettava ' ' -sisälle sen sijaan että käyttäisi "" -merkkejä. -->
 
 	<!-- <script src="assets/javascripts/controllers/MainController.js"></script>
 	     <script src="assets/javascripts/controllers/MapController.js"></script> -->

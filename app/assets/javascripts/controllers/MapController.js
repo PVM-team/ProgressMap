@@ -1,13 +1,13 @@
 ProgressApp.controller('MapController', [
    '$scope', '$http', '$log',
 
-   	function($scope, $http) {
+   	function($scope, $http, $log) {
 
 		$http.get('/map/index.json', {
        		params: { course_id: 1}
        	}).success(function(data, status, headers, config) {
 
-    		var c = data["course"]
+    		  var c = data["course"]
        		var a = data["assignments"]
        		var p = data["participants"]
        		var l = data["locations"]
@@ -30,5 +30,15 @@ ProgressApp.controller('MapController', [
         	}
 
     	})
-    }
+    
+
+      $scope.addStudent = function(course) {
+
+        $log.log("addStudent called")
+    
+        $http.post('/users', {
+          params: { course_id: course.id }
+        })
+      }
+  }
 ])

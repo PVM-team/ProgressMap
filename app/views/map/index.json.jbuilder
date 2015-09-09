@@ -7,7 +7,7 @@ json.participants(@participants) do |participant|
 end
 
 json.assignments(@assignments) do |assignment|
-  json.extract! assignment, :id, :course_id
+  json.extract! assignment, :id
 end
 
 json.locations(@locations) do |location|
