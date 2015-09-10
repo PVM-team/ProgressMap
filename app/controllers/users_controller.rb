@@ -27,7 +27,7 @@ class UsersController < ApplicationController
     course = Course.find(params[:course_id])
     @user = User.new
 
-    if @user.save
+    if course and @user.save
       course.participants << @user
     end
 
