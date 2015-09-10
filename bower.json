@@ -2,9 +2,6 @@
   "name": "ProgressMap",
   "version": "0.0.0",
   "homepage": "https://github.com/VihavaisenKurpitsat/ProgressMap",
-  "authors": [
-    "Teemu Ijäs <tijas@cs.helsinki.fi>"
-  ],
   "license": "MIT",
   "ignore": [
     "**/.*",

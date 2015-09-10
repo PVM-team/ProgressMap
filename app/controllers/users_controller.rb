@@ -25,15 +25,13 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     course = Course.find(params[:course_id])
-    user = User.new
+    @user = User.new
 
-    if user.save
-      course.participants << user
-    else
-      byebug
+    if @user.save
+      course.participants << @user
     end
 
-    redirect_to root
+    render 'show'
   end
 
   # PATCH/PUT /users/1

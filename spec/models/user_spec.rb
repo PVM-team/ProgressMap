@@ -1,5 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe User do
+  it "creates user for correct course" do
+    course = FactoryGirl.create(:course)
+    user = FactoryGirl.create(:user)
+    course.participants << user
+
+    expect(course.participants.length).to be(1)
+  end
 end

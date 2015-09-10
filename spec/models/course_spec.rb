@@ -1,5 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Course, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe Course do
+  it "saves the course into database" do
+    course = FactoryGirl.create(:course)
+    expect(Course.count) == 1
+  end
 end
