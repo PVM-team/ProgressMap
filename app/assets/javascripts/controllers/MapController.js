@@ -28,16 +28,20 @@ ProgressApp.controller('MapController', [
         	for (var i = 0; i < p.length; i++) {
         		$scope.participants.push(p[i])
         	}
-
     	})
     
 
       $scope.addStudent = function(course) {
 
-        $log.log("addStudent called")
-    
-        $http.post('/users', {
-          params: { course_id: course.id }
+        jQuery.ajax({
+          url: '/users',
+          data: "course_id=" + course.id,
+          type: 'POST',
+          
+          success: function(data) {
+            $scope.participants.push(data)
+            $scope.$apply()
+          }
         })
       }
   }
