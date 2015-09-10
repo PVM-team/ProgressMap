@@ -1,6 +1,4 @@
-ProgressApp.controller('MainController', [
-   '$scope',
-   function($scope){
+ProgressApp.controller('MainController', function($scope){
        $scope.message = 'moi kaikki';
        $scope.test = 'Hello World';
        $scope.lista = [
@@ -11,4 +9,4 @@ ProgressApp.controller('MainController', [
        $scope.addPost = function(item){
            $scope.lista.push(item)
        }
-   }])
+   })

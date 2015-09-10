@@ -1,7 +1,4 @@
-ProgressApp.controller('MapController', [
-   '$scope', '$http', '$log',
-
-   	function($scope, $http, $log) {
+ProgressApp.controller('MapController',	function($scope, $http, $log) {
 
 		$http.get('/map/index.json', {
        		params: { course_id: 1}
@@ -41,4 +38,4 @@ ProgressApp.controller('MapController', [
         })
       }
   }
-])
+)
