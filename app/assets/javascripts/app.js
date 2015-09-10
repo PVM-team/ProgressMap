@@ -1,4 +1,4 @@
-var ProgressApp = angular.module('ProgressApp',['ngRoute', 'templates', 'ngResource'])
+var ProgressApp = angular.module('ProgressApp',['ngRoute', 'templates'])
 
 ProgressApp.config(function($routeProvider){
    $routeProvider

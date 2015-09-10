@@ -9,4 +9,5 @@ ProgressApp.controller('MainController', function($scope){
        $scope.addPost = function(item){
            $scope.lista.push(item)
        }
-   })
+   });
+

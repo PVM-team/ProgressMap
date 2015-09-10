@@ -38,4 +38,5 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
         })
       }
   }
-)
+);
+
