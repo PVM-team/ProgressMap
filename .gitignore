@@ -19,3 +19,8 @@ tmp/
 progressmap/
 
 npm-debug.log
+
+#Vim temporary files
+*~
+*.swp
+*.swo
