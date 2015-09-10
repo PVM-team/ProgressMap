@@ -4,10 +4,7 @@
 // require support/jasmine-jquery-2.1.0
 // require support/sinon
 // require support/your-support-file
-
-//= require angular-mocks/angular-mocks
 //
-
 // PhantomJS (Teaspoons default driver) doesn't have support for Function.prototype.bind, which has caused confusion.
 // Use this polyfill to avoid the confusion.
 //= require support/bind-poly
@@ -15,6 +12,8 @@
 // You can require your own javascript files here. By default this will include everything in application, however you
 // may get better load performance if you require the specific files that are being used in the spec that tests them.
 //= require application
+//
+//= require angular-mocks/angular-mocks
 //
 // Deferring execution
 // If you're using CommonJS, RequireJS or some other asynchronous library you can defer execution. Call
