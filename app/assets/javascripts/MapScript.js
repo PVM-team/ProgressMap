@@ -30,9 +30,9 @@ window.onload = function() {
     drawQuadratic(800, 500, 700, 300);
 
     /*
-     var img = new Image(5, 5);
-     img.src = "ball2.png";
-     */
+    var img = new Image(5, 5);
+    img.src = "ball2.png";
+    */
 
     /*
      img.onload = function() {
@@ -42,18 +42,18 @@ window.onload = function() {
      */
 
     /*
-     img.onload = function () {
-     for (location in locations){
-     placeImageOnLocation(location.x, location.y, img);
-     }
+    img.onload = function () {
+         for (location in locations){
+         placeImageOnLocation(location.x, location.y, img);
+         }
 
-     placeImageOnLocation(250, 600, img);
-     placeImageOnLocation(500, 500, img);
-     placeImageOnLocation(800, 500, img);
-     placeImageOnLocation(700, 300, img);
+         placeImageOnLocation(250, 600, img);
+         placeImageOnLocation(500, 500, img);
+         placeImageOnLocation(800, 500, img);
+         placeImageOnLocation(700, 300, img);
 
-     }
-     */
+    }
+    */
 
     function createButton(parentDiv){
         var button = document.createElement("BUTTON");
