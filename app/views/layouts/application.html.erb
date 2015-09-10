@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
- <title>ProgressMap</title>
- <%= stylesheet_link_tag    'application', media: 'all' %>
- <%= javascript_include_tag 'application' %>
- <%= csrf_meta_tags %>
+ 	<title>ProgressMap</title>
+ 	<%= stylesheet_link_tag    'application', media: 'all' %>
+ 	<%= javascript_include_tag 'application' %>
+ 	<%= csrf_meta_tags %>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
 </head>
 
 <body ng-app="ProgressApp">
@@ -29,8 +31,8 @@
 
 	<!-- Muuttujat laitettava ' ' -sisälle sen sijaan että käyttäisi "" -merkkejä. -->
 
-	<script src="assets/javascripts/controllers/MainController.js"></script>
-	<script src="assets/javascripts/controllers/MapController.js"></script>
+	<!-- <script src="assets/javascripts/controllers/MainController.js"></script>
+	<script src="assets/javascripts/controllers/MapController.js"></script> -->
 
 	<!-- Jos script src rivit tarvitaan ja ne eivät ole aakkosjärjestyksessä, testaa fiksaako se ongelman "ProgressApp" not defined -->
 
