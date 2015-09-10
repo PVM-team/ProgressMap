@@ -4,7 +4,7 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
    $routeProvider
        .when('/', {
            controller: 'MapController',
-           templateUrl: 'templates/map.html'
+           templateUrl: 'templates/map.html'		   
        })
        .when('/test',{
            controller: 'MainController'
