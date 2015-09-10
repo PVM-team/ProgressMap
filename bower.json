@@ -1,0 +1,13 @@
+{
+  "name": "ProgressMap",
+  "version": "0.0.0",
+  "homepage": "https://github.com/VihavaisenKurpitsat/ProgressMap",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
