@@ -3,9 +3,6 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
-
-  #angular routejen ongelmaan ratkaisuyritys
-  config.serve_static_assets = true
   
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
