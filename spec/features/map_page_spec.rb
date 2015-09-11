@@ -12,7 +12,7 @@ describe "Map page" do
 
   it "adds user to course", js: true do
     visit "/#/"
-    save_and_open_page
+    # save_and_open_page
     click_button("Add user to course")
     expect(page).to have_content "{"
   end
