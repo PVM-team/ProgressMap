@@ -44,8 +44,8 @@ ProgressApp.controller('MapController',	function($scope, $http) {
 
     function drawQuadratic(x1, y1, x2, y2) {
         ctx.beginPath();
-        ctx.moveTo((x1), (y1));
-        ctx.quadraticCurveTo(((x2 + x1) / 2), x2, (x2), (y2));
+        ctx.moveTo((x1+10), (y1+10));
+        ctx.quadraticCurveTo(((x2 + x1) / 2), x2, (x2+10), (y2+10));
         ctx.stroke();
     }
 
@@ -58,5 +58,7 @@ ProgressApp.controller('MapController',	function($scope, $http) {
         return button;
 
 	}
-  
+ $scope.checkAssigment = function(id) {
+ 	return true;
+ } 
 })

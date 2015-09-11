@@ -24,7 +24,12 @@
 
 <div id="mapElements" style="position: relative">
 	<canvas id="canvas" width="1000" height="1000" ></canvas>
-	<button ng-repeat="location in locations" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px"> nappi</button>
-</div>
+	<div ng-repeat="location in locations">
+	<button ng-if="checkAssigment(location.id)" class="done" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px"> nappi</button>
+	<button ng-if="!checkAssigment(location.id)" class="btn" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px">nappi</button> 
+
+	</div>
+
+	</div>
 
 
