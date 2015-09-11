@@ -5,6 +5,8 @@ class UsersController < ApplicationController
   # GET /users.json
   def index
     @users = User.all
+    
+    render 'users'
   end
 
   # GET /users/1
@@ -24,14 +26,14 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    course = Course.find(params[:course_id])
+    course = Course.find_by id: params[:course_id]
     @user = User.new
 
     if course and @user.save
       course.participants << @user
     end
 
-    render 'show'
+    render 'user'
   end
 
   # PATCH/PUT /users/1

@@ -1,5 +1,3 @@
-<p>map.html:n osio alkaa</p>
-
 <h2>Course: {{ course }}</h2>
 
 <h3>Assignments</h3>
@@ -14,22 +12,41 @@
   {{ participant }}
 </div>
 
-<h3>LocationsZZZ</h3>
+<h3>Locations</h3>
 
 <div ng-repeat="location in locations">
   {{ location }}
 </div>
 
+<br>
+
 <button ng-click="addStudent(course)">Add user to course</button>
+
+
+<p>Current user: <strong>{{ current_user }}</strong>
+
+<p>View the map as student:</p>
+
+<select ng-model="participant" ng-change="viewAsStudent(participant)" ng-options="participant.id as participant.id for participant in  participants"></select>
 
 <div id="mapElements" style="position: relative">
 	<canvas id="canvas" width="1000" height="1000" ></canvas>
+
 	<div ng-repeat="location in locations">
-	<button ng-if="checkAssigment(location.id)" class="done" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px"> nappi</button>
-	<button ng-if="!checkAssigment(location.id)" class="btn" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px">nappi</button> 
+
+		<div ng-repeat="finished in done_assignment_locations">
+			<button class="button done" style="top:{{finished.y}}px; left:{{finished.x}}px">valamis</button>
+		</div>
+
+		<button class="button undone" style="top:{{location.y}}px; left:{{location.x}}px">nappi</button>
+	
+		<!-- Ei toimi oikein sillä ei piilota 'undone' buttoneja vaan ne jäävät HTML koodiin ja voivat olla myös responsiivisia. Se mikä voisi olla järkevää on että tietokannasta palautetaan lista yhden oppilaan tehdyistä ja tekemättömistä tehtävistä. Ne voidaan alkuun muodostaa kontrollerissa ajassa O(n^2), mutta jos on liian hidasta selaimen näkökulmasta niin kysely voidaan tehdä myös User.rb tiedostoon jolloin suoritus on käytännössä vakioaikaista. -->
+
+		<!-- <button ng-if="checkAssigment(location.id)" class="done" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px"> nappi</button>
+	<button ng-if="!checkAssigment(location.id)" class="btn" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px">nappi</button> -->
 
 	</div>
 
-	</div>
+</div>
 
-
+<link rel="stylesheet" type="text/css" href="assets/stylesheets/site.css">
