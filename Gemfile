@@ -48,14 +48,17 @@ group :development, :test do
   gem 'sqlite3'
   gem 'byebug'
   gem 'rspec-rails', '~> 3.0'
-
-  gem "factory_girl_rails"
-  gem "capybara"
   gem "database_cleaner"
   gem "selenium-webdriver"
-  gem "launchy"
   gem 'teaspoon-jasmine'
   gem 'phantomjs'
+end
+
+group :test do
+  gem "factory_girl_rails"
+  gem "capybara"
+  gem "launchy"
+  
   gem 'simplecov', require: false
 end
 
