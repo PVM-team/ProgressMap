@@ -7,12 +7,14 @@ ProgressApp.controller('MapController',	function($scope, $http) {
       $scope.locations = data["locations"]
       $scope.participants = data["participants"]
 
-      alert($scope.locations.length);
-     /* for (int i = 0; i < $scope.locations.length; i++){
-    	
-	var button = createButton(document.getElementById("mapElements"));
-       	placeButtonOnLocation($scope.locations[i].x, $scope.locations[i].y, button); 
-	}*/	
+    for (var i=0; i < $scope.locations.length - 1; i++){
+	var x1 = $scope.locations[i].x;
+	var y1 = $scope.locations[i].y;
+	var x2 = $scope.locations[i+1].x;
+	var y2 = $scope.locations[i+1].y;
+	drawQuadratic(x1,y1,x2,y2);	
+    }
+    
       })
 
     $scope.addStudent = function(course) {
