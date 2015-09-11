@@ -6,18 +6,26 @@ ProgressApp.controller('MapController',	function($scope, $http) {
       $scope.assignments = data["assignments"]
       $scope.locations = data["locations"]
       $scope.participants = data["participants"]
-    })
+
+      alert($scope.locations.length);
+     /* for (int i = 0; i < $scope.locations.length; i++){
+    	
+	var button = createButton(document.getElementById("mapElements"));
+       	placeButtonOnLocation($scope.locations[i].x, $scope.locations[i].y, button); 
+	}*/	
+      })
 
     $scope.addStudent = function(course) {
 
       jQuery.ajax({
         url: '/users',
         data: "course_id=" + course.id,
-        type: 'POST',
-      
+        type: 'POST',  
         success: function(data) {
           $scope.participants.push(data)
           $scope.$apply()
+
+
         }
       })
     }
@@ -30,7 +38,7 @@ ProgressApp.controller('MapController',	function($scope, $http) {
         button.style.position = "absolute";
         button.style.top = y + "px";
         button.style.left = x + "px";
-    }
+    
 
     function drawQuadratic(x1, y1, x2, y2) {
         ctx.beginPath();
@@ -46,12 +54,7 @@ ProgressApp.controller('MapController',	function($scope, $http) {
         parentDiv.appendChild(button);
 
         return button;
-    }
 
-    for (location in $scope.locations) {
-        alert("!");
-        var button = createButton(document.getElementById("mapElements"));
-        placeButtonOnLocation(location.x, location.y, button);
-    }
-
+	}
+  
 })

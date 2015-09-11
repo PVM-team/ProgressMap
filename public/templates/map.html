@@ -23,5 +23,8 @@
 <button ng-click="addStudent(course)">Add user to course</button>
 
 <div id="mapElements" style="position: relative">
-  <canvas id="canvas" width="1000" height="1000" ></canvas>
+	<canvas id="canvas" width="1000" height="1000" ></canvas>
+	<button ng-repeat="location in locations" style="position:absolute; top:{{location.y}}px; left:{{location.x}}px"> nappi</button>
 </div>
+
+
