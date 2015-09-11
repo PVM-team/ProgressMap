@@ -53,6 +53,7 @@ group :development, :test do
   gem "capybara"
   gem "database_cleaner"
   gem "selenium-webdriver"
+  gem "launchy"
   gem 'simplecov', require: false
 end
 
