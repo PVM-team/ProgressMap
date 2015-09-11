@@ -1,48 +1,24 @@
-ProgressApp.controller('MapController', [
-   '$scope', '$http', '$log',
+ProgressApp.controller('MapController',	function($scope, $http) {
 
-   	function($scope, $http, $log) {
+		$http.get('/map/index.json', { params: { course_id: 1} }).success(function(data, status, headers, config) {
 
-		$http.get('/map/index.json', {
-       		params: { course_id: 1}
-       	}).success(function(data, status, headers, config) {
+      $scope.course = data["course"][0]
+      $scope.assignments = data["assignments"]
+      $scope.locations = data["locations"]
+      $scope.participants = data["participants"]
+    })
 
-    		  var c = data["course"]
-       		var a = data["assignments"]
-       		var p = data["participants"]
-       		var l = data["locations"]
+    $scope.addStudent = function(course) {
 
-       		$scope.course = c[0]
-        	$scope.assignments = []
-        	$scope.locations = []
-        	$scope.participants = []
-
-        	for (var i = 0; i < a.length; i++) {
-        		$scope.assignments.push(a[i])
-        	}
-
-        	for (var i = 0; i < l.length; i++) {
-        		$scope.locations.push(l[i])
-        	}
-
-        	for (var i = 0; i < p.length; i++) {
-        		$scope.participants.push(p[i])
-        	}
-    	})
-    
-
-      $scope.addStudent = function(course) {
-
-        jQuery.ajax({
-          url: '/users',
-          data: "course_id=" + course.id,
-          type: 'POST',
-          
-          success: function(data) {
-            $scope.participants.push(data)
-            $scope.$apply()
-          }
-        })
-      }
-  }
-])
+      jQuery.ajax({
+        url: '/users',
+        data: "course_id=" + course.id,
+        type: 'POST',
+      
+        success: function(data) {
+          $scope.participants.push(data)
+          $scope.$apply()
+        }
+      })
+    }
+})

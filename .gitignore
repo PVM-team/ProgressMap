@@ -18,6 +18,7 @@
 tmp/
 .idea/
 progressmap/
+coverage/
 
 npm-debug.log
 

@@ -53,7 +53,12 @@ group :development, :test do
   gem "capybara"
   gem "database_cleaner"
   gem "selenium-webdriver"
+<<<<<<< HEAD
   gem "launchy"
+=======
+  gem 'teaspoon-jasmine'
+  gem 'phantomjs'
+>>>>>>> cf22a8d7b69eed44817d0b90eaa165b3df230113
   gem 'simplecov', require: false
 end
 
