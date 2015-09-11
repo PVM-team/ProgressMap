@@ -38,7 +38,7 @@ ProgressApp.controller('MapController',	function($scope, $http) {
         button.style.position = "absolute";
         button.style.top = y + "px";
         button.style.left = x + "px";
-    
+    }    
 
     function drawQuadratic(x1, y1, x2, y2) {
         ctx.beginPath();
