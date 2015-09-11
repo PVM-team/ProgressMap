@@ -21,4 +21,37 @@ ProgressApp.controller('MapController',	function($scope, $http) {
         }
       })
     }
+
+    var ctx = document.getElementById("canvas").getContext("2d");
+    ctx.fillStyle = "#6B8E23";
+    ctx.fillRect(0, 0, 1000, 1000);
+
+    function placeButtonOnLocation(x, y, button) {
+        button.style.position = "absolute";
+        button.style.top = y + "px";
+        button.style.left = x + "px";
+    }
+
+    function drawQuadratic(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo((x1), (y1));
+        ctx.quadraticCurveTo(((x2 + x1) / 2), x2, (x2), (y2));
+        ctx.stroke();
+    }
+
+    function createButton(parentDiv) {
+        var button = document.createElement("BUTTON");
+        var buttonText = document.createTextNode("test");
+        button.appendChild(buttonText);
+        parentDiv.appendChild(button);
+
+        return button;
+    }
+
+    for (location in $scope.locations) {
+        alert("!");
+        var button = createButton(document.getElementById("mapElements"));
+        placeButtonOnLocation(location.x, location.y, button);
+    }
+
 })
