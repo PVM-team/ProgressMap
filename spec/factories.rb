@@ -13,7 +13,7 @@ FactoryGirl.define do
   end
 
   factory :location do
-    Location.create x: 10, y: 25
+    Location.new x: 10, y: 25
   end
 
 end
