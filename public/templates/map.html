@@ -1,3 +1,5 @@
+<p id="errorMsg"></p>
+
 <h2>Course: {{ course }}</h2>
 
 <h3>Assignments</h3>
@@ -33,11 +35,12 @@
 	<canvas id="canvas" width="1000" height="1000" ></canvas>
 
 	<div ng-repeat="assignment in assignments">
-		<button class="button undone" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">nappi</button>
+		<button class="button undone-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">nappi</button>
+		<label class="amount-of-doers" style="top:{{assignment.location.y + 30}}px; left:{{assignment.location.x + 50}}px">{{assignment.doers.length}}</label>
 	</div>
 
 	<div ng-repeat="assignment in done_assignments">
-		<button class="button done" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">valmis</button>
+		<button class="button done-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">valmis</button>
 	</div>
 
 </div>

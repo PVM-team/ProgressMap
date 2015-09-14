@@ -3,7 +3,6 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
 		$http.get('/map/init.json', { params: { course_id: 1, user_id: 2 } }).success(function(data, status, headers, config) {
 
       $scope.course = data["course"][0]
-            $scope.current_user = data["current_user"][0]
 
       $scope.assignments = data["assignments"]
       $scope.participants = data["participants"]
@@ -17,6 +16,7 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
 	
         drawQuadratic(x1, y1, x2, y2);
       }
+            $scope.current_user = data["current_user"][0]
             $scope.done_assignments = doneAssignments($scope.current_user.id)
     })
 
@@ -60,6 +60,15 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
         return button;
     }
 
+    function getCurrentUser(userId) {
+        for (var i = 0; i < $scope.participants.length; i++) {
+            if ($scope.participants[i].id == userId){
+                return $scope.participants[i];
+            }
+        }
+        throw "User not found: " +  userId;
+    }
+
     function doneAssignments(userId) {
         var done_assignments = []
 
@@ -76,6 +85,13 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
     }
 
     $scope.viewAsStudent = function(userId) {
+        try {
+            $scope.current_user = getCurrentUser(userId)
+        }
+        catch(err) {
+            document.getElementById("errorMsg").innerHTML = err
+        }
+
         $scope.done_assignments = doneAssignments(userId)
     }
 })

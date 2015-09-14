@@ -5,10 +5,16 @@
 	border-radius: 50%;
 	border-color: black;
 }
-
-.undone {
+.undone-task {
 	background: red;
 }
-.done {
+.done-task {
 	background: green !important;
+}
+.amount-of-doers {
+    position: absolute;
+}
+
+#errorMsg {
+    color: red;
 }
