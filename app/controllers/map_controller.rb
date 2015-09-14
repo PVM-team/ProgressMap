@@ -2,32 +2,16 @@ class MapController < ApplicationController
 	
 	def init
 		course = Course.find_by id: params[:course_id]
+		user = User.find_by id: params[:user_id]
 		@course = []
+		@current_user = []
 
 		if course
 			@course << course
-
 			@participants = course.participants
 			@assignments = course.assignments
-			@locations = []
-
-			@assignments.each { |assignment| @locations << assignment.location }
 		end
+
+		@current_user << user if user
 	end
-
-	def view_as_user
-		user = User.find_by id: params[:user_id]
-		course = Course.find_by id: params[:course_id]
-
-		@current_user = []
-		@done_assignments = []
-		@done_assignment_locations = []
-
-		if user and course
-			@current_user << user
-			@done_assignments = user.completed_assignments(course)
-
-			@done_assignments.each { |assignment| @done_assignment_locations << assignment.location }
-		end
-	end	
 end

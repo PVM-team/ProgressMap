@@ -1,31 +1,23 @@
 ProgressApp.controller('MapController',	function($scope, $http, $log) {
 
-		$http.get('/map/init.json', { params: { course_id: 1 } }).success(function(data, status, headers, config) {
+		$http.get('/map/init.json', { params: { course_id: 1, user_id: 2 } }).success(function(data, status, headers, config) {
 
       $scope.course = data["course"][0]
+            $scope.current_user = data["current_user"][0]
 
       $scope.assignments = data["assignments"]
-      $scope.locations = data["locations"]
       $scope.participants = data["participants"]
 
-      for (var i = 0; i < $scope.locations.length - 1; i++) {
-        var x1 = $scope.locations[i].x;
-        var y1 = $scope.locations[i].y;
-        var x2 = $scope.locations[i+1].x;
-        var y2 = $scope.locations[i+1].y;
+      for (var i = 0; i < $scope.assignments.length - 1; i++) {
+
+        var x1 = $scope.assignments[i].location.x
+        var y1 = $scope.assignments[i].location.y
+        var x2 = $scope.assignments[i+1].location.x
+        var y2 = $scope.assignments[i+1].location.y
 	
         drawQuadratic(x1, y1, x2, y2);
       }
-    })
-
-    $http.get('/map/view_as_user.json', { params: { user_id: 1, course_id: 1 } })
-                .success(function(data, status, headers, config) {
-
-        $scope.current_user = data['current_user']
-        $scope.done_assignments = data["done_assignments"]
-        $scope.done_assignment_locations = data["done_assignment_locations"]
-
-        $scope.undone_assignment_locations = null
+            $scope.done_assignments = doneAssignments($scope.current_user.id)
     })
 
     $scope.addStudent = function(course) {
@@ -68,15 +60,22 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
         return button;
     }
 
-    $scope.viewAsStudent = function(user_id) {
+    function doneAssignments(userId) {
+        var done_assignments = []
 
-      $http.get('/map/view_as_user.json', 
-                { params: { user_id: user_id, course_id: $scope.course.id } })
-                .success(function(data, status, headers, config) {
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            var doers = $scope.assignments[i].doers
 
-        $scope.current_user = data["current_user"]
-        $scope.done_assignments = data["done_assignments"]
-        $scope.done_assignment_locations = data["done_assignment_locations"]
-      })
+            for (var j = 0; j < doers.length; j++) {
+                if (doers[j].id == userId) {
+                    done_assignments.push($scope.assignments[i])
+                }
+            }
+        }
+        return done_assignments
+    }
+
+    $scope.viewAsStudent = function(userId) {
+        $scope.done_assignments = doneAssignments(userId)
     }
 })

@@ -10,5 +10,5 @@
 	background: red;
 }
 .done {
-	background: green;
+	background: green !important;
 }

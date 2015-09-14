@@ -56,38 +56,4 @@ describe User, type: :model do
       expect(Course.count).to be(3)
     end
   end
-
-
-  describe "when completed_assignments is called" do
-
-    before :each do
-      @user = FactoryGirl.create :user
-      @course = FactoryGirl.create :course
-    end
-
-    it "initially returns an empty array" do
-      expect(@user.completed_assignments(@course)).to eq([])
-    end
-
-    it "returns the list of done assignments when some are done" do
-      course2 = FactoryGirl.create :course
-      assignment1 = FactoryGirl.create :assignment
-      assignment2 = FactoryGirl.create :assignment
-      assignment3 = FactoryGirl.create :assignment
-
-      add_assignment_to_course(@course, assignment1)
-      add_assignment_to_course(course2, assignment2)
-      add_assignment_to_course(course2, assignment3)
-
-      @user.assignments << assignment2
-      @user.assignments << assignment3
-
-      expect(@user.completed_assignments(@course).length).to be(0)
-      expect(@user.completed_assignments(course2).length).to be(2)
-    end
-  end
-end
-
-def add_assignment_to_course(course, assignment)
-  course.assignments << assignment
 end

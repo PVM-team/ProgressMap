@@ -5,8 +5,6 @@ class UsersController < ApplicationController
   # GET /users.json
   def index
     @users = User.all
-    
-    render 'users'
   end
 
   # GET /users/1
@@ -32,8 +30,6 @@ class UsersController < ApplicationController
     if course and @user.save
       course.participants << @user
     end
-
-    render 'user'
   end
 
   # PATCH/PUT /users/1

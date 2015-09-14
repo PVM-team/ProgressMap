@@ -2,7 +2,6 @@ Rails.application.routes.draw do
 
   root 'application#index'
   get 'map/init', to: 'map#init'
-  get 'map/view_as_user', to: 'map#view_as_user'
 
   resources :users, only: [:create]
 
