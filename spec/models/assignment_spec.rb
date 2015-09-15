@@ -64,4 +64,30 @@ describe Assignment, type: :model do
       expect(Course.count).to be(1)
     end
   end
+
+  describe "dependencies" do
+
+    before :each do
+      @assignment1 = FactoryGirl.create :assignment
+    end
+
+    it "returns an empty array if assignment has no dependencies" do
+      expect(@assignment1.dependencies).to eq([])
+    end
+
+    it "returns the dependencies of the assignment if assignment has dependencies" do
+      assignment2 = FactoryGirl.create :assignment
+      assignment3 = FactoryGirl.create :assignment
+
+      assignment3.dependencies << @assignment1
+      assignment3.dependencies << assignment2
+      assignment2.dependencies << @assignment1
+
+      expect(assignment2.dependencies.length).to be(1)
+      expect(assignment3.dependencies.length).to be(2)
+
+      expect(assignment3.dependencies[0]).to eq(@assignment1)
+      expect(assignment3.dependencies[1]).to eq(assignment2)
+    end
+  end
 end

@@ -6,5 +6,8 @@ class Assignment < ActiveRecord::Base
 	has_many :students_tasks, dependent: :destroy
 	has_many :doers, through: :students_tasks, :source => :user
 
+	has_many :assignment_dependencies, dependent: :destroy
+	has_many :dependencies, through: :assignment_dependencies	# has_many perässä oleva 'dependencies' kuvaa sitä että assignment_dependencyn kautta Assignment modelin riveihin viittaa foreign_key 'dependency_id'
+
 	# validates :course_id, numericality: { only_integer: true }
 end

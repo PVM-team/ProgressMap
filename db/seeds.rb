@@ -82,3 +82,16 @@ student8.assignments << assignment4
 
 student9.assignments << assignment5
 student9.assignments << assignment1
+
+
+assignment2.dependencies << assignment1
+
+assignment6.dependencies << assignment1
+assignment6.dependencies << assignment4
+
+assignment8.dependencies << assignment5
+assignment8.dependencies << assignment4
+
+assignment9.dependencies << assignment3
+assignment9.dependencies << assignment7
+assignment9.dependencies << assignment8
