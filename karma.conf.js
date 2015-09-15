@@ -75,11 +75,9 @@ module.exports = function(config) {
 		flags: ['--no-sandbox']
 	}
     }
-  })
+  });
+  if(process.env.TRAVIS) {
+	config.browsers = ['Chrome_travis_ci']
+  }
 }
 
-if (process.env.TRAVIS) {
-  config.set({
-    browsers: ['Chrome_travis_ci']
-  })
-}
