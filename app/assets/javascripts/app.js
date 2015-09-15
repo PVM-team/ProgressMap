@@ -1,4 +1,4 @@
-var ProgressApp = angular.module('ProgressApp',['ngRoute', 'templates', 'ngResource'])
+var ProgressApp = angular.module('ProgressApp',['ngRoute', 'ngResource'])
 
 ProgressApp.config(['$routeProvider', function($routeProvider){
    $routeProvider
@@ -8,7 +8,7 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
        })
        .when('/test',{
            controller: 'MainController'
-
+	   	
        })
        .otherwise({
            redirectTo: '/'
