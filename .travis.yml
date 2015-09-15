@@ -30,3 +30,4 @@ before_script:
  - npm install karma-chrome-launcher --save-dev
  - npm install -g karma-cli
 
+ - npm install karma karma-coverage --save-dev
