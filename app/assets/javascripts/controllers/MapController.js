@@ -1,8 +1,10 @@
 ProgressApp.controller('MapController',	function($scope, MapDataService) {
 
+    
     var ctx = document.getElementById("canvas").getContext("2d");
     ctx.fillStyle = "#6B8E23";
     ctx.fillRect(0, 0, 1000, 1000);
+
 
     MapDataService.initMap().then(function(data) {
 
@@ -37,13 +39,6 @@ ProgressApp.controller('MapController',	function($scope, MapDataService) {
         button.style.left = x + "px";
     }
 
-    function drawQuadratic(x1, y1, x2, y2) {
-        ctx.beginPath();
-        ctx.moveTo((x1+10), (y1+10));
-        ctx.quadraticCurveTo(((x2 + x1) / 2), x2, (x2+10), (y2+10));
-        ctx.stroke();
-    }
-
     function createButton(parentDiv) {
         var button = document.createElement("BUTTON");
         var buttonText = document.createTextNode("test");
@@ -63,6 +58,13 @@ ProgressApp.controller('MapController',	function($scope, MapDataService) {
 
             drawQuadratic(x1, y1, x2, y2);
         }
+    }
+
+    function drawQuadratic(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo((x1+10), (y1+10));
+        ctx.quadraticCurveTo(((x2 + x1) / 2), x2, (x2+10), (y2+10));
+        ctx.stroke();
     }
 
     function getCurrentUser(userId) {
