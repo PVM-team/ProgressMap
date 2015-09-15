@@ -25,7 +25,7 @@ before_install:
 script: karma start karma.conf.js --single-run
 
 before_script:
- - npm install jasmine       
+ - npm install karma-jasmine --save-dev       
  - npm install karma
 
 
