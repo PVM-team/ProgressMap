@@ -26,6 +26,7 @@ before_install:
 
 before_script:
  - npm install karma-jasmine --save-dev       
- - npm install karma
+ - npm install karma --save-dev
  - npm install karma-chrome-launcher --save-dev
+ - npm install -g karma-cli
 
