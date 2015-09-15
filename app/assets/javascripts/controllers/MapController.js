@@ -1,25 +1,22 @@
-ProgressApp.controller('MapController',	function($scope, $http, $log) {
+ProgressApp.controller('MapController',	function($scope, MapDataService) {
 
-		$http.get('/map/init.json', { params: { course_id: 1, user_id: 2 } }).success(function(data, status, headers, config) {
+    var ctx = document.getElementById("canvas").getContext("2d");
+    ctx.fillStyle = "#6B8E23";
+    ctx.fillRect(0, 0, 1000, 1000);
 
-      $scope.course = data["course"][0]
+    MapDataService.initMap().then(function(data) {
 
-      $scope.assignments = data["assignments"]
-      $scope.participants = data["participants"]
+        $scope.course = data["course"][0]
+        $scope.assignments = data["assignments"]
+        $scope.participants = data["participants"]
 
-      for (var i = 0; i < $scope.assignments.length - 1; i++) {
+        $scope.current_user = data["current_user"][0]
+        $scope.done_assignments = doneAssignments($scope.current_user.id)
 
-        var x1 = $scope.assignments[i].location.x
-        var y1 = $scope.assignments[i].location.y
-        var x2 = $scope.assignments[i+1].location.x
-        var y2 = $scope.assignments[i+1].location.y
-	
-        drawQuadratic(x1, y1, x2, y2);
-      }
-            $scope.current_user = data["current_user"][0]
-            $scope.done_assignments = doneAssignments($scope.current_user.id)
+        drawPaths()
     })
 
+    //osa pitäisi siirtää palvelun puolelle
     $scope.addStudent = function(course) {
 
       jQuery.ajax({
@@ -33,10 +30,6 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
         }
       })
     }
-
-    var ctx = document.getElementById("canvas").getContext("2d");
-    ctx.fillStyle = "#6B8E23";
-    ctx.fillRect(0, 0, 1000, 1000);
 
     function placeButtonOnLocation(x, y, button) {
         button.style.position = "absolute";
@@ -58,6 +51,18 @@ ProgressApp.controller('MapController',	function($scope, $http, $log) {
         parentDiv.appendChild(button);
 
         return button;
+    }
+
+    function drawPaths(){
+        for (var i = 0; i < $scope.assignments.length - 1; i++) {
+
+            var x1 = $scope.assignments[i].location.x
+            var y1 = $scope.assignments[i].location.y
+            var x2 = $scope.assignments[i+1].location.x
+            var y2 = $scope.assignments[i+1].location.y
+
+            drawQuadratic(x1, y1, x2, y2);
+        }
     }
 
     function getCurrentUser(userId) {
