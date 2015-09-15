@@ -1,9 +1,9 @@
 ProgressApp.controller('MapController',	function($scope, MapDataService) {
 
-    
-    var ctx = document.getElementById("canvas").getContext("2d");
-    ctx.fillStyle = "#6B8E23";
-    ctx.fillRect(0, 0, 1000, 1000);
+
+//    var ctx = document.getElementById("canvas").getContext("2d");
+//    ctx.fillStyle = "#6B8E23";
+//    ctx.fillRect(0, 0, 1000, 1000);
 
 
     MapDataService.initMap().then(function(data) {
