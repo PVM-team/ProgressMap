@@ -1,6 +1,7 @@
 describe('MapController', function () {
 
     var controller, scope, logMock;
+    var mapDataService;
     var MapDataServiceMock;
     var data = {};
 
@@ -20,11 +21,17 @@ describe('MapController', function () {
         data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
         data.current_user = {"id": 2};
 
-        inject(function ($controller, $rootScope) {
+        inject(function ($controller, $rootScope, _MapDataService_) {
             scope = $rootScope.$new();
+            mapDataService = _MapDataService_;
             controller = $controller('MapController', {
-                $scope: scope
+                $scope: scope,
+                MapDataService: mapDataService
             });
+
+            spyOn(mapDataService, 'initMap');
+            mapDataService.initMap(data);
+
         });
 
         //asetetaan data scopeen (joka oikeasti tapahtuu MapDataServicen avulla)
@@ -34,6 +41,7 @@ describe('MapController', function () {
 
         scope.current_user = data["current_user"][0]
         //$scope.done_assignments = doneAssignments($scope.current_user.
+        ;
     });
 
 
@@ -46,7 +54,22 @@ describe('MapController', function () {
         expect(scope.done_assignments.length).toBe(1);
     })
 
+    it('Init was called on Controller initialize', function () {
+        expect(mapDataService.initMap).toHaveBeenCalled();
+    })
+
+    //ei toimi
+    it('throws error when user id is not valid', function () {
+//        expect(scope.viewAsStudent(4)).toThrowError("err");
+    })
+
+    //koko yö mennyt tähän
+    it('canavas gets rendered', function () {
+//        expect(scope.getctx()).not.toBe(null);
+    })
+
 })
+
 /*
 
  //   template ei halua toimia..
