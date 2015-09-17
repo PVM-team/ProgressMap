@@ -4,9 +4,11 @@
 
 <h3>Assignments</h3>
 
-<div ng-repeat="assignment in assignments">
-  {{ assignment }}
-</div>
+<table>
+	<div ng-repeat="assignment in assignments">
+  		<tr> {{ assignment }}</tr>
+	</div>
+</table>
 
 <h3>Participants</h3>
 
@@ -29,14 +31,14 @@
 	<canvas id="canvas" width="1000" height="1000" ></canvas>
 
 	<div ng-repeat="assignment in assignments">
-		<button class="button undone-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">nappi</button>
+		<button class="button undone-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
 		<label class="amount-of-doers" style="top:{{assignment.location.y + 30}}px; left:{{assignment.location.x + 50}}px">{{assignment.doers.length}}</label>
 	</div>
 
 	<div ng-repeat="assignment in done_assignments">
-		<button class="button done-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">valmis</button>
+		<button class="button done-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
 	</div>
 
 </div>
 
-<link rel="stylesheet" type="text/css" href="assets/stylesheets/site.css">
+<!-- <link rel="stylesheet" type="text/css" href="assets/stylesheets/site.css"> -->

@@ -23,8 +23,11 @@ end
 
 def assure_location_is_invalid(x, y)
     count = Location.count
-    location = Location.create x: x, y: y
 
-    expect(location).to be_invalid
+    begin
+      FactoryGirl.create(:location, x: x, y: y)
+    rescue
+    end
+
     expect(Location.count).to be(count)
 end
