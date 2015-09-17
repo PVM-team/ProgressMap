@@ -2,14 +2,20 @@ describe('MapController', function () {
 
     var controller, scope, logMock;
     var mapDataService;
-    var MapDataServiceMock;
+    var CanvasServiceMock;
     var data = {};
 
     beforeEach(function () {
         module('ProgressApp');
 
-        //does nothing yet
-        MapDataServiceMock = (function () {
+
+        CanvasServiceMock = (function () {
+            return {
+                initiateCanvas: function (height, width, div, bgColor) {
+                },
+                drawSmoothPaths: function (locations) {
+                }
+            }
         })();
 
         //luodaan data testaamiselle (joka oikeasti saataisiin palvelusta)
@@ -21,12 +27,13 @@ describe('MapController', function () {
         data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
         data.current_user = {"id": 2};
 
-        inject(function ($controller, $rootScope, _MapDataService_) {
+        inject(function ($controller, $rootScope, _MapDataService_, CanvasService) {
             scope = $rootScope.$new();
             mapDataService = _MapDataService_;
             controller = $controller('MapController', {
                 $scope: scope,
-                MapDataService: mapDataService
+                MapDataService: mapDataService,
+                CanvasService: CanvasServiceMock
             });
 
             spyOn(mapDataService, 'initMap');
@@ -40,8 +47,7 @@ describe('MapController', function () {
         scope.participants = data["participants"]
 
         scope.current_user = data["current_user"][0]
-        //$scope.done_assignments = doneAssignments($scope.current_user.
-        ;
+        //$scope.done_assignments = doneAssignments($scope.current_user);
     });
 
 

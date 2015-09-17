@@ -74,9 +74,6 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
         $scope.done_assignments = doneAssignments(userId)
     }
 
-    $scope.getctx = function() {
-        return ctx;
-    }
     
     $scope.checkIfAssignmentIsDone = function(assignmentId){
 	for (var i = 0; i < $scope.done_assignments.length; i++){
