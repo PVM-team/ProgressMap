@@ -27,16 +27,18 @@ describe "Course map page", js: true do
   		end
 
   		it "has a canvas" do
-  			expect(page.find("canvas")).not_to be(nil)
+  			canvas = page.find("canvas")
+  			expect(canvas.visible?).to be(true)
   		end
 
   		it "has buttons for each assignment" do
   			@course.assignments.each do |assignment|
   				button = page.first("button", :text => assignment.id)
+  				expect(button.visible?).to be(true)
   			end
   		end
 
-  		it "has only one button for each assignment" do
+  		it "has one button for each assignment" do
   			@course.assignments.each do |assignment|
   				expect(page.find("button", :text => assignment.id))
   			end
@@ -66,9 +68,43 @@ describe "Course map page", js: true do
   			end
   		end
 
-  		#it "user can see, how many participants have completed each assignment" do
-  		#
-  		#end
+  		it "user can see, how many participants have completed each assignment" do
+  			amounts_of_doers = page.all("label", :text => '1')
+
+  			expect(amounts_of_doers.length).to be(4)	# tarkistaa, onko tiedostossa jossain <label ...>1</label>
+  			enumerator = amounts_of_doers.each
+  				
+  			for i in 1..4
+  				elem = enumerator.next
+  				style = elem[:style]
+
+  				same_style_found = false
+
+  				@course.assignments.each do |assignment|
+  					assignment_style = style_by_assignment(assignment)
+
+  					same_style_found = true if style === assignment_style
+  				end
+  				expect(same_style_found).to be(true)
+
+  				i = i + 1
+  			end
+
+  			same_style_found = false
+
+  			amounts_of_doers = page.all("label", :text => '2')
+  			expect(amounts_of_doers.length).to be(1)
+
+  			style = amounts_of_doers.each.next[:style]
+
+  			@course.assignments.each do |assignment|
+  				assignment_style = style_by_assignment(assignment)
+
+  				same_style_found = true if style === assignment_style
+  			end
+
+  			expect(same_style_found).to be(true)
+  		end
   	end
 end
 
@@ -158,4 +194,8 @@ def user_has_done_assignment(user, assignment)
 		return true if a === assignment
 	end
 	false
+end
+
+def style_by_assignment(assignment)
+	"top: " + (assignment.location.y + 5).to_s + "px; left: " + (assignment.location.x + 25).to_s + "px;"
 end
