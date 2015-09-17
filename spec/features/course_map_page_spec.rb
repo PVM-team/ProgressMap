@@ -36,11 +36,11 @@ describe "Course map page", js: true do
   			end
   		end
 
-  	#	it "has only one button for each assignment" do
-  	#		@course.assignments.each do |assignment|
-  	#			expect(page.find("button", :text => assignment.id))
-  	#		end
-  	#	end
+  		it "has only one button for each assignment" do
+  			@course.assignments.each do |assignment|
+  				expect(page.find("button", :text => assignment.id))
+  			end
+  		end
 
 
   		# button[:class] --> button undone-task ng-binding
@@ -54,11 +54,28 @@ describe "Course map page", js: true do
   				expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
   			end
   		end
+
+  		describe "when current user is @user2" do
+
+  			it "user can see 4 assignments marked as done" do
+  				check_that_user_sees_done_tasks_as_done(@course, @user2, 4)
+  			end
+
+  			it "one of the assignments is marked as undone" do
+  				check_that_user_sees_undone_tasks_as_undone(@course, @user2, 1)
+  			end
+  		end
+
+  		#it "user can see, how many participants have completed each assignment" do
+  		#
+  		#end
   	end
 end
 
 def course_details
 	@course = FactoryGirl.create :course
+	course2 = FactoryGirl.create :course
+	course2.assignments << (FactoryGirl.create :assignment)
 
 	@user1 = FactoryGirl.create :user
 	@user2 = FactoryGirl.create :user
@@ -93,8 +110,52 @@ def course_details
 	@user2.assignments << @task3
 	@user2.assignments << @task4
 	@user2.assignments << @task5
+
+	@user3.assignments << course2.assignments[0]
 end
 
 def visit_map_page
 	visit '/'
+end
+
+def check_that_user_sees_tasks_with_status_as_status(course, assignments, status, amount)
+	index = 0
+
+  	assignments.each do |assignment|
+
+  		course.assignments.each do |course_assignment|
+  			if course_assignment === assignment
+
+  				button = page.first("button", :text => assignment.id)
+  				clas = button[:class]
+
+  				expect(clas).to have_content(status)
+  				index = index + 1
+  			end
+  		end
+  	end
+  	expect(index).to be(amount)
+end
+
+def check_that_user_sees_done_tasks_as_done(course, user, amount)
+  	check_that_user_sees_tasks_with_status_as_status(course, user.assignments, "done-task", amount)
+end
+
+def check_that_user_sees_undone_tasks_as_undone(course, user, amount)
+	undone_tasks = []
+
+	course.assignments.each do |assignment|
+
+		undone_tasks << assignment unless user_has_done_assignment(user, assignment)
+	end
+
+	check_that_user_sees_tasks_with_status_as_status(course, undone_tasks, "undone-task", amount)
+end
+
+def user_has_done_assignment(user, assignment)
+	user.assignments.each do |a|
+
+		return true if a === assignment
+	end
+	false
 end
