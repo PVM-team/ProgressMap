@@ -104,4 +104,19 @@ ProgressApp.controller('MapController',	function($scope, MapDataService) {
     $scope.getctx = function() {
         return ctx;
     }
+    
+    $scope.checkIfAssignmentIsDone = function (assignmentId){
+	for (var i = 0; i < $scope.done_assignments.length; i++){
+		if ($scope.done_assignments[i].id == assignmentId) {
+			return true;
+		}
+	}
+	return false;
+    }
+
+
+
+
+
+
 })

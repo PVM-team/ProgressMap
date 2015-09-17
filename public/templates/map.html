@@ -31,12 +31,10 @@
 	<canvas id="canvas" width="1000" height="1000" ></canvas>
 
 	<div ng-repeat="assignment in assignments">
-		<button class="button undone-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
-		<label class="amount-of-doers" style="top:{{assignment.location.y + 30}}px; left:{{assignment.location.x + 50}}px">{{assignment.doers.length}}</label>
-	</div>
+		<button ng-if="!checkIfAssignmentIsDone(assignment.id);" class="button undone-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
+		<button ng-if="checkIfAssignmentIsDone(assignment.id);" class="button done-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
 
-	<div ng-repeat="assignment in done_assignments">
-		<button class="button done-task" style="top:{{assignment.location.y}}px; left:{{assignment.location.x}}px">{{ assignment.id }}</button>
+		<label class="amount-of-doers" style="top:{{assignment.location.y + 30}}px; left:{{assignment.location.x + 50}}px">{{assignment.doers.length}}</label>
 	</div>
 
 </div>
