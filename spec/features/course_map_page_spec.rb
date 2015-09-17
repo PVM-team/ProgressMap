@@ -19,16 +19,40 @@ describe "Course map page", js: true do
     	self.use_transactional_fixtures = true
   	end
 
-  	describe "when map page is opened" do
+  	describe "when map page is opened", js: true do
 
   		before :each do
   			course_details
   			visit_map_page
   		end
 
+  		it "has a canvas" do
+  			expect(page.find("canvas")).not_to be(nil)
+  		end
 
-  		it "has a canvas", js: true do
-  			expect(page.find("#canvas")).not_to be(nil)
+  		it "has buttons for each assignment" do
+  			@course.assignments.each do |assignment|
+  				button = page.first("button", :text => assignment.id)
+  			end
+  		end
+
+  	#	it "has only one button for each assignment" do
+  	#		@course.assignments.each do |assignment|
+  	#			expect(page.find("button", :text => assignment.id))
+  	#		end
+  	#	end
+
+
+  		# button[:class] --> button undone-task ng-binding
+
+  		it "the positions of the buttons are determined by their location" do
+  			@course.assignments.each do |assignment|
+  				button = page.first("button", :text => assignment.id)
+  				style = button[:style]
+
+  				expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
+  				expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
+  			end
   		end
   	end
 end
