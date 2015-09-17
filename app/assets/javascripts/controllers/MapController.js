@@ -1,10 +1,8 @@
 ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasService) {
 
 
-    var canvas = CanvasService.initiateCanvas(1000, 1000);
-    CanvasService.placeCanvasInMapElementsDiv(canvas);
-    CanvasService.setCanvasBGColor("#F7CCEF", canvas.getContext("2d"), 1000, 1000);
-
+    //creates a canvas with given height and width, parent div-element and given background color
+    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "#F7CCEF");
 
     MapDataService.initMap().then(function(data) {
         $scope.course = data["course"][0]
@@ -15,11 +13,9 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
         $scope.done_assignments = doneAssignments($scope.current_user.id)
 
         CanvasService.drawSmoothPaths(getLocations());
-
-        //CanvasService.drawPaths($scope.assignments);
     })
 
-    //osa pitäisi siirtää palvelun puolelle
+    //osa pitäisi siirtää palvelun puolelle?
     $scope.addStudent = function(course) {
 
         jQuery.ajax({
@@ -34,27 +30,13 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
         })
     }
 
+    //extracts assignment locations into an array for use when drawing the course path
     function getLocations(){
         var locations = [];
         for (var i = 0; i < $scope.assignments.length; i++){
             locations.push([$scope.assignments[i].location.x, $scope.assignments[i].location.y]);
         }
         return locations;
-    }
-
-    function placeButtonOnLocation(x, y, button) {
-        button.style.position = "absolute";
-        button.style.top = y + "px";
-        button.style.left = x + "px";
-    }
-
-    function createButton(parentDiv) {
-        var button = document.createElement("BUTTON");
-        var buttonText = document.createTextNode("test");
-        button.appendChild(buttonText);
-        parentDiv.appendChild(button);
-
-        return button;
     }
 
     function getCurrentUser(userId) {
@@ -90,9 +72,5 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
         }
 
         $scope.done_assignments = doneAssignments(userId)
-    }
-
-    $scope.getctx = function() {
-        return ctx;
     }
 })
