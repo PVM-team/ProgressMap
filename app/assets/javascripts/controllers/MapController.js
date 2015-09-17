@@ -3,7 +3,7 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
 
     var canvas = CanvasService.initiateCanvas(1000, 1000);
     CanvasService.placeCanvasInMapElementsDiv(canvas);
-    CanvasService.setCanvasBGColor("#6B8E23", canvas.getContext("2d"), 1000, 1000);
+    CanvasService.setCanvasBGColor("#F7CCEF", canvas.getContext("2d"), 1000, 1000);
 
 
     MapDataService.initMap().then(function(data) {
