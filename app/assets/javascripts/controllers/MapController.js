@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasService) {
+ProgressApp.controller('MapController',	function($scope, $http, MapDataService, CanvasService) {
 
 
     //creates a canvas with given height and width, parent div-element and given background color
@@ -17,18 +17,21 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
 
     //osa pitäisi siirtää palvelun puolelle?
     $scope.addStudent = function(course) {
-
-        jQuery.ajax({
-            url: '/users',
-            data: "course_id=" + course.id,
-            type: 'POST',
-
-            success: function(data) {
-                $scope.participants.push(data)
-                $scope.$apply()
-            }
-        })
-    }
+	
+       var sendData = {
+	course_id : course.id
+       }
+	    
+	 $http.post('/users', sendData) 
+           .success(function(data)    {
+	 	var student = {
+		id: data.id
+		}
+		$scope.participants.push(student);		
+       })
+   }
+        
+    
 
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations(){

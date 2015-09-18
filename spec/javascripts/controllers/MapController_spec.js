@@ -64,15 +64,20 @@ describe('MapController', function () {
         expect(mapDataService.initMap).toHaveBeenCalled();
     })
 
-    //ei toimi
-    it('throws error when user id is not valid', function () {
-//        expect(scope.viewAsStudent(4)).toThrowError("err");
+    it('should add a new student to course', function () {
+	expect(scope.participants.length).toBe(3);
+	// work to be done
     })
 
-    //koko yö mennyt tähän
-    it('canavas gets rendered', function () {
-//        expect(scope.getctx()).not.toBe(null);
-    })
+    /*ei toimi
+    it('throws error when user id is not valid', function () {
+       var test = getCurrentUser(3);
+       console.log(test);
+    });
+    */
+
+	
+    
 
 })
 

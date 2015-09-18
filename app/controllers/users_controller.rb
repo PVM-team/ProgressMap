@@ -24,12 +24,13 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    course = Course.find_by id: params[:course_id]
+   course = Course.find_by id: params[:course_id]
     @user = User.new
 
     if course and @user.save
       course.participants << @user
     end
+    render json: @user
   end
 
   # PATCH/PUT /users/1

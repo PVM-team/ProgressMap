@@ -13,4 +13,5 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
        .otherwise({
            redirectTo: '/'
        });
-}])
+}]);
+
