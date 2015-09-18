@@ -3,14 +3,42 @@
 	width: 50px;
 	height: 50px;
 	border-radius: 50%;
-	border-color: #E7E7E7;
+	border-style: solid;
+	border-width: 2px;
 }
+
+.cannot-reach-task {
+    background: #9DAFA0; /* Grey */
+}
+
 .undone-task {
-	background: #F9FFF6;
+	/* Determined by used browser, which background color value to pick */
+
+    background: rgba(241, 140, 58, 0.97); /* Orange */
+    background: -moz-linear-gradient(top, rgba(241, 140, 58, 0.97) 0%, rgba(207, 117, 43, 0.94) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(241, 140, 58, 0.97)), color-stop(100%, rgba(207, 117, 43, 0.94)));
+    background: -webkit-linear-gradient(top, rgba(241, 140, 58, 0.97) 0%, rgba(207, 117, 43, 0.94) 100%);
+    background: -o-linear-gradient(top, rgba(241, 140, 58, 0.97) 0%, rgba(207, 117, 43, 0.94) 100%);
+    background: -ms-linear-gradient(top, rgba(241, 140, 58, 0.97) 0%, rgba(207, 117, 43, 0.94) 100%);
+    background: linear-gradient(to bottom, rgba(241, 140, 58, 0.97) 0%, rgba(207, 117, 43, 0.94) 100%);
+
+    border-color: rgba(189, 99, 25, 0.55);
+    box-shadow: rgba(205, 115, 41, 0.35) 0px 1px;
 }
+
 .done-task {
-	background: #C1F4A6 !important;
+    background: rgba(41, 193, 36, 0.9); /* Light green */
+    background: -moz-linear-gradient(top, rgba(41, 193, 36, 0.9) 0%, rgba(73, 179, 35, 0.8) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(41, 193, 36, 0.9)), color-stop(100%, rgba(73, 179, 35, 0.8)));
+    background: -webkit-linear-gradient(top, rgba(41, 193, 36, 0.9) 0%, rgba(73, 179, 35, 0.8) 100%);
+    background: -o-linear-gradient(top, rgba(41, 193, 36, 0.9) 0%, rgba(73, 179, 35, 0.8) 100%);
+    background: -ms-linear-gradient(top, rgba(41, 193, 36, 0.9) 0%, rgba(73, 179, 35, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(41, 193, 36, 0.9) 0%, rgba(73, 179, 35, 0.8) 100%);
+
+    border-color: rgba(43, 110, 59, 0.35);
+    box-shadow: rgba(43, 153, 55, 0.21) 0px 2px;
 }
+
 .amount-of-doers {
     position: absolute;
 }

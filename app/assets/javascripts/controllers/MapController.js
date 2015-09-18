@@ -2,7 +2,7 @@ ProgressApp.controller('MapController',	function($scope, MapDataService, CanvasS
 
 
     //creates a canvas with given height and width, parent div-element and given background color
-    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "#F7CCEF");
+    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
 
     MapDataService.initMap().then(function(data) {
         $scope.course = data["course"][0]
