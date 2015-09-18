@@ -10,7 +10,6 @@ ProgressApp.service('CanvasService', function () {
         cubicTension: 0
     };
 
-    //???
     function placeCanvasInDiv(div) {
         div.appendChild(canvas);
     };
@@ -19,8 +18,8 @@ ProgressApp.service('CanvasService', function () {
         context = canvas.getContext("2d");
     }
 
-    function setCanvasBGColor(hex, height, width) {
-        context.fillStyle = hex;
+    function setCanvasBGColor(bgColor, height, width) {
+        context.fillStyle = bgColor;
         context.fillRect(0, 0, height, width);
     };
 
@@ -30,16 +29,19 @@ ProgressApp.service('CanvasService', function () {
 
     function drawSmoothCurve(i, locations) {
         var ref, ref2, start, end, pieceLength, wat;
+        
         var s = Smooth(locations, smoothConfig);
         var averageLineLength = 1;
         var pieceCount = 2;
-        var ref = 1/pieceCount;
-        for (var j = 0; j < 1; j += ref){
+        var ref = 1 / pieceCount;
+        
+        for (var j = 0; j < 1; j += ref) {
             ref2 = [s(i + j), s(i + j + pieceCount)];
             start = ref2[0];
             end = ref2[1];
             pieceLength = distance(start, end);
-            wat = averageLineLength/pieceLength;
+            wat = averageLineLength / pieceLength;
+
             for (var u = 0; 0 <= 1/pieceCount ? u < 1/pieceCount : u > 1/pieceCount; u += wat) {
                 context.lineTo.apply(context, s(i + j + u));
             }
@@ -61,16 +63,20 @@ ProgressApp.service('CanvasService', function () {
 
         drawSmoothPaths: function(locations){
             var lastIndex = locations.length - 1;
-            if (locations.length >= 2){
+            
+            if (locations.length >= 2) {
                 context.beginPath();
                 context.moveTo.apply(context, (locations[0]));
-                for (var i = 0; 0 <= lastIndex ? i < lastIndex: i > lastIndex; 0 <= lastIndex ? i++: i--){
+                
+                for (var i = 0; i < lastIndex;  i++){
                     drawSmoothCurve(i, locations);
                 }
+                
                 context.lineWidth = 2;
                 context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
                 context.lineJoin = 'round';
                 context.lineCap = 'round';
+
                 return context.stroke();
             }
         }
