@@ -53,33 +53,40 @@ describe('MapController', function () {
 
     it('0 should be 0', function () {
         expect(0).toBe(0);
-    })
+    });
 
     it('viewing as student sets done assignments when user id is valid', function () {
         scope.viewAsStudent(2);
         expect(scope.done_assignments.length).toBe(1);
-    })
+    });
 
     it('Init was called on Controller initialize', function () {
         expect(mapDataService.initMap).toHaveBeenCalled();
-    })
+    });
 
-    it('if given assignment is done returns true', function () {
+    it('returns true, if student has done the assignment', function () {
         scope.viewAsStudent(2);
         expect(scope.checkIfAssignmentIsDone(scope.done_assignments[0].id)).toBe(true);
-    })
+    });
 
-    it ('if given assignment is not done returns false', function () {
-        expect(scope.checkIfAssignmentIsDone(scope.viewAsStudent(3))).toBe(false);
-    })
+    it ('returns false, if student has not done the assignment', function () {
+        scope.viewAsStudent(3);
+        expect(scope.checkIfAssignmentIsDone(scope.assignments[3])).toBe(false);
+    });
 
-    //ei toimi
-    it('throws error when user id is not valid', function () {
-//        expect(scope.viewAsStudent(4)).toThrowError("err");
+    it('should throw an error, if user does not exist', function () {
+        var error;
+        try {
+            scope.viewAsStudent(5);
+        }
+        catch(err) {
+            error = err;
+        }
+        expect(error).toBeDefined();
     })
 
     //koko yö mennyt tähän
-    it('canavas gets rendered', function () {
+    it('does nothing', function () {
 //        expect(scope.getctx()).not.toBe(null);
     })
 
