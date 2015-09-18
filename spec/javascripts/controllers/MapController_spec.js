@@ -64,9 +64,13 @@ describe('MapController', function () {
         expect(mapDataService.initMap).toHaveBeenCalled();
     })
 
-    it('if given assigment is done returns true', function () {
+    it('if given assignment is done returns true', function () {
         scope.viewAsStudent(2);
         expect(scope.checkIfAssignmentIsDone(scope.done_assignments[0].id)).toBe(true);
+    })
+
+    it ('if given assignment is not done returns false', function () {
+        expect(scope.checkIfAssignmentIsDone(scope.viewAsStudent(3))).toBe(false);
     })
 
     //ei toimi
