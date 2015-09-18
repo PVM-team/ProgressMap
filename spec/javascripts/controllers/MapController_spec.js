@@ -64,6 +64,11 @@ describe('MapController', function () {
         expect(mapDataService.initMap).toHaveBeenCalled();
     });
 
+    it('should add a new student to course', function () {
+        scope.addStudent(1);
+        expect(scope.participants.length).toBe(3);
+    });
+    
     it('returns true, if student has done the assignment', function () {
         scope.viewAsStudent(2);
         expect(scope.checkIfAssignmentIsDone(scope.done_assignments[0].id)).toBe(true);
@@ -74,6 +79,7 @@ describe('MapController', function () {
         expect(scope.checkIfAssignmentIsDone(scope.assignments[3])).toBe(false);
     });
 
+
     it('should throw an error, if user does not exist', function () {
         var error;
         try {
@@ -83,12 +89,14 @@ describe('MapController', function () {
             error = err;
         }
         expect(error).toBeDefined();
-    })
+    });
 
     //koko yö mennyt tähän
     it('does nothing', function () {
 //        expect(scope.getctx()).not.toBe(null);
     })
+
+  
 
 })
 
