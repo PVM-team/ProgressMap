@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController',	function($scope, $http, MapDataService, CanvasService) {
+ProgressApp.controller('MapController',	function($scope, $http, MapDataService, CanvasService, NewCourseService) {
 
 
     //creates a canvas with given height and width, parent div-element and given background color
@@ -30,8 +30,14 @@ ProgressApp.controller('MapController',	function($scope, $http, MapDataService, 
                 $scope.participants.push(student);
             })
     }
-        
-    
+
+    $scope.range = function(min, max, step){
+        step = step || 1;
+        var input = [];
+        for (var i = min; i <= max; i += step) input.push(i);
+        return input;
+    }
+
 
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations(){
