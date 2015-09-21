@@ -6,9 +6,10 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'MapController',
            templateUrl: 'templates/map.html'		   
        })
-       .when('/test',{
-           controller: 'MainController'
-	   	
+       .when('/newcourse',{
+           controller: 'MapController',
+           templateUrl: 'templates/newcourse.html'
+      
        })
        .otherwise({
            redirectTo: '/'

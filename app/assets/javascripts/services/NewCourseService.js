@@ -1,0 +1,3 @@
+ProgressApp.service('NewCourseService', function () {
+	
+}

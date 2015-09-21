@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+    <canvas id="myCanvas" width="1000" height="1000" style="border:1px solid #c3c3c3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    
+	<% @locations.each do |location| %>
+	      <tr>
+	        <td><%= location.x %></td>
+	        <td><%= location.y %></td>	        
+	      </tr>
+	    <% end %>
+
+
+    <script src="../../assets/javascripts/MapScript.js"></script>
+
+</body>
+</html>
