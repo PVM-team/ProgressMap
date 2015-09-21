@@ -78,7 +78,7 @@ ProgressApp.controller('MapController',	function($scope, $http, MapDataService, 
     }
 
     
-    $scope.checkIfAssignmentIsDone = function(assignmentId){
+    $scope.assignmentCompleted = function(assignmentId){
 	for (var i = 0; i < $scope.done_assignments.length; i++){
 		if ($scope.done_assignments[i].id == assignmentId) {
 			return true;
