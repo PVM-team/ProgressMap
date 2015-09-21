@@ -2,17 +2,17 @@ var ProgressApp = angular.module('ProgressApp',['ngRoute', 'ngResource'])
 
 ProgressApp.config(['$routeProvider', function($routeProvider){
    $routeProvider
-       .when('/', {
+
+       .when('/map/:course_id', {
            controller: 'MapController',
-           templateUrl: 'templates/map.html'		   
+           templateUrl: 'templates/map.html'
        })
-       .when('/newcourse',{
-           controller: 'MapController',
-           templateUrl: 'templates/newcourse.html'
+       .when('/new_course',{
+           controller: 'NewCourseController',
+           templateUrl: 'templates/new_course.html'
       
        })
        .otherwise({
-           redirectTo: '/'
+           redirectTo: '/map/:course_id?1'
        });
 }]);
-

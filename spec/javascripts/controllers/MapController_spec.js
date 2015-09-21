@@ -1,6 +1,6 @@
 describe('MapController', function () {
 
-    var controller, scope, httpBackend;
+    var controller, scope, httpBackend, stateService;
     var mapDataService;
     var CanvasServiceMock;
     var data = {};
@@ -36,13 +36,16 @@ describe('MapController', function () {
         data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
         data.current_user = [{"id": 2}];
 
-        inject(function ($controller, $rootScope, $httpBackend, _MapDataService_, CanvasService) {
+        inject(function ($controller, $rootScope, $httpBackend, $routeParams, _MapDataService_, _StateService_, CanvasService) {
             scope = $rootScope.$new();
             httpBackend = $httpBackend;
             mapDataService = _MapDataService_;
+            stateService = _StateService_;
             controller = $controller('MapController', {
                 $scope: scope,
+                $routeParams: $routeParams,
                 MapDataService: mapDataService,
+                StateService: stateService,
                 CanvasService: CanvasServiceMock
             });
 
@@ -55,7 +58,7 @@ describe('MapController', function () {
 
         scope.current_user = data["current_user"][0]
 
-        httpBackend.when('GET', '/map/init.json?course_id=1&user_id=2').respond(200, data)
+        httpBackend.when('GET', '/map/init.json?user_id=2').respond(200, data)
         httpBackend.when('POST', '/users', {'course_id': scope.course.id }).respond(201, data)
 
         httpBackend.flush()
@@ -77,17 +80,6 @@ describe('MapController', function () {
 
             expect(scope.done_assignments.length).toBe(3);
         });
-
-        it('throws an error, if userId is not valid', function () {
-            var error;
-            try {
-                scope.viewAsStudent(5);
-            }
-            catch(err) {
-                error = err;
-            }
-            expect(error).toBeDefined();
-        })
     })
 
     describe('assignmentCompleted returns', function() {
@@ -121,9 +113,8 @@ describe('MapController', function () {
         expect(scope.participants.length).toBe(amount + 1);
     });
 
-   afterEach(function() {
-     httpBackend.verifyNoOutstandingExpectation();
-     httpBackend.verifyNoOutstandingRequest();
-   });
-
+    afterEach(function() {
+        httpBackend.verifyNoOutstandingExpectation();
+        httpBackend.verifyNoOutstandingRequest();
+    });
 })

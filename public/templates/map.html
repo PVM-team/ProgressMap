@@ -2,14 +2,6 @@
 
 <h2>Course: <i>{{ course.name }}</i> </h2>
 
-<h3>Assignments</h3>
-
-<table>
-	<div ng-repeat="assignment in assignments">
-  		<tr> {{ assignment }}</tr>
-	</div>
-</table>
-
 <h3>Participants</h3>
 
 <div ng-repeat="participant in participants">
@@ -20,7 +12,7 @@
 
 <button ng-click="addStudent(course)">Add user to course</button>
 
-<a href="#/newcourse">Create a new course</a>
+<a href="#/new_course">Create a new course</a>
 
 
 <p>Current user: <strong>{{ current_user }}</strong>

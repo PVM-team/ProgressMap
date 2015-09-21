@@ -1,10 +1,10 @@
-ProgressApp.controller('MapController', function($scope, $http, MapDataService, CanvasService, NewCourseService) {
-
+ProgressApp.controller('MapController', function($scope, $http, $routeParams, MapDataService, CanvasService, StateService) {
 
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
 
-    MapDataService.initMap().then(function(data) {
+    MapDataService.initMap($routeParams.course_id).then(function(data) {
+
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
@@ -12,6 +12,8 @@ ProgressApp.controller('MapController', function($scope, $http, MapDataService, 
         $scope.current_user = data["current_user"][0]
         $scope.done_assignments = doneAssignments($scope.current_user.id)
 
+        StateService.setCurrentUser($scope.current_user)
+        
         CanvasService.drawSmoothPaths(getLocations());
     })
 
@@ -22,13 +24,12 @@ ProgressApp.controller('MapController', function($scope, $http, MapDataService, 
            course_id : course.id
        }
 
-        $http.post('/users', sendData)
-            .success(function(data) {
-                var student = {
-                    id: data.id
-                }
-                $scope.participants.push(student);
-            })
+        $http.post('/users', sendData).success(function(data) {
+            var student = {
+                id: data.id
+            }
+            $scope.participants.push(student);
+        })
     }
 
     //extracts assignment locations into an array for use when drawing the course path
@@ -40,23 +41,23 @@ ProgressApp.controller('MapController', function($scope, $http, MapDataService, 
         return locations;
     }
 
-    function getCurrentUser(userId) {
+    function getCurrentUser(user_id) {
         for (var i = 0; i < $scope.participants.length; i++) {
-            if ($scope.participants[i].id == userId){
+            if ($scope.participants[i].id == user_id){
                 return $scope.participants[i];
             }
         }
-        throw "User not found: " +  userId;
+        throw "User not found: " +  user_id;
     }
 
-    function doneAssignments(userId) {
+    function doneAssignments(user_id) {
         var done_assignments = []
 
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers
 
             for (var j = 0; j < doers.length; j++) {
-                if (doers[j].id == userId) {
+                if (doers[j].id == user_id) {
                     done_assignments.push($scope.assignments[i])
                 }
             }
@@ -64,21 +65,22 @@ ProgressApp.controller('MapController', function($scope, $http, MapDataService, 
         return done_assignments
     }
 
-    $scope.viewAsStudent = function(userId) {
+    $scope.viewAsStudent = function(user_id) {
         try {
-            $scope.current_user = getCurrentUser(userId)
+            $scope.current_user = getCurrentUser(user_id)
+            StateService.setCurrentUser($scope.current_user)
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err
         }
 
-        $scope.done_assignments = doneAssignments(userId)
+        $scope.done_assignments = doneAssignments(user_id)
     }
 
     
-    $scope.assignmentCompleted = function(assignmentId){
+    $scope.assignmentCompleted = function(assignment_id){
 	for (var i = 0; i < $scope.done_assignments.length; i++){
-		if ($scope.done_assignments[i].id == assignmentId) {
+		if ($scope.done_assignments[i].id == assignment_id) {
 			return true;
 		}
 	}
@@ -86,4 +88,3 @@ ProgressApp.controller('MapController', function($scope, $http, MapDataService, 
     }
 
 })
-

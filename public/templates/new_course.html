@@ -1,0 +1,23 @@
+<h2 class="small-left-margin">Create a new course</h2>
+
+<form ng-submit="createCourse()">
+	<fieldset>
+
+		<div class="col-xs-12">
+			<strong class="col-xs-3">Name:</strong> 
+			<input type="text" class="col-xs-2" ng-change="changeCourseName()" ng-model="form.name">
+			<div id="nameInfo" class="info-message col-xs-4">Name must contain at least one character.</div>
+		</div>
+		
+		<div class="small-top-margin"></div>
+		
+		<div class="col-xs-12">
+			<strong class="col-xs-3">Amount of assignments:</strong> 
+			<input type="number" min="1" class="col-xs-2" ng-change="changeAssignmentCount()" ng-model="form.assignmentCount">
+			<div id="assignmentInfo" class="info-message col-xs-4">The amount of assignments must be a value between range 1-499.</div>
+		</div>
+	
+	</fieldset>
+
+	<button type="submit" class="create-course-button small-left-margin" ngClick="Submit">Create course</button>
+</form>

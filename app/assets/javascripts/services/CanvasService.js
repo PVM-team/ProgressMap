@@ -73,7 +73,7 @@ ProgressApp.service('CanvasService', function () {
                 drawSmoothCurve(i, locations);
             }
                 
-            context.lineWidth = 2;
+            context.lineWidth = 14;
             context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
             context.lineJoin = 'round';
             context.lineCap = 'round';
