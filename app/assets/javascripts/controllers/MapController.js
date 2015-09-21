@@ -19,17 +19,17 @@ ProgressApp.controller('MapController',	function($scope, $http, MapDataService, 
     $scope.addStudent = function(course) {
 	
        var sendData = {
-	course_id : course.id
+           course_id : course.id
        }
-	    
-	 $http.post('/users', sendData) 
-           .success(function(data)    {
-	 	var student = {
-		id: data.id
-		}
-		$scope.participants.push(student);		
-       })
-   }
+
+        $http.post('/users', sendData)
+            .success(function(data) {
+                var student = {
+                    id: data.id
+                }
+                $scope.participants.push(student);
+            })
+    }
         
     
 

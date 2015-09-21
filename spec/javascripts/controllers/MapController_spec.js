@@ -1,6 +1,6 @@
 describe('MapController', function () {
 
-    var controller, scope, logMock;
+    var controller, scope, logMock, httpBackend;
     var mapDataService;
     var CanvasServiceMock;
     var data = {};
@@ -8,7 +8,17 @@ describe('MapController', function () {
     beforeEach(function () {
         module('ProgressApp');
 
-
+        //jotain tämmöistä pitää canvaksen piirtoo tehdä
+        module(function($provide) {
+            $provide.value('mapDataService', {
+                initMap: function() {
+                    return {
+                        then: function(callback) {
+                        }
+                    }
+                }
+            })
+        })
         CanvasServiceMock = (function () {
             return {
                 initiateCanvas: function (height, width, div, bgColor) {
@@ -27,8 +37,9 @@ describe('MapController', function () {
         data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
         data.current_user = {"id": 2};
 
-        inject(function ($controller, $rootScope, _MapDataService_, CanvasService) {
+        inject(function ($controller, $rootScope, $httpBackend, _MapDataService_, CanvasService) {
             scope = $rootScope.$new();
+            httpBackend = $httpBackend;
             mapDataService = _MapDataService_;
             controller = $controller('MapController', {
                 $scope: scope,
@@ -36,8 +47,7 @@ describe('MapController', function () {
                 CanvasService: CanvasServiceMock
             });
 
-            spyOn(mapDataService, 'initMap');
-            mapDataService.initMap(data);
+            spyOn(scope, 'addStudent')
 
         });
 
@@ -48,6 +58,20 @@ describe('MapController', function () {
 
         scope.current_user = data["current_user"][0]
         //$scope.done_assignments = doneAssignments($scope.current_user);
+
+        var student = {
+            id: data.id
+        }
+
+        var course = {"id": 1};
+
+        //nämä pitää saada toimimaan niin että testikattavuus nousee myös
+        httpBackend.when('POST', '/users', course.id
+        ).respond('201', scope.participants.push(student))
+
+        httpBackend.when('GET', '/map/init.json', " "
+        ).respond('200', data)
+
     });
 
 
@@ -61,12 +85,15 @@ describe('MapController', function () {
     });
 
     it('Init was called on Controller initialize', function () {
+        spyOn(mapDataService, 'initMap')
+        mapDataService.initMap(" ");
         expect(mapDataService.initMap).toHaveBeenCalled();
     });
 
+    //testi menee läpi, mutta testikattavuus ei nouse..
     it('should add a new student to course', function () {
         scope.addStudent(1);
-        expect(scope.participants.length).toBe(3);
+        expect(scope.participants.length).toBe(4);
     });
     
     it('returns true, if student has done the assignment', function () {
