@@ -11,7 +11,9 @@ ProgressApp.service('CanvasService', function () {
     };
 
     function placeCanvasInDiv(div) {
-        div.appendChild(canvas);
+        if (div) {
+            div.appendChild(canvas);
+        }
     };
 
     function setContext(){
@@ -49,36 +51,34 @@ ProgressApp.service('CanvasService', function () {
         return context.lineTo.apply(context, s(i + 1));
     };
 
-    return {
-        initiateCanvas: function (height, width, div, bgColor) {
-            canvas = document.createElement('canvas');
-            canvas.height = height;
-            canvas.width = width;
-            placeCanvasInDiv(div);
-            setContext();
-            setCanvasBGColor(bgColor, height, width);
+    this.initiateCanvas = function (height, width, div, bgColor) {
+        canvas = document.createElement('canvas');
+        canvas.height = height;
+        canvas.width = width;
+        placeCanvasInDiv(div);
+        setContext();
+        setCanvasBGColor(bgColor, height, width);
 
-            return canvas;
-        },
+        return canvas;
+    }
 
-        drawSmoothPaths: function(locations){
-            var lastIndex = locations.length - 1;
+    this.drawSmoothPaths = function(locations) {
+        var lastIndex = locations.length - 1;
             
-            if (locations.length >= 2) {
-                context.beginPath();
-                context.moveTo.apply(context, (locations[0]));
-                
-                for (var i = 0; i < lastIndex;  i++){
-                    drawSmoothCurve(i, locations);
-                }
-                
-                context.lineWidth = 2;
-                context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
-                context.lineJoin = 'round';
-                context.lineCap = 'round';
-
-                return context.stroke();
+        if (locations.length >= 2) {
+            context.beginPath();
+            context.moveTo.apply(context, (locations[0]));
+            
+            for (var i = 0; i < lastIndex;  i++){
+                drawSmoothCurve(i, locations);
             }
+                
+            context.lineWidth = 2;
+            context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
+            context.lineJoin = 'round';
+            context.lineCap = 'round';
+
+            return context.stroke();
         }
     }
 })

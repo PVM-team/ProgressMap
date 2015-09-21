@@ -93,6 +93,13 @@ describe('MapController', function () {
     })
 
 
+    it('Init was called on Controller initialize', function () {
+        spyOn(mapDataService, 'initMap')
+        mapDataService.initMap(" ");
+        expect(mapDataService.initMap).toHaveBeenCalled();
+    });
+
+
     it('should add a new student to course', function () {
         var amount = scope.participants.length
 
@@ -102,7 +109,6 @@ describe('MapController', function () {
         httpBackend.flush()
         expect(scope.participants.length).toBe(amount + 1);
     });
-
 
    afterEach(function() {
      httpBackend.verifyNoOutstandingExpectation();
