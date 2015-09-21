@@ -1,6 +1,7 @@
 FactoryGirl.define do
 
   factory :course do
+    name "course"
   end
 
   factory :user do

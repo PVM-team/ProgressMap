@@ -16,6 +16,22 @@ describe Course, type: :model do
     end
   end
 
+  describe "when an invalid course is created" do
+    
+    it "it is not saved to database" do
+      count = Course.count
+      msg = ""
+
+      begin
+        FactoryGirl.create :course, name: ""
+      rescue ActiveRecord::RecordInvalid => e
+        msg = e.message
+      end
+
+      expect(Course.count).to be(count)
+      expect(msg.include? "Validation failed").to be(true)
+    end
+  end
 
   describe "when a course is deleted" do
 
@@ -29,7 +45,7 @@ describe Course, type: :model do
   		FactoryGirl.create :assignment
 
   		@course.participants << @student1
-  		@course.participants << @student2  		
+  		@course.participants << @student2
   	end
 
   	it "it is removed from database" do

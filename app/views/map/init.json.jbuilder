@@ -1,6 +1,4 @@
-json.course(@course) do |course|
-  json.extract! course, :id
-end
+json.course @course, partial:'courses/course', as: :course
 
 json.current_user @current_user, partial:'users/user', as: :user
 
