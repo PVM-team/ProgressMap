@@ -81,4 +81,8 @@ ProgressApp.service('CanvasService', function () {
             return context.stroke();
         }
     }
+
+    this.getContext = function() {
+        return context;
+    }
 })

@@ -77,6 +77,17 @@ describe('MapController', function () {
 
             expect(scope.done_assignments.length).toBe(3);
         });
+
+        it('throws an error, if userId is not valid', function () {
+            var error;
+            try {
+                scope.viewAsStudent(5);
+            }
+            catch(err) {
+                error = err;
+            }
+            expect(error).toBeDefined();
+        })
     })
 
     describe('assignmentCompleted returns', function() {
