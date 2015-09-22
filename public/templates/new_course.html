@@ -1,23 +1,23 @@
 <h2 class="small-left-margin">Create a new course</h2>
 
-<form ng-submit="createCourse()">
-	<fieldset>
+<form name="createCourseForm">
+	<div>
+		<label> Course name </label>
+		<input name="courseName" type="text" ng-model="name" required minlength="2">
+		<span ng-show="createCourseForm.courseName.$invalid && createCourseForm.courseName.$touched">
+			Course name should have atleast 2 characters
+		</span>
+	</div>
 
-		<div class="col-xs-12">
-			<strong class="col-xs-3">Name:</strong> 
-			<input type="text" class="col-xs-2" ng-change="changeCourseName()" ng-model="form.name">
-			<div id="nameInfo" class="info-message col-xs-4">Name must contain at least one character.</div>
-		</div>
-		
-		<div class="small-top-margin"></div>
-		
-		<div class="col-xs-12">
-			<strong class="col-xs-3">Amount of assignments:</strong> 
-			<input type="number" min="1" class="col-xs-2" ng-change="changeAssignmentCount()" ng-model="form.assignmentCount">
-			<div id="assignmentInfo" class="info-message col-xs-4">The amount of assignments must be a value between range 1-499.</div>
-		</div>
+	<div>
+		<label> Assigments </label>
+		<input name="assignmentCount" type="number" ng-model="assignmentCount" required min="1" max="500">
+		<span ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$touched">
+			Number shoul be between 1-500
+		</span>
+	</div>
 	
-	</fieldset>
-
-	<button type="submit" class="create-course-button small-left-margin" ngClick="Submit">Create course</button>
+	<div>
+		<button class="create-course-button" ng-disabled="createCourseForm.$invalid" ng-click="createCourse();">Submit</button>		
+	</div>
 </form>
