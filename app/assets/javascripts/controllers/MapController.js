@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function($scope, $http, $routeParams, MapDataService, CanvasService, StateService) {
+ProgressApp.controller('MapController', function($scope, $routeParams, MapDataService, CanvasService, StateService, DataSendService) {
 
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
@@ -9,7 +9,9 @@ ProgressApp.controller('MapController', function($scope, $http, $routeParams, Ma
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
 
+        //sets user automatically to first on list
         $scope.current_user = data["current_user"][0]
+
         $scope.done_assignments = doneAssignments($scope.current_user.id)
 
         StateService.setCurrentUser($scope.current_user)
@@ -17,18 +19,16 @@ ProgressApp.controller('MapController', function($scope, $http, $routeParams, Ma
         CanvasService.drawSmoothPaths(getLocations());
     })
 
-    //osa pitäisi siirtää palvelun puolelle?
-    $scope.addStudent = function(course) {
-	
-       var sendData = {
-           course_id : course.id
+    $scope.addStudent = function() {
+       var courseData = {
+           course_id : $scope.course.id
        }
 
-        $http.post('/users', sendData).success(function(data) {
-            var student = {
+        DataSendService.addStudent(courseData).then(function(data){
+            var newStudent = {
                 id: data.id
             }
-            $scope.participants.push(student);
+            $scope.participants.push(newStudent);
         })
     }
 

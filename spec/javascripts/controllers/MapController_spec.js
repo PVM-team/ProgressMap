@@ -1,23 +1,37 @@
 describe('MapController', function () {
 
-    var controller, scope, httpBackend, stateService;
-    var mapDataService;
+    var controller, scope, stateService;
     var CanvasServiceMock;
-    var data = {};
+    var DataSendServiceMock;
+    var MapDataServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
 
-        module(function($provide) {
-            $provide.value('mapDataService', {
-                initMap: function() {
-                    return {
-                        then: function(callback) {
+        //leikkii backendiä, palauttaa testejä varten esimerkkidatan
+        MapDataServiceMock = (function () {
+            var data = {};
+
+            data.course = [{"id": 1}];
+            data.assignments =
+                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}]},
+                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}]},
+                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}]}];
+            data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
+            data.current_user = [{"id": 2}];
+
+            return {
+                initMap: function(courseId){
+                    return{
+                        then: function(callback){
+                            return callback(data);
                         }
-                    }
+                    };
                 }
-            })
-        })
+            }
+        })();
+
+        //ei tee mitään
         CanvasServiceMock = (function () {
             return {
                 initiateCanvas: function (height, width, div, bgColor) {
@@ -27,42 +41,75 @@ describe('MapController', function () {
             }
         })();
 
-        //luodaan data testaamiselle (joka oikeasti saataisiin palvelusta)
-        data.course = [{"id": 1}];
-        data.assignments =
-            [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}]},
-                {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}]},
-                {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}]}];
-        data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
-        data.current_user = [{"id": 2}];
+        //palauttaa uuden opiskelijan
+        DataSendServiceMock = (function () {
+            return {
+                addStudent: function(course){
+                    return{
+                        then: function(callback){
+                            return callback({id: (scope.participants.length + 1)});
+                        }
+                    };
+                }
+            }
+        })();
 
-        inject(function ($controller, $rootScope, $httpBackend, $routeParams, _MapDataService_, _StateService_, CanvasService) {
+        spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
+        spyOn(MapDataServiceMock, 'initMap').and.callThrough();
+        spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
+
+
+        inject(function ($controller, $rootScope, $routeParams, MapDataService, _StateService_, CanvasService, DataSendService) {
             scope = $rootScope.$new();
-            httpBackend = $httpBackend;
-            mapDataService = _MapDataService_;
             stateService = _StateService_;
             controller = $controller('MapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
-                MapDataService: mapDataService,
+                MapDataService: MapDataServiceMock,
                 StateService: stateService,
-                CanvasService: CanvasServiceMock
+                CanvasService: CanvasServiceMock,
+                DataSendService: DataSendServiceMock
             });
 
-            // spyOn(scope, 'addStudent')
         });
 
-        scope.course = data["course"][0]
-        scope.assignments = data["assignments"]
-        scope.participants = data["participants"]
 
-        scope.current_user = data["current_user"][0]
-
-        httpBackend.when('GET', '/map/init.json?user_id=2').respond(200, data)
-        httpBackend.when('POST', '/users', {'course_id': scope.course.id }).respond(201, data)
-
-        httpBackend.flush()
     });
+
+    describe ('when initializing MapController', function(){
+        it('calls on CanvasService.initiateCanvas', function(){
+            expect(CanvasServiceMock.initiateCanvas).toHaveBeenCalled();
+        })
+        it('calls on MapDataService.initMap', function(){
+            expect(MapDataServiceMock.initMap).toHaveBeenCalled();
+        })
+        it('calls on CanvasService.drawSmoothPaths', function(){
+            expect(CanvasServiceMock.drawSmoothPaths).toHaveBeenCalled();
+        })
+    })
+
+    describe ('initializing MapController retrieves data from MapDataService', function(){
+        it('sets scope.course to 1', function(){
+            expect(scope.course.id).toBe(1);
+        })
+        it('sets scope.assignments to what MapDataService returns', function(){
+            expect(scope.assignments.length).toBe(3);
+            expect(scope.assignments[0].id).toBe(1);
+            expect(scope.assignments[1].location.x).toBe(330);
+            expect(scope.assignments[2].doers.length).toBe(1);
+        })
+        it('sets scope.participants to what MapDataService returns', function(){
+            expect(scope.participants.length).toBe(3);
+            expect(scope.participants[0].id).toBe(1);
+            expect(scope.done_assignments.length).toBe(1);
+        })
+        it('sets scope.current_user to what MapDataService returns', function(){
+            expect(scope.current_user.id).toBe(2);
+        })
+        it('sets scope.done_assignments to those of scope.current_user', function(){
+            expect(scope.done_assignments.length).toBe(1);
+        })
+    })
 
 
     describe('viewAsStudent', function() {
@@ -95,26 +142,15 @@ describe('MapController', function () {
         })
     })
 
+    describe('addStudent', function (){
 
-    it('Init was called on Controller initialize', function () {
-        spyOn(mapDataService, 'initMap')
-        mapDataService.initMap(" ");
-        expect(mapDataService.initMap).toHaveBeenCalled();
-    });
+        it('should add a new student to course currently selected', function () {
+            var amount = scope.participants.length;
+            scope.addStudent();
+            expect(scope.participants.length).toBe(amount+1);
+
+        });
+    })
 
 
-    it('should add a new student to course', function () {
-        var amount = scope.participants.length
-
-        httpBackend.expectPOST("/users", {'course_id': scope.course.id })
-        scope.addStudent(scope.course);
-
-        httpBackend.flush()
-        expect(scope.participants.length).toBe(amount + 1);
-    });
-
-    afterEach(function() {
-        httpBackend.verifyNoOutstandingExpectation();
-        httpBackend.verifyNoOutstandingRequest();
-    });
-})
+    })
