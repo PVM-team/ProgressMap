@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922112531) do
+ActiveRecord::Schema.define(version: 20150922212656) do
 
   create_table "assignment_dependencies", force: :cascade do |t|
     t.integer  "assignment_id"
@@ -58,6 +58,8 @@ ActiveRecord::Schema.define(version: 20150922112531) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "firstName"
+    t.string   "lastName"
   end
 
 end

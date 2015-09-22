@@ -5,6 +5,8 @@ FactoryGirl.define do
   end
 
   factory :user do
+    firstName "first"
+    lastName "last"
   end
 
   factory :assignment do
