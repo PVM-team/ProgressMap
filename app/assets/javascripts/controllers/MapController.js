@@ -3,18 +3,16 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
 
-    MapDataService.initMap($routeParams.course_id).then(function(data) {
+    //initiates map with given course id and current user id (currently always 2)
+    MapDataService.initMap($routeParams.course_id, 2).then(function(data) {
 
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
 
-        //sets user automatically to first on list
         $scope.current_user = data["current_user"][0]
 
         $scope.done_assignments = doneAssignments($scope.current_user.id)
-
-        StateService.setCurrentUser($scope.current_user)
         
         CanvasService.drawSmoothPaths(getLocations());
     })
@@ -24,7 +22,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
            course_id : $scope.course.id
        }
 
-        DataSendService.addStudent(courseData).then(function(data){
+        DataSendService.addData('/users', courseData).then(function(data){
             var newStudent = {
                 id: data.id
             }
@@ -68,7 +66,6 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
     $scope.viewAsStudent = function(user_id) {
         try {
             $scope.current_user = getCurrentUser(user_id)
-            StateService.setCurrentUser($scope.current_user)
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err

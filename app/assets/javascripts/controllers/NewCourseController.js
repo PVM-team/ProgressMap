@@ -1,18 +1,17 @@
-ProgressApp.controller('NewCourseController', function($scope, $http, $location, StateService) {
+ProgressApp.controller('NewCourseController', function($scope, $location, DataSendService) {
 
     $scope.createCourse = function() {
         var name = $scope.name
         var assignmentCount = $scope.assignmentCount
 
-            var sendData = {
+            var newCourse = {
                 name: name,
                 assignment_count: assignmentCount
             }
         
-            $http.post('/courses', sendData).success(function(data) {
-                user = StateService.getCurrentUser()
 
-                $location.path("/map/" + data.id)
-            })
+        DataSendService.addData('/courses', newCourse).then(function(data){
+            $location.path("/map/" + data.id)
+        });
     }
 });

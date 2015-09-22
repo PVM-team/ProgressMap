@@ -1,6 +1,6 @@
 describe('MapController', function () {
 
-    var controller, scope, stateService;
+    var controller, scope;
     var CanvasServiceMock;
     var DataSendServiceMock;
     var MapDataServiceMock;
@@ -44,7 +44,7 @@ describe('MapController', function () {
         //palauttaa uuden opiskelijan
         DataSendServiceMock = (function () {
             return {
-                addStudent: function(course){
+                addData: function(path, data){
                     return{
                         then: function(callback){
                             return callback({id: (scope.participants.length + 1)});
@@ -57,16 +57,15 @@ describe('MapController', function () {
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(MapDataServiceMock, 'initMap').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
+        spyOn(DataSendServiceMock, 'addData').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, MapDataService, _StateService_, CanvasService, DataSendService) {
+        inject(function ($controller, $rootScope, $routeParams, MapDataService, CanvasService, DataSendService) {
             scope = $rootScope.$new();
-            stateService = _StateService_;
             controller = $controller('MapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
                 MapDataService: MapDataServiceMock,
-                StateService: stateService,
                 CanvasService: CanvasServiceMock,
                 DataSendService: DataSendServiceMock
             });
@@ -143,6 +142,11 @@ describe('MapController', function () {
     })
 
     describe('addStudent', function (){
+
+        it ('should call on DataSendService.addData', function(){
+            scope.addStudent();
+            expect(DataSendServiceMock.addData).toHaveBeenCalled();
+        })
 
         it('should add a new student to course currently selected', function () {
             var amount = scope.participants.length;
