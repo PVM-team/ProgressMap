@@ -24,8 +24,8 @@
 <div id="mapElements" style="position: relative">
 
 	<div ng-repeat="assignment in assignments">
-		<button ng-if="!assignmentCompleted(assignment.id);" class="button undone-task" style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.id }}</button>
-		<button ng-if="assignmentCompleted(assignment.id);" class="button done-task" style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.id }}</button>
+		<button ng-if="!assignmentCompleted(assignment.id);" class="button undone-task" style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number }}</button>
+		<button ng-if="assignmentCompleted(assignment.id);" class="button done-task" style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number }}</button>
 
 		<label class="amount-of-doers" style="top:{{assignment.location.y + 5}}px; left:{{assignment.location.x + 25}}px">{{assignment.doers.length}}</label>
 	</div>

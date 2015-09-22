@@ -23,15 +23,15 @@ course1.participants << student7
 course1.participants << student8
 course1.participants << student9
 
-assignment1 = Assignment.new
-assignment2 = Assignment.new
-assignment3 = Assignment.new
-assignment4 = Assignment.new
-assignment5 = Assignment.new
-assignment6 = Assignment.new
-assignment7 = Assignment.new
-assignment8 = Assignment.new
-assignment9 = Assignment.new
+assignment1 = Assignment.new number: 1
+assignment2 = Assignment.new number: 2
+assignment3 = Assignment.new number: 3
+assignment4 = Assignment.new number: 4
+assignment5 = Assignment.new number: 5
+assignment6 = Assignment.new number: 6
+assignment7 = Assignment.new number: 7
+assignment8 = Assignment.new number: 8
+assignment9 = Assignment.new number: 9
 
 
 course1.assignments << assignment1

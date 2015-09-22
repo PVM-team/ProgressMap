@@ -12,6 +12,23 @@ describe Assignment, type: :model do
     end
   end
 
+  describe "when an invalid assignment is created" do
+    
+    it "it is not saved to database" do
+      count = Assignment.count
+      msg = ""
+
+      begin
+        FactoryGirl.create :assignment, number: 0
+      rescue ActiveRecord::RecordInvalid => e
+        msg = e.message
+      end
+
+      expect(Assignment.count).to be(count)
+      expect(msg.include? "Validation failed").to be(true)
+    end
+  end
+
   describe "when an assignment is deleted" do
 
     before :each do

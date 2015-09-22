@@ -33,14 +33,14 @@ describe "Course map page", js: true do
 
   		it "has buttons for each assignment" do
   			@course.assignments.each do |assignment|
-  				button = page.first("button", :text => assignment.id)
+  				button = page.first("button", :text => assignment.number)
   				expect(button.visible?).to be(true)
   			end
   		end
 
   		it "has one button for each assignment" do
   			@course.assignments.each do |assignment|
-  				expect(page.find("button", :text => assignment.id))
+  				expect(page.find("button", :text => assignment.number))
   			end
   		end
 
@@ -49,7 +49,7 @@ describe "Course map page", js: true do
 
   		it "the positions of the buttons are determined by their location" do
   			@course.assignments.each do |assignment|
-  				button = page.first("button", :text => assignment.id)
+  				button = page.first("button", :text => assignment.number)
   				style = button[:style]
 
   				expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
@@ -117,11 +117,11 @@ def course_details
 	@user2 = FactoryGirl.create :user
 	@user3 = FactoryGirl.create :user
 
-	@task1 = FactoryGirl.create :assignment
-	@task2 = FactoryGirl.create :assignment
-	@task3 = FactoryGirl.create :assignment
-	@task4 = FactoryGirl.create :assignment
-	@task5 = FactoryGirl.create :assignment
+	@task1 = FactoryGirl.create :assignment, number: 1
+	@task2 = FactoryGirl.create :assignment, number: 2
+	@task3 = FactoryGirl.create :assignment, number: 3
+	@task4 = FactoryGirl.create :assignment, number: 4
+	@task5 = FactoryGirl.create :assignment, number: 5
 
 	@task1.location = FactoryGirl.create :location, x: 100, y: 200
 	@task2.location = FactoryGirl.create :location, x: 360, y: 180
@@ -162,7 +162,7 @@ def check_that_user_sees_tasks_with_status_as_status(course, assignments, status
   		course.assignments.each do |course_assignment|
   			if course_assignment === assignment
 
-  				button = page.first("button", :text => assignment.id)
+  				button = page.first("button", :text => assignment.number)
   				clas = button[:class]
 
   				expect(clas).to have_content(status)

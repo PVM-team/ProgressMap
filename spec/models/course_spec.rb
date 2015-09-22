@@ -9,10 +9,10 @@ describe Course, type: :model do
   describe "when a valid course is created" do
     
     it "it is saved to database" do
-    	count = Course.count
-		FactoryGirl.create :course
+      count = Course.count
+		  FactoryGirl.create :course
 
-		expect(Course.count).to be(count + 1)
+		  expect(Course.count).to be(count + 1)
     end
   end
 
