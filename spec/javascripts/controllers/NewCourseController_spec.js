@@ -33,9 +33,9 @@ describe('NewCourseController', function () {
     })
 
     describe ('calling createCourse', function(){
-        it ('should call on DataSendService.addData', function(){
+        it ('should call on DataSendService.addData with parameters found in scope', function(){
             scope.createCourse();
-            expect(DataSendServiceMock.addData).toHaveBeenCalled();
+            expect(DataSendServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5});
         })
 
     })

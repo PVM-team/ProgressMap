@@ -17,10 +17,10 @@
 
 <button ng-click="addStudent()">Add user to course</button>
 
-<a href="#/new_course">Create a new course</a>
+<button ng-click="moveToCourseCreationView()">Create a new course</button>
 
 
-<p>Current user: <strong>{{ user_used_in_view.firstName }} {{ user_used_in_view.lastName }}</strong>
+<p>Current user: <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
 
 <p>View the map as student:</p>
 

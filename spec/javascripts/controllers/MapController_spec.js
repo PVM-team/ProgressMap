@@ -102,10 +102,10 @@ describe('MapController', function () {
             expect(scope.participants[0].id).toBe(1);
             expect(scope.done_assignments.length).toBe(1);
         })
-        it('sets scope.user_used_in_view to what MapDataService returns', function(){
-            expect(scope.user_used_in_view.id).toBe(2);
+        it('sets scope.currentUser to what MapDataService returns', function(){
+            expect(scope.currentUser.id).toBe(2);
         })
-        it('sets scope.done_assignments to those of scope.user_used_in_view', function(){
+        it('sets scope.done_assignments to those of scope.currentUser', function(){
             expect(scope.done_assignments.length).toBe(1);
         })
     })
@@ -113,11 +113,11 @@ describe('MapController', function () {
 
     describe('viewAsStudent', function() {
 
-        it('changes user_used_in_view to the student whose id is given as parameter', function () {
-            expect(scope.user_used_in_view.id).toBe(2)
+        it('changes currentUser to the student whose id is given as parameter', function () {
+            expect(scope.currentUser.id).toBe(2)
             scope.viewAsStudent(3);
 
-            expect(scope.user_used_in_view.id).toBe(3);
+            expect(scope.currentUser.id).toBe(3);
         });
 
         it('sets done_assignments when userId is valid', function () {

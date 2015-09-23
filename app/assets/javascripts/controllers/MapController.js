@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function($scope, $routeParams, MapDataService, CanvasService, StateService, DataSendService) {
+ProgressApp.controller('MapController', function($scope, $routeParams, $location, MapDataService, CanvasService, StateService, DataSendService) {
 
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
@@ -6,12 +6,13 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
     //initiates map with given course id and current user id
     MapDataService.initMap($routeParams.course_id, $routeParams.user_id).then(function(data) {
 
+
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
 
-        $scope.user_used_in_view = data["current_user"][0]
-        $scope.done_assignments = doneAssignments($scope.user_used_in_view.id)
+        $scope.viewAsStudent($routeParams.user_id);
+        $scope.done_assignments = doneAssignments($scope.currentUser.id)
 
         CanvasService.drawSmoothPaths(getLocations());
     })
@@ -31,6 +32,11 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
             }
             $scope.participants.push(newStudent);
         })
+    }
+
+    $scope.moveToCourseCreationView = function(){
+        StateService.setCurrentUser($scope.currentUser);
+        $location.path("/new_course");
     }
 
     //extracts assignment locations into an array for use when drawing the course path
@@ -68,7 +74,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
 
     $scope.viewAsStudent = function(user_id) {
         try {
-            $scope.user_used_in_view = getCurrentUser(user_id)
+            $scope.currentUser = getCurrentUser(user_id)
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err
