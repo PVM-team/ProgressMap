@@ -1,5 +1,4 @@
 ProgressApp.service('DataSendService', function ($http, $q){
-
     var deferred = $q.defer();
 
     this.addData = function(path, data){
