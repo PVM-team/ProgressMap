@@ -65,6 +65,7 @@ describe "Course creation page", js: true do
     fill_in('courseName', with:'m')
     fill_in('assignmentCount', with:'100')
 
+    page.first('button', :text => 'Submit')
     expect(page).to have_content('Course name should have')
    end
 
@@ -72,6 +73,7 @@ describe "Course creation page", js: true do
     fill_in('assignmentCount', with:'-1')
     fill_in('courseName', with:'makkara')
 
+    page.first('button', :text => 'Submit')
     expect(page).to have_content('Number should be between')
    end
  end
