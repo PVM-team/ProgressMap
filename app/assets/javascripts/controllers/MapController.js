@@ -11,7 +11,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
 
-        $scope.viewAsStudent($routeParams.user_id);
+        $scope.currentUser = data["current_user"][0]
         $scope.done_assignments = doneAssignments($scope.currentUser.id)
 
         CanvasService.drawSmoothPaths(getLocations());
