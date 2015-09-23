@@ -4,6 +4,7 @@ describe('MapController', function () {
     var CanvasServiceMock;
     var DataSendServiceMock;
     var MapDataServiceMock;
+    var StateServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
@@ -41,6 +42,13 @@ describe('MapController', function () {
             }
         })();
 
+        StateServiceMock = (function () {
+            return {
+                setCurrentUser: function (currentUser) {
+                }
+            }
+        })();
+
         //palauttaa uuden opiskelijan
         DataSendServiceMock = (function () {
             return {
@@ -54,20 +62,23 @@ describe('MapController', function () {
             }
         })();
 
+
+        spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(MapDataServiceMock, 'initMap').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
         spyOn(DataSendServiceMock, 'addData').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, MapDataService, CanvasService, DataSendService) {
+        inject(function ($controller, $rootScope, $routeParams, MapDataService, CanvasService, DataSendService, StateService) {
             scope = $rootScope.$new();
             controller = $controller('MapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
                 MapDataService: MapDataServiceMock,
                 CanvasService: CanvasServiceMock,
-                DataSendService: DataSendServiceMock
+                DataSendService: DataSendServiceMock,
+                StateService: StateServiceMock
             });
 
         });
@@ -155,6 +166,14 @@ describe('MapController', function () {
 
         });
     })
+
+    describe('moveToCourseCreationView', function(){
+        it ('should call StateService.setCurrentUser with correct value', function(){
+            scope.moveToCourseCreationView();
+            expect(StateServiceMock.setCurrentUser).toHaveBeenCalledWith(scope.currentUser);
+        })
+    })
+
 
 
     })
