@@ -3,28 +3,31 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
 
-    //initiates map with given course id and current user id (currently always 2)
-    MapDataService.initMap($routeParams.course_id, 2).then(function(data) {
+    //initiates map with given course id and current user id
+    MapDataService.initMap($routeParams.course_id, $routeParams.user_id).then(function(data) {
 
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
 
-        $scope.current_user = data["current_user"][0]
+        $scope.user_used_in_view = data["current_user"][0]
+        $scope.done_assignments = doneAssignments($scope.user_used_in_view.id)
 
-        $scope.done_assignments = doneAssignments($scope.current_user.id)
-        
         CanvasService.drawSmoothPaths(getLocations());
     })
 
     $scope.addStudent = function() {
-       var courseData = {
-           course_id : $scope.course.id
+       var userData = {
+           course_id : $scope.course.id,
+           firstName: 'Erkki',
+           lastName: 'Mäkelä'
        }
 
-        DataSendService.addData('/users', courseData).then(function(data){
+        DataSendService.addData('/users', userData).then(function(data){
             var newStudent = {
-                id: data.id
+                id: data.id,
+                firstName: data.firstName,
+                lastName: data.lastName
             }
             $scope.participants.push(newStudent);
         })
@@ -65,7 +68,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, MapDataSe
 
     $scope.viewAsStudent = function(user_id) {
         try {
-            $scope.current_user = getCurrentUser(user_id)
+            $scope.user_used_in_view = getCurrentUser(user_id)
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err

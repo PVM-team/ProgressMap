@@ -1,4 +1,4 @@
-ProgressApp.controller('NewCourseController', function($scope, $location, DataSendService) {
+ProgressApp.controller('NewCourseController', function($scope, $location, DataSendService, StateService) {
 
     $scope.createCourse = function() {
         var name = $scope.name
@@ -10,8 +10,19 @@ ProgressApp.controller('NewCourseController', function($scope, $location, DataSe
             }
         
 
-        DataSendService.addData('/courses', newCourse).then(function(data){
-            $location.path("/map/" + data.id)
+        DataSendService.addData('/courses', newCourse).then(function(data) {
+            var current_user = StateService.getCurrentUser()
+            var path = "/map/" + data.id + "/"
+
+            if (current_user) {
+                path += current_user.id
+            }
+            else {
+                // What now?
+                path += 1
+            }
+
+            $location.path(path)
         });
     }
 });

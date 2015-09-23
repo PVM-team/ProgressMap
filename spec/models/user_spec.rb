@@ -12,6 +12,30 @@ describe User, type: :model do
     end
   end
 
+  describe "when a use without either one of the names is created" do
+    
+    it "it is not saved to database" do
+      count = User.count
+      msg = ""
+      msg2 = ""
+
+      begin
+        FactoryGirl.create :user, firstName: ""
+      rescue ActiveRecord::RecordInvalid => e
+        msg = e.message
+      end
+
+      begin
+        FactoryGirl.create :user, lastName: ""
+      rescue ActiveRecord::RecordInvalid => e
+        msg2 = e.message
+      end
+
+      expect(User.count).to be(count)
+      expect(msg.include? "Validation failed").to be(true)
+      expect(msg2.include? "Validation failed").to be(true)
+    end
+  end
 
   describe "when a user is deleted" do
 

@@ -25,7 +25,7 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     course = Course.find_by id: params[:course_id]
-    @user = User.new
+    @user = User.new(user_params)
 
     if course and @user.save
       course.participants << @user
@@ -65,6 +65,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params[:user]
+      params.require(:user).permit(:firstName, :lastName)
     end
 end

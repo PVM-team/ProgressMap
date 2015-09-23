@@ -7,7 +7,7 @@
 <div>
 	<table>
 		<tr ng-repeat="p in participants">
-			<td>{{ p.firstName }}</td>
+			<td> {{ p.firstName }}</td>
 			<td> {{ p.lastName }}</td>
 		</tr>
 	</table>
@@ -20,7 +20,7 @@
 <a href="#/new_course">Create a new course</a>
 
 
-<p>Current user: <strong>{{ current_user.firstName }} {{ current_user.lastName }}</strong>
+<p>Current user: <strong>{{ user_used_in_view.firstName }} {{ user_used_in_view.lastName }}</strong>
 
 <p>View the map as student:</p>
 
