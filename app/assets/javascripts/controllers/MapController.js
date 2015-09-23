@@ -3,8 +3,13 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
 
+    //korvataan joskus käyttäjän valintaruudulla?
+    if (!StateService.getCurrentUser()){
+        StateService.setCurrentUser({id: 2});
+    }
+
     //initiates map with given course id and current user id
-    MapDataService.initMap($routeParams.course_id, $routeParams.user_id).then(function(data) {
+    MapDataService.initMap($routeParams.course_id, StateService.getCurrentUser().id).then(function(data) {
 
 
         $scope.course = data["course"][0]

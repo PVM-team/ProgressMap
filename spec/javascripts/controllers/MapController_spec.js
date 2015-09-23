@@ -43,8 +43,13 @@ describe('MapController', function () {
         })();
 
         StateServiceMock = (function () {
+            var user;
             return {
                 setCurrentUser: function (currentUser) {
+                    user = currentUser;
+                },
+                getCurrentUser: function(){
+                    return user;
                 }
             }
         })();

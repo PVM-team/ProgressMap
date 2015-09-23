@@ -11,18 +11,8 @@ ProgressApp.controller('NewCourseController', function($scope, $location, DataSe
         
 
         DataSendService.addData('/courses', newCourse).then(function(data) {
-            var current_user = StateService.getCurrentUser()
-            var path = "/map/" + data.id + "/"
-
-            if (current_user) {
-                path += current_user.id
-            }
-            else {
-                // What now?
-                path += 1
-            }
-
-            $location.path(path)
+            var path = "/map/" + data.id;
+            $location.path(path);
         });
     }
 });
