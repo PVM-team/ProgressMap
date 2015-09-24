@@ -2,84 +2,123 @@ require 'rails_helper'
 
 describe "Course creation page", js: true do
 
- before :all do
-   self.use_transactional_fixtures = false
- end
+  before :all do
+    self.use_transactional_fixtures = false
+  end
 
- before :each do
-   DatabaseCleaner.strategy = :truncation
-   DatabaseCleaner.start
- end
+  before :each do
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
 
- after :each do
-   DatabaseCleaner.clean
- end
+    visit_course_creation_page
+    @button = page.find("button")
 
- after :all do
-   self.use_transactional_fixtures = true
- end
+    FactoryGirl.create :user
+    FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
+  end
 
- describe 'when course creation page is opened' do
+  after :each do
+    DatabaseCleaner.clean
+  end
 
-   before :each do
-     visit_course_creation_page
-     @button = page.find("button")
+  after :all do
+    self.use_transactional_fixtures = true
+  end
 
-     FactoryGirl.create :user
-     FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
-   end
+  it "has initially a disabled submit button" do
+    submit_button_is_disabled
+  end
 
-   it 'it has a disabled submit button' do
-     expect(@button.visible?).to be(true)
-     expect(@button[:disabled]).to eq("true")
-   end
 
-   it 'when course name is given a valid value and assignment count an invalid value, submit button is disabled' do
-      fill_in('courseName', with:'course')
-      fill_in('assignmentCount', with:'501')
-      expect(@button[:disabled]).to eq("true")
-   end
+  describe "when course_name is given a valid value and assignment_count an invalid one" do
 
-   it 'when course name is given an invalid value and assignment count a valid value, submit button is disabled' do
-      fill_in('courseName', with:'c')
-      fill_in('assignmentCount', with:'300')
-      expect(@button[:disabled]).to eq("true")
-   end
+    before :each do
+      fill_course_name_and_assignment_count_with('course', '501')
+    end
 
-   it 'when course name and assignment count are given valid values, submit button is disabled' do
-      fill_in('courseName', with:'course')
-      fill_in('assignmentCount', with:'300')
-      expect(@button[:disabled]).to be(nil)
-   end
+    it 'submit button is disabled' do
+      submit_button_is_disabled
+    end
 
-   it "when submit button is enabled and it is clicked" do 
-      fill_in('courseName', with:'makkara')
-      fill_in('assignmentCount', with:'3')
-      click_button 'Submit'
+    it 'displays an error message due to invalid assignment_count' do
+      expect(page).to have_content('Number should be between')
+    end
+  end
 
-      expect(page).to have_content 'Course: makkara'
-      expect(page.find("button", :text => '1'))
-   end
 
-   it "when filling courseName with invalid value, displays error message" do
-    fill_in('courseName', with:'m')
-    fill_in('assignmentCount', with:'100')
+  describe "when course_name is given an invalid value and assignment_count a valid one" do
 
-    page.first('button', :text => 'Submit')
-    expect(page).to have_content('Course name should have')
-   end
+    before :each do
+      fill_course_name_and_assignment_count_with('c', '50')
+    end
 
-  it "when filling assignmentCount with invalid value, displays error message" do
-    fill_in('assignmentCount', with:'-1')
-    fill_in('courseName', with:'makkara')
+    it 'submit button is disabled' do
+      submit_button_is_disabled
+    end
 
-    page.first('button', :text => 'Submit')
-    expect(page).to have_content('Number should be between')
-   end
- end
+    it 'displays an error message due to invalid name' do
+      expect(page).to have_content('Course name should have')
+    end    
+  end
+
+
+  describe "when both course_name assignment_count are given valid values" do
+
+    before :each do
+      fill_course_name_and_assignment_count_with('makkara', '3')
+    end
+
+    it "submit button is enabled" do
+      submit_button_is_enabled
+    end
+
+    describe "and course_name is changed to an invalid one" do
+
+      before :each do
+        fill_in('courseName', with: '')
+      end
+
+      it "submit button is disabled" do
+        submit_button_is_disabled
+      end
+
+      it "displays an error message due to invalid name" do
+        expect(page).to have_content('Course name should have')
+      end
+    end
+
+    describe "and when submit button is clicked" do
+
+      before :each do
+        click_button 'Submit'
+      end
+
+      it "it displays the course page of the created course" do
+        expect(page).to have_content 'Course: makkara'
+      end
+
+      it "there is a button for one of the made assignments in that page" do
+        expect(page.find("button", :text => '1'))
+      end
+    end
+  end
 end
 
 def visit_course_creation_page
  visit '/'
  click_button 'Create a new course'
+end
+
+def fill_course_name_and_assignment_count_with(course_name, assignment_count)
+  fill_in('courseName', with: course_name)
+  fill_in('assignmentCount', with: assignment_count)
+end
+
+def submit_button_is_disabled
+  expect(@button.visible?).to be(true)
+  expect(@button[:disabled]).to eq("true")
+end
+
+def submit_button_is_enabled
+  expect(@button[:disabled]).to be(nil)
 end

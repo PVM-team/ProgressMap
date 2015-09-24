@@ -8,7 +8,7 @@
 			<label class="col-md-2 col-sm-3 col-xs-4">Course name</label>
 				
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="name" required minlength="2">
-			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.courseName.$invalid && createCourseForm.courseName.$touched">
+			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.courseName.$invalid && createCourseForm.courseName.$dirty">
 				Course name should have at least 2 characters
 			</span>
 		</div>
@@ -16,7 +16,7 @@
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4"> Assigments </label>
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="assignmentCount" type="number" ng-model="assignmentCount" required min="1" max="500">
-			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$touched">
+			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$dirty">
 				Number should be between 1-500
 			</span>
 		</div>
