@@ -3,6 +3,7 @@ class CoursesController < ApplicationController
 	def create
 		@course = Course.new(course_params)
 		assignment_count = params[:assignment_count]
+		# participants = params[:participants]
 
 		begin
 			validate_course_name
@@ -11,7 +12,7 @@ class CoursesController < ApplicationController
 		rescue ValidationError => e # What now?
 
 		else	# Validations OK
-			try_to_create_course(assignment_count)
+			try_to_create_course(assignment_count) #, participants)
 		end
 
 		render json: @course
@@ -41,6 +42,12 @@ class CoursesController < ApplicationController
 
 					@course.assignments << assignment
 				end
+
+				#participants.each do |p|
+				#	user = User.find_by id: p.id
+
+				#	course.participants << user if user
+				#end
 			end
 		end	
 end

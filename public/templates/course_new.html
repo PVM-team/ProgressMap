@@ -20,6 +20,34 @@
 				Number should be between 1-500
 			</span>
 		</div>
+
+		<div class="col-xs-12">
+			<label class="col-md-2 col-sm-3 col-xs-4"> Participants </label>
+
+			<tr ng-repeat="p in participants">
+				<td> {{ p.firstName }}</td>
+				<td> {{ p.lastName }}</td>
+			</tr>
+		</div>
+
+		<div class="col-xs-12">
+
+			<section>
+    			<label>First name: <input ng-model="search.firstName" /></label> <br>
+    			<label>Last name: <input ng-model="search.lastName" /></label>
+			</section>
+
+			<section id="resultview">
+       			<ul>  
+            		<li ng-repeat="user in allUsers | filter:search:strict">
+            			<p> {{ user.firstName }}
+            			<p> {{ user.lastName }}
+            		</li>  
+        		</ul>  
+
+			</section>
+
+		</div> 
 	
 		<div class="col-xs-12">
 			<button class="create-course-button" ng-disabled="createCourseForm.$invalid" ng-click="createCourse();">Submit</button>

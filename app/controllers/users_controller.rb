@@ -1,24 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
 
-  # GET /users
-  # GET /users.json
-  def index
+  def all
     @users = User.all
-  end
-
-  # GET /users/1
-  # GET /users/1.json
-  def show
-  end
-
-  # GET /users/new
-  def new
-    @user = User.new
-  end
-
-  # GET /users/1/edit
-  def edit
+    render 'users/all.json.jbuilder'
   end
 
   # POST /users
@@ -55,11 +39,6 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
-  end
-
-  def init
-    @users = User.all
-    @courses = Course.all
   end
 
   private
