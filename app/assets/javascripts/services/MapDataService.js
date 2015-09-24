@@ -12,9 +12,9 @@ ProgressApp.service('MapDataService', function ($http, $q) {
                 //deferred.resolve(response.data)
                 //return deferred.promise
 
-            }, function (response) {
+            })/*, function (response) {
                 deferred.reject(response)
                 return deferred.promise
-            })
+            })*/
     }
 })

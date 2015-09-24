@@ -5,10 +5,10 @@ ProgressApp.service('DataSendService', function ($http, $q){
         return $http.post(path, data)
             .then(function(response) {
                 return response.data;
-            }, function (response){
+            })/*, function (response){
                 deferred.reject(response);
                 return deferred.promise
-            })
+            })*/
     }
 
 })

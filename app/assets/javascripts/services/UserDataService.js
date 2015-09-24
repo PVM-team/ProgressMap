@@ -9,9 +9,9 @@ ProgressApp.service('UserDataService', function ($http, $q) {
             .then(function (response) {
                 return response.data
 
-            }, function (response) {
+            })/*, function (response) {
                 deferred.reject(response)
                 return deferred.promise
-            })
+            })*/
     }
 })
