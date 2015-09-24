@@ -21,7 +21,7 @@ describe('MapController', function () {
             data.current_user = [{"id": 2}];
 
             return {
-                initMap: function(courseId){
+                getData: function(path, params){
                     return{
                         then: function(callback){
                             return callback(data);
@@ -64,7 +64,7 @@ describe('MapController', function () {
 
         spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
-        spyOn(httpServiceMock, 'initMap').and.callThrough();
+        spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'addData').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
@@ -88,8 +88,8 @@ describe('MapController', function () {
         it('calls on CanvasService.initiateCanvas', function(){
             expect(CanvasServiceMock.initiateCanvas).toHaveBeenCalled();
         })
-        it('calls on httpService.initMap', function(){
-            expect(httpServiceMock.initMap).toHaveBeenCalled();
+        it('calls on httpService.getData', function(){
+            expect(httpServiceMock.getData).toHaveBeenCalled();
         })
         it('calls on CanvasService.drawSmoothPaths', function(){
             expect(CanvasServiceMock.drawSmoothPaths).toHaveBeenCalled();

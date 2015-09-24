@@ -13,7 +13,7 @@ describe('NewCourseController', function () {
                             return callback({id: 5});
                         }
                     };
-                }, allUsers: function(){
+                }, getData: function(path, params){
                     return{
                         then: function(callback){
                             return callback({});

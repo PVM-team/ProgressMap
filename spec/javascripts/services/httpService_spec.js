@@ -21,9 +21,9 @@ describe('httpService', function () {
     });
 
 
-    it('should call http.get when initMap is called', function() {
+    it('should call http.get when getData is called', function() {
         var result;
-        result = httpService.initMap(course_id, user_id);
+        result = httpService.getData(path, {params: {course_id: course_id, user_id: user_id}});
         $http.expectGET(params);
         $http.flush();
     });

@@ -5,7 +5,7 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
     //    -Participantiksi lisättävälle opiskelijalle lisätään ylimääräinen attribuutti 'lisätty kurssille'.
     // 3. Lopuksi tehdään kurssin luonnin yhteydessä HTTP post johon participantit mukaan.
 
-    httpService.allUsers().then(function(data) {
+    httpService.getData('/users/all', {}).then(function(data){
         $scope.allUsers = data['users']
 
         $log.log($scope.allUsers)

@@ -9,9 +9,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     }
 
     //initiates map with given course id and current user id
-    httpService.initMap($routeParams.course_id, StateService.getCurrentUser().id).then(function(data) {
-
-
+    httpService.getData('/map/init.json', {params: {course_id: $routeParams.course_id, user_id: StateService.getCurrentUser().id}}).then(function(data){
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
@@ -20,7 +18,8 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.done_assignments = doneAssignments($scope.currentUser.id)
 
         CanvasService.drawSmoothPaths(getLocations());
-    })
+    });
+
 
     $scope.addStudent = function() {
        var userData = {
