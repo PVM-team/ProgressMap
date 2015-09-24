@@ -1,4 +1,3 @@
-
 <div class="small-left-margin">
 	<h2>Create a new course</h2>
 
@@ -14,7 +13,7 @@
 		</div>
 
 		<div class="col-xs-12">
-			<label class="col-md-2 col-sm-3 col-xs-4"> Assigments </label>
+			<label class="col-md-2 col-sm-3 col-xs-4"> Assignments </label>
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="assignmentCount" type="number" ng-model="assignmentCount" required min="1" max="500">
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$dirty">
 				Number should be between 1-500
@@ -24,10 +23,11 @@
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4"> Participants </label>
 
-			<tr ng-repeat="p in participants">
-				<td> {{ p.firstName }}</td>
-				<td> {{ p.lastName }}</td>
-			</tr>
+			<ol>
+				<li ng-repeat="p in participants">
+					 {{ p.firstName }} {{ p.lastName }}
+				</li>
+			</ol>
 		</div>
 
 		<div class="col-xs-12">
@@ -38,12 +38,11 @@
 			</section>
 
 			<section id="resultview">
-       			<ul>  
+       			<ol>
             		<li ng-repeat="user in allUsers | filter:search:strict">
-            			<p> {{ user.firstName }}
-            			<p> {{ user.lastName }}
+            			<a ng-click="addUser(user);"> {{ user.firstName }} {{ user.lastName }} </a>
             		</li>  
-        		</ul>  
+        		</ol>
 
 			</section>
 
