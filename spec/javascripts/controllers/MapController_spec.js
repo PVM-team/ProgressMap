@@ -2,15 +2,14 @@ describe('MapController', function () {
 
     var controller, scope;
     var CanvasServiceMock;
-    var DataSendServiceMock;
-    var MapDataServiceMock;
+    var httpServiceMock;
     var StateServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
 
         //leikkii backendiä, palauttaa testejä varten esimerkkidatan
-        MapDataServiceMock = (function () {
+        httpServiceMock = (function () {
             var data = {};
 
             data.course = [{"id": 1}];
@@ -26,6 +25,13 @@ describe('MapController', function () {
                     return{
                         then: function(callback){
                             return callback(data);
+                        }
+                    };
+                },
+                addData: function(path, data){
+                    return{
+                        then: function(callback){
+                            return callback({id: (scope.participants.length + 1)});
                         }
                     };
                 }
@@ -54,35 +60,22 @@ describe('MapController', function () {
             }
         })();
 
-        //palauttaa uuden opiskelijan
-        DataSendServiceMock = (function () {
-            return {
-                addData: function(path, data){
-                    return{
-                        then: function(callback){
-                            return callback({id: (scope.participants.length + 1)});
-                        }
-                    };
-                }
-            }
-        })();
 
 
         spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
-        spyOn(MapDataServiceMock, 'initMap').and.callThrough();
+        spyOn(httpServiceMock, 'initMap').and.callThrough();
+        spyOn(httpServiceMock, 'addData').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
-        spyOn(DataSendServiceMock, 'addData').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, MapDataService, CanvasService, DataSendService, StateService) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService) {
             scope = $rootScope.$new();
             controller = $controller('MapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
-                MapDataService: MapDataServiceMock,
+                httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock,
-                DataSendService: DataSendServiceMock,
                 StateService: StateServiceMock
             });
 
@@ -95,8 +88,8 @@ describe('MapController', function () {
         it('calls on CanvasService.initiateCanvas', function(){
             expect(CanvasServiceMock.initiateCanvas).toHaveBeenCalled();
         })
-        it('calls on MapDataService.initMap', function(){
-            expect(MapDataServiceMock.initMap).toHaveBeenCalled();
+        it('calls on httpService.initMap', function(){
+            expect(httpServiceMock.initMap).toHaveBeenCalled();
         })
         it('calls on CanvasService.drawSmoothPaths', function(){
             expect(CanvasServiceMock.drawSmoothPaths).toHaveBeenCalled();
@@ -159,9 +152,9 @@ describe('MapController', function () {
 
     describe('addStudent', function (){
 
-        it ('should call on DataSendService.addData', function(){
+        it ('should call on httpService.addData', function(){
             scope.addStudent();
-            expect(DataSendServiceMock.addData).toHaveBeenCalled();
+            expect(httpServiceMock.addData).toHaveBeenCalled();
         })
 
         it('should add a new student to course currently selected', function () {

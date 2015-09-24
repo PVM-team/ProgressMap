@@ -1,13 +1,13 @@
-ProgressApp.service('MapDataService', function ($http, $q) {
+ProgressApp.service('httpService', function ($http, $q) {
 
-    var deferred = $q.defer()
+    var deferred = $q.defer();
 
     this.initMap = function(course_id, user_id) {
 
         return $http.get('/map/init.json', { params: { course_id: course_id, user_id: user_id }})
 
             .then(function (response) {
-                return response.data
+                return response.data;
 
                 //deferred.resolve(response.data)
                 //return deferred.promise
@@ -18,6 +18,15 @@ ProgressApp.service('MapDataService', function ($http, $q) {
             })*/
     }
 
+    this.addData = function(path, data){
+        return $http.post(path, data)
+            .then(function(response) {
+                return response.data;
+            })/*, function (response){
+         deferred.reject(response);
+         return deferred.promise
+         })*/
+    }
 
     this.allUsers = function() {
         return $http.get('/users/all', {})
@@ -25,9 +34,9 @@ ProgressApp.service('MapDataService', function ($http, $q) {
             .then(function (response) {
                 return response.data
 
-            }, function (response) {
-                deferred.reject(response)
-                return deferred.promise
-        })
+            })/*, function (response) {
+         deferred.reject(response)
+         return deferred.promise
+         })*/
     }
 })
