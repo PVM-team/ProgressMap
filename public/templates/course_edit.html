@@ -15,6 +15,19 @@
             </span>
         </div>
     </form>
+    <div class="small-left-margin">
+        <h3> Participants </h3>
+        <div ng-repeat='participant in participants'>
+            {{ participant.firstName }} {{ participant.lastName }}
+            <button style='display: inline-block;' type='submit'>Poista</button>
 
-
+        </div>
+    </div>
+    <div class="small-left-margin">
+        <h3> Assignments </h3>
+        <div ng-repeat='assignment in assignments'>
+            {{ assignment.id }}
+            <button style='display: inline-block;' type="submit">Poista</button>
+        </div>
+    </div>
 </div>
