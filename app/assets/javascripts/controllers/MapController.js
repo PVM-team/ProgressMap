@@ -43,7 +43,11 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         StateService.setCurrentUser($scope.currentUser);
         $location.path("/new_course");
     }
-
+    
+    $scope.moveToCourseEditView = function() {
+        
+        $location.path('/'+ $scope.course.id + '/edit');
+    }
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations(){
         var locations = [];
