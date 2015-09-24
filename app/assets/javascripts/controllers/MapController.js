@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function($scope, $routeParams, $location, MapDataService, CanvasService, StateService, DataSendService) {
+ProgressApp.controller('MapController', function($scope, $routeParams, $location, httpService, CanvasService, StateService) {
 
     //creates a canvas with given height and width, parent div-element and given background color
     CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50"); /* väri + läpinäkyvyys */
@@ -9,9 +9,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     }
 
     //initiates map with given course id and current user id
-    MapDataService.initMap($routeParams.course_id, StateService.getCurrentUser().id).then(function(data) {
-
-
+    httpService.getData('/map/init.json', {params: {course_id: $routeParams.course_id, user_id: StateService.getCurrentUser().id}}).then(function(data){
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
@@ -20,7 +18,8 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.done_assignments = doneAssignments($scope.currentUser.id)
 
         CanvasService.drawSmoothPaths(getLocations());
-    })
+    });
+
 
     $scope.addStudent = function() {
        var userData = {
@@ -29,7 +28,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
            lastName: 'Mäkelä'
        }
 
-        DataSendService.addData('/users', userData).then(function(data){
+        httpService.addData('/users', userData).then(function(data){
             var newStudent = {
                 id: data.id,
                 firstName: data.firstName,

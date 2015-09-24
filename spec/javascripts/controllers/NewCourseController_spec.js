@@ -1,11 +1,11 @@
 describe('NewCourseController', function () {
     var controller, scope;
-    var DataSendServiceMock;
+    var httpServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
 
-        DataSendServiceMock = (function () {
+        httpServiceMock = (function () {
             return {
                 addData: function(path, data){
                     return{
@@ -13,17 +13,23 @@ describe('NewCourseController', function () {
                             return callback({id: 5});
                         }
                     };
+                }, getData: function(path, params){
+                    return{
+                        then: function(callback){
+                            return callback({});
+                        }
+                    };
                 }
             }
         })();
 
-        spyOn(DataSendServiceMock, 'addData').and.callThrough();
+        spyOn(httpServiceMock, 'addData').and.callThrough();
 
-        inject(function ($controller, $rootScope, DataSendService) {
+        inject(function ($controller, $rootScope, httpService) {
             scope = $rootScope.$new();
             controller = $controller('NewCourseController', {
                 $scope: scope,
-                DataSendService: DataSendServiceMock
+                httpService: httpServiceMock
             });
 
         });
@@ -33,9 +39,9 @@ describe('NewCourseController', function () {
     })
 
     describe ('calling createCourse', function(){
-        it ('should call on DataSendService.addData with parameters found in scope', function(){
+        it ('should call on httpServiceMock.addData with parameters found in scope', function(){
             scope.createCourse();
-            expect(DataSendServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5});
+            expect(httpServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5});
         })
 
     })

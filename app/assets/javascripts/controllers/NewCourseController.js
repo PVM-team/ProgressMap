@@ -1,11 +1,11 @@
-ProgressApp.controller('NewCourseController', function($scope, $location, $log, DataSendService, MapDataService, StateService) {
+ProgressApp.controller('NewCourseController', function($scope, $location, $log, httpService, StateService) {
 
     // 1. Etsittyä useria voi klikata jolloin se lisätään participants scopeen.
     // 2. Participants scopessa olevia usereita ei voi enää klikata uudestaan.
     //    -Participantiksi lisättävälle opiskelijalle lisätään ylimääräinen attribuutti 'lisätty kurssille'.
     // 3. Lopuksi tehdään kurssin luonnin yhteydessä HTTP post johon participantit mukaan.
 
-    MapDataService.allUsers().then(function(data) {
+    httpService.getData('/users/all', {}).then(function(data){
         $scope.allUsers = data['users']
 
         $log.log($scope.allUsers)
@@ -19,9 +19,9 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
                 name: name,
                 assignment_count: assignmentCount
             }
-        
 
-        DataSendService.addData('/courses', newCourse).then(function(data) {
+
+        httpService.addData('/courses', newCourse).then(function(data) {
             var path = "/map/" + data.id;
             $location.path(path);
         });
