@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root 'application#index'
   get 'map/init', to: 'map#init'
   get 'users/all', to: 'users#all'
+  get 'courses/all', to: 'courses#all'
 
   resources :courses, only: [:create]
   resources :users, only: [:create]

@@ -1,15 +1,20 @@
 <div class="small-left-margin">
-    <h2>Edit course  {{ course.name }}</h2>
+    <h2>Edit course  {{ originalName }}</h2>
 </div>
 
 <div>
-<form name="editCourseForm">
+    <form name="editCourseForm">
 
-    <label class="col-md-2 col-sm-3 col-xs-4">Course name</label>
+        <div class="col-xs-12">
+            <label class="col-md-2 col-sm-3 col-xs-4">Course name</label>
 
-    <input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="name" required minlength="2">
+            <input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="course.name" required minlength="2">
 
-</form>
+            <span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="editCourseForm.courseName.$invalid && editCourseForm.courseName.$dirty">
+                Course name should have at least 2 characters
+            </span>
+        </div>
+    </form>
 
 
 </div>
