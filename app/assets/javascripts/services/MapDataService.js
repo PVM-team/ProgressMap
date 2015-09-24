@@ -17,4 +17,17 @@ ProgressApp.service('MapDataService', function ($http, $q) {
                 return deferred.promise
             })*/
     }
+
+
+    this.allUsers = function() {
+        return $http.get('/users/all', {})
+
+            .then(function (response) {
+                return response.data
+
+            }, function (response) {
+                deferred.reject(response)
+                return deferred.promise
+        })
+    }
 })

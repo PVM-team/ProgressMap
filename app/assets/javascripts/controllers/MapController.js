@@ -41,7 +41,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
     $scope.moveToCourseCreationView = function(){
         StateService.setCurrentUser($scope.currentUser);
-        $location.path("/new_course");
+        $location.path("/course/new");
     }
     
     $scope.moveToCourseEditView = function() {

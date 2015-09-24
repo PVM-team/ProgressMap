@@ -7,10 +7,9 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'MapController',
            templateUrl: 'templates/map.html'
        })
-       .when('/new_course',{
+       .when('/course/new', {
            controller: 'NewCourseController',
-           templateUrl: 'templates/new_course.html'
-      
+           templateUrl: 'templates/course_new.html'
        })
        .when('/users', {
            controller: 'UsersController',
