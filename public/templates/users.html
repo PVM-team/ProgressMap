@@ -1,11 +1,11 @@
 <p id="errorMsg"></p>
 
-<p>Select Student:
-<select ng-model="user" ng-options="user.id as user.id for user in users"></select>
+<p>Select course:
+    <select ng-model="course" ng-options="course.name as course.name for course in courses"></select>
 </p>
 
-<p>Select course:
-<select ng-model="course" ng-options="course.id as course.id for course in courses"></select>
+<p>Select Student:
+<select ng-model="user" ng-options="user.id as user.firstName + ' ' + user.lastName for user in users"></select>
 </p>
 
 <button ng-click="addStudentToCourse()">Add student to course</button>
