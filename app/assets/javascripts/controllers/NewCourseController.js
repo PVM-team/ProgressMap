@@ -31,7 +31,6 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
 
     $scope.addUser = function(newParticipant) {
         $scope.participants.push(newParticipant);
-        alert($scope.participants.length);
     }
 
 //    $scope.searchUsers = function() {
