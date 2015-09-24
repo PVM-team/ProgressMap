@@ -34,6 +34,10 @@ fieldset {
 	border-color: rgba(43, 110, 59, 0.35);
 }
 
+button[disabled] {
+    background-color: #d3d3d3 !important;
+}
+
 .info-message {
 	color: blue;
 }
