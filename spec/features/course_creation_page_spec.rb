@@ -132,6 +132,55 @@ describe "Course creation page", js: true do
       end
     end
   end
+
+  describe "when firstName and/or lastName searches are used" do
+
+    describe "and searched firstName does not match with any student" do
+
+      before do
+        fill_first_name_with("Nonexistent-firstname")
+      end
+
+      it 'there are no results' do
+        expect(resultview).to be_empty
+      end
+    end
+
+    describe "and searched lastName does not match with any student" do
+
+      before do
+        fill_last_name_with("Nonexistent-lastname")
+      end
+
+      it 'there are no results' do
+        expect(resultview).to be_empty
+      end
+    end
+
+    describe "and searched firstName does not match with a student but lastName does" do
+
+      before do
+        fill_first_name_with("Erkki")
+        fill_last_name_with("Nonexistent-lastname")
+      end
+
+      it 'there are no results' do
+        expect(resultview).to be_empty
+      end
+    end
+
+    describe "and searched lastName does match with a student firstName does not" do
+
+      before do
+        fill_first_name_with("Nonexistent-firstname")
+        fill_last_name_with("Mäkelä")
+      end
+
+      it 'there are no results' do
+        expect(resultview).to be_empty
+      end
+    end
+  end
 end
 
 def visit_course_creation_page
@@ -142,6 +191,14 @@ end
 def fill_course_name_and_assignment_count_with(course_name, assignment_count)
   fill_in('courseName', with: course_name)
   fill_in('assignmentCount', with: assignment_count)
+end
+
+def fill_first_name_with(first_name)
+  fill_in('firstName', with: first_name)
+end
+
+def fill_last_name_with(last_name)
+  fill_in('lastName', with: last_name)
 end
 
 def submit_button_is_disabled
