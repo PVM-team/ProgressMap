@@ -142,7 +142,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(resultview).to be_empty
+        expect(find("#resultview").text).to be_empty
       end
     end
 
@@ -153,7 +153,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(resultview).to be_empty
+        expect(find("#resultview").text).to be_empty
       end
     end
 
@@ -165,11 +165,11 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(resultview).to be_empty
+        expect(find("#resultview").text).to be_empty
       end
     end
 
-    describe "and searched lastName does match with a student firstName does not" do
+    describe "and searched lastName does match with a student but firstName does not" do
 
       before do
         fill_first_name_with("Nonexistent-firstname")
@@ -177,7 +177,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(resultview).to be_empty
+        expect(find("#resultview").text).to be_empty
       end
     end
   end
