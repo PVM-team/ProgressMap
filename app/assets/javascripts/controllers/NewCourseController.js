@@ -1,4 +1,4 @@
-ProgressApp.controller('NewCourseController', function($scope, $location, $log, httpService, StateService) {
+ProgressApp.controller('NewCourseController', function($scope, $location, httpService, StateService) {
 
     // 1. Etsittyä useria voi klikata jolloin se lisätään participants scopeen.
     // 2. Participants scopessa olevia usereita ei voi enää klikata uudestaan.
@@ -9,18 +9,17 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
 
     httpService.getData('/users/all', {}).then(function(data){
         $scope.allUsers = data['users']
-
-        $log.log($scope.allUsers)
     })
 
     $scope.createCourse = function() {
         var name = $scope.name
         var assignmentCount = $scope.assignmentCount
+        var participants = $scope.participants;
 
             var newCourse = {
                 name: name,
                 assignment_count: assignmentCount,
-                participants: $scope.participants
+                participants: participants
             }
 
 
@@ -31,10 +30,14 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
     }
 
     $scope.addUser = function(newParticipant) {
-        if ($scope.participants.indexOf(newParticipant) == -1){
-            $scope.participants.push(newParticipant);
-        }
+
+        $scope.participants.push(newParticipant);
     }
 
 
+//    $scope.searchUsers = function() {
+//        var searched = $scope.searched
+
+//        $log.log(searched)
+//    }
 });
