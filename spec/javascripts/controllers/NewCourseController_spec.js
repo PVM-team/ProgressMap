@@ -36,12 +36,14 @@ describe('NewCourseController', function () {
 
         scope.name = "Test";
         scope.assignmentCount = 5;
+        scope.participants = [];
+
     })
 
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.addData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5});
+            expect(httpServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5, participants: []});
         })
 
     })
