@@ -19,7 +19,8 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
 
             var newCourse = {
                 name: name,
-                assignment_count: assignmentCount
+                assignment_count: assignmentCount,
+                participants: $scope.participants
             }
 
 
@@ -30,12 +31,10 @@ ProgressApp.controller('NewCourseController', function($scope, $location, $log, 
     }
 
     $scope.addUser = function(newParticipant) {
-        $scope.participants.push(newParticipant);
+        if ($scope.participants.indexOf(newParticipant) == -1){
+            $scope.participants.push(newParticipant);
+        }
     }
 
-//    $scope.searchUsers = function() {
-//        var searched = $scope.searched
 
-//        $log.log(searched)
-//    }
 });

@@ -14,6 +14,10 @@ fieldset {
 	margin-top: 18px;
 }
 
+li {
+    list-style-type: none;
+}
+
 .create-course-button {
 	background-color: #2EB92A;
 	display: block;
@@ -40,4 +44,9 @@ button[disabled] {
 
 .info-message {
 	color: blue;
+}
+
+
+a:hover {
+    text-decoration: none;
 }
