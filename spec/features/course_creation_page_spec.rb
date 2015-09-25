@@ -142,7 +142,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(find("#resultview").text).to be_empty
+        resultview_is_empty
       end
     end
 
@@ -153,7 +153,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(find("#resultview").text).to be_empty
+        resultview_is_empty
       end
     end
 
@@ -165,7 +165,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(find("#resultview").text).to be_empty
+        resultview_is_empty
       end
     end
 
@@ -177,7 +177,7 @@ describe "Course creation page", js: true do
       end
 
       it 'there are no results' do
-        expect(find("#resultview").text).to be_empty
+        resultview_is_empty
       end
     end
   end
@@ -208,4 +208,8 @@ end
 
 def submit_button_is_enabled
   expect(@button[:disabled]).to be(nil)
+end
+
+def resultview_is_empty
+  expect(find("#resultview").text).to be_empty
 end
