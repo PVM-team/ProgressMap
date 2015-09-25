@@ -47,9 +47,11 @@ class CoursesController < ApplicationController
                 @course.assignments << assignment
             end
 
-            participants.each do |p|
-                user = User.find_by id: p[:id]
-                @course.participants << user if user
+            if participants
+                participants.each do |p|
+                    user = User.find_by id: p[:id]
+                    @course.participants << user if user
+                end
             end
         end
     end	

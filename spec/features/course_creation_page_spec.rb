@@ -1,5 +1,9 @@
 require 'rails_helper'
 
+# lisää tänne vielä testit siitä että search boxit toimivat yhdessä ja kun klikkaa tyypin nimeä ja samaa nimeä uudestaan, klikkaaminen
+# ei johda mihinkään.
+
+
 describe "Course creation page", js: true do
 
   before :all do
@@ -10,11 +14,13 @@ describe "Course creation page", js: true do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.start
 
-    visit_course_creation_page
-    @button = page.find("button")
-
     FactoryGirl.create :user
     FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
+    FactoryGirl.create :user, firstName: "Mauno", lastName: "Tamminen"
+    FactoryGirl.create :user, firstName: "Etunimi", lastName: "Sukunimi"
+
+    visit_course_creation_page
+    @button = page.find("button")
   end
 
   after :each do
@@ -99,6 +105,30 @@ describe "Course creation page", js: true do
 
       it "there is a button for one of the made assignments in that page" do
         expect(page.find("button", :text => '1'))
+      end
+    end
+
+    describe "and some users are added to course" do
+      
+      before :each do
+        page.find("a", :text => 'Mauno Tamminen').click
+        page.find("a", :text => 'Etunimi Sukunimi').click
+      end
+
+      describe "and submit button is clicked" do
+
+        before :each do
+          click_button 'Submit'
+        end
+
+        it "it displays the course page of the created course" do
+          expect(page).to have_content 'Course: makkara'
+        end
+
+        it "displays the names of participants of the course" do
+          expect(page).to have_content("Mauno")
+          expect(page).to have_content('Sukunimi')
+        end
       end
     end
   end
