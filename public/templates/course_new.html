@@ -26,8 +26,8 @@
 			<ol>
 				<li ng-repeat="p in participants">
 					<div class="col-xs-12">
-						<div class="col-lg-1 col-md-1 col-sm-2 col-xs-4">{{ p.firstName }}</div>
-						<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7 col-xs-offset-0">{{ p.lastName }}</div>
+						<div ng-click="removeParticipant(p)" class="col-lg-1 col-md-1 col-sm-2 col-xs-4">{{ p.firstName }}</div>
+						<div ng-click="removeParticipant(p)" class="col-lg-7 col-md-7 col-sm-7 col-xs-7 col-xs-offset-0">{{ p.lastName }}</div>
 					</div>
 				</li>
 			</ol>
@@ -43,7 +43,7 @@
 			<section id="resultview">
        			<ol>
             		<li ng-repeat="user in allUsers | filter:search:strict">
-            			<a ng-click="addUser(user);"> {{ user.firstName }} {{ user.lastName }} </a>
+            			<a ng-click="addParticipant(user);"> {{ user.firstName }} {{ user.lastName }} </a>
             		</li>  
         		</ol>
 
