@@ -8,15 +8,15 @@ describe('NewCourseController', function () {
 
         httpServiceMock = (function () {
             return {
-                addData: function(path, data){
+                postData: function(path, data) {
                     return{
-                        then: function(callback){
+                        then: function(callback) {
                             return callback({});
                         }
                     };
-                }, getData: function(path, params){
+                }, getData: function(path, params) {
                     return{
-                        then: function(callback){
+                        then: function(callback) {
                             return callback({users: [{id: 5}]});
                         }
                     };
@@ -24,7 +24,7 @@ describe('NewCourseController', function () {
             }
         })();
 
-        spyOn(httpServiceMock, 'addData').and.callThrough();
+        spyOn(httpServiceMock, 'postData').and.callThrough();
 
         inject(function ($controller, $rootScope, httpService) {
             scope = $rootScope.$new();
@@ -74,9 +74,9 @@ describe('NewCourseController', function () {
     })
 
     describe ('calling createCourse', function(){
-        it ('should call on httpServiceMock.addData with parameters found in scope', function(){
+        it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.addData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5, participants: [fakeParticipant]});
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5, participants: [fakeParticipant]});
         })
 
     })

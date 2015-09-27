@@ -31,7 +31,7 @@ describe('httpService', function () {
     it('sends data to http', function() {
         path = 'path';
         var result;
-        result = httpService.addData(path, data);
+        result = httpService.postData(path, data);
         $http.expectPOST(path, data);
         $http.flush();
     });
