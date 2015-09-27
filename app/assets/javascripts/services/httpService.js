@@ -27,4 +27,11 @@ ProgressApp.service('httpService', function ($http, $q) {
          })*/
     }
 
+    this.editData = function(path, data) {
+        return $http.put(path, data)
+            .then(function(response) {
+                return response.data;
+            })
+    }
+
 })

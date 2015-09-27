@@ -15,7 +15,7 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'UsersController',
            templateUrl: 'templates/users.html'
        })
-       .when('/:course_id/edit', {
+       .when('/course/:course_id/edit/', {
             controller: 'EditCourseController',
             templateUrl:'templates/course_edit.html'
        })

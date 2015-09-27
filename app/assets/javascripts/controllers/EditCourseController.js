@@ -1,25 +1,17 @@
 ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService) {
-    var courses = [];
 
-    httpService.getData('courses/all', {}).then(function(data) {
-        courses = data['courses'];
-        for (var i = 0; i < courses.length; i++) {
-            if (courses[i].id == $routeParams.course_id) {
-                $scope.course = courses[i];
-                $scope.originalName = $scope.course.name;
-                break;
-            }
-        }
-    });
 //KOKEILU datan haku ketjutettu, jotta oltaisiin varmoja, että participantit ja alluserit ollaan haettu ennenkuin allusereista poistetaan participantit
 //jostain mysteerisestä syystä alluUserit tulostuu kahteen kertaan. Kommenteissa olevat loopit poistavat allusereista participantit
-    httpService.getData('courses/show', {params: {course_id: $routeParams.course_id}}).then(function(data){
+    
+    httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
+        $scope.course = data['course']
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
-    }).then(function(){
-        httpService.getData('/users/all', {}).then(function(data2){
-            $scope.allUsers = data2['users'];
-            console.log($scope.allUsers);
+    
+    }).then(function() {
+        httpService.getData('/users/all', {}).then(function(data2) {
+            $scope.allUsers = data2['users']
+          
           /*  for (var i = 0, l = $scope.participants.length; i < l; i++) {
                 var v = $scope.participants[i];
                 if (v){
@@ -32,16 +24,26 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                     }
                 }   
             }*/
+        })
+    })
+
+    $scope.editCourseName = function() {
+        var data = {
+            course_id: $scope.course.id,
+            name: $scope.name
+        }
+
+        httpService.editData('/courses/edit_name', data).then(function (data) {
+            $scope.course.name = data['course'].name
         });
-    });
+    }
 
     $scope.addAssignment = function() {
-        console.log($scope.assignments);
         $scope.assignments.push({id: 'new'});
     }
+
     //KOKEILU! poistaa SCOPEN allusersista lisättävän osallistujan, jotta etsintä ei ehdottaisi jo kurssilla olevia henkilöitä
-    $scope.addUser = function(newParticipant) {
-        console.log(newParticipant);
+    $scope.addParticipant = function(newParticipant) {
         var index = $scope.allUsers.indexOf(newParticipant);
         $scope.allUsers.splice(index, 1);
         $scope.participants.push(newParticipant);
@@ -54,14 +56,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                 break;
             }
         }
-    };
+    }
 
-    $scope.deleteUser = function(user) {
+    $scope.deleteParticipant = function(user) {
         $scope.participants.splice($scope.participants.indexOf(user), 1);
         $scope.allUsers.push(user);
     }
-});
-
-
-
-
+})

@@ -224,10 +224,26 @@ describe "Course creation page", js: true do
     end
 
     it "trying to add the same student to the course again won't add it to that list" do
-      length = find("#resultview").text.length
+      length = find("#participants").text.length
       page.find("a", :text => 'Mauno Tamminen').click
       
-      expect(find("#resultview").text.length).to be(length)
+      expect(find("#participants").text.length).to be(length)
+    end
+
+    it "the student can be removed from that list" do
+      remove_buttons = page.all("button", :text => 'Remove')
+      expect(remove_buttons.length).to be(2)
+
+      remove_buttons[0].click
+
+      expect(page.all("button", :text => 'Remove').length).to be(1)
+
+      resultview_contains_string('Etunimi Sukunimi')
+
+      expect(find("#participants").text.include?('Mauno Tamminen')).to be(false)
+
+      remove_buttons[1].click
+      expect(find("#participants").text).to be_empty
     end
   end
 end
