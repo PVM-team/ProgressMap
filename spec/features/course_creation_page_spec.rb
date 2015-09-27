@@ -1,9 +1,5 @@
 require 'rails_helper'
 
-# lisää tänne vielä testit siitä että search boxit toimivat yhdessä ja kun klikkaa tyypin nimeä ja samaa nimeä uudestaan, klikkaaminen
-# ei johda mihinkään.
-
-
 describe "Course creation page", js: true do
 
   before :all do
@@ -18,6 +14,7 @@ describe "Course creation page", js: true do
     FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
     FactoryGirl.create :user, firstName: "Mauno", lastName: "Tamminen"
     FactoryGirl.create :user, firstName: "Etunimi", lastName: "Sukunimi"
+    FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi"
 
     visit_course_creation_page
     @button = page.find("button")
@@ -180,6 +177,58 @@ describe "Course creation page", js: true do
         resultview_is_empty
       end
     end
+
+    describe "and searched firstName matches with students and lastName is not filled" do
+
+      before :each do
+        fill_first_name_with("E")
+      end
+
+      it "finds the matching students" do
+        resultview_contains_string("Erkki Mäkelä")
+        resultview_contains_string("Etunimi Sukunimi")
+      end
+    end
+
+    describe "and searched lastName matches with students and firsttName is not filled" do
+
+      before :each do
+        fill_last_name_with("T")
+      end
+
+      it "finds the matching students" do
+        resultview_contains_string("Mauno Tamminen")
+        resultview_contains_string("Mauno Tammi")
+      end
+    end
+
+    describe "and both fields together match with some students" do
+
+      before :each do
+        fill_first_name_with("Mau")
+        fill_last_name_with("Tammi")
+      end
+
+      it "finds the matching students" do
+        resultview_contains_string("Mauno Tamminen")
+        resultview_contains_string("Mauno Tammi")
+      end
+    end  
+  end
+
+  describe "when a student is added to to the list of students to be added to the course" do
+
+    before :each do
+      page.find("a", :text => 'Mauno Tamminen').click
+      page.find("a", :text => 'Etunimi Sukunimi').click
+    end
+
+    it "trying to add the same student to the course again won't add it to that list" do
+      length = find("#resultview").text.length
+      page.find("a", :text => 'Mauno Tamminen').click
+      
+      expect(find("#resultview").text.length).to be(length)
+    end
   end
 end
 
@@ -212,4 +261,8 @@ end
 
 def resultview_is_empty
   expect(find("#resultview").text).to be_empty
+end
+
+def resultview_contains_string(string)
+  expect(find("#resultview").text.include?(string)).to be(true)
 end
