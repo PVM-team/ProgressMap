@@ -38,7 +38,7 @@ class CoursesController < ApplicationController
         @course = Course.find params[:course_id]
         @course.name = params[:name]
 
-        @course.update
+        @course.save
         render 'courses/show.json.jbuilder'
     end
 

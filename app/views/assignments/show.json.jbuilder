@@ -1,0 +1,1 @@
+json.assignment @assignment, partial:'assignments/assignment', as: :assignment

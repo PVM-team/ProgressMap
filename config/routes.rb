@@ -3,11 +3,14 @@ Rails.application.routes.draw do
   root 'application#index'
   get 'map/init', to: 'map#init'
   get 'users/all', to: 'users#all'
-  # get 'courses/all', to: 'courses#all'
 
   put 'courses/edit_name', to: 'courses#edit_name'
+
+  post 'memberships/destroy', to: 'memberships#destroy'   # HTTP delete method cannot be provided with params other than ':id'
   
+  resources :assignments, only: [:create, :destroy]
   resources :courses, only: [:create, :show]
+  resources :memberships, only: [:create]
   resources :users, only: [:create]
 
   # The priority is based upon order of creation: first created -> highest priority.

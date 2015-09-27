@@ -17,7 +17,7 @@ ProgressApp.service('httpService', function ($http, $q) {
          })*/
     }
 
-    this.addData = function(path, data){
+    this.postData = function(path, data){
         return $http.post(path, data)
             .then(function(response) {
                 return response.data;
@@ -27,11 +27,18 @@ ProgressApp.service('httpService', function ($http, $q) {
          })*/
     }
 
-    this.editData = function(path, data) {
+    this.putData = function(path, data) {
         return $http.put(path, data)
             .then(function(response) {
                 return response.data;
             })
     }
+
+    this.deleteData = function(path) {
+        return $http.delete(path)
+            .then(function(response) {
+                return response.data;
+            })
+    }    
 
 })
