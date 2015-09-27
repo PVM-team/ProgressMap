@@ -4,6 +4,13 @@ class CoursesController < ApplicationController
         render 'courses/all.json.jbuilder'
     end
 
+    def show
+        course = Course.find params[:course_id]
+        @assignments = course.assignments
+        @participants = course.participants
+        render 'courses/show.json.jbuilder'
+    end
+
     def create
         @course = Course.new(course_params)
         assignment_count = params[:assignment_count]

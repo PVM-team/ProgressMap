@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   get 'map/init', to: 'map#init'
   get 'users/all', to: 'users#all'
   get 'courses/all', to: 'courses#all'
-
-  resources :courses, only: [:create]
+  
+  resources :courses, only: [:create, :show]
   resources :users, only: [:create]
 
   # The priority is based upon order of creation: first created -> highest priority.
