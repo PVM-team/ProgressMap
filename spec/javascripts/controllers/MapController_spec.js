@@ -35,6 +35,7 @@ describe('MapController', function () {
                         }
                     };
                 }
+
             }
         })();
 
@@ -50,12 +51,16 @@ describe('MapController', function () {
 
         StateServiceMock = (function () {
             var user;
+            var course;
             return {
                 setCurrentUser: function (currentUser) {
                     user = currentUser;
                 },
                 getCurrentUser: function(){
                     return user;
+                },
+                setCurrentCourse: function(currentCourse){
+                    course = currentCourse;
                 }
             }
         })();
@@ -63,6 +68,7 @@ describe('MapController', function () {
 
 
         spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
+        spyOn(StateServiceMock, 'setCurrentCourse').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
@@ -150,25 +156,47 @@ describe('MapController', function () {
         })
     })
 
-    /* describe('addStudent', function (){
-
-        it ('should call on httpService.postData', function(){
-            scope.addStudent();
-            expect(httpServiceMock.postData).toHaveBeenCalled();
+    describe('marking assignments', function(){
+        describe('when undone', function(){
+            it('calls on httpService.postData with assignment id, current user id and path students_tasks', function(){
+                var assignment = scope.assignments[1];
+                scope.markAssignmentAsDone(assignment);
+                var data2 = {assignment_id: 2, user_id: scope.currentUser.id}
+                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks", data2);
+            })
+            it('sets them as done', function(){
+                var assignment = scope.assignments[1];
+                scope.markAssignmentAsDone(assignment);
+                expect(scope.done_assignments.indexOf(assignment)).not.toBe(-1);
+            })
+        })
+        describe('when done', function(){
+            it('calls on httpService.postData with assignment id, current user id and path students_tasks/destroy', function(){
+                var assignment = scope.assignments[0];
+                scope.markAssignmentAsUndone(assignment);
+                var data2 = {assignment_id: 1, user_id: scope.currentUser.id}
+                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/destroy", data2);
+            })
+            it ('sets them as undone', function(){
+                var assignment = scope.assignments[0];
+                scope.markAssignmentAsUndone(assignment);
+                expect(scope.done_assignments.indexOf(assignment)).toBe(-1);
+            })
         })
 
-        it('should add a new student to course currently selected', function () {
-            var amount = scope.participants.length;
-            scope.addStudent();
-            expect(scope.participants.length).toBe(amount+1);
-
-        });
-    }) */
+    })
 
     describe('moveToCourseCreationView', function(){
         it ('should call StateService.setCurrentUser with correct value', function(){
             scope.moveToCourseCreationView();
             expect(StateServiceMock.setCurrentUser).toHaveBeenCalledWith(scope.currentUser);
+        })
+    })
+
+    describe('moveToCourseEditView', function(){
+        it ('should call StateService.setCurrentCourse with correct value', function(){
+            scope.moveToCourseEditView();
+            expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
         })
     })
 })
