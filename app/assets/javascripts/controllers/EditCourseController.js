@@ -6,8 +6,14 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         $scope.participants = data["participants"]
         $scope.allUsers = data['all_users']
 
+        $scope.name = $scope.course.name
+
         removeParticipantsFromAllUsers()
     })
+
+    $scope.goToCoursePage = function() {
+        $location.path("/map/" + $scope.course.id)
+    }
 
     $scope.editCourseName = function() {
         var data = {
@@ -30,47 +36,42 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         })
     }
 
-    $scope.addParticipant = function(newParticipant) {
-        var index = $scope.allUsers.indexOf(newParticipant)
-
-        var data = {
-            course_id: $scope.course.id,
-            user_id: newParticipant.id
-        }
-
-        httpService.postData('memberships', data).then(function (data) {
-            $scope.allUsers.splice(index, 1)
-            $scope.participants.push(newParticipant)
-        })
-    }
-
     $scope.deleteAssignment = function(assignment) {
         var index = $scope.assignments.indexOf(assignment)
 
         httpService.deleteData('assignments/' + assignment.id).then(function (data) {
             $scope.assignments.splice(index, 1);
         })
+    }    
+
+    $scope.addParticipant = function(newParticipant) {
+        postParticipantData("", newParticipant, $scope.allUsers, $scope.participants)
     }
 
-    $scope.deleteParticipant = function(user) {
-        var index = $scope.participants.indexOf(user)
+    $scope.deleteParticipant = function(participant) {
+        postParticipantData('/destroy', participant, $scope.participants, $scope.allUsers)
+    }
+
+    function postParticipantData(uri, participant, list_to_remove, list_to_add) {
+        var index = list_to_remove.indexOf(participant)
 
         var data = {
             course_id: $scope.course.id,
-            user_id: user.id
+            user_id: participant.id
         }
 
-        httpService.postData('memberships/destroy', data).then(function (data) {
-            $scope.participants.splice(index, 1);
-            $scope.allUsers.push(user);
+        httpService.postData('memberships' + uri, data).then(function (data) {
+            list_to_remove.splice(index, 1);
+            list_to_add.push(participant);
         })
     }
 
     function removeParticipantsFromAllUsers() {
-            
+
         for (var i = 0; i < $scope.participants.length; i++) {
             var v = $scope.participants[i];
-                
+            var found = false;
+
             for (var m = 0; m < $scope.allUsers.length; m++) {
 
                 if (v.id == $scope.allUsers[m].id) {

@@ -22,7 +22,7 @@
 
 <p>View the map as student:</p>
 
-<select ng-model="participant" ng-change="viewAsStudent(participant)" ng-options="participant.id as participant.id for participant in  participants"></select>
+<select ng-model="participant" ng-change="viewAsStudent(participant)" ng-options="participant.id as (participant.firstName + ' ' + participant.lastName) for participant in  participants"></select>
 
 <div id="mapElements" style="position: relative">
 
