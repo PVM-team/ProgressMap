@@ -1,7 +1,6 @@
 ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService) {
 
 //KOKEILU datan haku ketjutettu, jotta oltaisiin varmoja, että participantit ja alluserit ollaan haettu ennenkuin allusereista poistetaan participantit
-//jostain mysteerisestä syystä alluUserit tulostuu kahteen kertaan. Kommenteissa olevat loopit poistavat allusereista participantit
     
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         $scope.course = data['course'][0]
@@ -11,8 +10,8 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }).then(function() {
         httpService.getData('/users/all', {}).then(function(data2) {
             $scope.allUsers = data2['users']
-          
-          /* for (var i = 0, l = $scope.participants.length; i < l; i++) {
+//          console.log($scope.allUsers);
+               for (var i = 0, l = $scope.participants.length; i < l; i++) {
                 var v = $scope.participants[i];
                 if (v){
                     for (var m = 0, l = $scope.allUsers.length; m < l; m++) {
@@ -23,7 +22,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                         } 
                     }
                 }   
-            } */
+            } 
         })
     })
 

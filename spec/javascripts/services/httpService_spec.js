@@ -17,6 +17,8 @@ describe('httpService', function () {
             $http = $httpBackend;
             $http.when('POST', 'path', data).respond(200);
             $http.when('GET', params).respond(200);
+            $http.when('PUT', 'path', 'data').respond(200);
+            $http.when('DELETE', 'path').respond(200); 
         });
     });
 
@@ -28,11 +30,26 @@ describe('httpService', function () {
         $http.flush();
     });
 
-    it('sends data to http', function() {
+    it('should call http.post when postData is called', function() {
         path = 'path';
         var result;
         result = httpService.postData(path, data);
         $http.expectPOST(path, data);
+        $http.flush();
+    });
+
+    
+    it('should call http.put when putData is called', function() {
+        var result;
+        result = httpService.putData('path', 'data');
+        $http.expectPUT('path', 'data');
+        $http.flush();
+    });
+
+    it('should call http.delete when deleteData is called', function() {
+        var result;
+        result = httpService.deleteData('path');
+        $http.expectDELETE('path');
         $http.flush();
     });
 });
