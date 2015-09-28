@@ -36,6 +36,31 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $location.path('/course/' + $scope.course.id + '/edit')
     }
 
+    $scope.markAssignmentAsDone = function(assignment) {
+
+        var data = {
+            assignment_id: assignment.id,
+            user_id: $scope.currentUser.id
+        }
+
+        httpService.postData('students_tasks', data).then(function (data) {
+            $scope.done_assignments.push(assignment)
+        })
+    }
+
+    $scope.markAssignmentAsUndone = function(assignment) {
+
+        var data = {
+            assignment_id: assignment.id,
+            user_id: $scope.currentUser.id
+        }
+
+        httpService.postData('students_tasks/destroy', data).then(function (data) {
+            var i = $scope.done_assignments.indexOf(assignment)
+            $scope.done_assignments.splice(i, 1)
+        })
+    }    
+
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations() {
         var locations = []

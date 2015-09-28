@@ -1,0 +1,1 @@
+json.students_task @students_task, partial:'students_tasks/students_task', as: :students_task
