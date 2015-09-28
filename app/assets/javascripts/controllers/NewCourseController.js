@@ -1,4 +1,4 @@
-ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, StateService) {
+ProgressApp.controller('NewCourseController', function ($scope, $location, httpService) {
 
     $scope.participants = []
 
@@ -20,14 +20,17 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         })
     }
 
-    $scope.removeParticipant = function(participant) {
-        var index = $scope.participants.indexOf(participant)
-        $scope.participants.splice(index, 1)
+    $scope.removeParticipant = function (participant) {
+        editLists($scope.participants, $scope.allUsers, participant)
     }
 
     $scope.addParticipant = function (newParticipant) {
-        if ($scope.participants.indexOf(newParticipant) == -1) {
-            $scope.participants.push(newParticipant)
-        }
+        editLists($scope.allUsers, $scope.participants, newParticipant)
+    }
+
+    function editLists(listToRemoveFrom, listToAddTo, member){
+        var index = listToRemoveFrom.indexOf(member);
+        listToRemoveFrom.splice(index, 1);
+        listToAddTo.push(member);
     }
 })

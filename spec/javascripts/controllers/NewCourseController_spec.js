@@ -41,7 +41,6 @@ describe('NewCourseController', function () {
 
         fakeParticipant = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
         scope.addParticipant(fakeParticipant)
-
     })
 
     describe('initializing newCourseController', function(){
@@ -52,16 +51,9 @@ describe('NewCourseController', function () {
 
     describe ('calling scope.addParticipant', function(){
         it('should add given participant to scope.participants', function(){
-            var fakeParticipantTheSecond = {id: 5, firstName: "Joku", lastName: "Pelle"};
+            var fakeParticipantTheSecond = {id: 6, firstName: "Joku", lastName: "Pelle"};
             scope.addParticipant(fakeParticipantTheSecond)
             expect(scope.participants.indexOf(fakeParticipantTheSecond)).not.toBe(-1);
-        })
-        describe('on a user who already is a participant', function(){
-            it('should not change scope.participants', function(){
-                expect(scope.participants.length).toBe(1);
-                scope.addParticipant(fakeParticipant);
-                expect(scope.participants.length).toBe(1);
-            })
         })
     })
 

@@ -10,7 +10,7 @@ describe('EditCourseController', function () {
         httpServiceMock = (function () {
             var data = {};
 
-            data.course = [{"id": 1}];
+            data.course = [{"id": 1, "name": 'ohtu'}];
             data.assignments =
                 [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}]},
                     {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id": 1}]},
@@ -34,7 +34,7 @@ describe('EditCourseController', function () {
                 }, putData: function (path, params) {
                     return {
                         then: function (callback) {
-                            return callback({});
+                            return callback({course: {name: scope.name}});
                         }
                     };
                 }, deleteData: function (path, params) {
@@ -111,6 +111,15 @@ describe('EditCourseController', function () {
             var amount = scope.assignments.length;
             scope.addAssignment();
             expect(scope.assignments.length).toBe(amount + 1);
+        })
+    })
+
+    describe ('editCourseName', function(){
+        it('should change the name of the course currently in scope.course', function(){
+            expect(scope.course.name).not.toBe("asdf");
+            scope.name = "asdf";
+            scope.editCourseName();
+            expect(scope.course.name).toBe("asdf");
         })
     })
 })
