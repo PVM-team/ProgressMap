@@ -6,6 +6,8 @@ describe('NewCourseController', function () {
     beforeEach(function () {
         module('ProgressApp');
 
+        fakeParticipant = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
+
         httpServiceMock = (function () {
             return {
                 postData: function(path, data) {
@@ -17,7 +19,7 @@ describe('NewCourseController', function () {
                 }, getData: function(path, params) {
                     return{
                         then: function(callback) {
-                            return callback({users: [{id: 5}]});
+                            return callback({users: [{id: 1}, fakeParticipant]});
                         }
                     };
                 }
@@ -39,19 +41,19 @@ describe('NewCourseController', function () {
         scope.assignmentCount = 5;
         scope.participants = [];
 
-        fakeParticipant = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
         scope.addParticipant(fakeParticipant)
     })
 
     describe('initializing newCourseController', function(){
-        it ('should set scope.allUsers to what httpService.addData returns', function(){
-            expect(scope.allUsers[0].id).toBe(5);
+        it ('should set scope.allUsers to what httpService.addData returns minus users in scope.participants', function(){
+            expect(scope.allUsers.length).toBe(1);
+            expect(scope.allUsers.indexOf(fakeParticipant)).toBe(-1)
         })
     })
 
     describe ('calling scope.addParticipant', function(){
         it('should add given participant to scope.participants', function(){
-            var fakeParticipantTheSecond = {id: 6, firstName: "Joku", lastName: "Pelle"};
+            var fakeParticipantTheSecond = {id: 7, firstName: "Joku", lastName: "Pelle"};
             scope.addParticipant(fakeParticipantTheSecond)
             expect(scope.participants.indexOf(fakeParticipantTheSecond)).not.toBe(-1);
         })
