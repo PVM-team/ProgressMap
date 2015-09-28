@@ -45,6 +45,8 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
         httpService.postData('students_tasks', data).then(function (data) {
             $scope.done_assignments.push(assignment)
+
+            assignment.doers.push($scope.currentUser)
         })
     }
 
@@ -57,65 +59,84 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
             var i = $scope.done_assignments.indexOf(assignment)
-            $scope.done_assignments.splice(i, 1)
+            removeValueFromList($scope.done_assignments, i)
+
+            i = $scope.assignments.indexOf(assignment)
+            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
+
+            removeValueFromList($scope.assignments[i].doers, j)
         })
     }    
 
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations() {
         var locations = []
+
         for (var i = 0; i < $scope.assignments.length; i++) {
             locations.push([$scope.assignments[i].location.x, $scope.assignments[i].location.y])
         }
         return locations
     }
 
-    function getCurrentUser(user_id) {
-        for (var i = 0; i < $scope.participants.length; i++) {
-            if ($scope.participants[i].id == user_id){
-                return $scope.participants[i]
-            }
+    function getCurrentUser(userId) {
+        var i = indexOfValueWithId($scope.participants, userId)
+
+        if (i >= 0) {
+            return $scope.participants[i]
         }
-        throw "User not found: " +  user_id
+
+        throw "User not found: " +  user
     }
 
-    function doneAssignments(user_id) {
+    function doneAssignments(userId) {
         var done_assignments = []
 
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers
 
-            for (var j = 0; j < doers.length; j++) {
-                if (doers[j].id == user_id) {
-                    done_assignments.push($scope.assignments[i])
-                }
+            if (listHasValueWithId(doers, userId)) {
+                done_assignments.push($scope.assignments[i])
             }
         }
         return done_assignments
     }
 
-    $scope.viewAsStudent = function(user_id) {
+    $scope.viewAsStudent = function(user) {
         try {
-            $scope.currentUser = getCurrentUser(user_id)
+            $scope.currentUser = getCurrentUser(user.id)
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err
         }
 
-        $scope.done_assignments = doneAssignments(user_id)
+        $scope.done_assignments = doneAssignments(user.id)
     }
 
     
-    $scope.assignmentCompleted = function(assignment_id) {
-	    for (var i = 0; i < $scope.done_assignments.length; i++) {
-		    if ($scope.done_assignments[i].id == assignment_id) {
-			    return true
-		    }
-	   }
-	   return false
+    $scope.assignmentCompleted = function(assignment) {
+        return listHasValueWithId($scope.done_assignments, assignment.id)
     }
 
     function validRequest(data) {
         return data['course'][0]
+    }
+
+    function removeValueFromList(list, index) {
+        list.splice(index, 1)
+    }
+
+    function listHasValueWithId(list, id) {
+        return (indexOfValueWithId(list, id)) >= 0
+    }
+
+    // indexOf ei toimi taulukoiden kanssa joka sisältää objekteja, kun verrattava objekti on { } -sisällä.
+    function indexOfValueWithId(list, id) {
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id == id) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 })

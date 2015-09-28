@@ -128,16 +128,16 @@ describe('MapController', function () {
 
     describe('viewAsStudent', function() {
 
-        it('changes currentUser to the student whose id is given as parameter', function () {
+        it('changes currentUser to the student which is given as parameter', function () {
             expect(scope.currentUser.id).toBe(2)
-            scope.viewAsStudent(3);
+            scope.viewAsStudent({"id": 3});
 
             expect(scope.currentUser.id).toBe(3);
         });
 
-        it('sets done_assignments when userId is valid', function () {
+        it('sets done_assignments when user is valid', function () {
             expect(scope.done_assignments.length).not.toBe(3);
-            scope.viewAsStudent(scope.participants[0].id);
+            scope.viewAsStudent(scope.participants[0]);
 
             expect(scope.done_assignments.length).toBe(3);
         });
@@ -146,13 +146,13 @@ describe('MapController', function () {
     describe('assignmentCompleted returns', function() {
 
         it ('true if student has done the assignment', function () {
-            scope.viewAsStudent(2)
-            expect(scope.assignmentCompleted(scope.done_assignments[0].id)).toBe(true)
+            scope.viewAsStudent({"id": 2})
+            expect(scope.assignmentCompleted(scope.assignments[0])).toBe(true)
         })
 
         it ('false if student has not done the assignment', function () {
-            scope.viewAsStudent(3);
-            expect(scope.assignmentCompleted(scope.assignments[3])).toBe(false);
+            scope.viewAsStudent({"id": 2})
+            expect(scope.assignmentCompleted(scope.assignments[1])).toBe(false);
         })
     })
 
