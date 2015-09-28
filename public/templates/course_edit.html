@@ -57,7 +57,7 @@
         <button ng-click='addAssignment();'>Add a new assignment</button>
         <div ng-repeat='assignment in assignments'>
             Id: {{ assignment.id }}, Number: {{ assignment.number }}
-            <button ng-click='deleteAssignment(assignment.id);'>Delete</button>
+            <button ng-click='deleteAssignment(assignment);'>Delete</button>
         </div>
     </div>
 </div>

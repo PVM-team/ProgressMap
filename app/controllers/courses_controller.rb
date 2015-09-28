@@ -1,14 +1,10 @@
 class CoursesController < ApplicationController
-    
-    #def all
-    #    @courses = Course.all
-    #    render 'courses/all.json.jbuilder'
-    #end
 
     def show
         course = Course.find params[:course_id]
         @assignments = course.assignments
         @participants = course.participants
+        @all_users = User.all
         
         @course = []
         @course << course if course

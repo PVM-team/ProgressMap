@@ -1,7 +1,7 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 
-course1 = Course.create name: "Ohtuprojekt"
+course1 = Course.create name: "Ohtuprojekti"
 
 student1 = User.create firstName: "Heimo", lastName: "Vesa"
 student2 = User.create firstName: "Allan", lastName: "Kurma"

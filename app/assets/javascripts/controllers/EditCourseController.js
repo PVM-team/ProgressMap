@@ -1,29 +1,12 @@
 ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService) {
 
-//KOKEILU datan haku ketjutettu, jotta oltaisiin varmoja, että participantit ja alluserit ollaan haettu ennenkuin allusereista poistetaan participantit
-    
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         $scope.course = data['course'][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
-    
-    }).then(function() {
-        httpService.getData('/users/all', {}).then(function(data2) {
-            $scope.allUsers = data2['users']
-//          console.log($scope.allUsers);
-               for (var i = 0, l = $scope.participants.length; i < l; i++) {
-                var v = $scope.participants[i];
-                if (v){
-                    for (var m = 0, l = $scope.allUsers.length; m < l; m++) {
-                        if ($scope.allUsers[m]) {
-                            if (v.id == $scope.allUsers[m].id) {
-                                $scope.allUsers.splice(m, 1);
-                            }
-                        } 
-                    }
-                }   
-            } 
-        })
+        $scope.allUsers = data['all_users']
+
+        removeParticipantsFromAllUsers()
     })
 
     $scope.editCourseName = function() {
@@ -47,7 +30,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         })
     }
 
-    //KOKEILU! poistaa SCOPEN allusersista lisättävän osallistujan, jotta etsintä ei ehdottaisi jo kurssilla olevia henkilöitä
     $scope.addParticipant = function(newParticipant) {
         var index = $scope.allUsers.indexOf(newParticipant)
 
@@ -62,21 +44,16 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         })
     }
 
-    $scope.deleteAssignment = function(assignment_id) {
-        for (var i = 0, l = $scope.assignments.length; i < l; i++) {
-            if ($scope.assignments[i].id == assignment_id) {
-                $scope.assignments.splice(i, 1);
-                break;
-            }
-        }
+    $scope.deleteAssignment = function(assignment) {
+        var index = $scope.assignments.indexOf(assignment)
 
-        httpService.deleteData('assignments/' + assignment_id).then(function (data) {
+        httpService.deleteData('assignments/' + assignment.id).then(function (data) {
+            $scope.assignments.splice(index, 1);
         })
     }
 
     $scope.deleteParticipant = function(user) {
-        $scope.participants.splice($scope.participants.indexOf(user), 1);
-        $scope.allUsers.push(user);
+        var index = $scope.participants.indexOf(user)
 
         var data = {
             course_id: $scope.course.id,
@@ -84,6 +61,22 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         }
 
         httpService.postData('memberships/destroy', data).then(function (data) {
-        })        
+            $scope.participants.splice(index, 1);
+            $scope.allUsers.push(user);
+        })
+    }
+
+    function removeParticipantsFromAllUsers() {
+            
+        for (var i = 0; i < $scope.participants.length; i++) {
+            var v = $scope.participants[i];
+                
+            for (var m = 0; m < $scope.allUsers.length; m++) {
+
+                if (v.id == $scope.allUsers[m].id) {
+                    $scope.allUsers.splice(m, 1);
+                }
+            }
+        }        
     }
 })
