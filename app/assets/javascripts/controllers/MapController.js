@@ -10,6 +10,12 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
     //initiates map with given course id and current user id
     httpService.getData('/map/init.json', { params: { course_id: $routeParams.course_id, user_id: StateService.getCurrentUser().id }}).then(function(data) {
+        
+        if (! validRequest(data)) {
+            $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
+            return;
+        }
+
         $scope.course = data["course"][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
@@ -76,11 +82,15 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
     
     $scope.assignmentCompleted = function(assignment_id) {
-	for (var i = 0; i < $scope.done_assignments.length; i++) {
-		if ($scope.done_assignments[i].id == assignment_id) {
-			return true
-		}
-	}
-	return false
+	    for (var i = 0; i < $scope.done_assignments.length; i++) {
+		    if ($scope.done_assignments[i].id == assignment_id) {
+			    return true
+		    }
+	   }
+	   return false
+    }
+
+    function validRequest(data) {
+        return data['course'][0]
     }
 })

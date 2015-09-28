@@ -1,6 +1,11 @@
 ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService) {
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
+        if (! validRequest(data)) {
+            $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
+            return;
+        }
+
         $scope.course = data['course'][0]
         $scope.assignments = data["assignments"]
         $scope.participants = data["participants"]
@@ -78,6 +83,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                     $scope.allUsers.splice(m, 1);
                 }
             }
-        }        
+        }     
+    }
+
+    function validRequest(data) {
+        return data['course'][0]
     }
 })

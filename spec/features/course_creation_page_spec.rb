@@ -10,6 +10,8 @@ describe "Course creation page", js: true do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.start
 
+    FactoryGirl.create :course
+
     FactoryGirl.create :user
     FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
     FactoryGirl.create :user, firstName: "Mauno", lastName: "Tamminen"
@@ -185,8 +187,8 @@ describe "Course creation page", js: true do
       end
 
       it "finds the matching students" do
-        resultview_contains_string("Erkki Mäkelä")
-        resultview_contains_string("Etunimi Sukunimi")
+        resultview_include_string("Erkki Mäkelä", true)
+        resultview_include_string("Etunimi Sukunimi", true)
       end
     end
 
@@ -197,8 +199,8 @@ describe "Course creation page", js: true do
       end
 
       it "finds the matching students" do
-        resultview_contains_string("Mauno Tamminen")
-        resultview_contains_string("Mauno Tammi")
+        resultview_include_string("Mauno Tamminen", true)
+        resultview_include_string("Mauno Tammi", true)
       end
     end
 
@@ -210,40 +212,51 @@ describe "Course creation page", js: true do
       end
 
       it "finds the matching students" do
-        resultview_contains_string("Mauno Tamminen")
-        resultview_contains_string("Mauno Tammi")
+        resultview_include_string("Mauno Tamminen", true)
+        resultview_include_string("Mauno Tammi", true)
       end
     end  
   end
 
-  describe "when a student is added to to the list of students to be added to the course" do
+  describe "when two students are added to to the list of students to be added to the course" do
 
     before :each do
-      page.find("a", :text => 'Mauno Tamminen').click
-      page.find("a", :text => 'Etunimi Sukunimi').click
-    end
-
-    it "trying to add the same student to the course again won't add it to that list" do
-      length = find("#participants").text.length
-      page.find("a", :text => 'Mauno Tamminen').click
-      
-      expect(find("#participants").text.length).to be(length)
-    end
-
-    it "the student can be removed from that list" do
-      remove_buttons = page.all("button", :text => 'Remove')
-      expect(remove_buttons.length).to be(2)
-
-      remove_buttons[0].click
-
-      expect(page.all("button", :text => 'Remove').length).to be(1)
-
-      resultview_contains_string('Etunimi Sukunimi')
-
       expect(find("#participants").text.include?('Mauno Tamminen')).to be(false)
 
-      remove_buttons[1].click
-      expect(find("#participants").text).to be_empty
+      page.find("a", :text => 'Mauno Tamminen').click
+      page.find("a", :text => 'Etunimi Sukunimi').click
+
+      expect(find("#participants").text.include?('Mauno Tamminen')).to be(true)
+      expect(find("#participants").text.include?('Etunimi Sukunimi')).to be(true)
+    end
+
+    it "neither one of the students can be added again" do
+      resultview_include_string("Mauno Tamminen", false)
+      resultview_include_string("Etunimi Sukunimi", false)
+    end
+
+    describe "and when the first student is removed from that list" do
+
+      before :each do
+        remove_buttons = page.all("button", :text => 'Remove')
+        expect(remove_buttons.length).to be(2)
+
+        remove_buttons[0].click
+        expect(page.all("button", :text => 'Remove').length).to be(1)
+      end
+
+      it "the student is no longer in that list" do
+        expect(find("#participants").text.include?('Mauno Tamminen')).to be(false)
+      end
+
+      it "the student can be added to the course once again" do
+        resultview_include_string('Mauno Tamminen', true)
+
+        page.find("a", :text => 'Mauno Tamminen').click
+
+        resultview_include_string('Mauno Tamminen', false)
+        expect(find("#participants").text.include?('Mauno Tamminen')).to be(true)
+      end
     end
   end
 end
@@ -279,6 +292,6 @@ def resultview_is_empty
   expect(find("#resultview").text).to be_empty
 end
 
-def resultview_contains_string(string)
-  expect(find("#resultview").text.include?(string)).to be(true)
+def resultview_include_string(string, bool)
+  expect(find("#resultview").text.include?(string)).to be(bool)
 end
