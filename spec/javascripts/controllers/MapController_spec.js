@@ -4,6 +4,8 @@ describe('MapController', function () {
     var CanvasServiceMock;
     var httpServiceMock;
     var StateServiceMock;
+    var undoneAssignment;
+    var doneAssignment;
 
     beforeEach(function () {
         module('ProgressApp');
@@ -87,6 +89,8 @@ describe('MapController', function () {
 
         });
 
+        undoneAssignment = scope.assignments[1];
+        doneAssignment = scope.assignments[0];
 
     });
 
@@ -102,22 +106,22 @@ describe('MapController', function () {
         })
     })
 
-    describe ('initializing MapController retrieves data from MapDataService', function(){
+    describe ('initializing MapController retrieves data from httpService', function(){
         it('sets scope.course to 1', function(){
             expect(scope.course.id).toBe(1);
         })
-        it('sets scope.assignments to what MapDataService returns', function(){
+        it('sets scope.assignments to what httpService returns', function(){
             expect(scope.assignments.length).toBe(3);
             expect(scope.assignments[0].id).toBe(1);
             expect(scope.assignments[1].location.x).toBe(330);
             expect(scope.assignments[2].doers.length).toBe(1);
         })
-        it('sets scope.participants to what MapDataService returns', function(){
+        it('sets scope.participants to what httpService returns', function(){
             expect(scope.participants.length).toBe(3);
             expect(scope.participants[0].id).toBe(1);
             expect(scope.done_assignments.length).toBe(1);
         })
-        it('sets scope.currentUser to what MapDataService returns', function(){
+        it('sets scope.currentUser to what httpService returns', function(){
             expect(scope.currentUser.id).toBe(2);
         })
         it('sets scope.done_assignments to those of scope.currentUser', function(){
@@ -159,28 +163,34 @@ describe('MapController', function () {
     describe('marking assignments', function(){
         describe('when undone', function(){
             it('calls on httpService.postData with assignment id, current user id and path students_tasks', function(){
-                var assignment = scope.assignments[1];
-                scope.markAssignmentAsDone(assignment);
+                scope.markAssignmentAsDone(undoneAssignment);
                 var data2 = {assignment_id: 2, user_id: scope.currentUser.id}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks", data2);
             })
             it('sets them as done', function(){
-                var assignment = scope.assignments[1];
-                scope.markAssignmentAsDone(assignment);
-                expect(scope.done_assignments.indexOf(assignment)).not.toBe(-1);
+                scope.markAssignmentAsDone(undoneAssignment);
+                expect(scope.done_assignments.indexOf(undoneAssignment)).not.toBe(-1);
+            })
+            it('increases the assignment doers', function(){
+                expect(undoneAssignment.doers.length).toBe(1);
+                scope.markAssignmentAsDone(undoneAssignment);
+                expect(undoneAssignment.doers.length).toBe(2);
             })
         })
         describe('when done', function(){
             it('calls on httpService.postData with assignment id, current user id and path students_tasks/destroy', function(){
-                var assignment = scope.assignments[0];
-                scope.markAssignmentAsUndone(assignment);
+                scope.markAssignmentAsUndone(doneAssignment);
                 var data2 = {assignment_id: 1, user_id: scope.currentUser.id}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/destroy", data2);
             })
             it ('sets them as undone', function(){
-                var assignment = scope.assignments[0];
-                scope.markAssignmentAsUndone(assignment);
-                expect(scope.done_assignments.indexOf(assignment)).toBe(-1);
+                scope.markAssignmentAsUndone(doneAssignment);
+                expect(scope.done_assignments.indexOf(doneAssignment)).toBe(-1);
+            })
+            it('decreases the assignment doers', function(){
+                expect(doneAssignment.doers.length).toBe(2);
+                scope.markAssignmentAsUndone(doneAssignment);
+                expect(doneAssignment.doers.length).toBe(1);
             })
         })
 
