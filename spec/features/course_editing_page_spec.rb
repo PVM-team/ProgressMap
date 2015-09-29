@@ -164,28 +164,33 @@ describe "Course editing page", js: true do
         describe 'when assignment is added to course' do
 
             before :each do
+                @assignments_at_beginning = @course.assignments.length
                 click_button 'Add a new assignment'   
             end 
 
             it 'a new assignment is added to assignmentView' do
                 expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
+                expect(Course.first.assignments.length).to be(@assignments_at_beginning + 1)
             end
 
             it 'should add assignment with differen id and number than previous' do
                 expect(find('#assignmentView')).not_to have_content('Id: 3, Number: 3')
                 click_button 'Add a new assignment'
                 expect(find('#assignmentView')).to have_content('Id: 3, Number: 3')
+                expect(Course.first.assignments.length).to be(@assignments_at_beginning + 2)
             end
 
         end
 
         describe 'when assignment is deleted' do
             before :each do
+                @assignments_at_beginning = @course.assignments.length
                 click_button 'Delete assignment'
             end
 
             it 'assignmentView should be empty' do
                 expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
+                expect(Course.first.assignments.length).to be(0)
             end
         end
     end
