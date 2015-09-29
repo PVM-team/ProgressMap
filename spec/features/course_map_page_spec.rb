@@ -65,7 +65,23 @@ describe "Course map page", js: true do
 
   			it "one of the assignments is marked as undone" do
   				check_that_user_sees_undone_tasks_as_undone(@course, @user2, 1)
-  			end
+        end
+
+				describe "and when an assignment button is clicked" do
+					it "it is marked as done when it was undone before" do
+            button = find_button('2')
+						expect(button['class']).to have_content "undone-task"
+						click_button('2')
+            expect(button['class']).to have_content "done-task"
+          end
+					#it "it is marked as undone when it was done before" do
+					#	button = find_button('1')
+					#	expect(button['class']).to have_content "done-task"
+					#	click_button('1')
+					#	expect(button['class']).to have_content "undone-task"
+					#end
+				end
+
   		end
 
   		it "user can see, how many participants have completed each assignment" do
@@ -104,7 +120,7 @@ describe "Course map page", js: true do
   			end
 
   			expect(same_style_found).to be(true)
-  		end
+      end
   	end
 end
 

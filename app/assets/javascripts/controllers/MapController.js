@@ -10,7 +10,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
     //initiates map with given course id and current user id
     httpService.getData('/map/init.json', { params: { course_id: $routeParams.course_id, user_id: StateService.getCurrentUser().id }}).then(function(data) {
-        
+
         if (! validRequest(data)) {
             $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
             return;
@@ -21,7 +21,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.participants = data["participants"]
 
         $scope.currentUser = data["current_user"][0]
-        $scope.done_assignments = doneAssignments($scope.currentUser.id)
+        setDoneAssignments();
 
         CanvasService.drawSmoothPaths(getLocations())
     })
@@ -30,7 +30,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         StateService.setCurrentUser($scope.currentUser)
         $location.path("/course/new")
     }
-    
+
     $scope.moveToCourseEditView = function() {
         StateService.setCurrentCourse($scope.course)
         $location.path('/course/' + $scope.course.id + '/edit')
@@ -66,7 +66,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
             removeValueFromList($scope.assignments[i].doers, j)
         })
-    }    
+    }
 
     //extracts assignment locations into an array for use when drawing the course path
     function getLocations() {
@@ -78,43 +78,33 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         return locations
     }
 
-    function getCurrentUser(userId) {
-        var i = indexOfValueWithId($scope.participants, userId)
-
-        if (i >= 0) {
-            return $scope.participants[i]
-        }
-
-        throw "User not found: " +  user
-    }
-
-    function doneAssignments(userId) {
-        var done_assignments = []
+    function setDoneAssignments() {
+        var done_assignments = [];
 
         for (var i = 0; i < $scope.assignments.length; i++) {
-            var doers = $scope.assignments[i].doers
+            var doers = $scope.assignments[i].doers;
 
-            if (listHasValueWithId(doers, userId)) {
+            if (indexOfValueWithId(doers, $scope.currentUser.id) >= 0) {
                 done_assignments.push($scope.assignments[i])
             }
         }
-        return done_assignments
+        $scope.done_assignments = done_assignments;
     }
 
     $scope.viewAsStudent = function(user) {
         try {
-            $scope.currentUser = getCurrentUser(user.id)
+            $scope.currentUser = user;
         }
         catch(err) {
             document.getElementById("errorMsg").innerHTML = err
         }
 
-        $scope.done_assignments = doneAssignments(user.id)
+        setDoneAssignments();
     }
 
-    
+
     $scope.assignmentCompleted = function(assignment) {
-        return listHasValueWithId($scope.done_assignments, assignment.id)
+        return ($scope.done_assignments.indexOf(assignment) >= 0)
     }
 
     function validRequest(data) {
@@ -125,11 +115,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         list.splice(index, 1)
     }
 
-    function listHasValueWithId(list, id) {
-        return (indexOfValueWithId(list, id)) >= 0
-    }
-
-    // indexOf ei toimi taulukoiden kanssa joka sisältää objekteja, kun verrattava objekti on { } -sisällä.
+    // $scope.currentUser ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {

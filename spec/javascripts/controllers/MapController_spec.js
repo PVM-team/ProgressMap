@@ -119,7 +119,6 @@ describe('MapController', function () {
         it('sets scope.participants to what httpService returns', function(){
             expect(scope.participants.length).toBe(3);
             expect(scope.participants[0].id).toBe(1);
-            expect(scope.done_assignments.length).toBe(1);
         })
         it('sets scope.currentUser to what httpService returns', function(){
             expect(scope.currentUser.id).toBe(2);
