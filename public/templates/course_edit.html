@@ -28,7 +28,7 @@
                     <div class="col-lg-1 col-md-1 col-sm-2 col-xs-4">{{ p.firstName }}</div>
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 col-xs-offset-0">{{ p.lastName }}</div>
 
-                    <button class"col-lg-1 col-md-1 col-sm-2 col-xs-4 col-xs-offset-0" ng-click="deleteParticipant(p);">Delete</button>
+                    <button  class"col-lg-1 col-md-1 col-sm-2 col-xs-4 col-xs-offset-0" ng-click="deleteParticipant(p);">Delete participant</button>
                 </li>
             </section>
         </ol>
@@ -55,9 +55,13 @@
         <label class="col-md-2 col-sm-3 col-xs-4">Assignments</label>
 
         <button ng-click='addAssignment();'>Add a new assignment</button>
-        <div ng-repeat='assignment in assignments'>
-            Id: {{ assignment.id }}, Number: {{ assignment.number }}
-            <button ng-click='deleteAssignment(assignment);'>Delete</button>
-        </div>
+        <section id="assignmentView">
+            <ol>
+                <li ng-repeat='assignment in assignments'>
+                    Id: {{ assignment.id }}, Number: {{ assignment.number }}
+                    <button ng-click='deleteAssignment(assignment);'>Delete assignment</button>
+                </li>
+            </ol>
+        </section>
     </div>
 </div>

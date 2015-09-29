@@ -16,6 +16,8 @@ describe "Course editing page", js: true do
 
         @course = FactoryGirl.create :course, name: "Ohtuprojekti"
         @course.participants << (FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi")
+
+        @course.assignments << (FactoryGirl.create :assignment, number: 1)
     end
 
     after :each do
@@ -63,6 +65,10 @@ describe "Course editing page", js: true do
             expect(find("#resultview")).to have_content('Erkki Mäkelä')
             expect(find("#resultview")).to have_content('Mauno Tamminen Add to course')
             expect(find("#resultview")).to have_content('Etunimi Sukunimi')
+        end
+
+        it 'shows an assignment in assignmentView' do
+            expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
         end
 
         describe "and name of the course is changed inside the course name text box" do
@@ -135,28 +141,52 @@ describe "Course editing page", js: true do
         describe "when a user is removed from the course" do
 
             it "deletes the participant from participantlist" do
-                click_button 'Delete'
+                click_button 'Delete participant'
                 expect(find("#participants")).not_to have_content('Mauno Tammi')
             end
 
             it "adds the participant to all users when deleted" do
-                click_button 'Delete'
-                expect(find("#resultview")).to have_content('Mauno Tammi')
+                click_button 'Delete participant'
+                expect(find("#resultview")).to have_content('Mauno Tammi Add to course')
 
             end
 
             it "membership between deleted user and edited course is deleted" do
                 @participants_on_course = @course.participants.length
                 @original_membership_count = Membership.count
-                click_button 'Delete'
+                click_button 'Delete participant'
                 expect(Membership.count).to be(@original_membership_count - 1)                    
                 course = Course.first
                 expect(course.participants.length).to be(@participants_on_course - 1)
             end
         end
-        
+
         describe 'when assignment is added to course' do
-            
+
+            before :each do
+                click_button 'Add a new assignment'   
+            end 
+
+            it 'a new assignment is added to assignmentView' do
+                expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
+            end
+
+            it 'should add assignment with differen id and number than previous' do
+                expect(find('#assignmentView')).not_to have_content('Id: 3, Number: 3')
+                click_button 'Add a new assignment'
+                expect(find('#assignmentView')).to have_content('Id: 3, Number: 3')
+            end
+
+        end
+
+        describe 'when assignment is deleted' do
+            before :each do
+                click_button 'Delete assignment'
+            end
+
+            it 'assignmentView should be empty' do
+                expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
+            end
         end
     end
 end
