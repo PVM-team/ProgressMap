@@ -68,20 +68,73 @@ describe "Course map page", js: true do
         end
 
 				describe "and when an assignment button is clicked" do
-					it "it is marked as done when it was undone before" do
-            button = find_button('2')
-						expect(button['class']).to have_content "undone-task"
-						click_button('2')
-            expect(button['class']).to have_content "done-task"
-          end
-					#it "it is marked as undone when it was done before" do
-					#	button = find_button('1')
-					#	expect(button['class']).to have_content "done-task"
-					#	click_button('1')
-					#	expect(button['class']).to have_content "undone-task"
-					#end
-				end
 
+          describe "and the button was marked as undone before" do
+
+            before :each do
+              @button = find_button('2')
+              expect(@button['class']).to have_content "undone-task"
+
+              @doers_size = @task2.doers.length
+              @students_tasks_size = StudentsTask.count
+
+              @button.click
+            end
+
+            it "it is marked as done" do
+              button = find_button('2')
+
+              expect(button['class']).to have_content "done-task"
+              expect(button['class']).not_to have_content "undone-task"
+            end
+
+            it "the amount of doers associated with that assignment is incremented by 1" do
+              check_that_amount_of_doers_of_assignment_matches_with_text(@task2, (@doers_size + 1).to_s)
+            end
+
+            it "a new StudentsTask between @user2 and the assignment is created" do
+              task2 = Assignment.find(@task2.id)
+
+              expect(StudentsTask.count).to be(@students_tasks_size + 1)
+              
+              expect(task2.doers.length).to be(@doers_size + 1)
+              expect(task2.doers.last).to eq(@user2)
+            end
+          end
+
+          describe "and the button was marked as done before" do
+
+            before :each do
+              @button = find_button('1')
+              expect(@button['class']).to have_content "done-task"
+
+              @doers_size = @task1.doers.length
+              @students_tasks_size = StudentsTask.count
+
+              expect(@task1.doers.include?(@user2)).to be(true)
+
+              @button.click
+            end
+
+            it "it is marked as undone" do
+              button = find_button('2')
+              expect(button['class']).to have_content "undone-task"
+            end
+
+            it "the amount of doers associated with that assignment is decremented by 1" do
+              check_that_amount_of_doers_of_assignment_matches_with_text(@task1, (@doers_size - 1).to_s)
+            end
+
+            it "the StudentsTask between @user2 and the assignment is deleted" do
+              task1 = Assignment.find(@task1.id)
+
+              expect(StudentsTask.count).to be(@students_tasks_size - 1)
+              
+              expect(task1.doers.length).to be(@doers_size - 1)
+              expect(task1.doers.include?(@user2)).to be(false)
+            end
+          end
+				end
   		end
 
   		it "user can see, how many participants have completed each assignment" do
@@ -214,4 +267,20 @@ end
 
 def style_by_assignment(assignment)
 	"top: " + (assignment.location.y + 5).to_s + "px; left: " + (assignment.location.x + 25).to_s + "px;"
+end
+
+def check_that_amount_of_doers_of_assignment_matches_with_text(assignment, text)
+  enumerator = page.all("label", :text => text).each
+  found = false
+
+  for i in 1..5
+    elem = enumerator.next
+
+    found = true if elem[:style].include?("top: " + (assignment.location.y + 5).to_s + "px")
+    break if found
+
+    i = i + 1
+  end
+
+  expect(found).to be(true)
 end

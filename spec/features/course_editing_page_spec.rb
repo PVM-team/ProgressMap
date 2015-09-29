@@ -140,57 +140,74 @@ describe "Course editing page", js: true do
 
         describe "when a user is removed from the course" do
 
-            it "deletes the participant from participantlist" do
+            before :each do
+                @participants_on_course = @course.participants.length
+                @original_membership_count = Membership.count
                 click_button 'Delete participant'
+            end
+
+            it "deletes the participant from participantlist" do
                 expect(find("#participants")).not_to have_content('Mauno Tammi')
             end
 
             it "adds the participant to all users when deleted" do
-                click_button 'Delete participant'
                 expect(find("#resultview")).to have_content('Mauno Tammi Add to course')
 
             end
 
             it "membership between deleted user and edited course is deleted" do
-                @participants_on_course = @course.participants.length
-                @original_membership_count = Membership.count
-                click_button 'Delete participant'
                 expect(Membership.count).to be(@original_membership_count - 1)                    
                 course = Course.first
                 expect(course.participants.length).to be(@participants_on_course - 1)
             end
         end
 
-        describe 'when assignment is added to course' do
+        describe 'when an assignment is added to course' do
 
             before :each do
-                @assignments_at_beginning = @course.assignments.length
+                @assignments_initially = @course.assignments.length
+
+                expect(find('#assignmentView')).not_to have_content('Id: 2, Number: 2')
                 click_button 'Add a new assignment'   
-            end 
+            end
 
             it 'a new assignment is added to assignmentView' do
                 expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
-                expect(Course.first.assignments.length).to be(@assignments_at_beginning + 1)
             end
 
-            it 'should add assignment with differen id and number than previous' do
+            it "a new assignment is added to database" do
+                expect(Course.first.assignments.length).to be(@assignments_initially + 1)
+            end
+
+            it "and the number of the added assignment is [the highest number of all course assignments] + 1" do
+                delete_buttons_enumerator = page.all("button", :text => 'Delete assignment').each
+
+                first_assignment_delete_button = delete_buttons_enumerator.next
+
+                expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
+                first_assignment_delete_button.click
+                expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
+
                 expect(find('#assignmentView')).not_to have_content('Id: 3, Number: 3')
                 click_button 'Add a new assignment'
                 expect(find('#assignmentView')).to have_content('Id: 3, Number: 3')
-                expect(Course.first.assignments.length).to be(@assignments_at_beginning + 2)
             end
-
         end
 
-        describe 'when assignment is deleted' do
+        describe 'when an assignment is deleted' do
             before :each do
-                @assignments_at_beginning = @course.assignments.length
+                @assignments_initially = @course.assignments.length
+
+                expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
                 click_button 'Delete assignment'
             end
 
-            it 'assignmentView should be empty' do
+            it "assignmentView won't contain the deleted assignment" do
                 expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
-                expect(Course.first.assignments.length).to be(0)
+            end
+
+            it "the assignment is removed from database" do
+                expect(Course.first.assignments.length).to be(@assignments_initially - 1)
             end
         end
     end
