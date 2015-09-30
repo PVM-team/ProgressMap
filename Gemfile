@@ -63,6 +63,8 @@ group :test do
   gem "capybara-angular"
   
   gem 'simplecov', require: false
+
+  gem 'rspec-example_steps'
 end
 
 gem "foreman"
