@@ -1,33 +1,33 @@
 require 'rails_helper'
 
-context 'As a teacher I want to create a course', js: true do
+context "As a teacher I want to create a course", js: true do
 
-  	before :all do
-    	self.use_transactional_fixtures = false
-  	end
+  before :all do
+    self.use_transactional_fixtures = false
+  end
 
-  	after :all do
-    	self.use_transactional_fixtures = true
-  	end  	
+  after :all do
+  	self.use_transactional_fixtures = true
+  end  	
 
 	before :each do
-    	DatabaseCleaner.strategy = :truncation
-    	DatabaseCleaner.start
+  	DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
 
 		FactoryGirl.create :course
-	end
+	 end
 
-  	after :each do
-    	DatabaseCleaner.clean
-  	end	
+  after :each do
+    DatabaseCleaner.clean
+  end
 
-	Steps 'Creating a course' do
+	Steps "Creating a course" do
 
-		Given 'I visit the course creation page' do
+		Given "I visit the course creation page" do
 			visit_course_creation_page
 		end
 
-		Then 'Submit button is disabled' do
+		Then "Submit button is disabled" do
 			submit_button_is_disabled
 		end		
 
@@ -35,7 +35,7 @@ context 'As a teacher I want to create a course', js: true do
 			fill_course_name_and_assignment_count_with('Ohtuprojekti', '3')
 		end
 
-		Then 'Submit button is enabled' do
+		Then "Submit button is enabled" do
 			submit_button_is_enabled
 		end
 	end
