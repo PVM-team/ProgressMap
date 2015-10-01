@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-context "As a student I want to see my own progress", js: true do 
+context "As a student I want to see my own progress", js: true do
 
   before :all do
     self.use_transactional_fixtures = false
