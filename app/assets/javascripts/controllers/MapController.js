@@ -1,7 +1,10 @@
-ProgressApp.controller('MapController', function($scope, $routeParams, $location, httpService, CanvasService, StateService) {
+ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
+
+    $scope.buttonClicked = false;
 
     //creates a canvas with given height and width, parent div-element and given background color
-    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50") /* väri + läpinäkyvyys */
+    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
+    /* väri + läpinäkyvyys */
 
     //korvataan joskus käyttäjän valintaruudulla?
     if (!StateService.getCurrentUser()) {
@@ -9,9 +12,14 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     }
 
     //initiates map with given course id and current user id
-    httpService.getData('/map/init.json', { params: { course_id: $routeParams.course_id, user_id: StateService.getCurrentUser().id }}).then(function(data) {
+    httpService.getData('/map/init.json', {
+        params: {
+            course_id: $routeParams.course_id,
+            user_id: StateService.getCurrentUser().id
+        }
+    }).then(function (data) {
 
-        if (! validRequest(data)) {
+        if (!validRequest(data)) {
             $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
             return;
         }
@@ -26,17 +34,53 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         CanvasService.drawSmoothPaths(getLocations())
     })
 
-    $scope.moveToCourseCreationView = function() {
+    $scope.moveToCourseCreationView = function () {
         StateService.setCurrentUser($scope.currentUser)
         $location.path("/course/new")
     }
 
-    $scope.moveToCourseEditView = function() {
+    $scope.moveToCourseEditView = function () {
         StateService.setCurrentCourse($scope.course)
         $location.path('/course/' + $scope.course.id + '/edit')
     }
 
-    $scope.markAssignmentAsDone = function(assignment) {
+    function findAssignmentById(id) {
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            if ($scope.assignments[i].id == id) {
+                return $scope.assignments[i];
+            }
+        }
+    }
+
+    $scope.showDependencies = function (assignment) {
+        for (var i = 0; i < assignment.dependencies.length; i++) {
+            var dependent = findAssignmentById(assignment.dependencies[i].id);
+            var numberOfDependentAssignment = dependent.number;
+
+            console.log(dependent.number);
+
+            console.log($("button:contains('" + numberOfDependentAssignment + "')"))
+            $("button:contains('" + numberOfDependentAssignment + "')").closest('button').addClass("dependent");
+            ;
+        }
+
+    }
+
+    $scope.hideDependencies = function (assignment) {
+        for (var i = 0; i < assignment.dependencies.length; i++) {
+            var dependent = findAssignmentById(assignment.dependencies[i].id);
+            var numberOfDependentAssignment = dependent.number;
+
+            console.log(dependent.number);
+
+            console.log($("button:contains('" + numberOfDependentAssignment + "')"))
+            $("button:contains('" + numberOfDependentAssignment + "')").closest('button').removeClass("dependent");
+            ;
+        }
+    }
+
+    $scope.markAssignmentAsDone = function (assignment) {
+        $scope.buttonClicked = true;
 
         var data = {
             assignment_id: assignment.id,
@@ -45,12 +89,14 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
         httpService.postData('students_tasks', data).then(function (data) {
             $scope.done_assignments.push(assignment)
-
             assignment.doers.push($scope.currentUser)
+
+            $scope.buttonClicked = false;
         })
     }
 
-    $scope.markAssignmentAsUndone = function(assignment) {
+    $scope.markAssignmentAsUndone = function (assignment) {
+        $scope.buttonClicked = true;
 
         var data = {
             assignment_id: assignment.id,
@@ -65,6 +111,8 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
             var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
 
             removeValueFromList($scope.assignments[i].doers, j)
+
+            $scope.buttonClicked = false;
         })
     }
 
@@ -91,11 +139,11 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.done_assignments = done_assignments;
     }
 
-    $scope.viewAsStudent = function(user) {
+    $scope.viewAsStudent = function (user) {
         try {
             $scope.currentUser = user;
         }
-        catch(err) {
+        catch (err) {
             document.getElementById("errorMsg").innerHTML = err
         }
 
@@ -103,7 +151,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     }
 
 
-    $scope.assignmentCompleted = function(assignment) {
+    $scope.assignmentCompleted = function (assignment) {
         return ($scope.done_assignments.indexOf(assignment) >= 0)
     }
 

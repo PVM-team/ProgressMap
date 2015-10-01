@@ -95,3 +95,12 @@ assignment8.dependencies << assignment4
 assignment9.dependencies << assignment3
 assignment9.dependencies << assignment7
 assignment9.dependencies << assignment8
+
+assignment1.dependencies << assignment2
+assignment1.dependencies << assignment3
+assignment1.dependencies << assignment4
+assignment1.dependencies << assignment5
+assignment1.dependencies << assignment6
+assignment1.dependencies << assignment7
+assignment1.dependencies << assignment8
+assignment1.dependencies << assignment9

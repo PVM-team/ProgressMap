@@ -49,3 +49,13 @@
 #errorMsg {
     color: red;
 }
+
+.done-task.dependent {
+    background: #ffd700;
+    box-shadow: 1px 1px 20px 10px rgba(225, 189, 47, 0.86);
+}
+
+.undone-task.dependent{
+    background: #fbe3cc;
+    box-shadow: 1px 1px 20px 10px rgba(225, 189, 47, 0.86);
+}
