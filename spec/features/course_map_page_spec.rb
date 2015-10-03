@@ -55,7 +55,16 @@ describe "Course map page", js: true do
   				expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
   				expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
   			end
-  		end
+      end
+
+      describe 'when hovering over assignments' do
+        it "reacts to hover if assignment has dependencies" do
+          expect(page.find_button('1').hover)
+        end
+
+        it ("highlights correct nodes") do
+        end
+      end
 
   		describe "when current user is @user2" do
 
@@ -197,6 +206,9 @@ def course_details
 	@task3.location = FactoryGirl.create :location, x: 580, y: 190
 	@task4.location = FactoryGirl.create :location, x: 630, y: 410
 	@task5.location = FactoryGirl.create :location, x: 420, y: 390
+
+	@task1.dependencies << @task2
+	@task1.dependencies << @task3
 
 	@course.participants << @user1
 	@course.participants << @user2

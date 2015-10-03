@@ -16,8 +16,8 @@ describe('MapController', function () {
 
             data.course = [{"id": 1}];
             data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}]},
-                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}]},
+                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "dependencies": [{"id":2}]},
+                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "dependencies": [{"id":1}]},
                     {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}]}];
             data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
             data.current_user = [{"id": 2}];
@@ -206,6 +206,19 @@ describe('MapController', function () {
         it ('should call StateService.setCurrentCourse with correct value', function(){
             scope.moveToCourseEditView();
             expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
+        })
+    })
+
+    describe('dependencies', function(){
+        it("should test for the showDependencies console output", function (){
+            console.log = jasmine.createSpy("log");
+            scope.showDependencies(scope.assignments[0]);
+            expect(console.log).toHaveBeenCalled();
+        })
+        it("should test for the hideDependencies console output", function (){
+            console.log = jasmine.createSpy("log");
+            scope.hideDependencies(scope.assignments[1]);
+            expect(console.log).toHaveBeenCalled();
         })
     })
 })
