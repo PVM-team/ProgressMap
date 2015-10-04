@@ -208,17 +208,4 @@ describe('MapController', function () {
             expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
         })
     })
-
-    describe('dependencies', function(){
-        it("should test for the showDependencies console output", function (){
-            console.log = jasmine.createSpy("log");
-            scope.showDependencies(scope.assignments[0]);
-            expect(console.log).toHaveBeenCalled();
-        })
-        it("should test for the hideDependencies console output", function (){
-            console.log = jasmine.createSpy("log");
-            scope.hideDependencies(scope.assignments[1]);
-            expect(console.log).toHaveBeenCalled();
-        })
-    })
 })
