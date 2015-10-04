@@ -47,14 +47,14 @@ def visit_course_creation_page
 end
 
 def submit_button_is_disabled
-  button = page.find("button")
+  button = page.find('button', :text => 'Submit')
 
   expect(button.visible?).to be(true)
   expect(button[:disabled]).to eq("true")
 end
 
 def submit_button_is_enabled
-  button = page.find("button")
+  button = page.find('button', :text => 'Submit')
 
   expect(button[:disabled]).to be(nil)
 end

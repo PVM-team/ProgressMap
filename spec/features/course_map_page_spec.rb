@@ -72,17 +72,17 @@ describe "Course map page", js: true do
           describe "and the button was marked as undone before" do
 
             before :each do
-              @button = find_button('2')
-              expect(@button['class']).to have_content "undone-task"
+              button = page.find('button', :text => '2')
+              expect(button['class']).to have_content "undone-task"
 
               @doers_size = @task2.doers.length
               @students_tasks_size = StudentsTask.count
 
-              @button.click
+              button.click
             end
 
             it "it is marked as done" do
-              button = find_button('2')
+              button = page.find('button', :text => '2')
 
               expect(button['class']).to have_content "done-task"
               expect(button['class']).not_to have_content "undone-task"
@@ -105,19 +105,19 @@ describe "Course map page", js: true do
           describe "and the button was marked as done before" do
 
             before :each do
-              @button = find_button('1')
-              expect(@button['class']).to have_content "done-task"
+              button = page.find('button', :text => '1')
+              expect(button['class']).to have_content "done-task"
 
               @doers_size = @task1.doers.length
               @students_tasks_size = StudentsTask.count
 
               expect(@task1.doers.include?(@user2)).to be(true)
 
-              @button.click
+              button.click
             end
 
             it "it is marked as undone" do
-              button = find_button('2')
+              button = page.find('button', :text => '2')
               expect(button['class']).to have_content "undone-task"
             end
 
@@ -178,18 +178,18 @@ describe "Course map page", js: true do
       describe "when user sets the mouse above one of the assignment buttons" do
 
         before :each do
-          expect(find_button('1')[:class]).not_to have_content('dependent')
-          expect(find_button('2')[:class]).not_to have_content('dependent')
+          expect(page.find('button', :text => '1')[:class]).not_to have_content('dependent')
+          expect(page.find('button', :text => '2')[:class]).not_to have_content('dependent')
 
-          find_button('4').hover
+          page.find('button', :text => '4').hover
         end
 
         it "the user can see the assignments this assignments depends on" do
-          expect(find_button('1')[:class]).to have_content('dependent')
-          expect(find_button('2')[:class]).to have_content('dependent')
-          expect(find_button('3')[:class]).not_to have_content('dependent')
-          expect(find_button('4')[:class]).not_to have_content('dependent')
-          expect(find_button('5')[:class]).not_to have_content('dependent')
+          expect(page.find('button', :text => '1')[:class]).to have_content('dependent')
+          expect(page.find('button', :text => '2')[:class]).to have_content('dependent')
+          expect(page.find('button', :text => '3')[:class]).not_to have_content('dependent')
+          expect(page.find('button', :text => '4')[:class]).not_to have_content('dependent')
+          expect(page.find('button', :text => '5')[:class]).not_to have_content('dependent')
         end
       end
 

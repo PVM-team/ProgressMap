@@ -70,11 +70,12 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             var borderSize = canvasWidth / 40; // 25
             var blockSize = canvasWidth / 5; // 200
 
-            var assignmentsPerLevel = canvasWidth / (2 * borderSize + blockSize) // 4
+            var assignmentsPerLevel = canvasWidth / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
 
-            var levelAmount = Math.ceil($scope.assignmentCount / assignmentsPerLevel)
+            var levelAmount = Math.ceil($scope.assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
 
-            CanvasService.initiateCanvas((2 * borderSize + blockSize) * levelAmount, canvasWidth, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
+            //100 pixeliä lisätään reunoi varten
+            CanvasService.initiateCanvas((2 * borderSize + blockSize) * levelAmount + 100, canvasWidth + 100, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
 
             for (var i = 0; i < $scope.assignmentCount; i++) {
                 var location = drawLocationForAssignment(i, assignmentsPerLevel, levelAmount, borderSize, blockSize)
@@ -89,11 +90,17 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
     }
 
     function drawLocationForAssignment(i, assignmentsPerLevel, levelAmount, borderSize, blockSize) {
-        var xStart = borderSize + (i % assignmentsPerLevel * (2 * borderSize + blockSize))
+        var level = Math.ceil((i + 1) / assignmentsPerLevel) - 1
 
-        var level = Math.ceil(levelAmount - (i / assignmentsPerLevel)) - 1
+        //50 pixeliä otettaan huomioon reunaa varten
+        if (level % 2 == 0) {
+            var xStart = 50 + borderSize + (i % assignmentsPerLevel * (2 * borderSize + blockSize))
+        } else {
+            var xStart = (50 + (assignmentsPerLevel - 1) * (blockSize + borderSize * 2)) - borderSize - (i % assignmentsPerLevel * (2 * borderSize + blockSize))
+        }
 
-        var yStart = borderSize + level * (2 * borderSize + blockSize)
+        //50 pixeliä reunaa varten
+        var yStart = 50 + borderSize + level * (2 * borderSize + blockSize)
 
         var x = getRandomPosition(xStart, blockSize)
         var y = getRandomPosition(yStart, blockSize)

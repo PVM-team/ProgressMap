@@ -19,7 +19,6 @@ describe "Course creation page", js: true do
     FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi"
 
     visit_course_creation_page
-    @button = page.find("button")
   end
 
   after :each do
@@ -280,12 +279,14 @@ def fill_last_name_with(last_name)
 end
 
 def submit_button_is_disabled
-  expect(@button.visible?).to be(true)
-  expect(@button[:disabled]).to eq("true")
+  button = page.find('button', :text => 'Submit')
+  expect(button.visible?).to be(true)
+  expect(button[:disabled]).to eq("true")
 end
 
 def submit_button_is_enabled
-  expect(@button[:disabled]).to be(nil)
+  button = page.find('button', :text => 'Submit')
+  expect(button[:disabled]).to be(nil)
 end
 
 def resultview_is_empty
