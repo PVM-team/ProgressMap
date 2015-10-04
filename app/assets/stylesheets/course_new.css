@@ -1,3 +1,9 @@
+#mapElements {
+	position: relative;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 .small-top-margin {
 	margin-top: 8px; 
 }

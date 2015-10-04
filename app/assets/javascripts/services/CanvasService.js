@@ -22,7 +22,7 @@ ProgressApp.service('CanvasService', function () {
 
     function setCanvasBGColor(bgColor, height, width) {
         context.fillStyle = bgColor;
-        context.fillRect(0, 0, height, width);
+        context.fillRect(0, 0, width, height);
     };
 
     function distance(a, b){
