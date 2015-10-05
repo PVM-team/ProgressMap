@@ -5,7 +5,12 @@ script:
 - bundle exec rake db:migrate --trace
 - RAILS_ENV=test bundle exec rake db:migrate --trace
 - bundle exec rake db:test:prepare
-- bundle exec rspec -fd spec/
+- bundle exec rspec -fd spec/features/course_creation_page_spec.rb
+- bundle exec rspec -fd spec/features/course_editing_page_spec.rb
+- bundle exec rspec -fd spec/features/course_map_page_spec.rb
+- bundle exec rspec -fd spec/features/stories/sprint1/as_a_student_I_want_to_see_my_own_progress_spec.rb
+- bundle exec rspec -fd spec/features/stories/sprint2/as_a_teacher_I_want_to_create_a_course_spec.rb
+- bundle exec rspec -fd spec/models
 - karma start karma.conf.js --single-run
 
 deploy:

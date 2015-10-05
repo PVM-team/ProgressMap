@@ -87,10 +87,10 @@ describe "Course map page", js: true do
               expect(button['class']).to have_content "done-task"
               expect(button['class']).not_to have_content "undone-task"
             end
-
-            it "the amount of doers associated with that assignment is incremented by 1" do
-              check_that_amount_of_doers_of_assignment_matches_with_text(@task2, (@doers_size + 1).to_s)
-            end
+#            not a visible feature now
+#            it "the amount of doers associated with that assignment is incremented by 1" do
+#              check_that_amount_of_doers_of_assignment_matches_with_text(@task2, (@doers_size + 1).to_s)
+#            end
 
             it "a new StudentsTask between @user2 and the assignment is created" do
               task2 = Assignment.find(@task2.id)
@@ -120,10 +120,10 @@ describe "Course map page", js: true do
               button = find_button('2')
               expect(button['class']).to have_content "undone-task"
             end
-
-            it "the amount of doers associated with that assignment is decremented by 1" do
-              check_that_amount_of_doers_of_assignment_matches_with_text(@task1, (@doers_size - 1).to_s)
-            end
+#             not a feature now
+#            it "the amount of doers associated with that assignment is decremented by 1" do
+#              check_that_amount_of_doers_of_assignment_matches_with_text(@task1, (@doers_size - 1).to_s)
+#            end 
 
             it "the StudentsTask between @user2 and the assignment is deleted" do
               task1 = Assignment.find(@task1.id)
@@ -136,44 +136,45 @@ describe "Course map page", js: true do
           end
 				end
   		end
+#  not a feature anymore
+#
+# 		it "user can see, how many participants have completed each assignment" do
+#  			amounts_of_doers = page.all("label", :text => '1')
+#
+#  			expect(amounts_of_doers.length).to be(4)	# tarkistaa, onko tiedostossa jossain <label ...>1</label>
+#  			enumerator = amounts_of_doers.each
+#  				
+#  			for i in 1..4
+#  				elem = enumerator.next
+#  				style = elem[:style]
+#
+#  				same_style_found = false
+#
+#  				@course.assignments.each do |assignment|
+#  					assignment_style = style_by_assignment(assignment)
 
-  		it "user can see, how many participants have completed each assignment" do
-  			amounts_of_doers = page.all("label", :text => '1')
+# 					same_style_found = true if style === assignment_style
+#  				end
+#  				expect(same_style_found).to be(true)
 
-  			expect(amounts_of_doers.length).to be(4)	# tarkistaa, onko tiedostossa jossain <label ...>1</label>
-  			enumerator = amounts_of_doers.each
-  				
-  			for i in 1..4
-  				elem = enumerator.next
-  				style = elem[:style]
+#  				i = i + 1
+#  			end
 
-  				same_style_found = false
+#  			same_style_found = false
 
-  				@course.assignments.each do |assignment|
-  					assignment_style = style_by_assignment(assignment)
+#  			amounts_of_doers = page.all("label", :text => '2')
+#  			expect(amounts_of_doers.length).to be(1)
 
-  					same_style_found = true if style === assignment_style
-  				end
-  				expect(same_style_found).to be(true)
+# 			style = amounts_of_doers.each.next[:style]
 
-  				i = i + 1
-  			end
+#  			@course.assignments.each do |assignment|
+#  				assignment_style = style_by_assignment(assignment)
 
-  			same_style_found = false
+#  				same_style_found = true if style === assignment_style
+#  			end
 
-  			amounts_of_doers = page.all("label", :text => '2')
-  			expect(amounts_of_doers.length).to be(1)
-
-  			style = amounts_of_doers.each.next[:style]
-
-  			@course.assignments.each do |assignment|
-  				assignment_style = style_by_assignment(assignment)
-
-  				same_style_found = true if style === assignment_style
-  			end
-
-  			expect(same_style_found).to be(true)
-      end
+#  			expect(same_style_found).to be(true)
+#      end
   	end
 end
 
