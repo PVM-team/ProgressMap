@@ -17,17 +17,17 @@ class CoursesController < ApplicationController
 
     def create
         @course = Course.new(course_params)
-        assignment_count = params[:assignment_count]
+        assignments = params[:assignments]
         participants = params[:participants]
 
         begin
             validate_course_name
-            validate_assignment_count(assignment_count)
+            validate_assignment_count(assignments.length)
 
         rescue ValidationError => e # What now?
 
         else	# Validations OK
-            try_to_create_course(assignment_count, participants)
+            try_to_create_course(assignments, participants)
         end
 
         render json: @course
@@ -52,19 +52,16 @@ class CoursesController < ApplicationController
             raise ValidationError.new("Invalid course name: " + @course.name) if @course.name.length < 2
         end
 
-        def validate_assignment_count(count)
-            raise ValidationError.new("Invalid assignment count: " + count) if  count < 1 or count > 500
+        def validate_assignment_count(amount)
+            raise ValidationError.new("Invalid amount of assignments: " + amount) if  amount < 1 or amount > 500
         end
 
-        def try_to_create_course(count, participants)
+        def try_to_create_course(assignments, participants)
 
             if @course.save
 
-                for i in 1..count
-                    assignment = Assignment.new number: i
-                    assignment.location = (Location.create x: i*25, y: i*25)
-
-                    @course.assignments << assignment
+                for i in 0..assignments.length - 1
+                    add_assignment_to_course(assignments[i])
                 end
 
                 if participants
@@ -74,5 +71,20 @@ class CoursesController < ApplicationController
                     end
                 end
             end
-        end	
+        end
+
+        def add_assignment_to_course(assignment_json)
+            location_json = assignment_json[:location]
+            dependencies_json = assignment_json[:dependencies]
+
+            assignment = Assignment.create number: assignment_json[:number]
+            assignment.location = (Location.create x: location_json[:x], y: location_json[:y])
+
+            for i in 0..dependencies_json.length - 1
+                dependency = Assignment.find_by id: dependencies_json[i][:id]
+                assignment.dependencies << dependency if dependency
+            end
+
+            @course.assignments << assignment
+        end
 end

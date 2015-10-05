@@ -11,8 +11,8 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
 
         var newCourse = {
             name: $scope.name,
-            assignment_count: $scope.assignmentCount,
-            participants: $scope.participants
+            participants: $scope.participants,
+            assignments: $scope.assignments
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {

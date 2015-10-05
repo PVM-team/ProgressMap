@@ -2,10 +2,6 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.buttonClicked = false;
 
-    //creates a canvas with given height and width, parent div-element and given background color
-    CanvasService.initiateCanvas(1000, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
-    /* väri + läpinäkyvyys */
-
     //korvataan joskus käyttäjän valintaruudulla?
     if (!StateService.getCurrentUser()) {
         StateService.setCurrentUser({id: 2})
@@ -30,6 +26,18 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         $scope.currentUser = data["current_user"][0]
         setDoneAssignments();
+
+
+        var canvasWidth = 1000;
+        var borderSize = canvasWidth / 40; // 25
+        var blockSize = canvasWidth / 5; // 200
+
+        var assignmentsPerLevel = canvasWidth / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
+
+        var levelAmount = Math.ceil($scope.assignments.length / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
+
+        //100 pixeliä lisätään reunoi varten
+        CanvasService.initiateCanvas((2 * borderSize + blockSize) * levelAmount + 100, canvasWidth + 100, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
 
         CanvasService.drawSmoothPaths(getLocations())
     })
