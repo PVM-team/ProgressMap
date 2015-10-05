@@ -5,7 +5,7 @@ ProgressApp.service('CanvasService', function () {
 
     var smoothConfig = {
         method: 'lanczos',
-        clip: 'zero',
+        clip: 'clamp',
         lanczosFilterSize: 10,
         cubicTension: 0
     };

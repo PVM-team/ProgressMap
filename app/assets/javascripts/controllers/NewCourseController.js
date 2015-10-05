@@ -78,10 +78,11 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             CanvasService.initiateCanvas((2 * borderSize + blockSize) * levelAmount + 100, canvasWidth + 100, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
 
             var direction = "left"; // asetetaan directioniksi 'left', joka vaihtuu heti 'directionOfCurve' funktiossa, koska i % assignmentsPerLevel = 0.
+            var location = null;
 
             for (var i = 0; i < $scope.assignmentCount; i++) {
                 var direction = directionOfCurve(direction, i, assignmentsPerLevel);
-                var location = drawLocationForAssignment(i, assignmentsPerLevel, borderSize, blockSize, direction, levelAmount);
+                location = drawLocationForAssignment(i, assignmentsPerLevel, borderSize, blockSize, direction, levelAmount, location);
 
                 var assignment = {'number': i + 1, 'location': location, 'doers': {}, 'dependencies': {} };
                 $scope.assignments.push(assignment);
@@ -90,14 +91,32 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         }
     }
 
-    function drawLocationForAssignment(i, assignmentsPerLevel, borderSize, blockSize, direction, levelAmount) {
+    function drawLocationForAssignment(i, assignmentsPerLevel, borderSize, blockSize, direction, levelAmount, lastLocation) {
         var xStart = defineXStart(i, assignmentsPerLevel, borderSize, blockSize, direction)
         var yStart = defineYStart(i, assignmentsPerLevel, borderSize, blockSize, levelAmount)
 
-        var x = getRandomPosition(xStart, blockSize)
-        var y = getRandomPosition(yStart, blockSize)
+        do {
+            var x = getRandomPosition(xStart, blockSize)
+            var y = getRandomPosition(yStart, blockSize)
 
-        return {'x': x, 'y': y};
+            var location = {'x': x, 'y': y};
+        } while (! drawnLocationValid(location, lastLocation));
+
+        return location;
+    }
+
+    // ei poisteta tätä metodia turhaan. voidaan muokata myöhemmin validointia paremmaksi.
+
+    function drawnLocationValid(location, lastLocation) {
+        if (lastLocation) {
+            return distance(location, lastLocation) >= 120;
+        }
+
+        return true;
+    }
+
+    function distance(location1, location2) {
+        return Math.sqrt(Math.pow(location1.x - location2.x, 2) + Math.pow(location1.y - location2.y, 2));
     }
 
     function defineXStart(i, assignmentsPerLevel, borderSize, blockSize, direction) {
@@ -131,7 +150,7 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         }        
     }
 
-    function getRandomPosition(start, blockSize) {
+    function getRandomPosition(start, blockSize, lastLocation) {
         return Math.floor((Math.random() * blockSize) + start);
     }
 
