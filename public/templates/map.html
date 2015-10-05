@@ -12,15 +12,6 @@
         </tr>
     </table>
 </div>
-<div>
-    <table>
-        <tr ng-repeat="a in assignments">
-            <br>
-            <td> {{ a.number }}</td>
-            <td> {{ a.dependencies}}</td>
-        </tr>
-    </table>
-</div>
 
 <br>
 
@@ -37,12 +28,12 @@
 <div id="mapElements" style="position: relative">
 
     <div ng-repeat="assignment in assignments">
-        <button ng-dblclick="return false;" ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
+        <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
                 ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);"
                 ng-click="markAssignmentAsDone(assignment)" class="button undone-task"
                 style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
         </button>
-        <button ng-dblclick="return false;" ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
+        <button  ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
                 ng-mouseleave="hideDependencies(assignment)" ng-if="assignmentCompleted(assignment);"
                 ng-click="markAssignmentAsUndone(assignment)" class="button done-task"
                 style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
@@ -51,7 +42,7 @@
     </div>
 </div>
 
-<div id="actionMapElements" style="position: relative">
+<div ng-if="actionMap" id="actionMapElements" style="position: relative">
     <div ng-repeat="assignment in assignments">
         <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)"
                 class="button action-button"

@@ -1,5 +1,5 @@
 ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
-
+    $scope.actionMap = false;
     $scope.buttonClicked = false;
     $scope.studentsOnMap;
     var assignmentCount = []
