@@ -23,7 +23,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         if (!validRequest(data)) {
             $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-            return;
+                return;
         }
 
         $scope.course = data["course"][0]
@@ -38,10 +38,10 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         CanvasService.drawSmoothPaths(assignmentLocations)
 
-        //pöhinä-canvas
-        CanvasService.initiateCanvas(1000, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50")
-        CanvasService.drawSmoothPaths(assignmentLocations)
-        placeStudents();
+            //pöhinä-canvas
+            CanvasService.initiateCanvas(1000, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50")
+            CanvasService.drawSmoothPaths(assignmentLocations)
+            placeStudents();
     })
 
     function placeStudents() {
@@ -51,10 +51,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
         for (var i = 0; i < $scope.participants.length; i++) {
             var lastAssignmentDone = getLatestAssignment($scope.participants[i]);
-            assignmentCount[lastAssignmentDone.number] += 1;
-            var x = lastAssignmentDone.location.x + 25 * (assignmentCount[lastAssignmentDone.number] - 1);
-            students.push({id: $scope.participants[i].id, x: x, y: lastAssignmentDone.location.y});
-        }
+            if (lastAssignmentDone){
+                assignmentCount[lastAssignmentDone.number] += 1;
+
+                var x = lastAssignmentDone.location.x + 25 * (assignmentCount[lastAssignmentDone.number] - 1);
+                students.push({id: $scope.participants[i].id, x: x, y: lastAssignmentDone.location.y});
+            }}
         $scope.studentsOnMap = students;
     }
 
@@ -84,12 +86,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.moveToCourseCreationView = function () {
         StateService.setCurrentUser($scope.currentUser)
-        $location.path("/course/new")
+            $location.path("/course/new")
     }
 
     $scope.moveToCourseEditView = function () {
         StateService.setCurrentCourse($scope.course)
-        $location.path('/course/' + $scope.course.id + '/edit')
+            $location.path('/course/' + $scope.course.id + '/edit')
     }
 
     function findAssignmentById(id) {
@@ -129,9 +131,9 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         httpService.postData('students_tasks', data).then(function (data) {
             $scope.done_assignments.push(assignment)
-            assignment.doers.push($scope.currentUser)
+                assignment.doers.push($scope.currentUser)
 
-            $scope.buttonClicked = false;
+                $scope.buttonClicked = false;
         })
     }
 
@@ -145,18 +147,18 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
             var i = $scope.done_assignments.indexOf(assignment)
-            removeValueFromList($scope.done_assignments, i)
+                removeValueFromList($scope.done_assignments, i)
 
-            i = $scope.assignments.indexOf(assignment)
-            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
+                i = $scope.assignments.indexOf(assignment)
+                var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
 
-            removeValueFromList($scope.assignments[i].doers, j)
+                removeValueFromList($scope.assignments[i].doers, j)
 
-            $scope.buttonClicked = false;
+                $scope.buttonClicked = false;
         })
     }
 
-//extracts assignment locations into an array for use when drawing the course path
+    //extracts assignment locations into an array for use when drawing the course path
     function getLocations() {
         var locations = []
 
@@ -203,7 +205,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         list.splice(index, 1)
     }
 
-// $scope.currentUser ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
+    // $scope.currentUser ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {
