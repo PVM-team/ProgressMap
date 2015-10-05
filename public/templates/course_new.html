@@ -18,6 +18,10 @@
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$dirty">
 				Number should be between 1-500
 			</span>
+
+			<div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0" style="text-align: center">
+				<button class="shuffle-button"  ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
+			</div>
 		</div>
 		<div id="mapElements" class="col-xs-12">
 
@@ -28,6 +32,7 @@
 				<label class="amount-of-doers" style="top:{{assignment.location.y + 5}}px; left:{{assignment.location.x + 25}}px">{{assignment.doers.length}}</label>
 			</div>
 		</div>
+
 
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4"> Participants </label>
