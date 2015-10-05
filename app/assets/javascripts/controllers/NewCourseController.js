@@ -47,7 +47,10 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         $scope.assignments = [];
         removeOriginalCanvas();
 
+        var shuffleButtonStyle = 'none';
+
         if ($scope.assignmentCount) {
+            shuffleButtonStyle = 'inline';
 
             CanvasService.initiateCanvas($scope.assignmentCount, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
 
@@ -61,6 +64,8 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             }
             CanvasService.drawSmoothPaths($scope.assignments);
         }
+
+        setShuffleButtonDisplay(shuffleButtonStyle);
     }
 
     function removeOriginalCanvas() {
@@ -69,5 +74,9 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         if (canvasArray && canvasArray[0]) {
             canvasArray[0].remove();
         }        
+    }
+
+    function setShuffleButtonDisplay(style) {
+        document.getElementById("shuffle-button").style.display = style;
     }
 })

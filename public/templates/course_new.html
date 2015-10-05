@@ -19,15 +19,15 @@
 				Number should be between 1-500
 			</span>
 
-			<div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0" style="text-align: center">
-				<button class="shuffle-button"  ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
+			<div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0">
+				<button id="shuffle-button" ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
 			</div>
 		</div>
 		<div id="mapElements" class="col-xs-12">
 
 			<div ng-repeat="assignment in assignments">
 		
-				<button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number }}</button>
+				<button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
 
 				<label class="amount-of-doers" style="top:{{assignment.location.y + 5}}px; left:{{assignment.location.x + 25}}px">{{assignment.doers.length}}</label>
 			</div>
