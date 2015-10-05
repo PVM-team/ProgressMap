@@ -31,7 +31,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         $scope.participants = data["participants"]
 
         $scope.currentUser = data["current_user"][0]
-        $scope.done_assignments = getDoneAssignments($scope.currentUser);
+        setDoneAssignments();
 
         var assignmentLocations = getLocations();
 
@@ -64,15 +64,14 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         for (var i = 0; i < $scope.assignments.length; i++) {
 
             var assignmentInfo = $scope.assignments[i].students_tasks;
+
             for (var j = 0; j < assignmentInfo.length; j++) {
                 if (assignmentInfo[j].user_id == user.id){
                     if (!latestAssignment){
-                        var mul = $scope.assignments[i].number;
-                        latestAssignment = $scope.assignments[i];
+                        latestAssignment = {location: $scope.assignments[i].location, number: $scope.assignments[i].number, timestamp: assignmentInfo[j].timestamp};
 
                     } else if (latestAssignment.timestamp < assignmentInfo[j].timestamp){
-
-                        latestAssignment = $scope.assignments[i];
+                        latestAssignment = {location: $scope.assignments[i].location, number: $scope.assignments[i].number, timestamp: assignmentInfo[j].timestamp};
                     }
                 }
 
@@ -167,17 +166,17 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         return locations
     }
 
-    function getDoneAssignments(user) {
+    function setDoneAssignments() {
         var done_assignments = [];
 
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers;
 
-            if (indexOfValueWithId(doers, user.id) >= 0) {
+            if (indexOfValueWithId(doers, $scope.currentUser.id) >= 0) {
                 done_assignments.push($scope.assignments[i])
             }
         }
-        return done_assignments;
+        $scope.done_assignments = done_assignments;
     }
 
     $scope.viewAsStudent = function (user) {
@@ -188,7 +187,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
             document.getElementById("errorMsg").innerHTML = err
         }
 
-        $scope.done_assignments = getDoneAssignments($scope.currentUser);
+        setDoneAssignments();
     }
 
 
