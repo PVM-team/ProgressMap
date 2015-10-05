@@ -3,6 +3,14 @@ ProgressApp.service('CanvasService', function () {
     var canvas;
     var context;
 
+    var direction;
+    //var direction = left; // direction vaihtuu joka arpomisen jälkeen
+    
+    var borderSize;
+    var blockSize;
+    var assignmentsPerLevel;
+    var levelAmount;
+
     var smoothConfig = {
         method: 'lanczos',
         clip: 'clamp',
@@ -10,23 +18,146 @@ ProgressApp.service('CanvasService', function () {
         cubicTension: 0
     };
 
+    this.initiateCanvas = function (assignmentCount, width, div, bgColor) {
+        canvas = document.createElement('canvas');
+
+        borderSize = width / 40; // 25
+        blockSize = width / 5; // 200
+        assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
+        levelAmount = Math.ceil(assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
+
+        direction = "left"; // suunta vaihtuu heti drawLocationForAssignment() funktion alussa.
+
+        // if (levelAmount % 2 == 0) {
+        //    changeDirectionOfCurve();   // direction vaihtuu joka arpomisen jälkeen
+        //}
+
+        canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
+        canvas.width = width + 100; // 100 pikseliä lisää reunoja varten
+        placeCanvasInDiv(div);
+        setContext();
+        setCanvasBGColor(bgColor);
+
+        return canvas;
+    }
+
     function placeCanvasInDiv(div) {
         if (div) {
             div.appendChild(canvas);
         }
-    };
+    }
 
     function setContext(){
         context = canvas.getContext("2d");
     }
 
-    function setCanvasBGColor(bgColor, height, width) {
+    function setCanvasBGColor(bgColor) {
         context.fillStyle = bgColor;
-        context.fillRect(0, 0, width, height);
-    };
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
-    function distance(a, b){
+
+    this.drawLocationForAssignment = function(i, prevLocation) {
+        if (i % assignmentsPerLevel == 0) {
+            changeDirectionOfCurve();
+        }
+
+        var xStart = defineXStart(i, direction);
+        var yStart = defineYStart(i);
+
+        do {
+            var x = getRandomPosition(xStart);
+            var y = getRandomPosition(yStart);
+
+            var location = {'x': x, 'y': y};
+        } while (! drawnLocationValid(location, prevLocation));
+
+        return location;
+    }
+
+    function changeDirectionOfCurve() {
+        if (direction === "left") {
+            direction = "right";
+            return;
+        }
+        direction = "left";
+    }
+
+    function defineXStart(i, direction) {
+        //50 pixeliä otettaan huomioon reunaa varten
+        var border = 50 + 2 * borderSize;
+        var relativeStartingPosition = (i % assignmentsPerLevel) * (2 * borderSize + blockSize);
+
+        if (direction === "right") {
+            return border + relativeStartingPosition;
+        }
+        else if (direction === "left") {
+            return border - relativeStartingPosition + (assignmentsPerLevel - 1) * (2 * borderSize + blockSize);
+        }
+
+        throw "Direction value not defined";
+    }
+
+    function defineYStart(i) {
+        var level = Math.ceil(levelAmount - (i / assignmentsPerLevel)) - 1;
+
+        // 50 pikselin lisäreunus ylös
+
+        return 50 + 2 * borderSize + level * (2 * borderSize + blockSize);
+    }
+
+    function getRandomPosition(start) {
+        return Math.floor((Math.random() * blockSize) + start);
+    }
+
+    // ei poisteta tätä metodia turhaan. voidaan muokata myöhemmin validointia paremmaksi.
+
+    function drawnLocationValid(location, prevLocation) {
+        if (prevLocation) {
+            return distanceBetweenLocations(location, prevLocation) >= 120;
+        }
+
+        return true;
+    }
+
+    function distanceBetweenLocations(location1, location2) {
+        return distance([location1.x, location1.y], [location2.x, location2.y]);
+    }
+
+    function distance(a, b) {   // kutsutaan myös toisessa algoritmissa joka piirtää viivat pisteiden välille
         return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+    }
+
+
+    this.drawSmoothPaths = function(assignments) {
+        var locations = getLocations(assignments);
+
+        var lastIndex = locations.length - 1;
+            
+        if (locations.length >= 2) {
+            context.beginPath();
+            context.moveTo.apply(context, (locations[0]));
+            
+            for (var i = 0; i < lastIndex;  i++){
+                drawSmoothCurve(i, locations);
+            }
+                
+            context.lineWidth = 14;
+            context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
+            context.lineJoin = 'round';
+            context.lineCap = 'round';
+
+            return context.stroke();
+        }
+    }
+
+    function getLocations(assignments) {
+        var locations = [];
+
+        for (var i = 0; i < assignments.length; i++) {
+            locations.push([assignments[i].location.x, assignments[i].location.y]);
+        }
+        return locations;
     }
 
     function drawSmoothCurve(i, locations) {
@@ -50,37 +181,6 @@ ProgressApp.service('CanvasService', function () {
         }
         return context.lineTo.apply(context, s(i + 1));
     };
-
-    this.initiateCanvas = function (height, width, div, bgColor) {
-        canvas = document.createElement('canvas');
-        canvas.height = height;
-        canvas.width = width;
-        placeCanvasInDiv(div);
-        setContext();
-        setCanvasBGColor(bgColor, height, width);
-
-        return canvas;
-    }
-
-    this.drawSmoothPaths = function(locations) {
-        var lastIndex = locations.length - 1;
-            
-        if (locations.length >= 2) {
-            context.beginPath();
-            context.moveTo.apply(context, (locations[0]));
-            
-            for (var i = 0; i < lastIndex;  i++){
-                drawSmoothCurve(i, locations);
-            }
-                
-            context.lineWidth = 14;
-            context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
-            context.lineJoin = 'round';
-            context.lineCap = 'round';
-
-            return context.stroke();
-        }
-    }
 
     this.getContext = function() {
         return context;

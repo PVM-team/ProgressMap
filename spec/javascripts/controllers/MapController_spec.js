@@ -53,16 +53,12 @@ describe('MapController', function () {
 
         StateServiceMock = (function () {
             var user;
-            var course;
             return {
                 setCurrentUser: function (currentUser) {
                     user = currentUser;
                 },
                 getCurrentUser: function(){
                     return user;
-                },
-                setCurrentCourse: function(currentCourse){
-                    course = currentCourse;
                 }
             }
         })();
@@ -70,7 +66,6 @@ describe('MapController', function () {
 
 
         spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
-        spyOn(StateServiceMock, 'setCurrentCourse').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
@@ -199,13 +194,6 @@ describe('MapController', function () {
         it ('should call StateService.setCurrentUser with correct value', function(){
             scope.moveToCourseCreationView();
             expect(StateServiceMock.setCurrentUser).toHaveBeenCalledWith(scope.currentUser);
-        })
-    })
-
-    describe('moveToCourseEditView', function(){
-        it ('should call StateService.setCurrentCourse with correct value', function(){
-            scope.moveToCourseEditView();
-            expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
         })
     })
 })

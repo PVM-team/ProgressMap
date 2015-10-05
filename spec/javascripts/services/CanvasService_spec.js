@@ -8,7 +8,7 @@ describe('CanvasService', function () {
             service = _CanvasService_
         });
 
-        canvas = service.initiateCanvas(100, 200, "", "rgba(30, 85, 205, 0.50");
+        canvas = service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
     });
 
 
@@ -19,15 +19,20 @@ describe('CanvasService', function () {
         })
 
         it('sets its width and height to the values given as parameters', function () {
-            expect(canvas.width).toBe(200)
-            expect(canvas.height).toBe(100)
+            var expectedWidth = 1000 + 100;
+            var expectedHeight = 7 * 250 + 100;
+
+            expect(canvas.width).toBe(expectedWidth);
+            expect(canvas.height).toBe(expectedHeight)
         })
     })
 
-
     it('drawSmoothPaths modifies the context of canvas', function () {
-        var locations = [ [100, 250], [330, 180], [500, 130] ];
-        service.drawSmoothPaths(locations);
+        var assignments = [{'location': {'x': 100, 'y': 250}},
+                           {'location': {'x': 330, 'y': 180}},
+                           {'location': {'x': 500, 'y': 130}}];
+
+        service.drawSmoothPaths(assignments);
 
         var context = service.getContext();
 

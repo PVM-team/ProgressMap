@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
+ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService, StateService) {
 
     $scope.buttonClicked = false;
 
@@ -27,19 +27,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         $scope.currentUser = data["current_user"][0]
         setDoneAssignments();
 
-
-        var canvasWidth = 1000;
-        var borderSize = canvasWidth / 40; // 25
-        var blockSize = canvasWidth / 5; // 200
-
-        var assignmentsPerLevel = canvasWidth / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
-
-        var levelAmount = Math.ceil($scope.assignments.length / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
-
-        //100 pixeliä lisätään reunoi varten
-        CanvasService.initiateCanvas((2 * borderSize + blockSize) * levelAmount + 100, canvasWidth + 100, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50")
-
-        CanvasService.drawSmoothPaths(getLocations())
+        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.drawSmoothPaths($scope.assignments);
     })
 
     $scope.moveToCourseCreationView = function () {
@@ -48,32 +37,15 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     $scope.moveToCourseEditView = function () {
-        StateService.setCurrentCourse($scope.course)
         $location.path('/course/' + $scope.course.id + '/edit')
     }
 
-    function findAssignmentById(id) {
-        for (var i = 0; i < $scope.assignments.length; i++) {
-            if ($scope.assignments[i].id == id) {
-                return $scope.assignments[i];
-            }
-        }
-    }
-
     $scope.showDependencies = function (assignment) {
-        for (var i = 0; i < assignment.dependencies.length; i++) {
-            var dependent = findAssignmentById(assignment.dependencies[i].id);
-
-            $("button:contains('" + dependent.number + "')").closest('button').addClass("dependent");
-        }
+        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
     }
 
     $scope.hideDependencies = function (assignment) {
-        for (var i = 0; i < assignment.dependencies.length; i++) {
-            var dependent = findAssignmentById(assignment.dependencies[i].id);
-
-            $("button:contains('" + dependent.number + "')").closest('button').removeClass("dependent");
-        }
+        AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
     }
 
     $scope.markAssignmentAsDone = function (assignment) {
@@ -111,16 +83,6 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
             $scope.buttonClicked = false;
         })
-    }
-
-    //extracts assignment locations into an array for use when drawing the course path
-    function getLocations() {
-        var locations = []
-
-        for (var i = 0; i < $scope.assignments.length; i++) {
-            locations.push([$scope.assignments[i].location.x, $scope.assignments[i].location.y])
-        }
-        return locations
     }
 
     function setDoneAssignments() {
