@@ -1,7 +1,7 @@
 describe('NewCourseController', function () {
     var controller, scope;
     var httpServiceMock;
-    var fakeParticipant
+    var fakeParticipant;
 
     beforeEach(function () {
         module('ProgressApp');
@@ -38,8 +38,11 @@ describe('NewCourseController', function () {
         });
 
         scope.name = "Test";
-        scope.assignmentCount = 5;
         scope.participants = [];
+        scope.assignments = [];
+
+        scope.assignmentCount = 3;
+        scope.placeAssignmentButtonsOnCanvas()
 
         scope.addParticipant(fakeParticipant)
     })
@@ -70,7 +73,7 @@ describe('NewCourseController', function () {
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignment_count: 5, participants: [fakeParticipant]});
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: scope.assignments, participants: [fakeParticipant]});
         })
 
     })
