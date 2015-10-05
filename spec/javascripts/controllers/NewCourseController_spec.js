@@ -41,7 +41,7 @@ describe('NewCourseController', function () {
         scope.participants = [];
         scope.assignments = [];
 
-        scope.assignmentCount = 3;
+        scope.assignmentCount = 8;
         scope.placeAssignmentButtonsOnCanvas()
 
         scope.addParticipant(fakeParticipant)
@@ -51,6 +51,20 @@ describe('NewCourseController', function () {
         it ('should set scope.allUsers to what httpService.addData returns minus users in scope.participants', function(){
             expect(scope.allUsers.length).toBe(1);
             expect(scope.allUsers.indexOf(fakeParticipant)).toBe(-1)
+        })
+
+        it ('should have correct number of assignments', function(){
+            expect(scope.assignments.length).toBe(8);
+        })
+
+        it ('should have correct locations for assignments', function(){
+            var ass1 = scope.assignments[0];
+            var ass5 = scope.assignments[4];
+            var ass4 = scope.assignments[3];
+            var ass8 = scope.assignments[7];
+            expect(ass5.location.y).toBeLessThan(ass1.location.y);
+            expect(ass1.location.x).toBeLessThan(ass4.location.x);
+            expect(ass8.location.x).toBeLessThan(ass5.location.x);
         })
     })
 
