@@ -126,6 +126,11 @@ describe('MapController', function () {
         it('sets scope.done_assignments to those of scope.currentUser', function(){
             expect(scope.done_assignments.length).toBe(1);
         })
+        it('sets scope.studentsOnMap to include the latest done task of each student', function(){
+            expect(scope.studentsOnMap.length).toBe(2);
+            expect(scope.studentsOnMap[0].id).toBe(1);
+            expect(scope.studentsOnMap[1].id).toBe(2);
+        })
     })
 
 
