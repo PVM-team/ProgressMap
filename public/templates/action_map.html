@@ -1,0 +1,27 @@
+
+<h2>Course: <i>{{ course.name }}</i></h2>
+<button ng-click="goToNormalMap()"> Go to normal map </button>
+<h3>Participants</h3>
+
+<div>
+    <table>
+        <tr ng-repeat="p in participants">
+            <td> {{ p.firstName }}</td>
+            <td> {{ p.lastName }}</td>
+            <td> {{ p.id }}</td>
+        </tr>
+    </table>
+</div>
+<div id="actionMapElements" style="position: relative">
+    <div ng-repeat="assignment in assignments">
+        <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)"
+                class="button action-button"
+                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number
+            }}
+        </button>
+    </div>
+
+    <div ng-repeat="student in studentsOnMap">
+        <button class="student-button" style="top:{{student.y - 50}}px; left:{{student.x}}px">{{student.id}}</button>
+    </div>
+</div>
