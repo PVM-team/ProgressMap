@@ -21,7 +21,9 @@
         </button>
     </div>
 
-    <div ng-repeat="student in studentsOnMap | orderBy:'-timestamp'| limitTo:5">
-        <button class="student-button" style="top:{{student.y - 50}}px; left:{{student.x}}px">{{student.id}}</button>
+    <div ng-repeat="a in latestDoersForAssignments">
+        <div ng-repeat="b in a.listOfStudentLocations | orderBy:'-timestamp' | limitTo:5">
+            <button class="student-button" style="top:{{b.y}}px; left:{{b.x}}px">{{b.student.id}}</button>
+            </div>
     </div>
 </div>

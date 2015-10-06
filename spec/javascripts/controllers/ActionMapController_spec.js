@@ -98,10 +98,16 @@ describe('actionMapController', function () {
             expect(scope.participants.length).toBe(3);
             expect(scope.participants[0].id).toBe(1);
         })
-        it('sets scope.studentsOnMap to include the latest done task of each student', function(){
-            expect(scope.studentsOnMap.length).toBe(2);
-            expect(scope.studentsOnMap[0].id).toBe(1);
-            expect(scope.studentsOnMap[1].id).toBe(2);
+        it('sets scope.latestDoersForAssignments to include the students on that task', function(){
+            //student with id 2 is the latest to do task with number 1
+            expect(scope.latestDoersForAssignments[1].listOfStudentLocations.length).toBe(1);
+            expect(scope.latestDoersForAssignments[1].listOfStudentLocations[0].student.id).toBe(2);
+
+            expect(scope.latestDoersForAssignments[2].listOfStudentLocations.length).toBe(0);
+
+            //student with id 1 is the latest to do task with number 3
+            expect(scope.latestDoersForAssignments[3].listOfStudentLocations.length).toBe(1);
+            expect(scope.latestDoersForAssignments[3].listOfStudentLocations[0].student.id).toBe(1);
         })
     })
     
