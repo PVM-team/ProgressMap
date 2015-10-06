@@ -13,9 +13,9 @@ describe('EditCourseController', function () {
 
             data.course = [{"id": 1, "name": 'ohtu'}];
             data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}]},
-            {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id": 1}]},
-            {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}]}];
+                [{"id": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
+            {"id": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
+            {"id": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]}];
             data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
             data.all_users = [{"id": 1}, {"id": 2}, {"id": 3}, {"id": 4}, {"id": 5}, {"id": 6}];
 
@@ -49,14 +49,14 @@ describe('EditCourseController', function () {
         })();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, $location) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
             controller = $controller('EditCourseController', {
                 $scope: scope,
                 $routeParams: $routeParams,
-                httpService: httpServiceMock,
+                httpService: httpServiceMock
             });
 
         });
@@ -76,7 +76,7 @@ describe('EditCourseController', function () {
 
     describe('deleteAssignment', function () {
 
-        it('should remove assignment from course if it contains the assignment', function () {
+        it('should remove assignment from course', function () {
             var amount = scope.assignments.length;
             scope.deleteAssignment(scope.assignments[0]);
             expect(scope.assignments.length).toBe(amount - 1);

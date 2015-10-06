@@ -59,7 +59,7 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             for (var i = 0; i < $scope.assignmentCount; i++) {
                 location = CanvasService.drawLocationForAssignment(i, location);
 
-                var assignment = {'number': i + 1, 'location': location, 'doers': {}, 'dependencies': {} };
+                var assignment = {'number': i + 1, 'location': location, 'dependencies': [] };
                 $scope.assignments.push(assignment);
             }
             CanvasService.drawSmoothPaths($scope.assignments);

@@ -1,16 +1,26 @@
 class AssignmentsController < ApplicationController
 
 	def create
-		@course = Course.find(params[:course_id])
+		course = Course.find(params[:course_id])
+		location_json = params[:location]
+		number = params[:number]
+		dependencies_json_array = params[:dependencies]
+
 		@assignment = []
 
-		if @course
-			location = define_location_of_the_inserted_assignment(@course)
-			number = define_number_of_the_inserted_assignment(@course)
+		if course
+			assignment = Assignment.create number: number
+			assignment.location = Location.create x: location_json[:x], y: location_json[:y]
 
-			assignment = Assignment.create number: number, location: location
+			if dependencies_json_array
+				dependencies_json_array.each do |dependency_json|
+					dependency = Assignment.find_by id: dependency_json[:id]
 
-			@course.assignments << assignment
+					assignment.dependencies << dependency if dependency
+				end
+			end
+
+			course.assignments << assignment
 
 			@assignment << assignment
 		end
@@ -24,34 +34,43 @@ class AssignmentsController < ApplicationController
 
 		render plain: "Assignment deleted"
 	end
-end
 
-def define_location_of_the_inserted_assignment(course)
-	location = Location.new x: 10, y: 10
+	def decrease_numbers
+		course = Course.find_by id: params[:course_id]
+		prev_location = Location.new(x: params[:location][:x], y: params[:location][:y])
 
-	last_assignment = @course.assignments[@course.assignments.length - 1]
+		number = params[:number]
 
-	if last_assignment
-		last_assignment_loc = last_assignment.location
+		assignments = course.assignments.sort_by {|a| a.number }
 
-		if last_assignment_loc
-			location = Location.new x: (last_assignment_loc.x + 10), y: (last_assignment_loc.y + 10)
+		for i in number - 1..assignments.length - 1
+			assignment = assignments[i]
+
+			decrease_number(assignment)
+			prev_location = set_location_to_previous_location(assignment, prev_location)
 		end
+
+		@assignment = course.assignments
+
+		render 'assignments/show.json.jbuilder'
 	end
 
-	location
-end
+	private
 
-def define_number_of_the_inserted_assignment(course)
-	number = 1
+		def decrease_number(assignment)
+			assignment.number = assignment.number - 1
+			assignment.save
+		end
 
-	last_assignment = course.assignments[course.assignments.length - 1]
+		def set_location_to_previous_location(assignment, prev_location)
+			location = assignment.location
+			next_prev = Location.new(x: location.x, y: location.y)
 
-	if last_assignment
-		last_assignment_number = last_assignment.number
+			location.x = prev_location.x
+			location.y = prev_location.y
 
-		number = last_assignment_number + 1 if last_assignment_number
-	end
+			location.save
 
-	number
+			next_prev
+		end
 end

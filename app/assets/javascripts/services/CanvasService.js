@@ -62,6 +62,19 @@ ProgressApp.service('CanvasService', function () {
             changeDirectionOfCurve();
         }
 
+        return drawLocation(i, prevLocation);
+    }
+
+    this.locationOfNewAssignment = function(i, prevLocation) {
+        direction = "right";    // jos direction = "left", arpoo pisteet toiseen suuntaan alhaalta ylös
+
+        if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
+            changeDirectionOfCurve();
+        }
+        return drawLocation(i, prevLocation);
+    }
+
+    function drawLocation(i, prevLocation) {
         var xStart = defineXStart(i, direction);
         var yStart = defineYStart(i);
 
@@ -126,6 +139,14 @@ ProgressApp.service('CanvasService', function () {
 
     function distance(a, b) {   // kutsutaan myös toisessa algoritmissa joka piirtää viivat pisteiden välille
         return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+    }
+
+    this.lastLevelFull = function(assignmentCount) {
+        return assignmentCount % assignmentsPerLevel == 0;
+    }
+
+    this.levelHeight = function() {
+        return 2 * borderSize + blockSize;
     }
 
 

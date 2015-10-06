@@ -17,7 +17,10 @@ describe "Course editing page", js: true do
         @course = FactoryGirl.create :course, name: "Ohtuprojekti"
         @course.participants << (FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi")
 
-        @course.assignments << (FactoryGirl.create :assignment, number: 1)
+        assignment = FactoryGirl.create :assignment, number: 1
+        assignment.location = (FactoryGirl.create :location, x: 125, y: 160)
+
+        @course.assignments << assignment
     end
 
     after :each do
@@ -176,7 +179,7 @@ describe "Course editing page", js: true do
                 @assignments_initially = @course.assignments.length
 
                 expect(find('#assignmentView')).not_to have_content('Id: 2, Number: 2')
-                click_button 'Add a new assignment'   
+                click_button 'Add a new assignment'
             end
 
             it 'a new assignment is added to assignmentView' do
@@ -189,20 +192,6 @@ describe "Course editing page", js: true do
 
             it "a new assignment is added to database" do
                 expect(Course.first.assignments.length).to be(@assignments_initially + 1)
-            end
-
-            it "and the number of the added assignment is [the highest number of all course assignments] + 1" do
-                delete_buttons_enumerator = page.all("button", :text => 'Delete assignment').each
-
-                first_assignment_delete_button = delete_buttons_enumerator.next
-
-                expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
-                first_assignment_delete_button.click
-                expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
-
-                expect(find('#assignmentView')).not_to have_content('Id: 3, Number: 3')
-                click_button 'Add a new assignment'
-                expect(find('#assignmentView')).to have_content('Id: 3, Number: 3')
             end
         end
 
