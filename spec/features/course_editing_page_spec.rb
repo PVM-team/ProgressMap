@@ -38,6 +38,10 @@ describe "Course editing page", js: true do
             expect(page).to have_content "Edit course Ohtuprojekti"
         end
 
+        it "there is a canvas" do
+            page.find('canvas')
+        end
+
         it "the name of the course is shown in the course name text box" do
             input_fields = page.all("input")
             amount = input_fields.length
@@ -67,8 +71,12 @@ describe "Course editing page", js: true do
             expect(find("#resultview")).to have_content('Etunimi Sukunimi')
         end
 
-        it 'shows an assignment in assignmentView' do
+        it 'it shows an assignment in assignmentView' do
             expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
+        end
+
+        it "it shows a button related to the assignment" do
+            page.find('button', :text => '1')
         end
 
         describe "and name of the course is changed inside the course name text box" do
@@ -175,6 +183,10 @@ describe "Course editing page", js: true do
                 expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
             end
 
+            it "the added assignment is shown as a button on the map" do
+                page.find('button', :text => '2')
+            end
+
             it "a new assignment is added to database" do
                 expect(Course.first.assignments.length).to be(@assignments_initially + 1)
             end
@@ -204,6 +216,17 @@ describe "Course editing page", js: true do
 
             it "assignmentView won't contain the deleted assignment" do
                 expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
+            end
+
+            it 'the button related to the assignment is deleted' do
+                found = false
+                begin
+                    page.find('button', :text => '1')
+                    found = true
+                rescue
+                end
+
+                expect(found).to be(false)
             end
 
             it "the assignment is removed from database" do
