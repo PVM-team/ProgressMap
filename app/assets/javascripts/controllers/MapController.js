@@ -56,12 +56,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         for (var i = 0; i < assignment.dependencies.length; i++) {
             var dependent = findAssignmentById(assignment.dependencies[i].id);
             var numberOfDependentAssignment = dependent.number;
-
-            console.log(dependent.number);
-
-            console.log($("button:contains('" + numberOfDependentAssignment + "')"))
             $("button:contains('" + numberOfDependentAssignment + "')").closest('button').addClass("dependent");
-            ;
         }
 
     }
@@ -70,12 +65,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         for (var i = 0; i < assignment.dependencies.length; i++) {
             var dependent = findAssignmentById(assignment.dependencies[i].id);
             var numberOfDependentAssignment = dependent.number;
-
-            console.log(dependent.number);
-
-            console.log($("button:contains('" + numberOfDependentAssignment + "')"))
             $("button:contains('" + numberOfDependentAssignment + "')").closest('button').removeClass("dependent");
-            ;
         }
     }
 
