@@ -3,7 +3,8 @@ describe('actionMapController', function () {
     var CanvasServiceMock;
     var httpServiceMock;
     var StateServiceMock;
-
+    var location;
+   
     beforeEach(function () {
         module('ProgressApp');
 
@@ -66,8 +67,10 @@ describe('actionMapController', function () {
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService, $location) {
             scope = $rootScope.$new();
+            location = $location;
+            spyOn(location, 'path');
             controller = $controller('actionMapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
@@ -101,4 +104,11 @@ describe('actionMapController', function () {
             expect(scope.studentsOnMap[1].id).toBe(2);
         })
     })
+    
+    describe('goToNormalMap', function(){
+        it('should call location.path when function is called', function(){
+            scope.goToNormalMap();
+             expect(location.path).toHaveBeenCalledWith('/map/1');
+        })
+    });
 })
