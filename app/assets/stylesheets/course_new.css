@@ -1,3 +1,14 @@
+#mapElements {
+	position: relative;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#shuffle-button {
+	display: none;
+	text-align: center;
+}
+
 .small-top-margin {
 	margin-top: 8px; 
 }

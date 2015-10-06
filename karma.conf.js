@@ -1,7 +1,15 @@
 // Karma configuration
 // Generated on Mon Sep 14 2015 17:29:30 GMT+0300 (EEST)
 
+
+function loadAssets(page){
+    document.body.innerHTML = __html__['public/templates/course_new.html'];
+    appendCSS('app/assets/stylesheets/course_new.css');
+    appendScript('app/assets/javascripts/controllers/NewCourseController.js');
+}
+
 module.exports = function(config) {
+ loadAssets: loadAssets
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -18,7 +26,9 @@ module.exports = function(config) {
       'vendor/assets/bower_components/angular/angular.js',
       'vendor/assets/bower_components/angular-mocks/angular-mocks.js',
       'vendor/assets/bower_components/angular-route/angular-route.js',
-      'vendor/assets/bower_components/jquery/dist/jquery.js',
+      'vendor/assets/bower_components/jquery/dist/*.js',
+      'vendor/assets/bower_components/bootstrap-sass-official/assets/javascripts/*.js',
+      'app/assets/stylesheets/*.css',
       'public/**/*.html',
       'vendor/assets/bower_components/angular-resource/angular-resource.js',
       'app/assets/javascripts/**/*.js',

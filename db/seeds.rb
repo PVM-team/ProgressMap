@@ -44,15 +44,15 @@ course1.assignments << assignment7
 course1.assignments << assignment8
 course1.assignments << assignment9
 
-assignment1.location = Location.create x: 75, y: 850
-assignment2.location = Location.create x: 310, y: 795
-assignment3.location = Location.create x: 540, y: 865
-assignment4.location = Location.create x: 625, y: 685
-assignment5.location = Location.create x: 405, y: 605
-assignment6.location = Location.create x: 245, y: 735
-assignment7.location = Location.create x: 150, y: 520
-assignment8.location = Location.create x: 275, y: 405
-assignment9.location = Location.create x: 525, y: 440
+assignment1.location = Location.create x: 256, y: 664
+assignment2.location = Location.create x: 386, y: 718
+assignment3.location = Location.create x: 669, y: 634
+assignment4.location = Location.create x: 963, y: 717
+assignment5.location = Location.create x: 877, y: 428
+assignment6.location = Location.create x: 651, y: 333
+assignment7.location = Location.create x: 484, y: 357
+assignment8.location = Location.create x: 78, y: 472
+assignment9.location = Location.create x: 195, y: 162
 
 student2.assignments << assignment1
 student2.assignments << assignment2

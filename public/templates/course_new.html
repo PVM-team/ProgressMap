@@ -14,11 +14,25 @@
 
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4"> Assignments </label>
-			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="assignmentCount" type="number" ng-model="assignmentCount" required min="1" max="500">
+			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="assignmentCount" type="number" ng-model="assignmentCount" ng-change="placeAssignmentButtonsOnCanvas()" required min="1" max="500">
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$dirty">
 				Number should be between 1-500
 			</span>
+
+			<div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0">
+				<button id="shuffle-button" ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
+			</div>
 		</div>
+		<div id="mapElements" class="col-xs-12">
+
+			<div ng-repeat="assignment in assignments">
+		
+				<button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
+
+				<label class="amount-of-doers" style="top:{{assignment.location.y + 5}}px; left:{{assignment.location.x + 25}}px">{{assignment.doers.length}}</label>
+			</div>
+		</div>
+
 
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4"> Participants </label>
@@ -51,7 +65,7 @@
         		</ol>
 			</section>
 
-		</div> 
+		</div>
 	
 		<div class="col-xs-12">
 			<button class="create-course-button" ng-disabled="createCourseForm.$invalid" ng-click="createCourse();">Submit</button>

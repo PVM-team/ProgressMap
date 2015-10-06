@@ -19,7 +19,6 @@ describe "Course creation page", js: true do
     FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi"
 
     visit_course_creation_page
-    @button = page.find("button")
   end
 
   after :each do
@@ -70,7 +69,9 @@ describe "Course creation page", js: true do
   describe "when both course_name assignment_count are given valid values" do
 
     before :each do
-      fill_course_name_and_assignment_count_with('makkara', '3')
+      @assignment_count = 26
+
+      fill_course_name_and_assignment_count_with('makkara', @assignment_count.to_s)
     end
 
     it "submit button is enabled" do
@@ -102,8 +103,34 @@ describe "Course creation page", js: true do
         expect(page).to have_content 'Course: makkara'
       end
 
-      it "there is a button for one of the made assignments in that page" do
-        expect(page.find("button", :text => '1'))
+      describe "there is a button for one of the made assignments in that page" do
+
+        before :each do
+          for i in 1..@assignment_count
+            find_button(i.to_s)
+          end
+        end
+
+        it "and the buttons are located inside the 'blocks' they belong to in the canvas" do
+          direction = "left"
+
+          for i in 0..@assignment_count - 1
+            button = find_button((i + 1).to_s)
+            
+            x_loc = x_loc(button)
+            y_loc = y_loc(button)
+
+            if (i % 4 == 0)
+              if direction === 'left'
+                direction = "right"
+              else
+                direction = "left"
+              end
+            end
+
+            validate_location(x_loc, y_loc, i, @assignment_count, direction)
+          end 
+        end
       end
     end
 
@@ -259,6 +286,44 @@ describe "Course creation page", js: true do
       end
     end
   end
+
+  describe "when assignmentCount is filled with a valid value" do
+
+    before :each do
+      found = false
+
+      begin
+        page.find('canvas')
+        found = true
+      rescue
+      end
+
+      expect(found).to be(false)
+
+      begin
+        find_button('Generate new map')
+        found = true
+      rescue
+      end
+
+      expect(found).to be(false)
+      fill_in('assignmentCount', with: '7')
+    end
+
+    it "the canvas is displayed on the page" do
+      page.find("canvas")
+    end
+
+    it "buttons for assignments are created" do
+      for i in 1..7
+        find_button(i.to_s)
+      end
+    end
+
+    it "Generate new map button is displayed" do
+        find_button('Generate new map')
+    end
+  end
 end
 
 def visit_course_creation_page
@@ -280,12 +345,14 @@ def fill_last_name_with(last_name)
 end
 
 def submit_button_is_disabled
-  expect(@button.visible?).to be(true)
-  expect(@button[:disabled]).to eq("true")
+  button = page.find('button', :text => 'Submit')
+  expect(button.visible?).to be(true)
+  expect(button[:disabled]).to eq("true")
 end
 
 def submit_button_is_enabled
-  expect(@button[:disabled]).to be(nil)
+  button = page.find('button', :text => 'Submit')
+  expect(button[:disabled]).to be(nil)
 end
 
 def resultview_is_empty
@@ -294,4 +361,33 @@ end
 
 def resultview_include_string(string, bool)
   expect(find("#resultview").text.include?(string)).to be(bool)
+end
+
+def x_loc(button)
+  (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
+end
+
+def y_loc(button)
+  (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
+end
+
+def validate_location(x_loc, y_loc, index, assignment_count, direction)
+  border_size = 1000 / 40
+  block_size = 1000 / 5
+  left_border = 50 + 2 * border_size
+  top_border = 50 + 2 * border_size
+
+  assignments_per_level = 4
+  level_amount = (assignment_count / assignments_per_level) + 1
+
+  if (direction === 'right')
+    x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)
+  else
+    x_start = left_border - (index % assignments_per_level) * (2 * border_size + block_size) + (assignments_per_level - 1) * (2 * border_size + block_size)
+  end
+
+  y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
+
+  expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
+  expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end

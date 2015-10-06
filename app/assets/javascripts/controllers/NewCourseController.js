@@ -1,5 +1,6 @@
-ProgressApp.controller('NewCourseController', function ($scope, $location, httpService) {
+ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
+    $scope.assignments = []
     $scope.participants = []
 
     httpService.getData('/users/all', {}).then(function (data) {
@@ -10,8 +11,8 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
 
         var newCourse = {
             name: $scope.name,
-            assignment_count: $scope.assignmentCount,
-            participants: $scope.participants
+            participants: $scope.participants,
+            assignments: $scope.assignments
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {
@@ -32,5 +33,46 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         var index = listToRemoveFrom.indexOf(member);
         listToRemoveFrom.splice(index, 1);
         listToAddTo.push(member);
+    }
+
+    $scope.showDependencies = function (assignment) {
+        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+    }
+
+    $scope.hideDependencies = function (assignment) {
+        AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+    }
+
+    $scope.placeAssignmentButtonsOnCanvas = function () {
+        $scope.assignments = [];
+        removeOriginalCanvas();
+
+        var shuffleButtonStyle = 'none';
+
+        if ($scope.assignmentCount) {
+            shuffleButtonStyle = 'inline';
+
+            CanvasService.initiateCanvas($scope.assignmentCount, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+
+            var location = null;
+
+            for (var i = 0; i < $scope.assignmentCount; i++) {
+                location = CanvasService.drawLocationForAssignment(i, location);
+
+                var assignment = {'number': i + 1, 'location': location, 'doers': {}, 'dependencies': {} };
+                $scope.assignments.push(assignment);
+            }
+            CanvasService.drawSmoothPaths($scope.assignments);
+        }
+
+        $("#shuffle-button").css('display', shuffleButtonStyle);
+    }
+
+    function removeOriginalCanvas() {
+        var canvasArray = document.getElementsByTagName("canvas");
+
+        if (canvasArray && canvasArray[0]) {
+            canvasArray[0].remove();
+        }
     }
 })

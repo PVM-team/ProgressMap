@@ -1,7 +1,7 @@
 ProgressApp.service('StateService', function () {
 
 	var current_user;
-    var current_course;
+    // var current_course;
     
 	this.setCurrentUser = function(user) {
 		current_user = user
@@ -11,11 +11,11 @@ ProgressApp.service('StateService', function () {
 		return current_user
 	}
 
-    this.setCurrentCourse = function(course) {
+    /* this.setCurrentCourse = function(course) {		// ei taideta hyödyntää missään?
         current_course = course;
     }
 
     this.getCurrentCourse = function() {
         return current_course;
-    }
+    } */
 })
