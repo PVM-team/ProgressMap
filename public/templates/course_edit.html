@@ -18,6 +18,28 @@
         </div>
     </form>
 
+    <div class="col-xs-12 small-top-margin">
+        <label class="col-md-2 col-sm-3 col-xs-4">Assignments</label>
+
+        <button ng-click='addAssignment();'>Add a new assignment</button>
+        <section id="assignmentView" class="small-top-margin">
+            <ol>
+                <li ng-repeat='assignment in assignments'>
+                    Id: {{ assignment.id }}, Number: {{ assignment.number }}
+                    <button ng-click='deleteAssignment(assignment);'>Delete assignment</button>
+                </li>
+            </ol>
+        </section>
+    </div>
+
+    <div id="mapElements" class="col-xs-12">
+
+        <div ng-repeat="assignment in assignments">
+        
+            <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
+        </div>
+    </div>
+
     <div class="col-xs-7">
         <label class="col-md-2 col-sm-3 col-xs-4">Participants</label>
 
@@ -50,18 +72,4 @@
         </section>
     </div>
 
-
-    <div class="col-xs-12">
-        <label class="col-md-2 col-sm-3 col-xs-4">Assignments</label>
-
-        <button ng-click='addAssignment();'>Add a new assignment</button>
-        <section id="assignmentView">
-            <ol>
-                <li ng-repeat='assignment in assignments'>
-                    Id: {{ assignment.id }}, Number: {{ assignment.number }}
-                    <button ng-click='deleteAssignment(assignment);'>Delete assignment</button>
-                </li>
-            </ol>
-        </section>
-    </div>
 </div>

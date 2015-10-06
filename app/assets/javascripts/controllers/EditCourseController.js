@@ -1,4 +1,4 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService) {
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService, CanvasService, AssignmentDependenciesService) {
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         if (! validRequest(data)) {
@@ -14,6 +14,9 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         $scope.name = $scope.course.name
 
         removeParticipantsFromAllUsers()
+
+        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.drawSmoothPaths($scope.assignments);
     })
 
     $scope.goToCoursePage = function() {
@@ -30,6 +33,15 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             $scope.course.name = data['course'].name
         })
     }
+
+    $scope.showDependencies = function (assignment) {
+        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+    }
+
+    $scope.hideDependencies = function (assignment) {
+        AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+    }
+
 
     $scope.addAssignment = function() {
         var data = {
