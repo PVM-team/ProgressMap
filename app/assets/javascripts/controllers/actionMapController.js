@@ -35,7 +35,7 @@ ProgressApp.controller('actionMapController', function ($scope, $routeParams, $l
                 assignmentCount[lastAssignmentDone.number] += 1;
 
                 var x = lastAssignmentDone.location.x + 25 * (assignmentCount[lastAssignmentDone.number] - 1);
-                students.push({id: $scope.participants[i].id, x: x, y: lastAssignmentDone.location.y});
+                students.push({id: $scope.participants[i].id, x: x, y: lastAssignmentDone.location.y, timestamp: lastAssignmentDone.timestamp});
             }}
         $scope.studentsOnMap = students;
     }

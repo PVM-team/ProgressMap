@@ -21,7 +21,7 @@
         </button>
     </div>
 
-    <div ng-repeat="student in studentsOnMap">
+    <div ng-repeat="student in studentsOnMap | orderBy:'-timestamp'| limitTo:5">
         <button class="student-button" style="top:{{student.y - 50}}px; left:{{student.x}}px">{{student.id}}</button>
     </div>
 </div>
