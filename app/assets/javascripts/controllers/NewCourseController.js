@@ -73,7 +73,7 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
 
         if (canvasArray && canvasArray[0]) {
             canvasArray[0].remove();
-        }        
+        }
     }
 
     function setShuffleButtonDisplay(style) {

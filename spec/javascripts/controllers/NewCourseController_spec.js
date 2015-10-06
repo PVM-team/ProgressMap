@@ -5,7 +5,7 @@ describe('NewCourseController', function () {
 
     beforeEach(function () {
         module('ProgressApp');
-
+        
         fakeParticipant = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
 
         httpServiceMock = (function () {
