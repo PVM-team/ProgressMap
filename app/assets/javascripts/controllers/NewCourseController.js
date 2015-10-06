@@ -65,7 +65,7 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             CanvasService.drawSmoothPaths($scope.assignments);
         }
 
-        setShuffleButtonDisplay(shuffleButtonStyle);
+        $("#shuffle-button").css('display', shuffleButtonStyle);
     }
 
     function removeOriginalCanvas() {
@@ -74,9 +74,5 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         if (canvasArray && canvasArray[0]) {
             canvasArray[0].remove();
         }
-    }
-
-    function setShuffleButtonDisplay(style) {
-        document.getElementById("shuffle-button").style.display = style;
     }
 })

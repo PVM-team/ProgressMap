@@ -2,6 +2,7 @@ describe('NewCourseController', function () {
     var controller, scope;
     var httpServiceMock;
     var fakeParticipant;
+    var CanvasServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
@@ -26,13 +27,32 @@ describe('NewCourseController', function () {
             }
         })();
 
+        CanvasServiceMock = (function () {
+            return {      
+                initiateCanvas: function (assignmentCount, width, div, bgColor) {
+                },
+                drawSmoothPaths: function (assignmentCount) {
+                },
+                drawLocationForAssignment: function(i, location) {
+                    if (i >= 0 && i < 4) {
+                        return {'x': 100 + i * 250 + 50, 'y': 100 + 250 + 30};
+                    }
+                    else if (i >= 4 && i < 8) {
+                        return {'x': 100 - i * 250 + 3 * 250 + 50, 'y': 100 + 70};
+                    }
+                    return null;
+                }
+            }
+        })();
+
         spyOn(httpServiceMock, 'postData').and.callThrough();
 
-        inject(function ($controller, $rootScope, httpService) {
+        inject(function ($controller, $rootScope, httpService, CanvasService) {
             scope = $rootScope.$new();
             controller = $controller('NewCourseController', {
                 $scope: scope,
-                httpService: httpServiceMock
+                httpService: httpServiceMock,
+                CanvasService: CanvasServiceMock
             });
 
         });
@@ -41,30 +61,13 @@ describe('NewCourseController', function () {
         scope.participants = [];
         scope.assignments = [];
 
-        scope.assignmentCount = 8;
-        scope.placeAssignmentButtonsOnCanvas()
-
-        scope.addParticipant(fakeParticipant)
+        scope.addParticipant(fakeParticipant);
     })
 
-    describe('initializing newCourseController', function(){
+    describe('initializing newCourseController', function() {
         it ('should set scope.allUsers to what httpService.addData returns minus users in scope.participants', function(){
             expect(scope.allUsers.length).toBe(1);
             expect(scope.allUsers.indexOf(fakeParticipant)).toBe(-1)
-        })
-
-        it ('should have correct number of assignments', function(){
-            expect(scope.assignments.length).toBe(8);
-        })
-
-        it ('should have correct locations for assignments', function(){
-            var ass1 = scope.assignments[0];
-            var ass5 = scope.assignments[4];
-            var ass4 = scope.assignments[3];
-            var ass8 = scope.assignments[7];
-            expect(ass5.location.y).toBeLessThan(ass1.location.y);
-            expect(ass1.location.x).toBeLessThan(ass4.location.x);
-            expect(ass8.location.x).toBeLessThan(ass5.location.x);
         })
     })
 
@@ -87,7 +90,36 @@ describe('NewCourseController', function () {
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: scope.assignments, participants: [fakeParticipant]});
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: [], participants: [fakeParticipant]});
+        })
+    })
+
+    describe ('calling scope.placeAssignmentButtonsOnCanvas', function() {
+
+        it ("should set scope.assignments accordingly", function() {
+            scope.assignmentCount = 8;
+            scope.placeAssignmentButtonsOnCanvas();
+
+            expect(scope.assignments.length).toBe(8);
+
+            for (var i = 0; i < scope.assignments.length; i++) {
+
+                var assignment = scope.assignments[i];
+                expect(assignment.number).toBe(i + 1);
+
+                var expectedLocation;
+
+                if (i < 4) {
+                    expectedLocation = {'x': 100 + i * 250 + 50, 'y': 100 + 250 + 30};
+                }
+                else {
+                    expectedLocation = {'x': 100 - i * 250 + 3 * 250 + 50, 'y': 100 + 70};
+                }
+
+                expect(assignment.location).toEqual(expectedLocation);
+                expect(assignment.doers).toEqual({});
+                expect(assignment.dependencies).toEqual({});
+            }
         })
 
     })

@@ -44,9 +44,9 @@ describe('MapController', function () {
         //ei tee mitään
         CanvasServiceMock = (function () {
             return {
-                initiateCanvas: function (height, width, div, bgColor) {
+                initiateCanvas: function (assignmentCount, width, div, bgColor) {
                 },
-                drawSmoothPaths: function (locations) {
+                drawSmoothPaths: function (assignmentCount) {
                 }
             }
         })();
