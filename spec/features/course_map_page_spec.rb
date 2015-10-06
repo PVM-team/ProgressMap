@@ -53,7 +53,7 @@ describe "Course map page", js: true do
           style = button[:style]
 
           expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
-          expect(style).to have_content("left: " + (assignment.location.x - 5).to_s + "px")
+          expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
         end
       end
 

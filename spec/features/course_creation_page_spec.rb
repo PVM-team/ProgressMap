@@ -364,7 +364,7 @@ def resultview_include_string(string, bool)
 end
 
 def x_loc(button)
-  (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
+  (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
 end
 
 def y_loc(button)
