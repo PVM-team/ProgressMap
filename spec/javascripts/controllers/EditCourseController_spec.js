@@ -32,7 +32,7 @@ describe('EditCourseController', function () {
                 }, postData: function (path, data) {
                     return {
                         then: function (callback) {
-                            return callback({assignment: [{id: 7}]});
+                            return callback({assignment: [scope.assignments[0], scope.assignments[1]]});  // tänne pitäisi jotenkin saada kaikki muut assignmentit paitsi listan vika...
                         }
                     };
                 }, putData: function (path, params) {
@@ -65,6 +65,9 @@ describe('EditCourseController', function () {
                 },
                 lastLevelFull: function(assignmentCount) {
                     return assignmentCount % 4 == 0;
+                },
+                levelHeight: function() {
+                    return 250;
                 }
             }
         })();
@@ -138,10 +141,30 @@ describe('EditCourseController', function () {
 
     describe('addAssignment', function () {
 
-        it('should add assignment to the course', function () {
+        it('should increase assignment count if new assignment is added to course', function () {
             var amount = scope.assignments.length;
             scope.addAssignment();
             expect(scope.assignments.length).toBe(amount + 1);
+        })
+
+        it('should add assignment to correct location if level does not change', function () {
+            var lastAssignment = scope.assignments[scope.assignments.length - 1];
+            scope.addAssignment();
+            var newAssignment = scope.assignments[scope.assignments.length - 1];
+            expect(lastAssignment.location.x).toBeGreaterThan(newAssignment.location.x);
+            expect(lastAssignment.location.x - newAssignment.location.x).toBeGreaterThan(50);
+        })
+
+        it ('should add assignment to correct location if new level is added', function () {
+            var oldAssignment = scope.assignments[scope.assignments.length - 1];
+            scope.addAssignment();
+            var lastAssignment = scope.assignments[scope.assignments.length - 1];
+            scope.addAssignment();
+            var newAssignment = scope.assignments[scope.assignments.length - 1];
+            expect(lastAssignment.location.y).toBeLessThan(newAssignment.location.y);
+            expect(newAssignment.location.y - lastAssignment.location.y).toBeGreaterThan(50);
+            expect(oldAssignment.location.x).toBeGreaterThan(newAssignment.location.x);
+            expect(oldAssignment.location.x - newAssignment.location.x).toBeGreaterThan(50);
         })
     })
 
