@@ -2,8 +2,11 @@ describe('EditCourseController', function () {
 
     var controller, scope;
     var httpServiceMock;
+    var CanvasServiceMock;
     var fakeParticipant;
     var location;
+
+    var assignments;
 
     beforeEach(function () {
         module('ProgressApp');
@@ -13,9 +16,9 @@ describe('EditCourseController', function () {
 
             data.course = [{"id": 1, "name": 'ohtu'}];
             data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
-            {"id": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
-            {"id": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]}];
+                [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
+            {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
+            {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]}];
             data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
             data.all_users = [{"id": 1}, {"id": 2}, {"id": 3}, {"id": 4}, {"id": 5}, {"id": 6}];
 
@@ -48,6 +51,24 @@ describe('EditCourseController', function () {
             }
         })();
 
+        CanvasServiceMock = (function () {
+            return {
+                initiateCanvas: function (assignmentCount, width, div, bgColor) {
+                },
+                drawSmoothPaths: function (assignmentCount) {
+                },
+                locationOfNewAssignment: function(i, previousLocation) {
+                    if ((i % 8) >= 4) {
+                        return {'x': 100 - i * 250 + 3 * 250 + 50, 'y': 100 + 70}; // add info about i for 'y'
+                    }
+                    return {'x': 100 + i * 250 + 50, 'y': 100 + 250 + 30}; // add info about i for 'y'
+                },
+                lastLevelFull: function(assignmentCount) {
+                    return assignmentCount % 4 == 0;
+                }
+            }
+        })();
+
 
         inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
@@ -56,13 +77,18 @@ describe('EditCourseController', function () {
             controller = $controller('EditCourseController', {
                 $scope: scope,
                 $routeParams: $routeParams,
-                httpService: httpServiceMock
+                httpService: httpServiceMock,
+                CanvasService: CanvasServiceMock
             });
 
         });
 
 
         fakeParticipant = {id: 7, firstName: "Pekan", lastName: "Dantilus"};
+
+        scope.assignments = [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
+                       {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
+                       {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]} ];
     })
 
     describe('initializing EditCourseController', function () {
@@ -79,6 +105,8 @@ describe('EditCourseController', function () {
         it('should remove assignment from course', function () {
             var amount = scope.assignments.length;
             scope.deleteAssignment(scope.assignments[0]);
+
+            expect(scope.assignments[0]).toEqual({"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]})
             expect(scope.assignments.length).toBe(amount - 1);
         });
     })
