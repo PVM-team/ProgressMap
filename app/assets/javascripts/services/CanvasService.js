@@ -5,7 +5,7 @@ ProgressApp.service('CanvasService', function () {
 
     var direction;
     //var direction = left; // direction vaihtuu joka arpomisen jälkeen
-    
+
     var borderSize;
     var blockSize;
     var assignmentsPerLevel;
@@ -39,6 +39,12 @@ ProgressApp.service('CanvasService', function () {
         setCanvasBGColor(bgColor);
 
         return canvas;
+    }
+
+    //should not be called before initiateCanvas has been called at least once
+    this.redraw = function(bgColor){
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        setCanvasBGColor(bgColor);
     }
 
     function placeCanvasInDiv(div) {
@@ -133,15 +139,15 @@ ProgressApp.service('CanvasService', function () {
         var locations = getLocations(assignments);
 
         var lastIndex = locations.length - 1;
-            
+
         if (locations.length >= 2) {
             context.beginPath();
             context.moveTo.apply(context, (locations[0]));
-            
+
             for (var i = 0; i < lastIndex;  i++){
                 drawSmoothCurve(i, locations);
             }
-                
+
             context.lineWidth = 14;
             context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
             context.lineJoin = 'round';
@@ -162,12 +168,12 @@ ProgressApp.service('CanvasService', function () {
 
     function drawSmoothCurve(i, locations) {
         var ref, ref2, start, end, pieceLength, wat;
-        
+
         var s = Smooth(locations, smoothConfig);
         var averageLineLength = 1;
         var pieceCount = 2;
         var ref = 1 / pieceCount;
-        
+
         for (var j = 0; j < 1; j += ref) {
             ref2 = [s(i + j), s(i + j + pieceCount)];
             start = ref2[0];

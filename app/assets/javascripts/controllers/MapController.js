@@ -42,11 +42,13 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     $scope.showDependencies = function (assignment) {
-        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments, CanvasService.getContext());
     }
 
     $scope.hideDependencies = function (assignment) {
         AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+        CanvasService.redraw("rgba(30, 85, 205, 0.50");
+        CanvasService.drawSmoothPaths($scope.assignments);
     }
 
     $scope.markAssignmentAsDone = function (assignment) {
