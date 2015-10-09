@@ -1,4 +1,4 @@
-ProgressApp.controller('actionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
+ProgressApp.controller('actionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, $interval) {
 
     //never uses [0] unless there is an assignment with that number value!
     $scope.latestDoersForAssignments = [];
@@ -22,9 +22,18 @@ ProgressApp.controller('actionMapController', function ($scope, $routeParams, $l
         initializeLatest();
         placeStudents();
     })
+    
+    // calls updateLatestAssignments every 1 sec
+   $interval(function() {
+       updateLatestAssignments();
+   }, 1000);
 
     $scope.goToNormalMap = function() {
         $location.path('/map/' + $scope.course.id)
+    }
+
+    function updateLatestAssignments() {
+        console.log("moi");
     }
 
     function initializeLatest(){
