@@ -6,7 +6,7 @@ describe('MapController', function () {
     var StateServiceMock;
     var undoneAssignment;
     var doneAssignment;
-
+    var location;
     beforeEach(function () {
         module('ProgressApp');
 
@@ -16,9 +16,9 @@ describe('MapController', function () {
 
             data.course = [{"id": 1}];
             data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "dependencies": [{"id":2}]},
-                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "dependencies": [{"id":1}]},
-                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}]}];
+                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2014}, {"user_id": 2, "timestamp": 2015}], "number": 1},
+                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "students_tasks": [{"user_id": 1, "timestamp": 2013}], "number": 2},
+                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2015}], "number": 3}];
             data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
             data.current_user = [{"id": 2}];
 
@@ -72,8 +72,10 @@ describe('MapController', function () {
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService, $location) {
             scope = $rootScope.$new();
+            location = $location;
+            spyOn(location, 'path');
             controller = $controller('MapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
@@ -196,4 +198,18 @@ describe('MapController', function () {
             expect(StateServiceMock.setCurrentUser).toHaveBeenCalledWith(scope.currentUser);
         })
     })
+
+/*    describe('moveToCourseEditView', function(){
+        it ('should call StateService.setCurrentCourse with correct value', function(){
+            scope.moveToCourseEditView();
+            expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
+        })
+    })*/
+
+    describe('goToActionMap', function(){
+        it('should call location.path when function is called', function(){
+            scope.goToActionMap();
+             expect(location.path).toHaveBeenCalledWith('/actionmap/1');
+        })
+    });
 })

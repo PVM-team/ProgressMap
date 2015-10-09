@@ -17,7 +17,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         if (!validRequest(data)) {
             $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-            return;
+                return;
         }
 
         $scope.course = data["course"][0]
@@ -31,9 +31,10 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
+
     $scope.moveToCourseCreationView = function () {
         StateService.setCurrentUser($scope.currentUser)
-        $location.path("/course/new")
+            $location.path("/course/new")
     }
 
     $scope.moveToCourseEditView = function () {
@@ -58,9 +59,9 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         httpService.postData('students_tasks', data).then(function (data) {
             $scope.done_assignments.push(assignment)
-            assignment.doers.push($scope.currentUser)
+                assignment.doers.push($scope.currentUser)
 
-            $scope.buttonClicked = false;
+                $scope.buttonClicked = false;
         })
     }
 
@@ -74,14 +75,14 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
             var i = $scope.done_assignments.indexOf(assignment)
-            removeValueFromList($scope.done_assignments, i)
+                removeValueFromList($scope.done_assignments, i)
 
-            i = $scope.assignments.indexOf(assignment)
-            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
+                i = $scope.assignments.indexOf(assignment)
+                var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
 
-            removeValueFromList($scope.assignments[i].doers, j)
+                removeValueFromList($scope.assignments[i].doers, j)
 
-            $scope.buttonClicked = false;
+                $scope.buttonClicked = false;
         })
     }
 
@@ -119,7 +120,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     function removeValueFromList(list, index) {
-        list.splice(index, 1)
+        list.splice(index, 1);
     }
 
     // $scope.currentUser ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
@@ -131,5 +132,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         return -1;
+    }
+    $scope.goToActionMap = function(){
+        $location.path('/actionmap/' + $scope.course.id)
     }
 })

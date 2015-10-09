@@ -19,6 +19,10 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
             controller: 'EditCourseController',
             templateUrl:'templates/course_edit.html'
        })
+       .when('/actionmap/:course_id', {
+           controller: 'actionMapController',
+           templateUrl: 'templates/action_map.html'
+       })
        .otherwise({
            redirectTo: '/map/:course_id?1'
        });
