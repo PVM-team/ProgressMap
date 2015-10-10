@@ -32,7 +32,15 @@ describe('EditCourseController', function () {
                 }, postData: function (path, data) {
                     return {
                         then: function (callback) {
-                            return callback({assignment: [scope.assignments[0], scope.assignments[1]]});  // tänne pitäisi jotenkin saada kaikki muut assignmentit paitsi listan vika...
+                            if (path.match('/assignments')) {
+                                return callback({assignment: [data]})
+                            } else {
+                                var arr = [];
+                                for (var i = 0; i < scope.assignments.length; i++) {
+                                    arr[i] = scope.assignments[i];
+                                }
+                                return callback({assignment: arr});
+                            }
                         }
                     };
                 }, putData: function (path, params) {
@@ -58,10 +66,28 @@ describe('EditCourseController', function () {
                 drawSmoothPaths: function (assignmentCount) {
                 },
                 locationOfNewAssignment: function(i, previousLocation) {
-                    if ((i % 8) >= 4) {
-                        return {'x': 100 - i * 250 + 3 * 250 + 50, 'y': 100 + 70}; // add info about i for 'y'
+                    var xStart;
+                    var border = 50 + 2 * 25;
+                    var relativeStartingPosition = (i % 4) * (2 * 25 + 200);
+
+                    //toimii vaan 2 tasolla
+                    if (i < 4) {
+                        xStart =  border + relativeStartingPosition;
                     }
-                    return {'x': 100 + i * 250 + 50, 'y': 100 + 250 + 30}; // add info about i for 'y'
+                    else {
+                        xStart = border - relativeStartingPosition + (4 - 1) * (2 * 25 + 200);
+                    }
+
+                    var level = Math.ceil((i + 1) / 4) - 1;
+                    var yStart = 50 + 2 * 25 + level * (2 * 25 + 200);
+
+
+                    var x = Math.floor((Math.random() * 200) + xStart);
+                    var y = Math.floor((Math.random() * 200) + yStart);
+
+                    var location = {'x': x, 'y': y};
+
+                    return location;
                 },
                 lastLevelFull: function(assignmentCount) {
                     return assignmentCount % 4 == 0;
@@ -111,6 +137,9 @@ describe('EditCourseController', function () {
 
             expect(scope.assignments[0]).toEqual({"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]})
             expect(scope.assignments.length).toBe(amount - 1);
+            scope.deleteAssignment(scope.assignments[0]);
+            expect(scope.assignments.length).toBe(amount - 2);
+            expect(scope.assignments[0]).toEqual({"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]})
         });
     })
 
@@ -151,23 +180,29 @@ describe('EditCourseController', function () {
             var lastAssignment = scope.assignments[scope.assignments.length - 1];
             scope.addAssignment();
             var newAssignment = scope.assignments[scope.assignments.length - 1];
-            expect(lastAssignment.location.x).toBeGreaterThan(newAssignment.location.x);
-            expect(lastAssignment.location.x - newAssignment.location.x).toBeGreaterThan(50);
+            expect(lastAssignment.location.x).toBeLessThan(newAssignment.location.x);
+            expect(newAssignment.location.x - lastAssignment.location.x).toBeGreaterThan(50);
         })
 
         it ('should add assignment to correct location if new level is added', function () {
-            var oldAssignment = scope.assignments[scope.assignments.length - 1];
             scope.addAssignment();
-            var lastAssignment = scope.assignments[scope.assignments.length - 1];
+            expect(scope.assignments.length).toBe(4);
             scope.addAssignment();
-            var newAssignment = scope.assignments[scope.assignments.length - 1];
-            expect(lastAssignment.location.y).toBeLessThan(newAssignment.location.y);
-            expect(newAssignment.location.y - lastAssignment.location.y).toBeGreaterThan(50);
-            expect(oldAssignment.location.x).toBeGreaterThan(newAssignment.location.x);
-            expect(oldAssignment.location.x - newAssignment.location.x).toBeGreaterThan(50);
+            expect(scope.assignments.length).toBe(5);
+            scope.addAssignment();
+            expect(scope.assignments.length).toBe(6);
+            var assignment1 = scope.assignments[0];
+            var assignment2 = scope.assignments[1];
+            var assignment3 = scope.assignments[2];
+            var assignment4 = scope.assignments[3];
+            var assignment5 = scope.assignments[4];
+            var assignment6 = scope.assignments[5];
+
+            expect(assignment4.location.y).toBeLessThan(assignment5.location.y);
+            expect(assignment6.location.x).toBeLessThan(assignment5.location.x);
+            expect(assignment4.location.y).toBeLessThan(assignment6.location.y);
         })
     })
-
     describe ('editCourseName', function(){
         it('should change the name of the course currently in scope.course', function(){
             expect(scope.course.name).not.toBe("asdf");
