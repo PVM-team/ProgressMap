@@ -55,9 +55,13 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             CanvasService.initiateCanvas($scope.assignmentCount, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
 
             var location = null;
-
+            var locationBelow = null;
             for (var i = 0; i < $scope.assignmentCount; i++) {
-                location = CanvasService.drawLocationForAssignment(i, location);
+                location = CanvasService.drawLocationForAssignment(i, location, locationBelow);
+
+                if (i % 7 == 0) {
+                    locationBelow = location;
+                }
 
                 var assignment = {'number': i + 1, 'location': location, 'dependencies': [] };
                 $scope.assignments.push(assignment);

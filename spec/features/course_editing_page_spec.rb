@@ -17,10 +17,19 @@ describe "Course editing page", js: true do
         @course = FactoryGirl.create :course, name: "Ohtuprojekti"
         @course.participants << (FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi")
 
-        assignment = FactoryGirl.create :assignment, number: 1
-        assignment.location = (FactoryGirl.create :location, x: 125, y: 160)
+        assignment1 = FactoryGirl.create :assignment, number: 1
+        assignment1.location = (FactoryGirl.create :location, x: 125, y: 160)
+        assignment2 = FactoryGirl.create :assignment, number: 2
+        assignment2.location = (FactoryGirl.create :location, x: 425, y: 104)
+        assignment3 = FactoryGirl.create :assignment, number: 3
+        assignment3.location = (FactoryGirl.create :location, x: 725, y: 201)
+        assignment4 = FactoryGirl.create :assignment, number: 4
+        assignment4.location = (FactoryGirl.create :location, x: 999, y: 137)
 
-        @course.assignments << assignment
+        @course.assignments << assignment1
+        @course.assignments << assignment2
+        @course.assignments << assignment3
+        @course.assignments << assignment4
     end
 
     after :each do
@@ -167,50 +176,59 @@ describe "Course editing page", js: true do
             end
 
             it "membership between deleted user and edited course is deleted" do
-                expect(Membership.count).to be(@original_membership_count - 1)                    
+                expect(Membership.count).to be(@original_membership_count - 1)
                 course = Course.first
                 expect(course.participants.length).to be(@participants_on_course - 1)
             end
         end
+
 
         describe 'when an assignment is added to course' do
 
             before :each do
                 @assignments_initially = @course.assignments.length
 
-                expect(find('#assignmentView')).not_to have_content('Id: 2, Number: 2')
+                expect(find('#assignmentView')).not_to have_content('Id: 5, Number: 5')
                 click_button 'Add a new assignment'
             end
 
             it 'a new assignment is added to assignmentView' do
-                expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
+                expect(find('#assignmentView')).to have_content('Id: 5, Number: 5')
             end
 
             it "the added assignment is shown as a button on the map" do
-                page.find('button', :text => '2')
+                page.find('button', :text => '5')
+            end
+
+            it "the added assignment is located in correct block" do
+                assignment_count = 5
+                direction = "left"
+                button = find_button(assignment_count.to_s)
+                x_loc = x_loc(button)
+                y_loc = y_loc(button)
+                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count, direction)
             end
 
             it "a new assignment is added to database" do
-                expect(Course.first.assignments.length).to be(@assignments_initially + 1)
+                expect(@course.assignments.length).to be(@assignments_initially + 1)
             end
         end
 
         describe 'when an assignment is deleted' do
             before :each do
                 @assignments_initially = @course.assignments.length
-
-                expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
-                click_button 'Delete assignment'
+                expect(find('#assignmentView')).to have_content('Id: 4, Number: 4')
+                click_button('Delete assignment', match: :first)
             end
 
             it "assignmentView won't contain the deleted assignment" do
-                expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
+                expect(find('#assignmentView')).not_to have_content('Id: 4, Number: 4')
             end
 
             it 'the button related to the assignment is deleted' do
                 found = false
                 begin
-                    page.find('button', :text => '1')
+                    page.find('button', :text => '5')
                     found = true
                 rescue
                 end
@@ -218,8 +236,24 @@ describe "Course editing page", js: true do
                 expect(found).to be(false)
             end
 
+            it 'the last assignment in map is in correct block after delete' do
+                assignment_count = 3
+                direction = "right"
+                button = find_button(assignment_count.to_s)
+                x_loc = x_loc(button)
+                y_loc = y_loc(button)
+                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count, direction)
+            end
+
+            it 'if all assignments are deleted there is no delete button' do
+                click_button('Delete assignment', match: :first)
+                click_button('Delete assignment', match: :first)
+                click_button('Delete assignment', match: :first)
+                expect(page).not_to have_button('Delete assignment')
+            end
+
             it "the assignment is removed from database" do
-                expect(Course.first.assignments.length).to be(@assignments_initially - 1)
+                expect(@course.assignments.length).to be(@assignments_initially - 1)
             end
         end
     end
@@ -228,4 +262,33 @@ end
 def visit_course_editing_page
     visit '/'
     click_button 'Edit course'
+end
+
+def x_loc(button)
+    (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
+end
+
+def y_loc(button)
+    (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
+end
+
+def validate_location(x_loc, y_loc, index, assignment_count, direction)
+    border_size = 1000 / 40
+    block_size = 1000 / 5
+    left_border = 50 + 2 * border_size
+    top_border = 50 + 2 * border_size
+
+    assignments_per_level = 4
+    level_amount = (assignment_count / assignments_per_level) + 1
+
+    if (direction === 'right')
+        x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)
+    else
+        x_start = left_border - (index % assignments_per_level) * (2 * border_size + block_size) + (assignments_per_level - 1) * (2 * border_size + block_size)
+    end
+
+    y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
+
+    expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
+    expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end

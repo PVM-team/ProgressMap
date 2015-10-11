@@ -67,19 +67,22 @@ describe('EditCourseController', function () {
                 },
                 locationOfNewAssignment: function(i, previousLocation) {
                     var xStart;
-                    var border = 50 + 2 * 25;
-                    var relativeStartingPosition = (i % 4) * (2 * 25 + 200);
+                    var borderSize = 25;
+                    var border = 50 + 2 * borderSize;
+                    var blockSize = 200;
+                    var assignmentsPerLevel = 4;
+                    var relativeStartingPosition = (i % 4) * (2 * borderSize + blockSize);
 
-                    //toimii vaan 2 tasolla
-                    if (i < 4) {
+                    var level = Math.ceil((i + 1) / 4) - 1;
+
+                    if (level % 2 == 0) {
                         xStart =  border + relativeStartingPosition;
                     }
                     else {
-                        xStart = border - relativeStartingPosition + (4 - 1) * (2 * 25 + 200);
+                        xStart = border - relativeStartingPosition + (assignmentsPerLevel - 1) * (2 * borderSize + blockSize);
                     }
 
-                    var level = Math.ceil((i + 1) / 4) - 1;
-                    var yStart = 50 + 2 * 25 + level * (2 * 25 + 200);
+                    var yStart = 50 + 2 * borderSize + level * (2 * borderSize + blockSize)
 
 
                     var x = Math.floor((Math.random() * 200) + xStart);
@@ -140,7 +143,19 @@ describe('EditCourseController', function () {
             scope.deleteAssignment(scope.assignments[0]);
             expect(scope.assignments.length).toBe(amount - 2);
             expect(scope.assignments[0]).toEqual({"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]})
-        });
+        })
+
+        it('should remove level if there is no assignments left on it after delete', function () {
+            scope.addAssignment();
+            scope.addAssignment();
+            var amount = scope.assignments.length;
+            expect(amount).toEqual(5);
+            var assignment5 = scope.assignments[4];
+            expect(assignment5.location.y).toBeGreaterThan(350); // assignment is on 2nd level
+            scope.deleteAssignment(scope.assignments[amount - 1]);
+            var lastAssignment = scope.assignments[scope.assignments.length - 1];
+            expect(lastAssignment.location.y).toBeLessThan(300);
+        })
     })
 
     describe('deleteParticipant', function () {
@@ -191,9 +206,7 @@ describe('EditCourseController', function () {
             expect(scope.assignments.length).toBe(5);
             scope.addAssignment();
             expect(scope.assignments.length).toBe(6);
-            var assignment1 = scope.assignments[0];
-            var assignment2 = scope.assignments[1];
-            var assignment3 = scope.assignments[2];
+
             var assignment4 = scope.assignments[3];
             var assignment5 = scope.assignments[4];
             var assignment6 = scope.assignments[5];

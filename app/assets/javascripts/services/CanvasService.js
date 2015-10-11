@@ -57,12 +57,12 @@ ProgressApp.service('CanvasService', function () {
     }
 
 
-    this.drawLocationForAssignment = function(i, prevLocation) {
+    this.drawLocationForAssignment = function(i, prevLocation, locationbelow) {
         if (i % assignmentsPerLevel == 0) {
             changeDirectionOfCurve();
         }
 
-        return drawLocation(i, prevLocation);
+        return drawLocation(i, prevLocation, locationbelow);
     }
 
     this.locationOfNewAssignment = function(i, prevLocation) {
@@ -71,21 +71,32 @@ ProgressApp.service('CanvasService', function () {
         if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
             changeDirectionOfCurve();
         }
-        return drawLocation(i, prevLocation);
+        return drawLocation(i, prevLocation, null);
     }
 
-    function drawLocation(i, prevLocation) {
+    function drawLocation(i, prevLocation, locationBelow) {
         var xStart = defineXStart(i, direction);
         var yStart = defineYStart(i);
-
-        do {
-            var x = getRandomPosition(xStart);
-            var y = getRandomPosition(yStart);
-
-            var location = {'x': x, 'y': y};
-        } while (! drawnLocationValid(location, prevLocation));
-
-        return location;
+        var location = null;
+        if (i % 7 == 0 && locationBelow) {
+            while (true) {
+                var x = getRandomPosition(xStart);
+                var y = getRandomPosition(yStart);
+                var location = {'x': x, 'y': y};
+                if (drawnLocationValid(location, prevLocation) && drawnLocationValid(location, locationBelow)) {
+                    return location;
+                }
+            }
+        } else {
+            while (true) {
+                var x = getRandomPosition(xStart);
+                var y = getRandomPosition(yStart);
+                var location = {'x': x, 'y': y};
+                if (drawnLocationValid(location, prevLocation)) {
+                    return location;
+                }
+            }
+        }
     }
 
     function changeDirectionOfCurve() {
