@@ -57,12 +57,12 @@ ProgressApp.service('CanvasService', function () {
     }
 
 
-    this.drawLocationForAssignment = function(i, prevLocation, locationbelow) {
+    this.drawLocationForAssignment = function(i, locations) {
         if (i % assignmentsPerLevel == 0) {
             changeDirectionOfCurve();
         }
 
-        return drawLocation(i, prevLocation, locationbelow);
+        return drawLocation(i, locations);
     }
 
     this.locationOfNewAssignment = function(i, prevLocation) {
@@ -71,32 +71,38 @@ ProgressApp.service('CanvasService', function () {
         if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
             changeDirectionOfCurve();
         }
-        return drawLocation(i, prevLocation, null);
+
+        var locations = [prevLocation];
+
+        return drawLocation(i, locations);
     }
 
-    function drawLocation(i, prevLocation, locationBelow) {
+    function drawLocation(i, locations) {
         var xStart = defineXStart(i, direction);
         var yStart = defineYStart(i);
-        var location = null;
-        if (i % 7 == 0 && locationBelow) {
-            while (true) {
-                var x = getRandomPosition(xStart);
-                var y = getRandomPosition(yStart);
-                var location = {'x': x, 'y': y};
-                if (drawnLocationValid(location, prevLocation) && drawnLocationValid(location, locationBelow)) {
-                    return location;
-                }
-            }
+        var j = 0;
+        var k = 0;
+
+        var x = getRandomPosition(xStart);
+        var y = getRandomPosition(yStart);
+        var location = {'x': x, 'y': y};
+
+        if ((locations.length - 7) < 0) {
+            k = 0;
         } else {
-            while (true) {
-                var x = getRandomPosition(xStart);
-                var y = getRandomPosition(yStart);
-                var location = {'x': x, 'y': y};
-                if (drawnLocationValid(location, prevLocation)) {
-                    return location;
-                }
+            k = locations.length - 7;
+        }
+
+        for (var j = k; j < locations.length; j++) {
+            while (!drawnLocationValid(location, locations[j])) {
+                x = getRandomPosition(xStart);
+                y = getRandomPosition(yStart);
+                location = {'x': x, 'y': y};
+                j = k;
             }
         }
+
+        return location;
     }
 
     function changeDirectionOfCurve() {
@@ -137,11 +143,7 @@ ProgressApp.service('CanvasService', function () {
     // ei poisteta tätä metodia turhaan. voidaan muokata myöhemmin validointia paremmaksi.
 
     function drawnLocationValid(location, prevLocation) {
-        if (prevLocation) {
-            return distanceBetweenLocations(location, prevLocation) >= 120;
-        }
-
-        return true;
+        return distanceBetweenLocations(location, prevLocation) >= 120;
     }
 
     function distanceBetweenLocations(location1, location2) {

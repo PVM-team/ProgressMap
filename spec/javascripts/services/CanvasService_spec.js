@@ -47,7 +47,8 @@ describe('CanvasService', function () {
 
             for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
                 service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
-                var location = service.drawLocationForAssignment(0, null, null);
+                var locations = [];
+                var location = service.drawLocationForAssignment(0, locations);
 
                 var xStart = 100;
                 var yStart = 250 * 6 + 100;  // level = 6, border = 100
@@ -63,9 +64,11 @@ describe('CanvasService', function () {
                 for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
                     service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
 
-                    var prev = {'x': 100 + 50, 'y': 250 * 6 + 100 + 37}
+                    var prev = {'x': 100 + 50, 'y': 250 * 6 + 100 + 37};
 
-                    var location = service.drawLocationForAssignment(0, prev, null);
+                    var locations = [prev];
+
+                    var location = service.drawLocationForAssignment(0, locations);
 
                     var xStart = 100;
                     var yStart = 250 * 6 + 100;  // level = 6, border = 100
@@ -77,93 +80,89 @@ describe('CanvasService', function () {
             it ("which is in its 'block', but with requirement that distance to the previous location is at least 120px", function() {
                 for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
                     service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
-                    var locationBelow = null;
-                    var prev = {'x': 100 + 199, 'y': 250 * 6 + 100 + 199}
-                    var location = service.drawLocationForAssignment(0, prev, locationBelow);
+                    var prev = {'x': 100 + 199, 'y': 250 * 6 + 100 + 199};
+                    var locations = [prev];
+                    var location = service.drawLocationForAssignment(0, locations);
 
                     var xStart = 100;
                     var yStart = 250 * 6 + 100;  // level = 6, border = 100
 
                     locationIsInBlock(location, xStart, yStart);
-                    expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+                    expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(120);
+                    if (distanceBetweenLocations(location, locations[0]) < 120) {
+                        expect(location.x).toEqual(1);
+                        expect(location.y).toEqual(2);
+                    }
                 }
             })
         })
 
+ /*       //pitäis muokata
         it ('distance between first and 8th location is at least 120px', function() {
             for (var j = 0; j < 20; j++) {  // 20 test cases
 
                 service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
-                var prev = null;
+                var locations =  [];
                 var location = null;
-                var locationBelow = null;
                 var i = 0;
 
                 while (i < 4) {
-                    location = service.drawLocationForAssignment(i, prev, locationBelow);
+                    location = service.drawLocationForAssignment(i, locations);
                     locationIsInBlock(location, i * 250 + 100, 250 * 6 + 100);
 
-                    if (i % 7 == 0) {
-                        locationBelow = location;
+                    if (locations.length > 1) {
+                        expect(distanceBetweenLocations(location, locations[i]) >= 120).toBe(true);
                     }
 
-                    if (prev) {
-                        expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
-                    }
-
-                    prev = location;
+                    locations.push(location);
                     i++;
                 }
 
                 while (i < 8) {
-                    location = service.drawLocationForAssignment(i, prev, locationBelow);
+                    location = service.drawLocationForAssignment(i, locations);
                     locationIsInBlock(location, 100 - (i % 4) * 250 + 3 * 250, 250 * 5 + 100);
-                    expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
-                    prev = location;
+                    expect(distanceBetweenLocations(location, locations[i - 1]) >= 120).toBe(true);
+                    locations.push(location);
                     i++;
                 }
-                expect(distanceBetweenLocations(location, locationBelow)).toBeGreaterThan(120);
+                expect(distanceBetweenLocations(location, locations[i - 8])).toBeGreaterThan(120);
             }
         })
-
+*/
         it('the direction of curve changes during the drawing, and the 9 first locations are drawn into blocks they belong to', function() {
             
             for (var j = 0; j < 20; j++) {  // 20 test cases
 
                 service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
-                var prev = null;
+                var locations = [];
                 var location = null;
-                var locationBelow = null;
                 var i = 0;
 
 
                 while (i < 4) {
-                    location = service.drawLocationForAssignment(i, prev, locationBelow);
+                    location = service.drawLocationForAssignment(i, locations);
                     locationIsInBlock(location, i * 250 + 100, 250 * 6 + 100);
 
-                    if (i % 7 == 0) {
-                        locationBelow = location;
+
+                    if (locations[i - 1]) {
+                        expect(distanceBetweenLocations(location, locations[i - 1]) >= 120).toBe(true);
                     }
 
-                    if (prev) {
-                        expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
-                    }
-
-                    prev = location;
+                    locations.push(location);
                     i++;
                 }
 
                 while (i < 8) {
-                    location = service.drawLocationForAssignment(i, prev, locationBelow);
+                    location = service.drawLocationForAssignment(i, locations);
                     locationIsInBlock(location, 100 - (i % 4) * 250 + 3 * 250, 250 * 5 + 100);
 
-                    expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+                    expect(distanceBetweenLocations(location, locations[i - 1]) >= 120).toBe(true);
 
-                    prev = location;
+                    locations.push(location);
                     i++;
                 }
 
-                location = service.drawLocationForAssignment(i, prev, locationBelow);
+                location = service.drawLocationForAssignment(i, locations);
                 locationIsInBlock(location, 100, 250 * 4 + 100);
             }
         })
