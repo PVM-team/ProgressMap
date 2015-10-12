@@ -97,38 +97,6 @@ describe('CanvasService', function () {
             })
         })
 
- /*       //pitäis muokata
-        it ('distance between first and 8th location is at least 120px', function() {
-            for (var j = 0; j < 20; j++) {  // 20 test cases
-
-                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
-                var locations =  [];
-                var location = null;
-                var i = 0;
-
-                while (i < 4) {
-                    location = service.drawLocationForAssignment(i, locations);
-                    locationIsInBlock(location, i * 250 + 100, 250 * 6 + 100);
-
-                    if (locations.length > 1) {
-                        expect(distanceBetweenLocations(location, locations[i]) >= 120).toBe(true);
-                    }
-
-                    locations.push(location);
-                    i++;
-                }
-
-                while (i < 8) {
-                    location = service.drawLocationForAssignment(i, locations);
-                    locationIsInBlock(location, 100 - (i % 4) * 250 + 3 * 250, 250 * 5 + 100);
-                    expect(distanceBetweenLocations(location, locations[i - 1]) >= 120).toBe(true);
-                    locations.push(location);
-                    i++;
-                }
-                expect(distanceBetweenLocations(location, locations[i - 8])).toBeGreaterThan(120);
-            }
-        })
-*/
         it('the direction of curve changes during the drawing, and the 9 first locations are drawn into blocks they belong to', function() {
             
             for (var j = 0; j < 20; j++) {  // 20 test cases
@@ -164,6 +132,36 @@ describe('CanvasService', function () {
 
                 location = service.drawLocationForAssignment(i, locations);
                 locationIsInBlock(location, 100, 250 * 4 + 100);
+            }
+        })
+
+        it('7 previous locations should be at least 120px away from new location', function() {
+
+            for (var j = 0; j < 20; j++) {  // 20 test cases
+
+                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+                var locations = [];
+                var location = null;
+                var i = 0;
+
+
+                while (i < 500) {
+                    location = service.drawLocationForAssignment(i, locations);
+                    var n = 0;
+
+                    if ((locations.length - 7) < 0) {
+                        n = 0;
+                    } else {
+                        n = locations.length - 7;
+                    }
+
+                    for (var k = n ; k < locations.length; k++) {
+                        expect(distanceBetweenLocations(location, locations[k])).toBeGreaterThan(119);
+                    }
+
+                    locations.push(location);
+                    i++;
+                }
             }
         })
     })
