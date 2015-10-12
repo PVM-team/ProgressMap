@@ -75,15 +75,14 @@ describe('EditCourseController', function () {
 
                     var level = Math.ceil((i + 1) / 4) - 1;
 
-                    if (level % 2 == 0) {
-                        xStart =  border + relativeStartingPosition;
+                    if ((i % 8) >= 4) {
+                        xStart =  100 - i * 250 + 3 * 250;
                     }
                     else {
-                        xStart = border - relativeStartingPosition + (assignmentsPerLevel - 1) * (2 * borderSize + blockSize);
+                        xStart = 100 + i * 250;
                     }
 
                     var yStart = 50 + 2 * borderSize + level * (2 * borderSize + blockSize)
-
 
                     var x = Math.floor((Math.random() * 200) + xStart);
                     var y = Math.floor((Math.random() * 200) + yStart);

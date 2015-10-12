@@ -80,25 +80,20 @@ ProgressApp.service('CanvasService', function () {
     function drawLocation(i, locations) {
         var xStart = defineXStart(i, direction);
         var yStart = defineYStart(i);
-        var j = 0;
-        var k = 0;
 
+        var amountOfPreviousLocationsToCheck = Math.max(0, locations.length - 7);
         var x = getRandomPosition(xStart);
         var y = getRandomPosition(yStart);
+
         var location = {'x': x, 'y': y};
 
-        if ((locations.length - 7) < 0) {
-            k = 0;
-        } else {
-            k = locations.length - 7;
-        }
-
-        for (var j = k; j < locations.length; j++) {
+        for (var j = amountOfPreviousLocationsToCheck; j < locations.length; j++) {
             while (!drawnLocationValid(location, locations[j])) {
                 x = getRandomPosition(xStart);
                 y = getRandomPosition(yStart);
                 location = {'x': x, 'y': y};
-                j = k;
+
+                j = amountOfPreviousLocationsToCheck;
             }
         }
 

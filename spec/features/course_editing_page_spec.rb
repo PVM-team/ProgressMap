@@ -30,6 +30,15 @@ describe "Course editing page", js: true do
         @course.assignments << assignment2
         @course.assignments << assignment3
         @course.assignments << assignment4
+
+        #@course2 = FactoryGirl.create :course, name: "Iso kurssi"
+
+        #for i in 1..499 do
+        #    a = FactoryGirl.create :assignment, number: 1
+        #    a.location = FactoryGirl.create :location, x: i, y: i
+
+        #    @course2.assignments << a
+        #end
     end
 
     after :each do
@@ -108,10 +117,7 @@ describe "Course editing page", js: true do
                 end
 
                 it "the name of the course is changed in database" do
-                    expect(Course.count).to be(1)
-                    course = Course.first
-
-                    expect(course.name).to eq('Uus kurssi')
+                    expect(Course.first.name).to eq('Uus kurssi')
                 end
             end
         end
@@ -188,12 +194,12 @@ describe "Course editing page", js: true do
             before :each do
                 @assignments_initially = @course.assignments.length
 
-                expect(find('#assignmentView')).not_to have_content('Id: 5, Number: 5')
+                expect(find('#assignmentView')).not_to have_content('Number: 5')
                 click_button 'Add a new assignment'
             end
 
             it 'a new assignment is added to assignmentView' do
-                expect(find('#assignmentView')).to have_content('Id: 5, Number: 5')
+                expect(find('#assignmentView')).to have_content('Number: 5')
             end
 
             it "the added assignment is shown as a button on the map" do
@@ -210,11 +216,12 @@ describe "Course editing page", js: true do
             end
 
             it "a new assignment is added to database" do
-                expect(@course.assignments.length).to be(@assignments_initially + 1)
+                expect(Course.first.assignments.length).to be(@assignments_initially + 1)
             end
         end
 
         describe 'when an assignment is deleted' do
+            
             before :each do
                 @assignments_initially = @course.assignments.length
                 expect(find('#assignmentView')).to have_content('Id: 4, Number: 4')
@@ -245,15 +252,32 @@ describe "Course editing page", js: true do
                 validate_location(x_loc, y_loc, assignment_count - 1, assignment_count, direction)
             end
 
-            it 'if all assignments are deleted there is no delete button' do
-                click_button('Delete assignment', match: :first)
-                click_button('Delete assignment', match: :first)
-                click_button('Delete assignment', match: :first)
+            it "the assignment is removed from database" do
+                expect(Course.first.assignments.length).to be(@assignments_initially - 1)
+            end
+        end
+
+        describe "when all assignments are deleted" do
+
+            before :each do
+                for i in 1..@course.assignments.length do
+                    click_button('Delete assignment', match: :first)
+                end
+            end
+
+            it "there is no delete button" do
                 expect(page).not_to have_button('Delete assignment')
             end
 
-            it "the assignment is removed from database" do
-                expect(@course.assignments.length).to be(@assignments_initially - 1)
+            describe "and when an assignment is added" do
+
+                before :each do
+                    page.find("button", :text => 'Add a new assignment').click
+                end
+
+                it "there is a delete button" do
+                    expect(page).to have_button('Delete assignment')
+                end
             end
         end
     end

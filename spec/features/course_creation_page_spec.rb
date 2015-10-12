@@ -129,7 +129,7 @@ describe "Course creation page", js: true do
             end
 
             validate_location(x_loc, y_loc, i, @assignment_count, direction)
-          end 
+          end
         end
       end
     end
