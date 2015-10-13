@@ -1,7 +1,7 @@
 ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
-    $scope.assignments = []
-    $scope.participants = []
+    $scope.assignments = [];
+    $scope.participants = [];
 
     httpService.getData('/users/all', {}).then(function (data) {
         $scope.allUsers = data['users']

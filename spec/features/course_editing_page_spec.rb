@@ -276,7 +276,7 @@ describe "Course editing page", js: true do
                 end
 
                 it "there is a delete button" do
-                    expect(page).to have_button('Delete assignment')
+                    expect(page).to have_button('Delete assignment', match: :first)
                 end
             end
         end

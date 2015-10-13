@@ -72,6 +72,10 @@ ProgressApp.service('CanvasService', function () {
             changeDirectionOfCurve();
         }
 
+        if (prevLocation == null) {
+            return drawLocation(i, []);
+        }
+
         var locations = [prevLocation];
 
         return drawLocation(i, locations);

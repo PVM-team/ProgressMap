@@ -35,11 +35,7 @@ describe('EditCourseController', function () {
                             if (path.match('/assignments')) {
                                 return callback({assignment: [data]})
                             } else {
-                                var arr = [];
-                                for (var i = 0; i < scope.assignments.length; i++) {
-                                    arr[i] = scope.assignments[i];
-                                }
-                                return callback({assignment: arr});
+                                return callback({assignment: scope.assignments});
                             }
                         }
                     };
@@ -145,15 +141,26 @@ describe('EditCourseController', function () {
         })
 
         it('should remove level if there is no assignments left on it after delete', function () {
-            scope.addAssignment();
-            scope.addAssignment();
             var amount = scope.assignments.length;
-            expect(amount).toEqual(5);
-            var assignment5 = scope.assignments[4];
-            expect(assignment5.location.y).toBeGreaterThan(350); // assignment is on 2nd level
-            scope.deleteAssignment(scope.assignments[amount - 1]);
+            scope.addAssignment();
+            scope.addAssignment();
+            expect(scope.assignments.length).toEqual(amount + 2);
+            var assignment5 = scope.assignments[scope.assignments.length - 1];
+            expect(assignment5.location.y).toBeGreaterThan(349); // assignment is on 2nd level
+            scope.deleteAssignment(scope.assignments[scope.assignments.length - 1]);
             var lastAssignment = scope.assignments[scope.assignments.length - 1];
-            expect(lastAssignment.location.y).toBeLessThan(300);
+            expect(lastAssignment.location.y).toBeLessThan(301);
+        })
+
+        it('should be able to add new assignment if all assignments are deleted and the added assignment is in correct block', function () {
+            scope.deleteAssignment(scope.assignments[1]);
+            scope.deleteAssignment(scope.assignments[0]);
+            scope.deleteAssignment(scope.assignments[0]);
+            expect(scope.assignments.length).toEqual(0);
+            scope.addAssignment();
+            expect(scope.assignments.length).toEqual(1);
+            expect(scope.assignments[0].location.x >= 100 && scope.assignments[0].location.x < 100 + 200).toBe(true);
+            expect(scope.assignments[0].location.y >= 100 && scope.assignments[0].location.y < 100 + 200).toBe(true);
         })
     })
 

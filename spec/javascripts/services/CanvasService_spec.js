@@ -24,6 +24,8 @@ describe('CanvasService', function () {
 
             expect(canvas.width).toBe(expectedWidth);
             expect(canvas.height).toBe(expectedHeight)
+            expect(service.levelHeight()).toEqual(250);
+            expect(service.lastLevelFull(0)).toBe(true);
         })
     })
 
@@ -89,10 +91,6 @@ describe('CanvasService', function () {
 
                     locationIsInBlock(location, xStart, yStart);
                     expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(120);
-                    if (distanceBetweenLocations(location, locations[0]) < 120) {
-                        expect(location.x).toEqual(1);
-                        expect(location.y).toEqual(2);
-                    }
                 }
             })
         })
@@ -160,6 +158,40 @@ describe('CanvasService', function () {
                     }
 
                     locations.push(location);
+                    i++;
+                }
+            }
+        })
+
+        it('locations for new assignment are in correct blocks', function() {
+            for (var j = 0; j < 20; j++) {  // 20 test cases
+
+                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+                var location = null;
+                var prev = null;
+                var i = 0;
+
+
+                while (i < 4) {
+                    location = service.locationOfNewAssignment(i, prev);
+                    locationIsInBlock(location, i * 250 + 100, 250 * 6 + 100);
+
+
+                    if (prev) {
+                        expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+                    }
+
+                    prev = location;
+                    i++;
+                }
+
+                while (i < 8) {
+                    location = service.locationOfNewAssignment(i, prev);
+                    locationIsInBlock(location, 100 - (i % 4) * 250 + 3 * 250, 250 * 5 + 100);
+
+                    expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+
+                    prev = location;
                     i++;
                 }
             }
