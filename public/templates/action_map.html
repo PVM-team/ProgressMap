@@ -16,14 +16,13 @@
     <div ng-repeat="assignment in assignments">
         <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)"
                 class="button action-button"
-                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number
+                style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 25}}px">{{ assignment.number
             }}
         </button>
-    </div>
 
-    <div ng-repeat="a in latestDoersForAssignments">
-        <div ng-repeat="b in a.listOfStudentLocations | orderBy:'-timestamp' | limitTo:5">
-            <button class="student-button" style="top:{{b.y}}px; left:{{b.x}}px">{{b.student.id}}</button>
-            </div>
+        <div ng-repeat="participant in assignment.latestDoers">
+            <button class="student-button" ng-style="locationOfStudentInMap(participant, assignment)">{{ participant.id }}</button>
+        </div>
+
     </div>
 </div>

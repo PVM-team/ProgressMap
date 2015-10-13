@@ -1,5 +1,9 @@
 class MapController < ApplicationController
 	
+	def action_init
+		init
+	end
+
 	def init
 		course = Course.find_by id: params[:course_id]
 		user = User.find_by id: params[:user_id]

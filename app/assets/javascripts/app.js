@@ -11,16 +11,12 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'NewCourseController',
            templateUrl: 'templates/course_new.html'
        })
-       .when('/users', {
-           controller: 'UsersController',
-           templateUrl: 'templates/users.html'
-       })
        .when('/course/:course_id/edit/', {
             controller: 'EditCourseController',
             templateUrl:'templates/course_edit.html'
        })
        .when('/actionmap/:course_id', {
-           controller: 'actionMapController',
+           controller: 'ActionMapController',
            templateUrl: 'templates/action_map.html'
        })
        .otherwise({

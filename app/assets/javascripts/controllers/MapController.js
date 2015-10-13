@@ -2,6 +2,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.buttonClicked = false;
 
+    // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
+
     //korvataan joskus käyttäjän valintaruudulla?
     if (!StateService.getCurrentUser()) {
         StateService.setCurrentUser({id: 2})
@@ -16,15 +18,15 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }).then(function (data) {
 
         if (!validRequest(data)) {
-            $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-                return;
+            $location.path("/");     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
+            return;
         }
 
-        $scope.course = data["course"][0]
-        $scope.assignments = data["assignments"]
-        $scope.participants = data["participants"]
+        $scope.course = data["course"][0];
+        $scope.assignments = data["assignments"];
+        $scope.participants = data["participants"];
 
-        $scope.currentUser = data["current_user"][0]
+        $scope.currentUser = data["current_user"][0];
         setDoneAssignments();
 
         CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
@@ -33,12 +35,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
 
     $scope.moveToCourseCreationView = function () {
-        StateService.setCurrentUser($scope.currentUser)
-            $location.path("/course/new")
+        StateService.setCurrentUser($scope.currentUser);
+        $location.path("/course/new");
     }
 
     $scope.moveToCourseEditView = function () {
-        $location.path('/course/' + $scope.course.id + '/edit')
+        $location.path('/course/' + $scope.course.id + '/edit');
     }
 
     $scope.showDependencies = function (assignment) {
@@ -60,10 +62,10 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks', data).then(function (data) {
-            $scope.done_assignments.push(assignment)
-                assignment.doers.push($scope.currentUser)
+            $scope.done_assignments.push(assignment);
+            assignment.doers.push($scope.currentUser);
 
-                $scope.buttonClicked = false;
+            $scope.buttonClicked = false;
         })
     }
 
@@ -76,15 +78,15 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
-            var i = $scope.done_assignments.indexOf(assignment)
-                removeValueFromList($scope.done_assignments, i)
+            var i = $scope.done_assignments.indexOf(assignment);
+            removeValueFromList($scope.done_assignments, i);
 
-                i = $scope.assignments.indexOf(assignment)
-                var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id)
+            i = $scope.assignments.indexOf(assignment);
+            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id);
 
-                removeValueFromList($scope.assignments[i].doers, j)
+            removeValueFromList($scope.assignments[i].doers, j);
 
-                $scope.buttonClicked = false;
+            $scope.buttonClicked = false;
         })
     }
 

@@ -2,12 +2,14 @@ Rails.application.routes.draw do
 
   root 'application#index'
   get 'map/init', to: 'map#init'
+  get 'map/action_init', to: 'map#action_init'
   get 'users/all', to: 'users#all'
 
   put 'courses/edit_name', to: 'courses#edit_name'
 
   post 'memberships/destroy', to: 'memberships#destroy'   # HTTP delete method cannot be provided with params other than ':id'
   post 'students_tasks/destroy', to: 'students_tasks#destroy'
+  post 'students_tasks/student_finished_task', to: 'students_tasks#student_finished_task'
 
   resources :assignments, only: [:create, :destroy]
   resources :courses, only: [:create, :show]

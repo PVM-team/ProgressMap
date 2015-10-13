@@ -1,4 +1,4 @@
-describe('actionMapController', function () {
+describe('ActionMapController', function () {
     var controller, scope;
     var CanvasServiceMock;
     var httpServiceMock;
@@ -8,25 +8,91 @@ describe('actionMapController', function () {
     beforeEach(function () {
         module('ProgressApp');
 
-        //leikkii backendiä, palauttaa testejä varten esimerkkidatan
         httpServiceMock = (function () {
-            var data = {};
+            var data1 = {};
 
-            data.course = [{"id": 1}];
-            data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2014}, {"user_id": 2, "timestamp": 2015}], "number": 1},
-                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "students_tasks": [{"user_id": 1, "timestamp": 2013}], "number": 2},
-                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2015}], "number": 3}];
-            data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
-            data.current_user = [{"id": 2}];
+            data1.course = [{"id": 1}];
+            data1.assignments = [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "number": 1},
+                                {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "number": 2},
+                                {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "number": 3} ];
+            
+            data1.participants = [{"id": 1,  "lastDoneAssignment": null}, 
+                                 {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}}, 
+                                 {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
+                                 {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
+                                 {"id": 6,  "lastDoneAssignment": {"number": 2, "timestamp": 4}},
+                                 {"id": 7,  "lastDoneAssignment": {"number": 2, "timestamp": 5}},
+                                 {"id": 5,  "lastDoneAssignment": {"number": 2, "timestamp": 6}},
+                                 {"id": 8,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
+                                 {"id": 9,  "lastDoneAssignment": {"number": 3, "timestamp": 8}},
+                                 {"id": 10, "lastDoneAssignment": {"number": 2, "timestamp": 9}},
+                                 {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}},
+                                 {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}} ];
+
+            data1.current_user = [{"id": 2}];
+
+            data3 = {};
+            data3.participants = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
+                                  {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}},
+                                  {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
+                                  {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
+                                  {"id": 6,  "lastDoneAssignment": {"number": 2, "timestamp": 4}},
+                                  {"id": 7,  "lastDoneAssignment": {"number": 2, "timestamp": 5}},
+                                  {"id": 5,  "lastDoneAssignment": {"number": 2, "timestamp": 6}},
+                                  {"id": 8,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
+                                  {"id": 9,  "lastDoneAssignment": {"number": 3, "timestamp": 8}},
+                                  {"id": 10, "lastDoneAssignment": {"number": 2, "timestamp": 9}},
+                                  {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}},
+                                  {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}} ];
+
+            data4 = {};
+            data4.participants = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
+                                  {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}},
+                                  {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
+                                  {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
+                                  {"id": 6,  "lastDoneAssignment": {"number": 2, "timestamp": 4}},
+                                  {"id": 7,  "lastDoneAssignment": {"number": 1, "timestamp": 13}},
+                                  {"id": 5,  "lastDoneAssignment": {"number": 2, "timestamp": 6}},
+                                  {"id": 8,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
+                                  {"id": 9,  "lastDoneAssignment": {"number": 2, "timestamp": 15}},
+                                  {"id": 10, "lastDoneAssignment": {"number": 2, "timestamp": 9}},
+                                  {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}},
+                                  {"id": 12, "lastDoneAssignment": {"number": 1, "timestamp": 14}} ];
+
+            var i = 0;
 
             return {
-                getData: function(path, params){
-                    return{
-                        then: function(callback){
-                            return callback(data);
-                        }
-                    };
+                getData: function(path, params) {
+                    i++;
+
+                    if (i == 1) {
+                        return {
+                            then: function(callback){
+                                return callback(data1);
+                            }
+                        };
+                    }
+                    else if (i == 2) {
+                        return {
+                            then: function(callback){
+                                return callback(data1);
+                            }
+                        };
+                    }
+                    else if (i == 3) {
+                        return {
+                            then: function(callback){
+                                return callback(data3);
+                            }
+                        };
+                    }
+                    else if (i == 4) {
+                        return {
+                            then: function(callback){
+                                return callback(data4);
+                            }
+                        };
+                    }
                 },
                 postData: function(path, data) {
                     return{
@@ -49,18 +115,6 @@ describe('actionMapController', function () {
             }
         })();
 
-        StateServiceMock = (function () {
-            var course;
-            return {
-                setCurrentCourse: function(currentCourse){
-                    course = currentCourse;
-                }
-            }
-        })();
-
-
-
-        spyOn(StateServiceMock, 'setCurrentCourse').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
@@ -71,50 +125,129 @@ describe('actionMapController', function () {
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
-            controller = $controller('actionMapController', {
+            controller = $controller('ActionMapController', {
                 $scope: scope,
                 $routeParams: $routeParams,
                 httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock,
                 StateService: StateServiceMock
             });
-
         });
-
     });
 
-    describe ('initializing actionMapController retrieves data from httpService', function(){
-
-        it('sets scope.course to 1', function(){
-            expect(scope.course.id).toBe(1);
-        })
-        it('sets scope.assignments to what httpService returns', function(){
-            expect(scope.assignments.length).toBe(3);
-            expect(scope.assignments[0].id).toBe(1);
-            expect(scope.assignments[1].location.x).toBe(330);
-            expect(scope.assignments[2].doers.length).toBe(1);
-        })
-        it('sets scope.participants to what httpService returns', function(){
-            expect(scope.participants.length).toBe(3);
-            expect(scope.participants[0].id).toBe(1);
-        })
-        it('sets scope.latestDoersForAssignments to include the students on that task', function(){
-            //student with id 2 is the latest to do task with number 1
-            expect(scope.latestDoersForAssignments[1].listOfStudentLocations.length).toBe(1);
-            expect(scope.latestDoersForAssignments[1].listOfStudentLocations[0].student.id).toBe(2);
-
-            expect(scope.latestDoersForAssignments[2].listOfStudentLocations.length).toBe(0);
-
-            //student with id 1 is the latest to do task with number 3
-            expect(scope.latestDoersForAssignments[3].listOfStudentLocations.length).toBe(1);
-            expect(scope.latestDoersForAssignments[3].listOfStudentLocations[0].student.id).toBe(1);
-        })
-    })
-    
     describe('goToNormalMap', function(){
         it('should call location.path when function is called', function(){
             scope.goToNormalMap();
-             expect(location.path).toHaveBeenCalledWith('/map/1');
+            expect(location.path).toHaveBeenCalledWith('/map/1');
         })
-    });
+    })
+
+    describe ('initializing ActionMapController initializes scope with correct data from httpService', function(){
+
+        it('scope.course is set to 1', function(){
+            expect(scope.course.id).toBe(1);
+        })
+
+        it('scope.assignments is what it is supposed to be initially', function() {
+            stateInitially(scope);
+        })
+
+        it("scope.participants is set to data['participants']", function(){
+            expect(scope.participants.length).toBe(12);
+            expect(scope.participants[0].id).toBe(1);
+
+            expect(scope.participants[4].id).toBe(6);
+            expect(scope.participants[4].lastDoneAssignment.number).toBe(2);
+            expect(scope.participants[4].lastDoneAssignment.timestamp).toBe(4);
+        })
+    })
+
+    describe('after interval occurs and data for participants is received again', function() {
+
+        describe('and no new data is provided', function() {
+
+            it ('nothing will change', function() {
+                doInterval(1, controller);
+                stateInitially(scope);
+            })
+        })
+
+        describe('and after a second interval and participant ID = 1 does assignment 1', function() {
+
+            it ('participant 1 is added to latestDoers of assignment 1', function() {
+                doInterval(2, controller);
+
+                expect(scope.assignments[0].latestDoers.length).toBe(4)
+                expect(scope.assignments[0].latestDoers[0].id).toBe(1)
+                expect(scope.assignments[0].latestDoers[1].id).toBe(8)
+                expect(scope.assignments[0].latestDoers[2].id).toBe(3)
+                expect(scope.assignments[0].latestDoers[3].id).toBe(2)
+
+                expect(scope.assignments[2].latestDoers.length).toBe(2)
+            })
+
+        })
+
+        describe('and after a third interval participant ID = 9 who had previously done assignment 3 does assignment 2, participant ID = 7 who had previously done assignment 2 and was in latestDoers of that assignment does assignment 1, and participant ID = 12 who had previously done assignment 3, and was in latestDoers of that assignment does assignment 1', function() {
+
+            it ('participant 12 is removed from latestDoers of assignment 3', function() {
+                doInterval(3, controller);
+                expect(scope.assignments[2].latestDoers.length).toBe(0)
+            })
+
+            it ('participant 7 is removed from latestDoers of assignment 2, and after the funtion, it contains the 5 latest doers', function() {
+                doInterval(3, controller);
+
+                expect(scope.assignments[1].latestDoers.length).toBe(5)
+                expect(scope.assignments[1].latestDoers[0].id).toBe(9)
+                expect(scope.assignments[1].latestDoers[1].id).toBe(11)
+                expect(scope.assignments[1].latestDoers[2].id).toBe(10)
+                expect(scope.assignments[1].latestDoers[3].id).toBe(5)
+                expect(scope.assignments[1].latestDoers[4].id).toBe(6)
+            })
+
+            it ('after the functuion, assignment 1 contains the 5 latest doers', function() {
+                doInterval(3, controller);
+
+                expect(scope.assignments[0].latestDoers.length).toBe(5)
+                expect(scope.assignments[0].latestDoers[0].id).toBe(12)
+                expect(scope.assignments[0].latestDoers[1].id).toBe(7)
+                expect(scope.assignments[0].latestDoers[2].id).toBe(1)
+                expect(scope.assignments[0].latestDoers[3].id).toBe(8)
+                expect(scope.assignments[0].latestDoers[4].id).toBe(3)
+            })            
+
+        })        
+
+    })
 })
+
+function doInterval(times, controller) {
+    for (var i = 0; i < times; i++) {
+        controller.updateLatestAssignments();
+    }
+}
+
+function stateInitially(scope) {
+    expect(scope.assignments[0].id).toBe(1);
+    expect(scope.assignments[0].latestDoers.length).toBe(3)
+
+    expect(scope.assignments[0].latestDoers[0].id).toBe(8)
+    expect(scope.assignments[0].latestDoers[1].id).toBe(3)
+    expect(scope.assignments[0].latestDoers[2].id).toBe(2)
+
+    expect(scope.assignments[1].id).toBe(2);
+    expect(scope.assignments[1].latestDoers.length).toBe(5)
+
+    expect(scope.assignments[1].latestDoers[0].id).toBe(11)
+    expect(scope.assignments[1].latestDoers[1].id).toBe(10)
+    expect(scope.assignments[1].latestDoers[2].id).toBe(5)
+    expect(scope.assignments[1].latestDoers[3].id).toBe(7)
+    expect(scope.assignments[1].latestDoers[4].id).toBe(6)
+
+    expect(scope.assignments[2].id).toBe(3);
+    expect(scope.assignments[2].latestDoers.length).toBe(2)
+
+    expect(scope.assignments[2].latestDoers[0].id).toBe(12)
+    expect(scope.assignments[2].latestDoers[1].id).toBe(9)
+}
