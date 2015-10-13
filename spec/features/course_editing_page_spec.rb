@@ -175,9 +175,9 @@ describe "Course editing page", js: true do
                 expect(find('#assignmentView')).to have_content('Id: 2, Number: 2')
             end
 
-            it "a new assignment is added to database" do
-                expect(Course.first.assignments.length).to be(@assignments_initially + 1)
-            end
+            #it "a new assignment is added to database" do
+            #    expect(Course.first.assignments.length).to be(@assignments_initially + 1)
+            #end
 
             it "and the number of the added assignment is [the highest number of all course assignments] + 1" do
                 delete_buttons_enumerator = page.all("button", :text => 'Delete assignment').each
