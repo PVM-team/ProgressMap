@@ -254,8 +254,9 @@ describe "Course editing page", js: true do
         describe "when all assignments are deleted" do
 
             before :each do
-                for i in 1..@course.assignments.length do
+                for i in 0..@course.assignments.length - 1 do
                     click_button('Delete assignment', match: :first)
+                    wait_for_DB_unlocking_after_delete(@course.assignments.length - i)
                 end
             end
 
@@ -271,6 +272,146 @@ describe "Course editing page", js: true do
 
                 it "there is a delete button" do
                     find_button('Delete assignment')
+                end
+
+                it "its button is placed to the correct block" do
+                    button = find_button('1')
+                    validate_location(x_loc(button), y_loc(button), 0, 1, "right")
+                end
+            end
+        end
+
+        describe "when 10 new assignments are added" do
+
+            before :each do
+                @assignments_initially = @course.assignments.length
+                @amount_to_add = 10
+
+                for i in 0..@amount_to_add - 1 do
+                    click_button('Add a new assignment')
+                    wait_for_DB_unlocking_after_added_assignment(@assignments_initially + i)
+                end
+                @course = Course.first
+                @assignment_count = @assignments_initially + @amount_to_add
+            end
+
+            it "10 assignment buttons are placed on canvas" do
+                for i in 1..@amount_to_add do
+                    find_button(@assignments_initially + i)
+                end
+            end
+
+            it "10 assignments are added to course" do
+                expect(@course.assignments.length).to be(@assignment_count)
+            end
+
+            it "the buttons for all assignments are in the blocks they belong to" do
+                direction = "left"
+
+                for i in 0..@assignment_count - 1
+                    button = find_button((i + 1).to_s)
+            
+                    x_loc = x_loc(button)
+                    y_loc = y_loc(button)
+
+                    if (i % 4 == 0)
+                        if direction === 'left'
+                            direction = "right"
+                        else
+                            direction = "left"
+                        end
+                    end
+
+                    validate_location(x_loc, y_loc, i, @assignment_count, direction)
+                end
+            end
+
+            describe "and dependencies between assignments 1 --> 7 and 6 --> 13 are formed and assignment 8 is given name 'Kasi" do
+
+                before :each do
+                    assignment = @course.assignments[6]
+                    expect(assignment.id).to be(7)
+                    expect(assignment.number).to be(7)
+
+                    assignment.dependencies << @course.assignments[0]
+                    expect(assignment.dependencies[0].number).to be(1)
+                    expect(@course.assignments[6].dependencies.length).to be(1)
+
+                    assignment = @course.assignments[12]
+                    expect(assignment.id).to be(13)
+                    expect(assignment.number).to be(13)
+
+                    assignment.dependencies << @course.assignments[5]
+                    expect(assignment.dependencies[0].number).to be(6)
+                    expect(@course.assignments[12].dependencies.length).to be(1)
+
+                    assignment = @course.assignments[7]
+                    expect(assignment.number).to be(8)
+
+                    #assignment.name = 'Kasi'
+                    #assignment.save
+                end
+
+                describe "and 4 first assignments are deleted" do
+
+                    before :each do
+                        @amount_deleted = 4
+
+                        for i in 0..@amount_deleted - 1 do
+                            click_button('Delete assignment', match: :first)
+                            wait_for_DB_unlocking_after_delete(@assignment_count - i)
+                        end
+                        @course = Course.first
+                        @assignment_count = @assignment_count - @amount_deleted
+                    end
+
+                    it 'there are @assignment_count - 4 assignment buttons on canvas numbered from 1 to @assignment_count - 4' do
+                        for i in 1..@assignment_count
+                            find_button(i)
+                        end                 
+
+                        expect(page).not_to have_button(@assignment_count + 1)
+                    end
+
+                    it '4 assignments are deleted from database' do
+                        expect(@course.assignments.length).to be(@assignment_count)
+                    end
+
+                    it 'the assignment buttons are located in the blocks they belong to' do
+                        direction = "left"
+
+                        for i in 0..@assignment_count - 1
+                            button = find_button((i + 1).to_s)
+            
+                            x_loc = x_loc(button)
+                            y_loc = y_loc(button)
+
+                            if (i % 4 == 0)
+                                if direction === 'left'
+                                    direction = "right"
+                                else
+                                    direction = "left"
+                                end
+                            end
+
+                            validate_location(x_loc, y_loc, i, @assignment_count, direction)
+                        end                        
+                    end
+
+                    it 'and assignment 1 was a dependency to assignment 7 before, that dependency no more exists' do
+                        expect(@course.assignments.first.dependencies.length).to be(0)
+                    end
+
+                    it 'and assignment 6 was a dependency to assignment 13 before, that dependency exists between assignments 2 and 9 now' do
+                        expect(@course.assignments[8].number).to be(9)
+                        expect(@course.assignments[8].dependencies.length).to be(1)
+                        expect(@course.assignments[8].dependencies[0].number).to be(2)
+                    end
+
+                    it "assignment 4 has name 'Kasi' now" do
+                        pending("Name for assignments not implemented yet")
+                        expect(@course.assignments.fourth.name).to eq('Kasi')
+                    end
                 end
             end
         end
@@ -306,7 +447,7 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
     end
 
     y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
-
+    
     expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
     expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end

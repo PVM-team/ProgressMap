@@ -33,7 +33,7 @@ ProgressApp.service('CanvasService', function () {
         //}
 
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
-        canvas.width = width + 100; // 100 pikseliä lisää reunoja varten
+        canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
         placeCanvasInDiv(div);
         setContext();
         setCanvasBGColor(bgColor);
