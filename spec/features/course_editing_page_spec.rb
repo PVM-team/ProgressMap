@@ -10,12 +10,12 @@ describe "Course editing page", js: true do
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
 
-        @erkki = FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
-        FactoryGirl.create :user, firstName: "Mauno", lastName: "Tamminen"
-        FactoryGirl.create :user, firstName: "Etunimi", lastName: "Sukunimi"
+        @erkki = FactoryGirl.create :student, firstName: "Erkki", lastName: "Mäkelä"
+        FactoryGirl.create :student, firstName: "Mauno", lastName: "Tamminen"
+        FactoryGirl.create :student, firstName: "Etunimi", lastName: "Sukunimi"
 
         @course = FactoryGirl.create :course, name: "Ohtuprojekti"
-        @course.participants << (FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi")
+        @course.students << (FactoryGirl.create :student, firstName: "Mauno", lastName: "Tammi")
 
         assignment1 = FactoryGirl.create :assignment, number: 1
         assignment1.location = (FactoryGirl.create :location, x: 125, y: 160)
@@ -69,14 +69,14 @@ describe "Course editing page", js: true do
             expect(found).to be(true)
         end
 
-        it "it shows all the participants" do
-            expect(find("#participants")).to have_content('Mauno Tammi')
-            expect(find("#participants")).not_to have_content('Erkki Mäkelä')
-            expect(find("#participants")).not_to have_content('Mauno Tamminen')
-            expect(find("#participants")).not_to have_content('Etunimi Sukunimi')
+        it "it shows all the students" do
+            expect(find("#students")).to have_content('Mauno Tammi')
+            expect(find("#students")).not_to have_content('Erkki Mäkelä')
+            expect(find("#students")).not_to have_content('Mauno Tamminen')
+            expect(find("#students")).not_to have_content('Etunimi Sukunimi')
         end
 
-        it "it shows all the users not in course" do
+        it "it shows all the students not in course" do
             expect(find("#resultview")).not_to have_content('Mauno Tammi Add to course')
             expect(find("#resultview")).to have_content('Erkki Mäkelä')
             expect(find("#resultview")).to have_content('Mauno Tamminen Add to course')
@@ -120,62 +120,61 @@ describe "Course editing page", js: true do
                 fill_in('lastName', with: 'mmi')
             end
 
-            it "it finds the users not in course whose first name and last name have those strings as substrings" do
+            it "it finds the students not in course whose first name and last name have those strings as substrings" do
                 expect(find("#resultview")).to have_content('Mauno Tamminen Add to course')
                 expect(find("#resultview")).not_to have_content('Erkki Mäkelä')
-                expect(find("#resultview")).not_to have_content('Mauno Tammi Add to course') # shown as participant
+                expect(find("#resultview")).not_to have_content('Mauno Tammi Add to course')
             end
         end
 
-        describe "when a user is added to course" do
+        describe "when a student is added to course" do
 
             before :each do
-                @participants_on_course = @course.participants.length
-                @original_membership_count = Membership.count
+                @students_on_course = @course.students.length
 
                 fill_in('firstName', with: 'Erkki')
                 click_button 'Add to course' # Erkki Mäkelä lisätään kurssille
             end
 
-            it "the user will be shown in participants list" do
-                expect(page.find("#participants")).to have_content('Erkki Mäkelä')
+            it "the student will be shown in students list" do
+                expect(page.find("#students")).to have_content('Erkki Mäkelä')
             end
 
-            it "the user won't be shown in resultview" do
+            it "the student won't be shown in resultview" do
                 expect(page.find("#resultview").text).to be_empty
             end
 
-            it "a new membership between that user and the edited course is created" do
-                expect(Membership.count).to be(@original_membership_count + 1)
-
+            it "the student is added to students of the course in database" do
                 course = Course.first
 
-                expect(course.participants.length).to be(@participants_on_course + 1)
-                expect(course.participants[course.participants.length - 1]).to eq(@erkki)
+                expect(course.students.length).to be(@students_on_course + 1)
+
+                erkki_found = false
+                course.students.each do |student|
+                    erkki_found = true if student === @erkki
+                end
+                expect(erkki_found).to be(true)
             end
         end
 
-        describe "when a user is removed from the course" do
+        describe "when a student is removed from the course" do
 
             before :each do
-                @participants_on_course = @course.participants.length
-                @original_membership_count = Membership.count
-                click_button 'Delete participant'
+                @students_on_course = @course.students.length
+                click_button 'Delete student'
             end
 
-            it "deletes the participant from participantlist" do
-                expect(find("#participants")).not_to have_content('Mauno Tammi')
+            it "deletes the student from studentlist" do
+                expect(find("#students")).not_to have_content('Mauno Tammi')
             end
 
-            it "adds the participant to all users when deleted" do
+            it "adds the student to all students when deleted" do
                 expect(find("#resultview")).to have_content('Mauno Tammi Add to course')
-
             end
 
-            it "membership between deleted user and edited course is deleted" do
-                expect(Membership.count).to be(@original_membership_count - 1)
+            it "the student is no longer part of the students on the course" do
                 course = Course.first
-                expect(course.participants.length).to be(@participants_on_course - 1)
+                expect(course.students.length).to be(@students_on_course - 1)
             end
         end
 

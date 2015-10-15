@@ -94,22 +94,26 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
     $scope.addStudent = function(newStudent) {
-        postStudentData("", newStudent, $scope.allStudents, $scope.students)
+        var data = {
+            course_id: $scope.course.id,
+            student_id: newStudent.id
+        }
+
+        putStudentData("add_to_course", data, newStudent, $scope.allStudents, $scope.students);
     }
 
     $scope.deleteStudent = function(student) {
-        postStudentData('/destroy', student, $scope.students, $scope.allStudents)
-    }
-
-    function postStudentData(uri, student, list_to_remove, list_to_add) {
-        var index = list_to_remove.indexOf(student)
-
         var data = {
-            course_id: $scope.course.id,
             student_id: student.id
         }
 
-        httpService.postData('memberships' + uri, data).then(function (data) {
+        putStudentData('remove_from_course', data, student, $scope.students, $scope.allStudents);
+    }
+
+    function putStudentData(uri, data, student, list_to_remove, list_to_add) {
+        var index = list_to_remove.indexOf(student)
+
+        httpService.putData('students/' + uri, data).then(function (data) {
             list_to_remove.splice(index, 1);
             list_to_add.push(student);
         })

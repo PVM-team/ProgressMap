@@ -7,7 +7,7 @@ json.students @students do |student|
 	json.firstName student.firstName
 	json.lastName student.lastName
 
-	json.lastDoneAssignment student.latest_done_assignment
+	json.lastDoneAssignment student.last_done_assignment
 end
 
 json.assignments @assignments, partial: 'assignments/assignment', as: :assignment

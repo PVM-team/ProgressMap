@@ -36,16 +36,16 @@ describe Course, type: :model do
   describe "when a course is deleted" do
 
   	before :each do
-  		@student1 = FactoryGirl.create :user
-  		@student2 = FactoryGirl.create :user
+  		@student1 = FactoryGirl.create :student
+  		@student2 = FactoryGirl.create :student
   		@assignment1 = FactoryGirl.create :assignment
 
   		@course.assignments << @assignment1
   		@course.assignments << (FactoryGirl.create :assignment)
   		FactoryGirl.create :assignment
 
-  		@course.participants << @student1
-  		@course.participants << @student2
+  		@course.students << @student1
+  		@course.students << @student2
   	end
 
   	it "it is removed from database" do
@@ -60,16 +60,9 @@ describe Course, type: :model do
   		expect(Assignment.count).to be(1)
   	end
 
-  	it "all memberships associated with it are deleted" do
-  		expect(Membership.count).to be(2)
-
+  	it "the students of the course are deleted" do
   		@course.destroy
-  		expect(Membership.count).to be(0)
-  	end
-
-  	it "the participants of the course are not deleted" do
-  		@course.destroy
-  		expect(User.count).to be(2)
+  		expect(Student.count).to be(0)
   	end
   end
 end

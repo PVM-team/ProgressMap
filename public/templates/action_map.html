@@ -1,11 +1,11 @@
 
 <h2>Course: <i>{{ course.name }}</i></h2>
 <button ng-click="goToNormalMap()"> Go to normal map </button>
-<h3>Participants</h3>
+<h3>Students</h3>
 
 <div>
     <table>
-        <tr ng-repeat="p in participants">
+        <tr ng-repeat="p in students">
             <td> {{ p.firstName }}</td>
             <td> {{ p.lastName }}</td>
             <td> {{ p.id }}</td>
@@ -20,8 +20,8 @@
             }}
         </button>
 
-        <div ng-repeat="participant in assignment.latestDoers">
-            <button class="student-button" ng-style="locationOfStudentInMap(participant, assignment)">{{ participant.id }}</button>
+        <div ng-repeat="student in assignment.latestDoers">
+            <button class="student-button" ng-style="locationOfStudentInMap(student, assignment)">{{ student.id }}</button>
         </div>
 
     </div>

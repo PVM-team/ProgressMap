@@ -26,7 +26,7 @@ context "As a student I want to see my own progress", js: true do
 
 	Steps "Visiting course map page" do
 
-		Given "I visit the course map page as @user2" do
+		Given "I visit the course map page as @student2" do
 			visit_map_page
 		end
 
@@ -36,17 +36,17 @@ context "As a student I want to see my own progress", js: true do
 
   			@course.assignments.each do |assignment|
 
-  				button = page.first("button", :text => assignment.number)
+  				button = find_button(assignment.number)
   				expect(button.visible?).to be(true)
   			end
 		end
 
 		Then "I can see assignments I have completed" do
-			check_that_user_sees_done_tasks_as_done(@course, @user2, 4)
+			check_that_student_sees_done_tasks_as_done(@course, @student2, 4)
 		end
 
 		And "I can see the assignments I have not completed yet" do
-			check_that_user_sees_undone_tasks_as_undone(@course, @user2, 1)
+			check_that_student_sees_undone_tasks_as_undone(@course, @student2, 1)
 		end
 	end
 end
@@ -56,9 +56,9 @@ def course_details
 	course2 = FactoryGirl.create :course
 	course2.assignments << (FactoryGirl.create :assignment)
 
-	@user1 = FactoryGirl.create :user
-	@user2 = FactoryGirl.create :user
-	@user3 = FactoryGirl.create :user
+	@student1 = FactoryGirl.create :student
+	@student2 = FactoryGirl.create :student
+	@student3 = FactoryGirl.create :student
 
 	@task1 = FactoryGirl.create :assignment, number: 1
 	@task2 = FactoryGirl.create :assignment, number: 2
@@ -72,9 +72,9 @@ def course_details
 	@task4.location = FactoryGirl.create :location, x: 630, y: 410
 	@task5.location = FactoryGirl.create :location, x: 420, y: 390
 
-	@course.participants << @user1
-	@course.participants << @user2
-	@course.participants << @user3
+	@course.students << @student1
+	@course.students << @student2
+	@course.students << @student3
 
 	@course.assignments << @task1
 	@course.assignments << @task2
@@ -82,22 +82,22 @@ def course_details
 	@course.assignments << @task4
 	@course.assignments << @task5
 
-	@user1.assignments << @task1
-	@user1.assignments << @task2
+	@student1.assignments << @task1
+	@student1.assignments << @task2
 
-	@user2.assignments << @task1
-	@user2.assignments << @task3
-	@user2.assignments << @task4
-	@user2.assignments << @task5
+	@student2.assignments << @task1
+	@student2.assignments << @task3
+	@student2.assignments << @task4
+	@student2.assignments << @task5
 
-	@user3.assignments << course2.assignments[0]
+	@student3.assignments << course2.assignments[0]
 end
 
 def visit_map_page
 	visit '/'
 end
 
-def check_that_user_sees_tasks_with_status_as_status(course, assignments, status, amount)
+def check_that_student_sees_tasks_with_status_as_status(course, assignments, status, amount)
 	index = 0
 
   	assignments.each do |assignment|
@@ -105,10 +105,9 @@ def check_that_user_sees_tasks_with_status_as_status(course, assignments, status
   		course.assignments.each do |course_assignment|
   			if course_assignment === assignment
 
-  				button = page.first("button", :text => assignment.number)
-  				clas = button[:class]
+  				button = find_button(assignment.number)
 
-  				expect(clas).to have_content(status)
+  				expect(button[:class]).to have_content(status)
   				index = index + 1
   			end
   		end
@@ -116,23 +115,23 @@ def check_that_user_sees_tasks_with_status_as_status(course, assignments, status
   	expect(index).to be(amount)
 end
 
-def check_that_user_sees_done_tasks_as_done(course, user, amount)
-  	check_that_user_sees_tasks_with_status_as_status(course, user.assignments, "done-task", amount)
+def check_that_student_sees_done_tasks_as_done(course, student, amount)
+  	check_that_student_sees_tasks_with_status_as_status(course, student.assignments, "done-task", amount)
 end
 
-def check_that_user_sees_undone_tasks_as_undone(course, user, amount)
+def check_that_student_sees_undone_tasks_as_undone(course, student, amount)
 	undone_tasks = []
 
 	course.assignments.each do |assignment|
 
-		undone_tasks << assignment unless user_has_done_assignment(user, assignment)
+		undone_tasks << assignment unless student_has_done_assignment(student, assignment)
 	end
 
-	check_that_user_sees_tasks_with_status_as_status(course, undone_tasks, "undone-task", amount)
+	check_that_student_sees_tasks_with_status_as_status(course, undone_tasks, "undone-task", amount)
 end
 
-def user_has_done_assignment(user, assignment)
-	user.assignments.each do |a|
+def student_has_done_assignment(student, assignment)
+	student.assignments.each do |a|
 
 		return true if a === assignment
 	end

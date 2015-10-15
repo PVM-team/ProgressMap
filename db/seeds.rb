@@ -3,25 +3,25 @@
 
 course1 = Course.create name: "Ohtuprojekti"
 
-student1 = User.create firstName: "Heimo", lastName: "Vesa"
-student2 = User.create firstName: "Allan", lastName: "Kurma"
-student3 = User.create firstName: "Irma", lastName: "Kääriäinen"
-student4 = User.create firstName: "Aulis", lastName: "Homelius"
-student5 = User.create firstName: "Asko", lastName: "Vilenius"
-student6 = User.create firstName: "Sam", lastName: "Makkonen"
-student7 = User.create firstName: "Rivo", lastName: "Riitta"
-student8 = User.create firstName: "Inkeri", lastName: "Kääriäinen"
-student9 = User.create firstName: "Gootti", lastName: "Kusta"
+student1 = Student.create firstName: "Heimo", lastName: "Vesa"
+student2 = Student.create firstName: "Allan", lastName: "Kurma"
+student3 = Student.create firstName: "Irma", lastName: "Kääriäinen"
+student4 = Student.create firstName: "Aulis", lastName: "Homelius"
+student5 = Student.create firstName: "Asko", lastName: "Vilenius"
+student6 = Student.create firstName: "Sam", lastName: "Makkonen"
+student7 = Student.create firstName: "Rivo", lastName: "Riitta"
+student8 = Student.create firstName: "Inkeri", lastName: "Kääriäinen"
+student9 = Student.create firstName: "Gootti", lastName: "Kusta"
 
-course1.participants << student1
-course1.participants << student2
-course1.participants << student3
-course1.participants << student4
-course1.participants << student5
-course1.participants << student6
-course1.participants << student7
-course1.participants << student8
-course1.participants << student9
+course1.students << student1
+course1.students << student2
+course1.students << student3
+course1.students << student4
+course1.students << student5
+course1.students << student6
+course1.students << student7
+course1.students << student8
+course1.students << student9
 
 assignment1 = Assignment.new number: 1
 assignment2 = Assignment.new number: 2
@@ -95,12 +95,3 @@ assignment8.dependencies << assignment4
 assignment9.dependencies << assignment3
 assignment9.dependencies << assignment7
 assignment9.dependencies << assignment8
-
-assignment1.dependencies << assignment2
-assignment1.dependencies << assignment3
-assignment1.dependencies << assignment4
-assignment1.dependencies << assignment5
-assignment1.dependencies << assignment6
-assignment1.dependencies << assignment7
-assignment1.dependencies << assignment8
-assignment1.dependencies << assignment9

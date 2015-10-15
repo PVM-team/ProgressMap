@@ -4,7 +4,7 @@ FactoryGirl.define do
     name "course"
   end
 
-  factory :user do
+  factory :student do
     firstName "first"
     lastName "last"
   end

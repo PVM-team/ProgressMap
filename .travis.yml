@@ -5,6 +5,8 @@ script:
 - bundle exec rake db:migrate --trace
 - RAILS_ENV=test bundle exec rake db:migrate --trace
 - bundle exec rake db:test:prepare
+
+- bundle exec rspec -fd spec/features/actionmap_page_spec.rb
 - bundle exec rspec -fd spec/features/course_creation_page_spec.rb
 - bundle exec rspec -fd spec/features/course_editing_page_spec.rb
 - bundle exec rspec -fd spec/features/course_map_page_spec.rb

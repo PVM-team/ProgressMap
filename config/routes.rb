@@ -3,23 +3,25 @@ Rails.application.routes.draw do
   root 'application#index'
   get 'map/init', to: 'map#init'
   get 'map/action_init', to: 'map#action_init'
-  get 'users/all', to: 'users#all'
+  get 'students/all', to: 'students#all'
 
   put 'courses/edit_name', to: 'courses#edit_name'
 
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'
 
-  post 'memberships/destroy', to: 'memberships#destroy'   # HTTP delete method cannot be provided with params other than ':id'
+
+  put 'students/add_to_course', to: 'students#add_to_course'
+  put 'students/remove_from_course', to: 'students#remove_from_course'
+
   post 'students_tasks/destroy', to: 'students_tasks#destroy'
   post 'students_tasks/student_finished_task', to: 'students_tasks#student_finished_task'
 
   resources :assignments, only: [:create, :destroy]
   resources :courses, only: [:create, :show]
   resources :locations, only: [:update]
-  resources :memberships, only: [:create]
   resources :students_tasks, only: [:create]
-  resources :users, only: [:create]
+  resources :students, only: [:create]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

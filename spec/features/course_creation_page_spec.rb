@@ -12,11 +12,11 @@ describe "Course creation page", js: true do
 
     FactoryGirl.create :course
 
-    FactoryGirl.create :user
-    FactoryGirl.create :user, firstName: "Erkki", lastName: "Mäkelä"
-    FactoryGirl.create :user, firstName: "Mauno", lastName: "Tamminen"
-    FactoryGirl.create :user, firstName: "Etunimi", lastName: "Sukunimi"
-    FactoryGirl.create :user, firstName: "Mauno", lastName: "Tammi"
+    FactoryGirl.create :student
+    FactoryGirl.create :student, firstName: "Erkki", lastName: "Mäkelä"
+    FactoryGirl.create :student, firstName: "Mauno", lastName: "Tamminen"
+    FactoryGirl.create :student, firstName: "Etunimi", lastName: "Sukunimi"
+    FactoryGirl.create :student, firstName: "Mauno", lastName: "Tammi"
 
     visit_course_creation_page
   end
@@ -134,7 +134,7 @@ describe "Course creation page", js: true do
       end
     end
 
-    describe "and some users are added to course" do
+    describe "and some students are added to course" do
       
       before :each do
         page.find("a", :text => 'Mauno Tamminen').click
@@ -151,7 +151,7 @@ describe "Course creation page", js: true do
           expect(page).to have_content 'Course: makkara'
         end
 
-        it "displays the names of participants of the course" do
+        it "displays the names of students of the course" do
           expect(page).to have_content("Mauno")
           expect(page).to have_content('Sukunimi')
         end
@@ -248,13 +248,13 @@ describe "Course creation page", js: true do
   describe "when two students are added to to the list of students to be added to the course" do
 
     before :each do
-      expect(find("#participants").text.include?('Mauno Tamminen')).to be(false)
+      expect(find("#students").text.include?('Mauno Tamminen')).to be(false)
 
       page.find("a", :text => 'Mauno Tamminen').click
       page.find("a", :text => 'Etunimi Sukunimi').click
 
-      expect(find("#participants").text.include?('Mauno Tamminen')).to be(true)
-      expect(find("#participants").text.include?('Etunimi Sukunimi')).to be(true)
+      expect(find("#students").text.include?('Mauno Tamminen')).to be(true)
+      expect(find("#students").text.include?('Etunimi Sukunimi')).to be(true)
     end
 
     it "neither one of the students can be added again" do
@@ -273,7 +273,7 @@ describe "Course creation page", js: true do
       end
 
       it "the student is no longer in that list" do
-        expect(find("#participants").text.include?('Mauno Tamminen')).to be(false)
+        expect(find("#students").text.include?('Mauno Tamminen')).to be(false)
       end
 
       it "the student can be added to the course once again" do
@@ -282,7 +282,7 @@ describe "Course creation page", js: true do
         page.find("a", :text => 'Mauno Tamminen').click
 
         resultview_include_string('Mauno Tamminen', false)
-        expect(find("#participants").text.include?('Mauno Tamminen')).to be(true)
+        expect(find("#students").text.include?('Mauno Tamminen')).to be(true)
       end
     end
   end

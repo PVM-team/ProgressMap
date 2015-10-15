@@ -37,12 +37,12 @@ describe Assignment, type: :model do
       @assignment.course = FactoryGirl.create :course
 
       for i in 1..3
-        user = FactoryGirl.create :user
+        student = FactoryGirl.create :student
 
         if i < 3
-          @assignment.doers << user
+          @assignment.doers << student
         else
-          user.assignments << (FactoryGirl.create :assignment)
+          student.assignments << (FactoryGirl.create :assignment)
         end  
       end
     end
@@ -73,7 +73,7 @@ describe Assignment, type: :model do
 
     it "the doers are not deleted" do
       @assignment.destroy
-      expect(User.count).to be(3)
+      expect(Student.count).to be(3)
     end
 
     it "the course of the assignment is not deleted" do

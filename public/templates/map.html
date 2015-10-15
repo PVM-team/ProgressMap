@@ -2,11 +2,11 @@
 
 <h2>Course: <i>{{ course.name }}</i></h2>
 <button ng-click="goToActionMap()"> Go to action map </button>
-<h3>Participants</h3>
+<h3>Students</h3>
 
 <div>
     <table>
-        <tr ng-repeat="p in participants">
+        <tr ng-repeat="p in students">
             <td> {{ p.firstName }}</td>
             <td> {{ p.lastName }}</td>
         </tr>
@@ -18,12 +18,12 @@
 <button ng-click="moveToCourseCreationView()">Create a new course</button>
 <button ng-click="moveToCourseEditView()">Edit course</button>
 
-<p>Current user: <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
+<p>Current student: <strong>{{ currentStudent.firstName }} {{ currentStudent.lastName }}</strong>
 
 <p>View the map as student:</p>
 
-<select ng-model="participant" ng-change="viewAsStudent(participant)"
-        ng-options="participant as (participant.firstName + ' ' + participant.lastName) for participant in  participants"></select>
+<select ng-model="student" ng-change="viewAsStudent(student)"
+        ng-options="student as (student.firstName + ' ' + student.lastName) for student in  students"></select>
 
 <div id="mapElements">
 

@@ -54,7 +54,7 @@ def submit_button_is_disabled
 end
 
 def submit_button_is_enabled
-  button = page.find('button', :text => 'Submit')
+  button = find_button('Submit')
 
   expect(button[:disabled]).to be(nil)
 end
