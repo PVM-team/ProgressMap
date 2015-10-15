@@ -16,11 +16,11 @@ describe('MapController', function () {
 
             data.course = [{"id": 1}];
             data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2014}, {"user_id": 2, "timestamp": 2015}], "number": 1},
-                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "students_tasks": [{"user_id": 1, "timestamp": 2013}], "number": 2},
-                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "students_tasks": [{"user_id": 1, "timestamp": 2015}], "number": 3}];
-            data.participants = [{"id": 1}, {"id": 2}, {"id": 3}];
-            data.current_user = [{"id": 2}];
+                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "students_tasks": [{"student_id": 1, "timestamp": 2014}, {"student_id": 2, "timestamp": 2015}], "number": 1},
+                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "students_tasks": [{"student_id": 1, "timestamp": 2013}], "number": 2},
+                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "students_tasks": [{"student_id": 1, "timestamp": 2015}], "number": 3}];
+            data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
+            data.current_student = [{"id": 2}];
 
             return {
                 getData: function(path, params){
@@ -33,7 +33,7 @@ describe('MapController', function () {
                 postData: function(path, data) {
                     return{
                         then: function(callback){
-                            return callback({id: (scope.participants.length + 1)});
+                            return callback({id: (scope.students.length + 1)});
                         }
                     };
                 }
@@ -52,20 +52,20 @@ describe('MapController', function () {
         })();
 
         StateServiceMock = (function () {
-            var user;
+            var student;
             return {
-                setCurrentUser: function (currentUser) {
-                    user = currentUser;
+                setCurrentStudent: function (currentStudent) {
+                    student = currentStudent;
                 },
-                getCurrentUser: function(){
-                    return user;
+                getCurrentStudent: function() {
+                    return student;
                 }
             }
         })();
 
 
 
-        spyOn(StateServiceMock, 'setCurrentUser').and.callThrough();
+        spyOn(StateServiceMock, 'setCurrentStudent').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
@@ -113,14 +113,14 @@ describe('MapController', function () {
             expect(scope.assignments[1].location.x).toBe(330);
             expect(scope.assignments[2].doers.length).toBe(1);
         })
-        it('sets scope.participants to what httpService returns', function(){
-            expect(scope.participants.length).toBe(3);
-            expect(scope.participants[0].id).toBe(1);
+        it('sets scope.students to what httpService returns', function(){
+            expect(scope.students.length).toBe(3);
+            expect(scope.students[0].id).toBe(1);
         })
-        it('sets scope.currentUser to what httpService returns', function(){
-            expect(scope.currentUser.id).toBe(2);
+        it('sets scope.currentStudent to what httpService returns', function(){
+            expect(scope.currentStudent.id).toBe(2);
         })
-        it('sets scope.done_assignments to those of scope.currentUser', function(){
+        it('sets scope.done_assignments to those of scope.currentStudent', function(){
             expect(scope.done_assignments.length).toBe(1);
         })
     })
@@ -128,16 +128,16 @@ describe('MapController', function () {
 
     describe('viewAsStudent', function() {
 
-        it('changes currentUser to the student which is given as parameter', function () {
-            expect(scope.currentUser.id).toBe(2)
+        it('changes currentStudent to the student which is given as parameter', function () {
+            expect(scope.currentStudent.id).toBe(2)
             scope.viewAsStudent({"id": 3});
 
-            expect(scope.currentUser.id).toBe(3);
+            expect(scope.currentStudent.id).toBe(3);
         });
 
-        it('sets done_assignments when user is valid', function () {
+        it('sets done_assignments when student is valid', function () {
             expect(scope.done_assignments.length).not.toBe(3);
-            scope.viewAsStudent(scope.participants[0]);
+            scope.viewAsStudent(scope.students[0]);
 
             expect(scope.done_assignments.length).toBe(3);
         });
@@ -157,10 +157,11 @@ describe('MapController', function () {
     })
 
     describe('marking assignments', function(){
+        
         describe('when undone', function(){
-            it('calls on httpService.postData with assignment id, current user id and path students_tasks', function(){
+            it('calls on httpService.postData with assignment id, current student id and path students_tasks', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
-                var data2 = {assignment_id: 2, user_id: scope.currentUser.id}
+                var data2 = {assignment_id: 2, student_id: scope.currentStudent.id}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks", data2);
             })
             it('sets them as done', function(){
@@ -173,10 +174,11 @@ describe('MapController', function () {
                 expect(undoneAssignment.doers.length).toBe(2);
             })
         })
+
         describe('when done', function(){
-            it('calls on httpService.postData with assignment id, current user id and path students_tasks/destroy', function(){
+            it('calls on httpService.postData with assignment id, current student id and path students_tasks/destroy', function(){
                 scope.markAssignmentAsUndone(doneAssignment);
-                var data2 = {assignment_id: 1, user_id: scope.currentUser.id}
+                var data2 = {assignment_id: 1, student_id: scope.currentStudent.id}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/destroy", data2);
             })
             it ('sets them as undone', function(){
@@ -193,18 +195,11 @@ describe('MapController', function () {
     })
 
     describe('moveToCourseCreationView', function(){
-        it ('should call StateService.setCurrentUser with correct value', function(){
+        it ('should call StateService.setCurrentStudent with correct value', function(){
             scope.moveToCourseCreationView();
-            expect(StateServiceMock.setCurrentUser).toHaveBeenCalledWith(scope.currentUser);
+            expect(StateServiceMock.setCurrentStudent).toHaveBeenCalledWith(scope.currentStudent);
         })
     })
-
-/*    describe('moveToCourseEditView', function(){
-        it ('should call StateService.setCurrentCourse with correct value', function(){
-            scope.moveToCourseEditView();
-            expect(StateServiceMock.setCurrentCourse).toHaveBeenCalledWith(scope.course);
-        })
-    })*/
 
     describe('goToActionMap', function(){
         it('should call location.path when function is called', function(){

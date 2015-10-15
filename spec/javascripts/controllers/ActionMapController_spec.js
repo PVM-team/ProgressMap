@@ -16,7 +16,7 @@ describe('ActionMapController', function () {
                                 {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "number": 2},
                                 {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "number": 3} ];
             
-            data1.participants = [{"id": 1,  "lastDoneAssignment": null}, 
+            data1.students = [{"id": 1,  "lastDoneAssignment": null}, 
                                  {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}}, 
                                  {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
                                  {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
@@ -29,10 +29,10 @@ describe('ActionMapController', function () {
                                  {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}},
                                  {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}} ];
 
-            data1.current_user = [{"id": 2}];
+            data1.current_student = [{"id": 2}];
 
             data3 = {};
-            data3.participants = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
+            data3.students = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
                                   {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}},
                                   {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
                                   {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
@@ -46,7 +46,7 @@ describe('ActionMapController', function () {
                                   {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}} ];
 
             data4 = {};
-            data4.participants = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
+            data4.students = [{"id": 1,  "lastDoneAssignment": {"number": 1, "timestamp": 12}},
                                   {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}},
                                   {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
                                   {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
@@ -67,28 +67,28 @@ describe('ActionMapController', function () {
 
                     if (i == 1) {
                         return {
-                            then: function(callback){
+                            then: function(callback) {
                                 return callback(data1);
                             }
                         };
                     }
                     else if (i == 2) {
                         return {
-                            then: function(callback){
+                            then: function(callback) {
                                 return callback(data1);
                             }
                         };
                     }
                     else if (i == 3) {
                         return {
-                            then: function(callback){
+                            then: function(callback) {
                                 return callback(data3);
                             }
                         };
                     }
                     else if (i == 4) {
                         return {
-                            then: function(callback){
+                            then: function(callback) {
                                 return callback(data4);
                             }
                         };
@@ -96,8 +96,8 @@ describe('ActionMapController', function () {
                 },
                 postData: function(path, data) {
                     return{
-                        then: function(callback){
-                            return callback({id: (scope.participants.length + 1)});
+                        then: function(callback) {
+                            return callback({id: (scope.students.length + 1)});
                         }
                     };
                 }
@@ -152,17 +152,17 @@ describe('ActionMapController', function () {
             stateInitially(scope);
         })
 
-        it("scope.participants is set to data['participants']", function(){
-            expect(scope.participants.length).toBe(12);
-            expect(scope.participants[0].id).toBe(1);
+        it("scope.students is set to data['students']", function() {
+            expect(scope.students.length).toBe(12);
+            expect(scope.students[0].id).toBe(1);
 
-            expect(scope.participants[4].id).toBe(6);
-            expect(scope.participants[4].lastDoneAssignment.number).toBe(2);
-            expect(scope.participants[4].lastDoneAssignment.timestamp).toBe(4);
+            expect(scope.students[4].id).toBe(6);
+            expect(scope.students[4].lastDoneAssignment.number).toBe(2);
+            expect(scope.students[4].lastDoneAssignment.timestamp).toBe(4);
         })
     })
 
-    describe('after interval occurs and data for participants is received again', function() {
+    describe('after interval occurs and data for students is received again', function() {
 
         describe('and no new data is provided', function() {
 
@@ -172,9 +172,9 @@ describe('ActionMapController', function () {
             })
         })
 
-        describe('and after a second interval and participant ID = 1 does assignment 1', function() {
+        describe('and after a second interval and student ID = 1 does assignment 1', function() {
 
-            it ('participant 1 is added to latestDoers of assignment 1', function() {
+            it ('student 1 is added to latestDoers of assignment 1', function() {
                 doInterval(2, controller);
 
                 expect(scope.assignments[0].latestDoers.length).toBe(4)
@@ -188,14 +188,14 @@ describe('ActionMapController', function () {
 
         })
 
-        describe('and after a third interval participant ID = 9 who had previously done assignment 3 does assignment 2, participant ID = 7 who had previously done assignment 2 and was in latestDoers of that assignment does assignment 1, and participant ID = 12 who had previously done assignment 3, and was in latestDoers of that assignment does assignment 1', function() {
+        describe('and after a third interval student ID = 9 who had previously done assignment 3 does assignment 2, student ID = 7 who had previously done assignment 2 and was in latestDoers of that assignment does assignment 1, and student ID = 12 who had previously done assignment 3, and was in latestDoers of that assignment does assignment 1', function() {
 
-            it ('participant 12 is removed from latestDoers of assignment 3', function() {
+            it ('student 12 is removed from latestDoers of assignment 3', function() {
                 doInterval(3, controller);
                 expect(scope.assignments[2].latestDoers.length).toBe(0)
             })
 
-            it ('participant 7 is removed from latestDoers of assignment 2, and after the funtion, it contains the 5 latest doers', function() {
+            it ('student 7 is removed from latestDoers of assignment 2, and after the funtion, it contains the 5 latest doers', function() {
                 doInterval(3, controller);
 
                 expect(scope.assignments[1].latestDoers.length).toBe(5)

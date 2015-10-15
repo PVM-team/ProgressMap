@@ -1,13 +1,13 @@
 describe('NewCourseController', function () {
     var controller, scope;
     var httpServiceMock;
-    var fakeParticipant;
+    var fakeStudent;
     var CanvasServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
         
-        fakeParticipant = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
+        fakeStudent = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
 
         httpServiceMock = (function () {
             return {
@@ -20,7 +20,7 @@ describe('NewCourseController', function () {
                 }, getData: function(path, params) {
                     return{
                         then: function(callback) {
-                            return callback({users: [{id: 1}, fakeParticipant]});
+                            return callback({students: [{id: 1}, fakeStudent]});
                         }
                     };
                 }
@@ -58,39 +58,39 @@ describe('NewCourseController', function () {
         });
 
         scope.name = "Test";
-        scope.participants = [];
+        scope.students = [];
         scope.assignments = [];
 
-        scope.addParticipant(fakeParticipant);
+        scope.addStudent(fakeStudent);
     })
 
     describe('initializing newCourseController', function() {
-        it ('should set scope.allUsers to what httpService.addData returns minus users in scope.participants', function(){
-            expect(scope.allUsers.length).toBe(1);
-            expect(scope.allUsers.indexOf(fakeParticipant)).toBe(-1)
+        it ('should set scope.allStudents to what httpService.addData returns minus students in scope.students', function(){
+            expect(scope.allStudents.length).toBe(1);
+            expect(scope.allStudents.indexOf(fakeStudent)).toBe(-1)
         })
     })
 
-    describe ('calling scope.addParticipant', function(){
-        it('should add given participant to scope.participants', function(){
-            var fakeParticipantTheSecond = {id: 7, firstName: "Joku", lastName: "Pelle"};
-            scope.addParticipant(fakeParticipantTheSecond)
-            expect(scope.participants.indexOf(fakeParticipantTheSecond)).not.toBe(-1);
+    describe ('calling scope.addStudent', function(){
+        it('should add given student to scope.students', function(){
+            var fakeStudentTheSecond = {id: 7, firstName: "Joku", lastName: "Pelle"};
+            scope.addStudent(fakeStudentTheSecond)
+            expect(scope.students.indexOf(fakeStudentTheSecond)).not.toBe(-1);
         })
     })
 
-    describe('calling scope.removeUser', function(){
-        it ('should remove given participant from scope.participants', function(){
-            expect(scope.participants.length).toBe(1);
-            scope.removeParticipant(fakeParticipant);
-            expect(scope.participants.length).toBe(0);
+    describe('calling scope.removeStudent', function(){
+        it ('should remove given student from scope.students', function(){
+            expect(scope.students.length).toBe(1);
+            scope.removeStudent(fakeStudent);
+            expect(scope.students.length).toBe(0);
         })
     })
 
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: [], participants: [fakeParticipant]});
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: [], students: [fakeStudent]});
         })
     })
 
