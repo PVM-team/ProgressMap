@@ -1,4 +1,4 @@
 json.course @course, partial:'courses/course', as: :course
-json.participants @participants, partial:'users/user', as: :user
+json.students @students, partial:'students/student', as: :student
 json.assignments @assignments, partial: 'assignments/assignment', as: :assignment
-json.all_users @all_users, partial:'users/user', as: :user
+json.all_students @all_students, partial:'students/student', as: :student

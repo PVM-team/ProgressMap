@@ -1,15 +1,13 @@
 json.course @course, partial:'courses/course', as: :course
 
-json.current_user @current_user, partial:'users/user', as: :user
+json.current_student @current_student, partial:'students/student', as: :student
 
-json.participants @participants, partial:'users/user', as: :user
+json.students @students do |student|
+	json.id student.id
+	json.firstName student.firstName
+	json.lastName student.lastName
 
-json.participants @participants do |user|
-	json.id user.id
-	json.firstName user.firstName
-	json.lastName user.lastName
-
-	json.lastDoneAssignment user.latest_done_assignment(@course[0])
+	json.lastDoneAssignment student.latest_done_assignment
 end
 
 json.assignments @assignments, partial: 'assignments/assignment', as: :assignment

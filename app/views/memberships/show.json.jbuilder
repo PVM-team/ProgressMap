@@ -1,1 +1,0 @@
-json.membership @membership, partial:'memberships/membership', as: :membership

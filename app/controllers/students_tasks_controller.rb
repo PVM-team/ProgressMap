@@ -22,7 +22,7 @@ class StudentsTasksController < ApplicationController
     end
 
     def destroy
-        task = StudentsTask.find_by_assignment_id_and_user_id(params[:assignment_id], params[:user_id])
+        task = StudentsTask.find_by_assignment_id_and_student_id(params[:assignment_id], params[:student_id])
         task.destroy if task
 
         render plain: "StudentsTask deleted"
@@ -31,6 +31,6 @@ class StudentsTasksController < ApplicationController
     private
 
     def students_task_params
-        params.require(:students_task).permit(:assignment_id, :user_id)
+        params.require(:students_task).permit(:assignment_id, :student_id)
     end
 end

@@ -1,17 +1,17 @@
 ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
     $scope.assignments = [];
-    $scope.participants = [];
+    $scope.students = [];
 
-    httpService.getData('/users/all', {}).then(function (data) {
-        $scope.allUsers = data['users']
+    httpService.getData('/students/all', {}).then(function (data) {
+        $scope.allStudents = data['students']
     })
 
     $scope.createCourse = function () {
 
         var newCourse = {
             name: $scope.name,
-            participants: $scope.participants,
+            students: $scope.students,
             assignments: $scope.assignments
         }
 
@@ -21,12 +21,12 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         })
     }
 
-    $scope.removeParticipant = function (participant) {
-        editLists($scope.participants, $scope.allUsers, participant)
+    $scope.removeStudent = function (student) {
+        editLists($scope.students, $scope.allStudents, student)
     }
 
-    $scope.addParticipant = function (newParticipant) {
-        editLists($scope.allUsers, $scope.participants, newParticipant)
+    $scope.addStudent = function (newStudent) {
+        editLists($scope.allStudents, $scope.students, newStudent)
     }
 
     function editLists(listToRemoveFrom, listToAddTo, member){

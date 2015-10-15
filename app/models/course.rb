@@ -1,8 +1,6 @@
 class Course < ActiveRecord::Base
 	
-	has_many :memberships, dependent: :destroy
-	has_many :participants, through: :memberships, source: :user
-	
+	has_many :students, dependent: :destroy
 	has_many :assignments, dependent: :destroy
 
 	validates_length_of :name, :minimum => 1

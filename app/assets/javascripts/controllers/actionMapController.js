@@ -11,7 +11,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         $scope.course = data["course"][0];
         $scope.assignments = data["assignments"];
-        $scope.participants = data["participants"];
+        $scope.students = data["students"];
 
         CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50");
         CanvasService.drawSmoothPaths($scope.assignments);
@@ -30,88 +30,88 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
     this.updateLatestAssignments = function() {
         httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
-            $scope.participants = data["participants"];
+            $scope.students = data["students"];
 
             initializeLatest();
         })
     }
 
     function initializeLatest() {
-        for (var i = 0; i < $scope.participants.length; i++) {
-            var user = $scope.participants[i];
-            var lastDoneAssignment = user.lastDoneAssignment;
+        for (var i = 0; i < $scope.students.length; i++) {
+            var student = $scope.students[i];
+            var lastDoneAssignment = student.lastDoneAssignment;
             
             if (lastDoneAssignment) {
                 var assignmentToMoveTo = $scope.assignments[lastDoneAssignment.number - 1];
 
-                var originalPositionForUser = userShownInMap(user);
+                var originalPositionForStudent = studentShownInMap(student);
 
 
-                if (! userInLatestDoersOfAssignment(user, assignmentToMoveTo) &&
-                    userShouldBeInLatestDoersOfAssignment(user, assignmentToMoveTo)) {
+                if (! studentInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                    studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
-                    if (userShownInMap(user)) {
-                        var originalPositionForUser = userShownInMap(user);
+                    if (studentShownInMap(student)) {
+                        var originalPositionForStudent = studentShownInMap(student);
 
-                        removeUserFromLastShownUsersOfAssignment(originalPositionForUser, user);
-                        addNewUserInThePlaceOfRemovedOneIfSuchExists(originalPositionForUser);
+                        removeStudentFromLastShownStudentsOfAssignment(originalPositionForStudent, student);
+                        addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalPositionForStudent);
                     }
 
-                    replaceLastShownUserOfAssignmentWithUser(assignmentToMoveTo, user);
+                    replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                 }
             }
         }
     }
 
-    function removeUserFromLastShownUsersOfAssignment(assignment, user) {
+    function removeStudentFromLastShownStudentsOfAssignment(assignment, student) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
-            if (user.id == assignment.latestDoers[i].id) {
+            if (student.id == assignment.latestDoers[i].id) {
                 assignment.latestDoers.splice(i, 1);
             }
         }
     }
 
-    function addNewUserInThePlaceOfRemovedOneIfSuchExists(assignment) {
-        var userToAdd = null;
+    function addNewStudentInThePlaceOfRemovedOneIfSuchExists(assignment) {
+        var studentToAdd = null;
 
-        for (var i = 0; i < $scope.participants.length; i++) {
-            var user = $scope.participants[i];
+        for (var i = 0; i < $scope.students.length; i++) {
+            var student = $scope.students[i];
 
-            if (user.lastDoneAssignment &&
-                user.lastDoneAssignment.number == assignment.number &&
-                ! userInLatestDoersOfAssignment(user, assignment)) {
+            if (student.lastDoneAssignment &&
+                student.lastDoneAssignment.number == assignment.number &&
+                ! studentInLatestDoersOfAssignment(student, assignment)) {
 
-                if (! userToAdd) {
-                    userToAdd = user;
+                if (! studentToAdd) {
+                    studentToAdd = student;
                 }
 
-                else if (user1HasDoneLastDoneAssignmentAfterUser2(userToAdd, user)) {
-                    userToAdd = user;
+                else if (student1HasDoneLastDoneAssignmentAfterStudent2(studentToAdd, student)) {
+                    studentToAdd = student;
                 }
             }
         }
 
-        if (userToAdd) {
-            assignment.latestDoers.push(userToAdd);
+        if (studentToAdd) {
+            assignment.latestDoers.push(studentToAdd);
             sortLatestDoersForAssignment(assignment);
         }
     }
 
-    function replaceLastShownUserOfAssignmentWithUser(assignment, user) {
+    function replaceLastShownStudentOfAssignmentWithStudent(assignment, student) {
         if (assignment.latestDoers.length == maxStudentsToShowAroundAssigment) {
             assignment.latestDoers.pop();    
         }
 
-        assignment.latestDoers.push(user);
+        assignment.latestDoers.push(student);
         sortLatestDoersForAssignment(assignment);
     }
 
-    function userShownInMap(user) {
+    function studentShownInMap(student) {
         for (var i = 0; i < $scope.assignments.length; i++) {
 
             for (var j = 0; j < $scope.assignments[i].latestDoers.length; j++) {
 
-                if (userInLatestDoersOfAssignment(user, $scope.assignments[i])) {
+                if (studentInLatestDoersOfAssignment(student, $scope.assignments[i])) {
                     return $scope.assignments[i];
                 }
             }
@@ -119,25 +119,25 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         return null;
     }
 
-    function userInLatestDoersOfAssignment(user, assignment) {
+    function studentInLatestDoersOfAssignment(student, assignment) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 
-            if (user.id == assignment.latestDoers[i].id) {
+            if (student.id == assignment.latestDoers[i].id) {
                 return true;
             }
         }
         return false;
     }
 
-    function userShouldBeInLatestDoersOfAssignment(user, assignment) {
-        if (user.lastDoneAssignment) {
+    function studentShouldBeInLatestDoersOfAssignment(student, assignment) {
+        if (student.lastDoneAssignment) {
 
             if (assignment.latestDoers.length < maxStudentsToShowAroundAssigment) {
                 return true;
             }
 
             for (var i = 0; i < assignment.latestDoers.length; i++) {
-                if (user1HasDoneLastDoneAssignmentAfterUser2(user, assignment.latestDoers[i])) {
+                if (student1HasDoneLastDoneAssignmentAfterStudent2(student, assignment.latestDoers[i])) {
                     return true;
                 }
             }
@@ -153,9 +153,9 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
     function assignLatestDoersForAssignments() {
         addLatestDoersArrayForEachAssignment();
-        addEachUserToLatestDoersOfAssignmentTheyBelong();
+        addEachStudentToLatestDoersOfAssignmentTheyBelong();
         sortLatestDoersForEachAssignment();
-        removeUsersFromLatestDoersIfThereAreTooMany();
+        removeStudentsFromLatestDoersIfThereAreTooMany();
 
     }
 
@@ -165,23 +165,23 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         }
     }
 
-    function addEachUserToLatestDoersOfAssignmentTheyBelong() {
-         for (var i = 0; i < $scope.participants.length; i++) {
-            var user = $scope.participants[i];
+    function addEachStudentToLatestDoersOfAssignmentTheyBelong() {
+         for (var i = 0; i < $scope.students.length; i++) {
+            var student = $scope.students[i];
 
-            if (user.lastDoneAssignment) {
-                $scope.assignments[user.lastDoneAssignment.number - 1].latestDoers.push(user);
+            if (student.lastDoneAssignment) {
+                $scope.assignments[student.lastDoneAssignment.number - 1].latestDoers.push(student);
             }
         }
     }
     
-    function removeUsersFromLatestDoersIfThereAreTooMany() {
+    function removeStudentsFromLatestDoersIfThereAreTooMany() {
         for (var i = 0; i < $scope.assignments.length; i++) {
-            removeUsersFromLatestDoersOfAssignmentIfThereAreTooMany($scope.assignments[i]);
+            removeStudentsFromLatestDoersOfAssignmentIfThereAreTooMany($scope.assignments[i]);
         }
     }
 
-    function removeUsersFromLatestDoersOfAssignmentIfThereAreTooMany(assignment) {
+    function removeStudentsFromLatestDoersOfAssignmentIfThereAreTooMany(assignment) {
         var doers = assignment.latestDoers;
 
         if (doers.length > maxStudentsToShowAroundAssigment) {
@@ -208,11 +208,11 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         })
     }
 
-    function user1HasDoneLastDoneAssignmentAfterUser2(user1, user2) {
-        return new Date(user1.lastDoneAssignment.timestamp) - new Date(user2.lastDoneAssignment.timestamp) > 0;
+    function student1HasDoneLastDoneAssignmentAfterStudent2(student1, student2) {
+        return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
     }
 
-    $scope.locationOfStudentInMap = function(participant, assignment) {
+    $scope.locationOfStudentInMap = function(student, assignment) {
         var studentButtonWidth = 25;
         var studentButtonHeight = 25;
         var radius = 40;
@@ -222,7 +222,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 
-            if (participant.id == assignment.latestDoers[i].id) {
+            if (student.id == assignment.latestDoers[i].id) {
                 var x = Math.round(assignment.location.x + radius * Math.cos(angle) - studentButtonWidth / 2);
                 var y = Math.round(assignment.location.y + radius * Math.sin(angle) - studentButtonHeight / 2);
 

@@ -1,13 +1,12 @@
-class User < ActiveRecord::Base
+class Student < ActiveRecord::Base
 	
-	has_many :memberships, dependent: :destroy
-	has_many :courses, through: :memberships
+	belongs_to :course
 	
 	has_many :students_tasks, dependent: :destroy
 	has_many :assignments, through: :students_tasks
 
-  	validates :firstName, presence: true
-  	validates :lastName, presence: true
+  validates :firstName, presence: true
+  validates :lastName, presence: true
 
   	def latest_done_assignment(course)
   		latest_done_assignment = []

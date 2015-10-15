@@ -1,14 +1,14 @@
 ProgressApp.service('StateService', function () {
 
-	var current_user;
+	var current_student;
     // var current_course;
     
-	this.setCurrentUser = function(user) {
-		current_user = user
+	this.setCurrentStudent = function(student) {
+		current_student = student;
 	}
 
-	this.getCurrentUser = function() {
-		return current_user
+	this.getCurrentStudent = function() {
+		return current_student;
 	}
 
     /* this.setCurrentCourse = function(course) {		// ei taideta hyödyntää missään?

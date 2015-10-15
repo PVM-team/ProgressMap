@@ -5,15 +5,15 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
 
     //korvataan joskus käyttäjän valintaruudulla?
-    if (!StateService.getCurrentUser()) {
-        StateService.setCurrentUser({id: 2})
+    if (!StateService.getCurrentStudent()) {
+        StateService.setCurrentStudent({id: 2})
     }
 
-    //initiates map with given course id and current user id
+    //initiates map with given course id and current student id
     httpService.getData('/map/init.json', {
         params: {
             course_id: $routeParams.course_id,
-            user_id: StateService.getCurrentUser().id
+            student_id: StateService.getCurrentStudent().id
         }
     }).then(function (data) {
 
@@ -24,9 +24,9 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         $scope.course = data["course"][0];
         $scope.assignments = data["assignments"];
-        $scope.participants = data["participants"];
+        $scope.students = data["students"];
 
-        $scope.currentUser = data["current_user"][0];
+        $scope.currentStudent = data["current_student"][0];
         setDoneAssignments();
 
         CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
@@ -35,7 +35,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
 
     $scope.moveToCourseCreationView = function () {
-        StateService.setCurrentUser($scope.currentUser);
+        StateService.setCurrentStudent($scope.currentStudent);
         $location.path("/course/new");
     }
 
@@ -58,12 +58,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         var data = {
             assignment_id: assignment.id,
-            user_id: $scope.currentUser.id
+            student_id: $scope.currentStudent.id
         }
 
         httpService.postData('students_tasks', data).then(function (data) {
             $scope.done_assignments.push(assignment);
-            assignment.doers.push($scope.currentUser);
+            assignment.doers.push($scope.currentStudent);
 
             $scope.buttonClicked = false;
         })
@@ -74,7 +74,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         var data = {
             assignment_id: assignment.id,
-            user_id: $scope.currentUser.id
+            student_id: $scope.currentStudent.id
         }
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
@@ -82,7 +82,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
             removeValueFromList($scope.done_assignments, i);
 
             i = $scope.assignments.indexOf(assignment);
-            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentUser.id);
+            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
 
             removeValueFromList($scope.assignments[i].doers, j);
 
@@ -96,16 +96,16 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers;
 
-            if (indexOfValueWithId(doers, $scope.currentUser.id) >= 0) {
+            if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
                 done_assignments.push($scope.assignments[i])
             }
         }
         $scope.done_assignments = done_assignments;
     }
 
-    $scope.viewAsStudent = function (user) {
+    $scope.viewAsStudent = function (student) {
         try {
-            $scope.currentUser = user;
+            $scope.currentStudent = student;
         }
         catch (err) {
             document.getElementById("errorMsg").innerHTML = err
@@ -127,7 +127,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         list.splice(index, 1);
     }
 
-    // $scope.currentUser ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
+    // $scope.currentStudent ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {

@@ -1,7 +1,7 @@
 json.course @course, partial:'courses/course', as: :course
 
-json.current_user @current_user, partial:'users/user', as: :user
+json.current_student @current_student, partial:'students/student', as: :student
 
-json.participants @participants, partial:'users/user', as: :user
+json.students @students, partial:'students/student', as: :student
 
 json.assignments @assignments, partial: 'assignments/assignment', as: :assignment

@@ -6,16 +6,16 @@ class MapController < ApplicationController
 
 	def init
 		course = Course.find_by id: params[:course_id]
-		user = User.find_by id: params[:user_id]
+		student = Student.find_by id: params[:student_id]
 		@course = []
-		@current_user = []
+		@current_student = []
 
 		if course
 			@course << course
-			@participants = course.participants
+			@students = course.students
 			@assignments = course.assignments
 		end
 
-		@current_user << user if user
+		@current_student << student if student
 	end
 end

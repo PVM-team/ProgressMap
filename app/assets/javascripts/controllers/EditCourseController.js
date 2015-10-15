@@ -10,12 +10,12 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         $scope.course = data['course'][0]
         $scope.assignments = data["assignments"]
-        $scope.participants = data["participants"]
-        $scope.allUsers = data['all_users']
+        $scope.students = data["students"]
+        $scope.allStudents = data['all_students']
 
         $scope.name = $scope.course.name
 
-        removeParticipantsFromAllUsers();
+        removeStudentsFromAllStudents();
 
         setDisplayOfNewAssignmentButton();
 
@@ -93,37 +93,37 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         })
     }
 
-    $scope.addParticipant = function(newParticipant) {
-        postParticipantData("", newParticipant, $scope.allUsers, $scope.participants)
+    $scope.addStudent = function(newStudent) {
+        postStudentData("", newStudent, $scope.allStudents, $scope.students)
     }
 
-    $scope.deleteParticipant = function(participant) {
-        postParticipantData('/destroy', participant, $scope.participants, $scope.allUsers)
+    $scope.deleteStudent = function(student) {
+        postStudentData('/destroy', student, $scope.students, $scope.allStudents)
     }
 
-    function postParticipantData(uri, participant, list_to_remove, list_to_add) {
-        var index = list_to_remove.indexOf(participant)
+    function postStudentData(uri, student, list_to_remove, list_to_add) {
+        var index = list_to_remove.indexOf(student)
 
         var data = {
             course_id: $scope.course.id,
-            user_id: participant.id
+            student_id: student.id
         }
 
         httpService.postData('memberships' + uri, data).then(function (data) {
             list_to_remove.splice(index, 1);
-            list_to_add.push(participant);
+            list_to_add.push(student);
         })
     }
 
-    function removeParticipantsFromAllUsers() {
+    function removeStudentsFromAllStudents() {
 
-        for (var i = 0; i < $scope.participants.length; i++) {
-            var v = $scope.participants[i];
+        for (var i = 0; i < $scope.students.length; i++) {
+            var v = $scope.students[i];
 
-            for (var m = 0; m < $scope.allUsers.length; m++) {
+            for (var m = 0; m < $scope.allStudents.length; m++) {
 
-                if (v.id == $scope.allUsers[m].id) {
-                    $scope.allUsers.splice(m, 1);
+                if (v.id == $scope.allStudents[m].id) {
+                    $scope.allStudents.splice(m, 1);
                 }
             }
         }     
