@@ -30,15 +30,6 @@ describe "Course editing page", js: true do
         @course.assignments << assignment2
         @course.assignments << assignment3
         @course.assignments << assignment4
-
-        #@course2 = FactoryGirl.create :course, name: "Iso kurssi"
-
-        #for i in 1..499 do
-        #    a = FactoryGirl.create :assignment, number: 1
-        #    a.location = FactoryGirl.create :location, x: i, y: i
-
-        #    @course2.assignments << a
-        #end
     end
 
     after :each do
@@ -196,6 +187,7 @@ describe "Course editing page", js: true do
 
                 expect(find('#assignmentView')).not_to have_content('Number: 5')
                 click_button 'Add a new assignment'
+                wait_for_DB_unlocking_after_added_assignment(@assignments_initially)
             end
 
             it 'a new assignment is added to assignmentView' do
@@ -217,34 +209,35 @@ describe "Course editing page", js: true do
 
             it "a new assignment is added to database" do
                 expect(Course.first.assignments.length).to be(@assignments_initially + 1)
+                expect(Course.first.assignments.last.number).to be(@assignments_initially + 1)
             end
         end
 
-        describe 'when an assignment is deleted' do
+        describe 'when the assignment #1 is deleted' do
             
             before :each do
                 @assignments_initially = @course.assignments.length
-                expect(find('#assignmentView')).to have_content('Id: 4, Number: 4')
+                expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
+                find_button(@assignments_initially)
+
                 click_button('Delete assignment', match: :first)
+                wait_for_DB_unlocking_after_delete(@assignments_initially)
             end
 
             it "assignmentView won't contain the deleted assignment" do
-                expect(find('#assignmentView')).not_to have_content('Id: 4, Number: 4')
+                expect(find('#assignmentView')).not_to have_content('Id: 1, Number: 1')
             end
 
-            it 'the button related to the assignment is deleted' do
-                found = false
-                begin
-                    page.find('button', :text => '5')
-                    found = true
-                rescue
-                end
+            it 'there is a button for assignment number #1' do
+                find_button('1')
+            end
 
-                expect(found).to be(false)
+            it 'there is no more button for assignment nro. @assignments_initally' do
+                expect(page).not_to have_button(@assignments_initially)
             end
 
             it 'the last assignment in map is in correct block after delete' do
-                assignment_count = 3
+                assignment_count = @assignments_initially - 1
                 direction = "right"
                 button = find_button(assignment_count.to_s)
                 x_loc = x_loc(button)
@@ -254,6 +247,7 @@ describe "Course editing page", js: true do
 
             it "the assignment is removed from database" do
                 expect(Course.first.assignments.length).to be(@assignments_initially - 1)
+                expect(Course.first.assignments[0].id).to be(2)
             end
         end
 
@@ -272,11 +266,11 @@ describe "Course editing page", js: true do
             describe "and when an assignment is added" do
 
                 before :each do
-                    page.find("button", :text => 'Add a new assignment').click
+                    click_button('Add a new assignment')
                 end
 
                 it "there is a delete button" do
-                    expect(page).to have_button('Delete assignment', match: :first)
+                    find_button('Delete assignment')
                 end
             end
         end
@@ -315,4 +309,12 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
 
     expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
     expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
+end
+
+def wait_for_DB_unlocking_after_added_assignment(assignments_initially)
+    find_button(assignments_initially + 1)
+end
+
+def wait_for_DB_unlocking_after_delete(assignments_initially)
+    expect(page).not_to have_button(assignments_initially)
 end
