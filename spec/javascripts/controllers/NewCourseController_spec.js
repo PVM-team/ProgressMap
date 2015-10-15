@@ -117,8 +117,7 @@ describe('NewCourseController', function () {
                 }
 
                 expect(assignment.location).toEqual(expectedLocation);
-                expect(assignment.doers).toEqual({});
-                expect(assignment.dependencies).toEqual({});
+                expect(assignment.dependencies).toEqual([]);
             }
         })
 

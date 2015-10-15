@@ -1,7 +1,7 @@
 ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
-    $scope.assignments = []
-    $scope.participants = []
+    $scope.assignments = [];
+    $scope.participants = [];
 
     httpService.getData('/users/all', {}).then(function (data) {
         $scope.allUsers = data['users']
@@ -55,11 +55,12 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
             CanvasService.initiateCanvas($scope.assignmentCount, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
 
             var location = null;
-
+            var locations = [];
             for (var i = 0; i < $scope.assignmentCount; i++) {
-                location = CanvasService.drawLocationForAssignment(i, location);
+                location = CanvasService.drawLocationForAssignment(i, locations);
+                locations.push(location);
 
-                var assignment = {'number': i + 1, 'location': location, 'doers': {}, 'dependencies': {} };
+                var assignment = {'number': i + 1, 'location': location, 'dependencies': [] };
                 $scope.assignments.push(assignment);
             }
             CanvasService.drawSmoothPaths($scope.assignments);

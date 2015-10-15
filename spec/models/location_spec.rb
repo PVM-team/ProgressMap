@@ -9,6 +9,10 @@ describe Location, type: :model do
       FactoryGirl.create :location
 
       expect(Location.count).to be(count + 1)
+
+      FactoryGirl.create :location, y: -100
+
+      expect(Location.count).to be(count + 2)
     end
   end
 
@@ -16,7 +20,6 @@ describe Location, type: :model do
 
     it "the location can not be saved to database" do
       assure_location_is_invalid(-1, 0)
-      assure_location_is_invalid(0, -1)
     end
   end  
 end

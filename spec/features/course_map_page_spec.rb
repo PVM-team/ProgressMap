@@ -44,9 +44,6 @@ describe "Course map page", js: true do
         end
       end
 
-
-      # button[:class] --> button undone-task ng-binding
-
       it "the positions of the buttons are determined by their location" do
         @course.assignments.each do |assignment|
           button = page.first("button", :text => assignment.number)

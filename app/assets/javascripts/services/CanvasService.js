@@ -33,7 +33,7 @@ ProgressApp.service('CanvasService', function () {
         //}
 
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
-        canvas.width = width + 100; // 100 pikseliä lisää reunoja varten
+        canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
         placeCanvasInDiv(div);
         setContext();
         setCanvasBGColor(bgColor);
@@ -63,20 +63,49 @@ ProgressApp.service('CanvasService', function () {
     }
 
 
-    this.drawLocationForAssignment = function(i, prevLocation) {
+    this.drawLocationForAssignment = function(i, locations) {
         if (i % assignmentsPerLevel == 0) {
             changeDirectionOfCurve();
         }
 
+        return drawLocation(i, locations);
+    }
+
+    this.locationOfNewAssignment = function(i, prevLocation) {
+        direction = "right";    // jos direction = "left", arpoo pisteet toiseen suuntaan alhaalta ylös
+
+        if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
+            changeDirectionOfCurve();
+        }
+
+        if (prevLocation == null) {
+            return drawLocation(i, []);
+        }
+
+        var locations = [prevLocation];
+
+        return drawLocation(i, locations);
+    }
+
+    function drawLocation(i, locations) {
         var xStart = defineXStart(i, direction);
         var yStart = defineYStart(i);
 
-        do {
-            var x = getRandomPosition(xStart);
-            var y = getRandomPosition(yStart);
+        var amountOfPreviousLocationsToCheck = Math.max(0, locations.length - 7);
+        var x = getRandomPosition(xStart);
+        var y = getRandomPosition(yStart);
 
-            var location = {'x': x, 'y': y};
-        } while (! drawnLocationValid(location, prevLocation));
+        var location = {'x': x, 'y': y};
+
+        for (var j = amountOfPreviousLocationsToCheck; j < locations.length; j++) {
+            while (!drawnLocationValid(location, locations[j])) {
+                x = getRandomPosition(xStart);
+                y = getRandomPosition(yStart);
+                location = {'x': x, 'y': y};
+
+                j = amountOfPreviousLocationsToCheck;
+            }
+        }
 
         return location;
     }
@@ -119,11 +148,7 @@ ProgressApp.service('CanvasService', function () {
     // ei poisteta tätä metodia turhaan. voidaan muokata myöhemmin validointia paremmaksi.
 
     function drawnLocationValid(location, prevLocation) {
-        if (prevLocation) {
-            return distanceBetweenLocations(location, prevLocation) >= 120;
-        }
-
-        return true;
+        return distanceBetweenLocations(location, prevLocation) >= 120;
     }
 
     function distanceBetweenLocations(location1, location2) {
@@ -132,6 +157,14 @@ ProgressApp.service('CanvasService', function () {
 
     function distance(a, b) {   // kutsutaan myös toisessa algoritmissa joka piirtää viivat pisteiden välille
         return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+    }
+
+    this.lastLevelFull = function(assignmentCount) {
+        return assignmentCount % assignmentsPerLevel == 0;
+    }
+
+    this.levelHeight = function() {
+        return 2 * borderSize + blockSize;
     }
 
 

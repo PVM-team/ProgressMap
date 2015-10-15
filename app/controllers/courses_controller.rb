@@ -60,9 +60,7 @@ class CoursesController < ApplicationController
 
             if @course.save
 
-                for i in 0..assignments.length - 1
-                    add_assignment_to_course(assignments[i])
-                end
+                assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
 
                 if participants
                     participants.each do |p|
@@ -75,14 +73,16 @@ class CoursesController < ApplicationController
 
         def add_assignment_to_course(assignment_json)
             location_json = assignment_json[:location]
-            dependencies_json = assignment_json[:dependencies]
+            dependencies_json_array = assignment_json[:dependencies]
 
             assignment = Assignment.create number: assignment_json[:number]
             assignment.location = (Location.create x: location_json[:x], y: location_json[:y])
 
-            for i in 0..dependencies_json.length - 1
-                dependency = Assignment.find_by id: dependencies_json[i][:id]
-                assignment.dependencies << dependency if dependency
+            if dependencies_json_array
+                dependencies_json_array.each do |dependency_json|
+                    dependency = Assignment.find_by id: dependency_json[:id]
+                    assignment.dependencies << dependency if dependency
+                end
             end
 
             @course.assignments << assignment

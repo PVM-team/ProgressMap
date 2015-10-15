@@ -103,7 +103,7 @@ describe "Course creation page", js: true do
         expect(page).to have_content 'Course: makkara'
       end
 
-      describe "there is a button for one of the made assignments in that page" do
+      describe "there is a button for each one of the made assignments in that page" do
 
         before :each do
           for i in 1..@assignment_count
@@ -129,7 +129,7 @@ describe "Course creation page", js: true do
             end
 
             validate_location(x_loc, y_loc, i, @assignment_count, direction)
-          end 
+          end
         end
       end
     end
