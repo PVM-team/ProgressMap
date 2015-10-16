@@ -12,7 +12,10 @@ class Assignment < ActiveRecord::Base
 
     validates :number, numericality: { greater_than_or_equal_to: 1 }
 
-    def set_name
-    	self.name = ""
-    end
+
+    private
+    	
+    	def set_name
+    		self.name = ""
+    	end
 end

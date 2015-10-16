@@ -8,10 +8,8 @@ class AssignmentsController < ApplicationController
 
 		@assignment = []
 
-        name = define_name_of_the_inserted_assignment(@course)
-
 		if course
-			assignment = Assignment.create number: number, name: name
+			assignment = Assignment.create number: number
 			assignment.location = Location.create x: location_json[:x], y: location_json[:y]
 
 			if dependencies_json_array
@@ -83,8 +81,4 @@ class AssignmentsController < ApplicationController
 
         next_prev
     end
-
-    def define_name_of_the_inserted_assignment(course)
-        name = "Assignment"
-    end    
 end
