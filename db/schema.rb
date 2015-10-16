@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151015174304) do
+ActiveRecord::Schema.define(version: 20151016122106) do
 
   create_table "assignment_dependencies", force: :cascade do |t|
     t.integer  "assignment_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20151015174304) do
     t.string   "firstName"
     t.string   "lastName"
     t.integer  "course_id"
+    t.string   "token"
   end
 
   create_table "students_tasks", force: :cascade do |t|

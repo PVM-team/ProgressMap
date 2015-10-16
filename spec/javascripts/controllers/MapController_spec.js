@@ -203,8 +203,8 @@ describe('MapController', function () {
 
     describe('goToActionMap', function(){
         it('should call location.path when function is called', function(){
-            scope.goToActionMap();
-             expect(location.path).toHaveBeenCalledWith('/actionmap/1');
+            scope.moveToActionMap();
+            expect(location.path).toHaveBeenCalledWith('/actionmap/1');
         })
     });
 })

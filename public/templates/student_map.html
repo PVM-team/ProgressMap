@@ -1,0 +1,20 @@
+<p id="errorMsg"></p>
+
+<h2>Course: <i>{{ course.name }}</i></h2>
+<h3>Student: <i>{{ student.firstName}} {{ student.lastName }}</i></h3>
+
+<button ng-click="moveToActionMap()"> Go to action map </button>
+
+<div id="mapElements">
+
+    <div ng-repeat="assignment in assignments">
+        <button ng-mouseover="showDependencies(assignment)"
+                ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);"
+                class="button no-cursor-change undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 25}}px">{{ assignment.number}}
+        </button>
+        <button ng-mouseover="showDependencies(assignment)"
+                ng-mouseleave="hideDependencies(assignment)" ng-if="assignmentCompleted(assignment);"
+                class="button no-cursor-change done-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 25}}px">{{ assignment.number}}
+        </button>
+    </div>
+</div>

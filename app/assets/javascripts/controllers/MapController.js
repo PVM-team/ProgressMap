@@ -33,6 +33,9 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
+    $scope.moveToActionMap = function(){
+        $location.path('/actionmap/' + $scope.course.id)
+    }
 
     $scope.moveToCourseCreationView = function () {
         StateService.setCurrentStudent($scope.currentStudent);
@@ -136,8 +139,5 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         return -1;
-    }
-    $scope.goToActionMap = function(){
-        $location.path('/actionmap/' + $scope.course.id)
     }
 })

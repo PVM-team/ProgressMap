@@ -1,5 +1,8 @@
+require 'securerandom'
+
 class Student < ActiveRecord::Base
-	
+  before_create :generate_token
+
 	belongs_to :course
 	
 	has_many :students_tasks, dependent: :destroy
@@ -22,6 +25,16 @@ class Student < ActiveRecord::Base
 
     private
   	
+      def generate_token
+        uuid = SecureRandom.uuid
+        
+        while Student.find_by token: uuid
+          uuid = SecureRandom.uuid
+        end
+
+        self.token = uuid
+      end
+
       def task_done_after_last_done(task, last_done)
         return task.updated_at > last_done.updated_at if last_done
         true
