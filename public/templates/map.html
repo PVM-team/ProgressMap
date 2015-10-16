@@ -27,9 +27,12 @@
 
 <br>
 
+<!-- TÄMÄ TOIMII
 <canvas id="canvas2" resize paperjsmap assignments="assignments"></canvas>
+-->
 
-<!--<div id="mapElements">
+
+<!--TÄMÄ ON VANHA<div id="mapElements">
     <canvas id="canvas"></canvas>
     <div ng-repeat="assignment in assignments">
         <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
@@ -45,3 +48,20 @@
 
     </div>
 </div>-->
+
+<div id="mapElements">
+    <canvas id="canvas2" resize paperjsmap assignments="assignments"></canvas>
+    <div ng-repeat="assignment in assignments">
+        <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
+                ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);"
+                ng-click="markAssignmentAsDone(assignment)" class="button undone-task"
+                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
+        </button>
+        <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
+                ng-mouseleave="hideDependencies(assignment)" ng-if="assignmentCompleted(assignment);"
+                ng-click="markAssignmentAsUndone(assignment)" class="button done-task"
+                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
+        </button>
+
+    </div>
+</div>

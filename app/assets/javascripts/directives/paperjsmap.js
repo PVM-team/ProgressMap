@@ -45,11 +45,15 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                 var lastIndex = locations.length - 1;
                 var path = new paper.Path();
 
-                path.strokeColor = new paper.Color(122, 33, 195);
-                path.opacity = 0.62;
+                //beige vaihtoehto
+                //path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
+                path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
+
+                //path.opacity = 0.62;
                 path.strokeWidth = 14;
                 path.strokeJoin = 'round';
-                path.strokeCap = 'round';
+                //path.strokeCap = 'round';
+                path.dashArray = [35, 10];
 
                 if (locations.length >= 2) {
                     path.add(locations[0]);
