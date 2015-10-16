@@ -82,15 +82,16 @@ describe "Course editing page", js: true do
 
         describe "and name of assignment is changed inside assignment name field" do
             before :each do
-                fill_in('assignmentName', with: 'uus')
+               fields = page.find("#assignmentView").all("input")
+                fields[0].set('uus')
             end
 
             describe "and change assignment name button is clicked" do
                 before :each do
-                    click_button 'Change Assignment Name'
+                    page.find("#assignmentView").first("button", :text => 'Change Assignment Name').click
                 end
                 it "the name of the assignment is changed in database" do
-                    expect(@course.assignments.count).to be(1)
+                    expect(@course.assignments.count).to be(4)
                     assignment = @course.assignments.first
 
                     expect(assignment.name).to eq('uus')
@@ -354,8 +355,8 @@ describe "Course editing page", js: true do
                     assignment = @course.assignments[7]
                     expect(assignment.number).to be(8)
 
-                    #assignment.name = 'Kasi'
-                    #assignment.save
+                    assignment.name = 'Kasi'
+                    assignment.save
                 end
 
                 describe "and 4 first assignments are deleted" do
@@ -414,8 +415,8 @@ describe "Course editing page", js: true do
                         expect(@course.assignments[8].dependencies[0].number).to be(2)
                     end
 
-                    it "assignment 4 has name 'Assignment' now" do
-                        expect(@course.assignments.fourth.name).to eq('Assignment')
+                    it "assignment 4 has name 'Kasi' now" do
+                        expect(@course.assignments.fourth.name).to eq('Kasi')
                     end
                 end
             end
