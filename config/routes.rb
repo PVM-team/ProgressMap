@@ -4,7 +4,6 @@ Rails.application.routes.draw do
 
   get 'map/init', to: 'map#init'
   get 'map/action_init', to: 'map#action_init'
-  get 'students/all', to: 'students#all'
 
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
@@ -12,16 +11,13 @@ Rails.application.routes.draw do
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'
 
-  put 'students/add_to_course', to: 'students#add_to_course'
-  put 'students/remove_from_course', to: 'students#remove_from_course'
-
   post 'students_tasks/destroy', to: 'students_tasks#destroy'
   post 'students_tasks/student_finished_task', to: 'students_tasks#student_finished_task'
 
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]
   resources :locations, only: [:update]
-  resources :students, only: [:create, :show]
+  resources :students, only: [:create, :show, :destroy]
   resources :students_tasks, only: [:create]
 
   # The priority is based upon order of creation: first created -> highest priority.

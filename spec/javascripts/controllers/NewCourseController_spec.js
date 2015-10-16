@@ -1,13 +1,10 @@
 describe('NewCourseController', function () {
     var controller, scope;
     var httpServiceMock;
-    var fakeStudent;
     var CanvasServiceMock;
 
     beforeEach(function () {
         module('ProgressApp');
-        
-        fakeStudent = {id: 5, firstName: "Pekan", lastName: "Dantilus"};
 
         httpServiceMock = (function () {
             return {
@@ -15,12 +12,6 @@ describe('NewCourseController', function () {
                     return{
                         then: function(callback) {
                             return callback({});
-                        }
-                    };
-                }, getData: function(path, params) {
-                    return{
-                        then: function(callback) {
-                            return callback({students: [{id: 1}, fakeStudent]});
                         }
                     };
                 }
@@ -58,39 +49,13 @@ describe('NewCourseController', function () {
         });
 
         scope.name = "Test";
-        scope.students = [];
         scope.assignments = [];
-
-        scope.addStudent(fakeStudent);
-    })
-
-    describe('initializing newCourseController', function() {
-        it ('should set scope.allStudents to what httpService.addData returns minus students in scope.students', function(){
-            expect(scope.allStudents.length).toBe(1);
-            expect(scope.allStudents.indexOf(fakeStudent)).toBe(-1)
-        })
-    })
-
-    describe ('calling scope.addStudent', function(){
-        it('should add given student to scope.students', function(){
-            var fakeStudentTheSecond = {id: 7, firstName: "Joku", lastName: "Pelle"};
-            scope.addStudent(fakeStudentTheSecond)
-            expect(scope.students.indexOf(fakeStudentTheSecond)).not.toBe(-1);
-        })
-    })
-
-    describe('calling scope.removeStudent', function(){
-        it ('should remove given student from scope.students', function(){
-            expect(scope.students.length).toBe(1);
-            scope.removeStudent(fakeStudent);
-            expect(scope.students.length).toBe(0);
-        })
     })
 
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', {name: 'Test', assignments: [], students: [fakeStudent]});
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', { name: 'Test', assignments: [] });
         })
     })
 

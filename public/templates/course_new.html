@@ -23,6 +23,7 @@
 				<button id="shuffle-button" ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
 			</div>
 		</div>
+		
 		<div id="mapElements" class="col-xs-12">
 
 			<div ng-repeat="assignment in assignments">
@@ -31,40 +32,6 @@
 			</div>
 		</div>
 
-
-		<div class="col-xs-12">
-			<label class="col-md-2 col-sm-3 col-xs-4"> Students </label>
-
-			<ol>
-				<section id="students" class="col-xs-12">
-					<li ng-repeat="p in students">
-                
-						<div class="col-lg-1 col-md-1 col-sm-2 col-xs-4">{{ p.firstName }}</div>
-						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 col-xs-offset-0">{{ p.lastName }}</div>
-
-                		<button class"col-lg-1 col-md-1 col-sm-2 col-xs-4 col-xs-offset-0" ng-click="removeStudent(p);">Remove</button>
-					</li>
-				</section>
-			</ol>
-		</div>
-
-		<div class="col-xs-12">
-
-			<section>
-    			<label>First name: <input name="firstName"  ng-model="search.firstName" /></label> <br>
-    			<label>Last name: <input name="lastName" ng-model="search.lastName" /></label>
-			</section>
-
-			<section id="resultview">
-       			<ol>
-            		<li ng-repeat="student in allStudents | filter:search:strict">
-            			<a ng-click="addStudent(student);"> {{ student.firstName }} {{ student.lastName }} </a>
-            		</li>
-        		</ol>
-			</section>
-
-		</div>
-	
 		<div class="col-xs-12">
 			<button class="create-course-button" ng-disabled="createCourseForm.$invalid" ng-click="createCourse();">Submit</button>
 		</div>

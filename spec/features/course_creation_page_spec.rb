@@ -133,158 +133,6 @@ describe "Course creation page", js: true do
         end
       end
     end
-
-    describe "and some students are added to course" do
-      
-      before :each do
-        page.find("a", :text => 'Mauno Tamminen').click
-        page.find("a", :text => 'Etunimi Sukunimi').click
-      end
-
-      describe "and submit button is clicked" do
-
-        before :each do
-          click_button 'Submit'
-        end
-
-        it "it displays the course page of the created course" do
-          expect(page).to have_content 'Course: makkara'
-        end
-
-        it "displays the names of students of the course" do
-          expect(page).to have_content("Mauno")
-          expect(page).to have_content('Sukunimi')
-        end
-      end
-    end
-  end
-
-  describe "when firstName and/or lastName searches are used" do
-
-    describe "and searched firstName does not match with any student" do
-
-      before do
-        fill_first_name_with("Nonexistent-firstname")
-      end
-
-      it 'there are no results' do
-        resultview_is_empty
-      end
-    end
-
-    describe "and searched lastName does not match with any student" do
-
-      before do
-        fill_last_name_with("Nonexistent-lastname")
-      end
-
-      it 'there are no results' do
-        resultview_is_empty
-      end
-    end
-
-    describe "and searched firstName does not match with a student but lastName does" do
-
-      before do
-        fill_first_name_with("Erkki")
-        fill_last_name_with("Nonexistent-lastname")
-      end
-
-      it 'there are no results' do
-        resultview_is_empty
-      end
-    end
-
-    describe "and searched lastName does match with a student but firstName does not" do
-
-      before do
-        fill_first_name_with("Nonexistent-firstname")
-        fill_last_name_with("Mäkelä")
-      end
-
-      it 'there are no results' do
-        resultview_is_empty
-      end
-    end
-
-    describe "and searched firstName matches with students and lastName is not filled" do
-
-      before :each do
-        fill_first_name_with("E")
-      end
-
-      it "finds the matching students" do
-        resultview_include_string("Erkki Mäkelä", true)
-        resultview_include_string("Etunimi Sukunimi", true)
-      end
-    end
-
-    describe "and searched lastName matches with students and firsttName is not filled" do
-
-      before :each do
-        fill_last_name_with("T")
-      end
-
-      it "finds the matching students" do
-        resultview_include_string("Mauno Tamminen", true)
-        resultview_include_string("Mauno Tammi", true)
-      end
-    end
-
-    describe "and both fields together match with some students" do
-
-      before :each do
-        fill_first_name_with("Mau")
-        fill_last_name_with("Tammi")
-      end
-
-      it "finds the matching students" do
-        resultview_include_string("Mauno Tamminen", true)
-        resultview_include_string("Mauno Tammi", true)
-      end
-    end  
-  end
-
-  describe "when two students are added to to the list of students to be added to the course" do
-
-    before :each do
-      expect(find("#students").text.include?('Mauno Tamminen')).to be(false)
-
-      page.find("a", :text => 'Mauno Tamminen').click
-      page.find("a", :text => 'Etunimi Sukunimi').click
-
-      expect(find("#students").text.include?('Mauno Tamminen')).to be(true)
-      expect(find("#students").text.include?('Etunimi Sukunimi')).to be(true)
-    end
-
-    it "neither one of the students can be added again" do
-      resultview_include_string("Mauno Tamminen", false)
-      resultview_include_string("Etunimi Sukunimi", false)
-    end
-
-    describe "and when the first student is removed from that list" do
-
-      before :each do
-        remove_buttons = page.all("button", :text => 'Remove')
-        expect(remove_buttons.length).to be(2)
-
-        remove_buttons[0].click
-        expect(page.all("button", :text => 'Remove').length).to be(1)
-      end
-
-      it "the student is no longer in that list" do
-        expect(find("#students").text.include?('Mauno Tamminen')).to be(false)
-      end
-
-      it "the student can be added to the course once again" do
-        resultview_include_string('Mauno Tamminen', true)
-
-        page.find("a", :text => 'Mauno Tamminen').click
-
-        resultview_include_string('Mauno Tamminen', false)
-        expect(find("#students").text.include?('Mauno Tamminen')).to be(true)
-      end
-    end
   end
 
   describe "when assignmentCount is filled with a valid value" do
@@ -336,14 +184,6 @@ def fill_course_name_and_assignment_count_with(course_name, assignment_count)
   fill_in('assignmentCount', with: assignment_count)
 end
 
-def fill_first_name_with(first_name)
-  fill_in('firstName', with: first_name)
-end
-
-def fill_last_name_with(last_name)
-  fill_in('lastName', with: last_name)
-end
-
 def submit_button_is_disabled
   button = page.find('button', :text => 'Submit')
   expect(button.visible?).to be(true)
@@ -353,14 +193,6 @@ end
 def submit_button_is_enabled
   button = page.find('button', :text => 'Submit')
   expect(button[:disabled]).to be(nil)
-end
-
-def resultview_is_empty
-  expect(find("#resultview").text).to be_empty
-end
-
-def resultview_include_string(string, bool)
-  expect(find("#resultview").text.include?(string)).to be(bool)
 end
 
 def x_loc(button)

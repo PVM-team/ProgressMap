@@ -7,7 +7,6 @@ class CoursesController < ApplicationController
         if course
             @assignments = course.assignments
             @students = course.students
-            @all_students = Student.all
 
             @course << course
         end
@@ -18,7 +17,6 @@ class CoursesController < ApplicationController
     def create
         @course = Course.new(course_params)
         assignments = params[:assignments]
-        students = params[:students]
 
         begin
             validate_course_name
@@ -27,7 +25,9 @@ class CoursesController < ApplicationController
         rescue ValidationError => e # What now?
 
         else	# Validations OK
-            try_to_create_course(assignments, students)
+            if @course.save
+                assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
+            end
         end
 
         render json: @course
@@ -54,21 +54,6 @@ class CoursesController < ApplicationController
 
         def validate_assignment_count(amount)
             raise ValidationError.new("Invalid amount of assignments: " + amount) if  amount < 1 or amount > 500
-        end
-
-        def try_to_create_course(assignments, students)
-
-            if @course.save
-
-                assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
-
-                if students
-                    students.each do |p|
-                        student = Student.find_by id: p[:id]
-                        @course.students << student if student
-                    end
-                end
-            end
         end
 
         def add_assignment_to_course(assignment_json)

@@ -65,13 +65,6 @@ describe "Course editing page", js: true do
             expect(find("#students")).not_to have_content('Etunimi Sukunimi')
         end
 
-        it "it shows all the students not in course" do
-            expect(find("#resultview")).not_to have_content('Mauno Tammi Add to course')
-            expect(find("#resultview")).to have_content('Erkki Mäkelä')
-            expect(find("#resultview")).to have_content('Mauno Tamminen Add to course')
-            expect(find("#resultview")).to have_content('Etunimi Sukunimi')
-        end
-
         it 'it shows an assignment in assignmentView' do
             expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
         end
@@ -121,68 +114,26 @@ describe "Course editing page", js: true do
             end
         end
 
-        describe "when first name and last name fields are filled with text" do
-
-            before :each do
-                fill_in('firstName', with: 'u')
-                fill_in('lastName', with: 'mmi')
-            end
-
-            it "it finds the students not in course whose first name and last name have those strings as substrings" do
-                expect(find("#resultview")).to have_content('Mauno Tamminen Add to course')
-                expect(find("#resultview")).not_to have_content('Erkki Mäkelä')
-                expect(find("#resultview")).not_to have_content('Mauno Tammi Add to course')
-            end
-        end
-
-        describe "when a student is added to course" do
-
-            before :each do
-                @students_on_course = @course.students.length
-
-                fill_in('firstName', with: 'Erkki')
-                click_button 'Add to course' # Erkki Mäkelä lisätään kurssille
-            end
-
-            it "the student will be shown in students list" do
-                expect(page.find("#students")).to have_content('Erkki Mäkelä')
-            end
-
-            it "the student won't be shown in resultview" do
-                expect(page.find("#resultview").text).to be_empty
-            end
-
-            it "the student is added to students of the course in database" do
-                course = Course.first
-
-                expect(course.students.length).to be(@students_on_course + 1)
-
-                erkki_found = false
-                course.students.each do |student|
-                    erkki_found = true if student === @erkki
-                end
-                expect(erkki_found).to be(true)
-            end
-        end
-
         describe "when a student is removed from the course" do
 
             before :each do
+                @students_in_total = Student.count
                 @students_on_course = @course.students.length
+
                 click_button 'Delete student'
             end
 
-            it "deletes the student from studentlist" do
+            it "it is removed from the studentlist" do
                 expect(find("#students")).not_to have_content('Mauno Tammi')
             end
 
-            it "adds the student to all students when deleted" do
-                expect(find("#resultview")).to have_content('Mauno Tammi Add to course')
-            end
-
-            it "the student is no longer part of the students on the course" do
+            it "the student is no longer a student on the course" do
                 course = Course.first
                 expect(course.students.length).to be(@students_on_course - 1)
+            end
+
+            it "the student is removed from database" do
+                expect(Student.count).to be(@students_in_total - 1)
             end
         end
 
@@ -465,6 +416,7 @@ end
 def wait_for_DB_unlocking_after_delete(assignments_initially)
     expect(page).not_to have_button(assignments_initially)
 end
+
 def check_input_fields_for_value(value)
     input_fields = page.all("input")
     amount = input_fields.length

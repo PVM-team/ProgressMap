@@ -1,10 +1,5 @@
 class StudentsController < ApplicationController
 
-  def all
-    @students = Student.all
-    render 'students/all.json.jbuilder'
-  end
-
   def create
     course = Course.find_by id: params[:course_id]
     @student = Student.new(student_params)
@@ -33,29 +28,14 @@ class StudentsController < ApplicationController
     render 'students/show.json.jbuilder'
   end
 
-
-
-  def add_to_course
-    course = Course.find_by id: params[:course_id]
-    student = Student.find_by id: params[:student_id]
-
-    if course and student
-      course.students << student
-    end
-
-    render plain: 'Student added to course: ' + course.name
-  end
-
-  def remove_from_course
-    student = Student.find_by id: params[:student_id]
+  def destroy
+    student = Student.find_by id: params[:id]
     course_name = student.course.name
     
-    student.course = nil
-    student.save
+    student.destroy
 
     render plain: 'Student removed from course: ' + course_name
   end
-
 
 
 
@@ -71,16 +51,6 @@ class StudentsController < ApplicationController
         format.html { render :edit }
         format.json { render json: @student.errors, status: :unprocessable_entity }
       end
-    end
-  end
-
-  # DELETE /students/1
-  # DELETE /students/1.json
-  def destroy
-    @student.destroy
-    respond_to do |format|
-      format.html { redirect_to students_url, notice: 'Student was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 

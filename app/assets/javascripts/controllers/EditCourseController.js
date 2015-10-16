@@ -11,11 +11,8 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         $scope.course = data['course'][0];
         $scope.assignments = data["assignments"];
         $scope.students = data["students"];
-        $scope.allStudents = data['all_students'];
 
         $scope.name = $scope.course.name;
-
-        removeStudentsFromAllStudents();
 
         setDisplayOfNewAssignmentButton();
 
@@ -101,44 +98,12 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             })
     }
 
-    $scope.addStudent = function(newStudent) {
-        var data = {
-            course_id: $scope.course.id,
-            student_id: newStudent.id
-        }
-
-        putStudentData("add_to_course", data, newStudent, $scope.allStudents, $scope.students);
-    }
-
     $scope.deleteStudent = function(student) {
-        var data = {
-            student_id: student.id
-        }
+        var index = $scope.students.indexOf(student);
 
-        putStudentData('remove_from_course', data, student, $scope.students, $scope.allStudents);
-    }
-
-    function putStudentData(uri, data, student, list_to_remove, list_to_add) {
-        var index = list_to_remove.indexOf(student);
-
-            httpService.putData('students/' + uri, data).then(function (data) {
-                list_to_remove.splice(index, 1);
-                list_to_add.push(student);
-            })
-    }
-
-    function removeStudentsFromAllStudents() {
-
-        for (var i = 0; i < $scope.students.length; i++) {
-            var v = $scope.students[i];
-
-            for (var m = 0; m < $scope.allStudents.length; m++) {
-
-                if (v.id == $scope.allStudents[m].id) {
-                    $scope.allStudents.splice(m, 1);
-                }
-            }
-        }     
+        httpService.deleteData('students/' + student.id).then(function (data) {
+            $scope.students.splice(index, 1);
+        })
     }
 
     function validRequest(data) {

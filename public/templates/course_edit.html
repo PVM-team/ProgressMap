@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="col-xs-7">
+    <div class="col-xs-12">
         <label class="col-md-2 col-sm-3 col-xs-4">Students</label>
 
         <ol>
@@ -56,21 +56,4 @@
             </section>
         </ol>
     </div>
-
-    <div class="col-xs-4 col-xs-offset-1">
-
-        <section>
-            <label>First name: <input name="firstName"  ng-model="search.firstName" /></label> <br>
-            <label>Last name: <input name="lastName" ng-model="search.lastName" /></label>
-        </section>
-
-        <section id="resultview">
-            <ol>
-                <li ng-repeat="student in allStudents | filter:search:strict">
-                    {{ student.firstName }} {{ student.lastName }} <button ng-click='addStudent(student);'>Add to course</button>
-                </li>
-            </ol>
-        </section>
-    </div>
-
 </div>

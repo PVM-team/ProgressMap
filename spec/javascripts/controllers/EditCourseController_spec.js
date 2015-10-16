@@ -3,7 +3,6 @@ describe('EditCourseController', function () {
     var controller, scope;
     var httpServiceMock;
     var CanvasServiceMock;
-    var fakeStudent;
     var location;
 
     var assignments;
@@ -15,12 +14,10 @@ describe('EditCourseController', function () {
             var data = {};
 
             data.course = [{"id": 1, "name": 'ohtu'}];
-            data.assignments =
-                [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
-            {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
-            {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]}];
+            data.assignments = [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
+                                {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
+                                {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]}];
             data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
-            data.all_students = [{"id": 1}, {"id": 2}, {"id": 3}, {"id": 4}, {"id": 5}, {"id": 6}];
 
             return {
                 getData: function (path, params) {
@@ -109,13 +106,6 @@ describe('EditCourseController', function () {
             });
 
         });
-
-
-        fakeStudent = {id: 7, firstName: "Pekan", lastName: "Dantilus"};
-
-        scope.assignments = [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}]},
-                       {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}]},
-                       {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}]} ];
     })
 
     describe('initializing EditCourseController', function () {
@@ -123,7 +113,6 @@ describe('EditCourseController', function () {
             expect(scope.course.id).toBe(1);
             expect(scope.assignments.length).toBe(3);
             expect(scope.students.length).toBe(3);
-            expect(scope.allStudents.length).toBe(3);
         })
     })
 
@@ -166,26 +155,14 @@ describe('EditCourseController', function () {
 
     describe('deleteStudent', function () {
 
-        it('should remove student from course if it contains the student', function () {
-            var pcount = scope.students.length;
-            var ucount = scope.allStudents.length;
-            scope.deleteStudent(1);
-            expect(scope.students.length).toBe(pcount - 1);
-            expect(scope.allStudents.length).toBe(ucount + 1);
-        })
-    })
+        it('should remove the selected student from course', function () {
+            var count = scope.students.length;
+            var secondStudent = scope.students[1];
 
-    describe('addStudent', function () {
+            scope.deleteStudent(scope.students[0]);
 
-        it('should add student to the course', function () {
-            var pcount = scope.students.length;
-            expect(pcount).toBe(3);
-            var ucount = scope.allStudents.length;
-            expect(ucount).toBe(3);
-            scope.addStudent(fakeStudent);
-            expect(scope.students.indexOf(fakeStudent)).not.toBe(-1);
-            expect(scope.students.length).toBe(pcount + 1);
-            expect(scope.allStudents.length).toBe(ucount - 1);
+            expect(scope.students.length).toBe(count - 1);
+            expect(scope.students[0]).toEqual(secondStudent);
         })
     })
 
@@ -233,8 +210,8 @@ describe('EditCourseController', function () {
 
     describe('goToCoursePage', function(){
         it('should call location.path with right attributes', function(){
-        scope.goToCoursePage();
-        expect(location.path).toHaveBeenCalledWith('/map/1');
+            scope.goToCoursePage();
+            expect(location.path).toHaveBeenCalledWith('/map/1');
         })
     })
 })
