@@ -11,6 +11,7 @@ FactoryGirl.define do
 
   factory :assignment do
     number 1
+    name 'assignment'
   end
 
   factory :location do

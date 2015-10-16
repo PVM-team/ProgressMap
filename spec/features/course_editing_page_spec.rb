@@ -55,18 +55,7 @@ describe "Course editing page", js: true do
         end
 
         it "the name of the course is shown in the course name text box" do
-            input_fields = page.all("input")
-            amount = input_fields.length
-
-            found = false
-            enumerator = input_fields.each
-
-            for i in 1..amount
-                elem = enumerator.next
-                found = true if elem[:value] === 'Ohtuprojekti'
-            end
-
-            expect(found).to be(true)
+            check_input_fields_for_value('Ohtuprojekti')
         end
 
         it "it shows all the students" do
@@ -89,6 +78,24 @@ describe "Course editing page", js: true do
 
         it "it shows a button related to the assignment" do
             page.find('button', :text => '1')
+        end
+
+        describe "and name of assignment is changed inside assignment name field" do
+            before :each do
+                fill_in('assignmentName', with: 'uus')
+            end
+
+            describe "and change assignment name button is clicked" do
+                before :each do
+                    click_button 'Change Assignment Name'
+                end
+                it "the name of the assignment is changed in database" do
+                    expect(@course.assignments.count).to be(1)
+                    assignment = @course.assignments.first
+
+                    expect(assignment.name).to eq('uus')
+                end
+            end
         end
 
         describe "and name of the course is changed inside the course name text box" do
@@ -213,7 +220,7 @@ describe "Course editing page", js: true do
         end
 
         describe 'when the assignment #1 is deleted' do
-            
+
             before :each do
                 @assignments_initially = @course.assignments.length
                 expect(find('#assignmentView')).to have_content('Id: 1, Number: 1')
@@ -309,7 +316,7 @@ describe "Course editing page", js: true do
 
                 for i in 0..@assignment_count - 1
                     button = find_button((i + 1).to_s)
-            
+
                     x_loc = x_loc(button)
                     y_loc = y_loc(button)
 
@@ -381,7 +388,7 @@ describe "Course editing page", js: true do
 
                         for i in 0..@assignment_count - 1
                             button = find_button((i + 1).to_s)
-            
+
                             x_loc = x_loc(button)
                             y_loc = y_loc(button)
 
@@ -445,7 +452,7 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
     end
 
     y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
-    
+
     expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
     expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end
@@ -456,4 +463,18 @@ end
 
 def wait_for_DB_unlocking_after_delete(assignments_initially)
     expect(page).not_to have_button(assignments_initially)
+end
+def check_input_fields_for_value(value)
+    input_fields = page.all("input")
+    amount = input_fields.length
+
+    found = false
+    enumerator = input_fields.each
+
+    for i in 1..amount
+        elem = enumerator.next
+        found = true if elem[:value] === value
+    end
+
+    expect(found).to be(true)
 end
