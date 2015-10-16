@@ -29,7 +29,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             name: assignment.name
         }
         httpService.putData('assignments/edit_name', data).then(function(data){
-            console.log("Assignment number " + assignment.number + " name changed to " + assignment.name);
         })
     }
 
