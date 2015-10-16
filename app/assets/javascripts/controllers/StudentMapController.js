@@ -39,7 +39,7 @@ ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $
             var doers = $scope.assignments[i].doers;
 
             if (indexOfValueWithId(doers, $scope.student.id) >= 0) {
-                done_assignments.push($scope.assignments[i])
+                done_assignments.push($scope.assignments[i]);
             }
         }
         $scope.done_assignments = done_assignments;
@@ -53,7 +53,7 @@ ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $
         list.splice(index, 1);
     }
 
-    // $scope.currentStudent ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
+
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {
