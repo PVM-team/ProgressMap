@@ -19,7 +19,7 @@ describe "Course map page", js: true do
       self.use_transactional_fixtures = true
     end
 
-    describe "when map page is opened", js: true do
+    describe "when map page is opened" do
 
       before :each do
         course_details
