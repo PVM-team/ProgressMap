@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20151016130442) do
     t.string   "firstName"
     t.string   "lastName"
     t.integer  "course_id"
+    t.string   "token"
   end
 
   create_table "students_tasks", force: :cascade do |t|

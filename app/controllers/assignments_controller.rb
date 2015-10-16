@@ -41,6 +41,7 @@ class AssignmentsController < ApplicationController
         assignment= Assignment.find params[:assignment_id]
         assignment.name = params[:name]
         assignment.save
+        
         render 'assignments/show.json.jbuilder'
     end
 
