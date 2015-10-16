@@ -33,6 +33,15 @@ assignment7 = Assignment.new number: 7
 assignment8 = Assignment.new number: 8
 assignment9 = Assignment.new number: 9
 
+assignment1.name = "tehtävä1"
+assignment2.name = "tehtävä2"
+assignment3.name = "tehtävä3"
+assignment4.name = "tehtävä4"
+assignment5.name = "tehtävä5"
+assignment6.name = "tehtävä6"
+assignment7.name = "tehtävä7"
+assignment8.name = "tehtävä8"
+assignment9.name = "tehtävä9"
 
 course1.assignments << assignment1
 course1.assignments << assignment2

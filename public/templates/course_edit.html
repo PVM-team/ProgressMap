@@ -25,7 +25,8 @@
         <section id="assignmentView" class="small-top-margin">
             <ol>
                 <li ng-repeat='assignment in assignments'>
-                    Id: {{ assignment.id }}, Number: {{ assignment.number }}
+                    Id: {{ assignment.id }}, Number: {{ assignment.number }}, Name: <input name="assignmentName" ng-model="assignment.name">
+                    <button ng-click='changeNameOfAssignment(assignment);'>Change Assignment Name</button>
                     <button ng-dblclick="return;" ng-disabled="mutex" ng-click='deleteAssignment(assignment);'>Delete assignment</button>
                 </li>
             </ol>
@@ -35,7 +36,7 @@
     <div id="mapElements" class="col-xs-12">
 
         <div ng-repeat="assignment in assignments">
-        
+
             <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 25}}px">{{ assignment.number }}</button>
         </div>
     </div>
@@ -46,7 +47,7 @@
         <ol>
             <section id="students" class="col-xs-12">
                 <li ng-repeat="p in students">
-            
+
                     <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">{{ p.firstName }}</div>
                     <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4 col-xs-offset-0">{{ p.lastName }}</div>
 

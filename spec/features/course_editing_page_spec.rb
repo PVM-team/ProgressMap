@@ -407,9 +407,8 @@ describe "Course editing page", js: true do
                         expect(@course.assignments[8].dependencies[0].number).to be(2)
                     end
 
-                    it "assignment 4 has name 'Kasi' now" do
-                        pending("Name for assignments not implemented yet")
-                        expect(@course.assignments.fourth.name).to eq('Kasi')
+                    it "assignment 4 has name 'Assignment' now" do
+                        expect(@course.assignments.fourth.name).to eq('Assignment')
                     end
                 end
             end

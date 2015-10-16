@@ -5,7 +5,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         if (! validRequest(data)) {
             $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-            return;
+                return;
         }
 
         $scope.course = data['course'][0]
@@ -22,6 +22,16 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
         CanvasService.drawSmoothPaths($scope.assignments);
     })
+
+    $scope.changeNameOfAssignment = function(assignment) {
+        var data = {
+            assignment_id: assignment.id,
+            name: assignment.name
+        }
+        httpService.putData('assignments/edit_name', data).then(function(data){
+            console.log("Assignment number " + assignment.number + " name changed to " + assignment.name);
+        })
+    }
 
     $scope.goToCoursePage = function() {
         $location.path("/map/" + $scope.course.id)
@@ -84,13 +94,13 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         var index = $scope.assignments.indexOf(assignment)
 
-        httpService.deleteData('assignments/' + assignment.id).then(function (data) {
-            $scope.assignments.splice(index, 1);
+            httpService.deleteData('assignments/' + assignment.id).then(function (data) {
+                $scope.assignments.splice(index, 1);
 
-            setDisplayOfNewAssignmentButton();
+                setDisplayOfNewAssignmentButton();
 
-            decreaseNumbersOfFollowingAssignments(number, location);
-        })
+                decreaseNumbersOfFollowingAssignments(number, location);
+            })
     }
 
     $scope.addStudent = function(newStudent) {
@@ -113,10 +123,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     function putStudentData(uri, data, student, list_to_remove, list_to_add) {
         var index = list_to_remove.indexOf(student)
 
-        httpService.putData('students/' + uri, data).then(function (data) {
-            list_to_remove.splice(index, 1);
-            list_to_add.push(student);
-        })
+            httpService.putData('students/' + uri, data).then(function (data) {
+                list_to_remove.splice(index, 1);
+                list_to_add.push(student);
+            })
     }
 
     function removeStudentsFromAllStudents() {
