@@ -16,7 +16,7 @@ describe('ActionMapController', function () {
                                 {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "number": 2},
                                 {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "number": 3} ];
             
-            data1.students = [{"id": 1,  "lastDoneAssignment": null}, 
+            data1.students = [{"id": 1,  "lastDoneAssignment": null},
                                  {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 1}}, 
                                  {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 2}},
                                  {"id": 4,  "lastDoneAssignment": {"number": 2, "timestamp": 3}},
@@ -115,6 +115,16 @@ describe('ActionMapController', function () {
             }
         })();
 
+        StateServiceMock = (function () {
+            var currentStudent = {"id": 1, "token": "abc123"};
+
+            return {
+                getCurrentStudent: function() {
+                    return currentStudent;
+                }
+            }
+        })();
+
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
@@ -136,9 +146,9 @@ describe('ActionMapController', function () {
     });
 
     describe('goToNormalMap', function(){
-        it('should call location.path when function is called', function(){
+        it('should go to the map of the current student when function is called', function() {
             scope.goToNormalMap();
-            expect(location.path).toHaveBeenCalledWith('/map/1');
+            expect(location.path).toHaveBeenCalledWith('/student/abc123');
         })
     })
 

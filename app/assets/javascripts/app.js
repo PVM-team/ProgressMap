@@ -19,6 +19,10 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'ActionMapController',
            templateUrl: 'templates/action_map.html'
        })
+       .when('/student/:token', {
+           controller: 'StudentMapController',
+           templateUrl: 'templates/student_map.html'
+       })
        .otherwise({
            redirectTo: '/map/:course_id?1'
        });

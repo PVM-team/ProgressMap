@@ -16,20 +16,20 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {
-            var path = "/map/" + data.id
-            $location.path(path)
+            var path = "/map/" + data.id;
+            $location.path(path);
         })
     }
 
     $scope.removeStudent = function (student) {
-        editLists($scope.students, $scope.allStudents, student)
+        editLists($scope.students, $scope.allStudents, student);
     }
 
     $scope.addStudent = function (newStudent) {
-        editLists($scope.allStudents, $scope.students, newStudent)
+        editLists($scope.allStudents, $scope.students, newStudent);
     }
 
-    function editLists(listToRemoveFrom, listToAddTo, member){
+    function editLists(listToRemoveFrom, listToAddTo, member) {
         var index = listToRemoveFrom.indexOf(member);
         listToRemoveFrom.splice(index, 1);
         listToAddTo.push(member);

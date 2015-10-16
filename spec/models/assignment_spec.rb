@@ -4,11 +4,16 @@ describe Assignment, type: :model do
 
   describe "when a valid assignment is created" do
 
-    it "it is saved to database" do
-      count = Assignment.count
+    before :each do
       FactoryGirl.create :assignment
+    end
 
-      expect(Assignment.count).to be(count + 1)
+    it "it is saved to database" do
+      expect(Assignment.count).to be(1)
+    end
+
+    it "it is given no name at first" do
+      expect(Assignment.first.name).to eq("")
     end
   end
 

@@ -7,18 +7,17 @@ describe('MapController', function () {
     var undoneAssignment;
     var doneAssignment;
     var location;
+    
     beforeEach(function () {
         module('ProgressApp');
 
-        //leikkii backendiä, palauttaa testejä varten esimerkkidatan
         httpServiceMock = (function () {
             var data = {};
 
             data.course = [{"id": 1}];
-            data.assignments =
-                [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "students_tasks": [{"student_id": 1, "timestamp": 2014}, {"student_id": 2, "timestamp": 2015}], "number": 1},
-                    {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "students_tasks": [{"student_id": 1, "timestamp": 2013}], "number": 2},
-                    {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "students_tasks": [{"student_id": 1, "timestamp": 2015}], "number": 3}];
+            data.assignments = [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "number": 1},
+                                {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "number": 2},
+                                {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "number": 3}];
             data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
             data.current_student = [{"id": 2}];
 
@@ -63,12 +62,10 @@ describe('MapController', function () {
             }
         })();
 
-
-
         spyOn(StateServiceMock, 'setCurrentStudent').and.callThrough();
-        spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
+        spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
@@ -195,7 +192,7 @@ describe('MapController', function () {
     })
 
     describe('moveToCourseCreationView', function(){
-        it ('should call StateService.setCurrentStudent with correct value', function(){
+        it ('should call StateService.setCurrentStudent with correct value', function() {
             scope.moveToCourseCreationView();
             expect(StateServiceMock.setCurrentStudent).toHaveBeenCalledWith(scope.currentStudent);
         })
@@ -203,8 +200,8 @@ describe('MapController', function () {
 
     describe('goToActionMap', function(){
         it('should call location.path when function is called', function(){
-            scope.goToActionMap();
-             expect(location.path).toHaveBeenCalledWith('/actionmap/1');
+            scope.moveToActionMap();
+            expect(location.path).toHaveBeenCalledWith('/actionmap/1');
         })
     });
 })

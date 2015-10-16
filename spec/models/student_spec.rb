@@ -4,15 +4,21 @@ describe Student, type: :model do
 
   describe "when a valid student is created" do
 
-    it "is saved to database" do
-      count = Student.count
-      FactoryGirl.create :student
+    before :each do
+      @count = Student.count
+      @student = FactoryGirl.create :student
+    end
 
-      expect(Student.count).to be(count + 1)
+    it "is saved to database" do
+      expect(Student.count).to be(@count + 1)
+    end
+
+    it "it has a random UUID as token" do
+      expect(@student.token.length).to be(SecureRandom.uuid.length)
     end
   end
 
-  describe "when a use without either one of the names is created" do
+  describe "when a student without either one of the names is created" do
     
     it "it is not saved to database" do
       count = Student.count

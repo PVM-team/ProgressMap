@@ -2,14 +2,10 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.buttonClicked = false;
 
-    // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
-
-    //korvataan joskus käyttäjän valintaruudulla?
     if (!StateService.getCurrentStudent()) {
         StateService.setCurrentStudent({id: 2})
     }
 
-    //initiates map with given course id and current student id
     httpService.getData('/map/init.json', {
         params: {
             course_id: $routeParams.course_id,
@@ -18,7 +14,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }).then(function (data) {
 
         if (!validRequest(data)) {
-            $location.path("/");     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
+            $location.path("/");
             return;
         }
 
@@ -33,6 +29,9 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
+    $scope.moveToActionMap = function(){
+        $location.path('/actionmap/' + $scope.course.id);
+    }
 
     $scope.moveToCourseCreationView = function () {
         StateService.setCurrentStudent($scope.currentStudent);
@@ -97,37 +96,29 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
             var doers = $scope.assignments[i].doers;
 
             if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
-                done_assignments.push($scope.assignments[i])
+                done_assignments.push($scope.assignments[i]);
             }
         }
         $scope.done_assignments = done_assignments;
     }
 
     $scope.viewAsStudent = function (student) {
-        try {
-            $scope.currentStudent = student;
-        }
-        catch (err) {
-            document.getElementById("errorMsg").innerHTML = err
-        }
-
+        $scope.currentStudent = student;
         setDoneAssignments();
     }
 
-
     $scope.assignmentCompleted = function (assignment) {
-        return ($scope.done_assignments.indexOf(assignment) >= 0)
+        return $scope.done_assignments.indexOf(assignment) >= 0;
     }
 
     function validRequest(data) {
-        return data['course'][0]
+        return data['course'][0];
     }
 
     function removeValueFromList(list, index) {
         list.splice(index, 1);
     }
 
-    // $scope.currentStudent ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {
@@ -136,8 +127,5 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         return -1;
-    }
-    $scope.goToActionMap = function(){
-        $location.path('/actionmap/' + $scope.course.id)
     }
 })

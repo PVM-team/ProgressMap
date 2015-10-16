@@ -25,7 +25,10 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     });
 
     $scope.goToNormalMap = function() {
-        $location.path('/map/' + $scope.course.id);
+        student = StateService.getCurrentStudent();
+        $location.path('/student/' + student.token);
+
+        //$location.path('/map/' + $scope.course.id);
     }
 
     this.updateLatestAssignments = function() {

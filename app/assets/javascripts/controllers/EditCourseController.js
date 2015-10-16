@@ -4,16 +4,16 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         if (! validRequest(data)) {
-            $location.path("/")     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-                return;
+            $location.path("/");
+            return;
         }
 
-        $scope.course = data['course'][0]
-        $scope.assignments = data["assignments"]
-        $scope.students = data["students"]
-        $scope.allStudents = data['all_students']
+        $scope.course = data['course'][0];
+        $scope.assignments = data["assignments"];
+        $scope.students = data["students"];
+        $scope.allStudents = data['all_students'];
 
-        $scope.name = $scope.course.name
+        $scope.name = $scope.course.name;
 
         removeStudentsFromAllStudents();
 
@@ -28,12 +28,11 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             assignment_id: assignment.id,
             name: assignment.name
         }
-        httpService.putData('assignments/edit_name', data).then(function(data){
-        })
+        httpService.putData('assignments/edit_name', data).then(function(data) {})
     }
 
     $scope.goToCoursePage = function() {
-        $location.path("/map/" + $scope.course.id)
+        $location.path("/map/" + $scope.course.id);
     }
 
     $scope.editCourseName = function() {
@@ -43,7 +42,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         }
 
         httpService.putData('/courses/edit_name', data).then(function (data) {
-            $scope.course.name = data['course'].name
+            $scope.course.name = data['course'].name;
         })
     }
 
@@ -91,7 +90,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         var number = assignment.number;
         var location = assignment.location;
 
-        var index = $scope.assignments.indexOf(assignment)
+        var index = $scope.assignments.indexOf(assignment);
 
             httpService.deleteData('assignments/' + assignment.id).then(function (data) {
                 $scope.assignments.splice(index, 1);
@@ -120,7 +119,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
     function putStudentData(uri, data, student, list_to_remove, list_to_add) {
-        var index = list_to_remove.indexOf(student)
+        var index = list_to_remove.indexOf(student);
 
             httpService.putData('students/' + uri, data).then(function (data) {
                 list_to_remove.splice(index, 1);
@@ -143,7 +142,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
     function validRequest(data) {
-        return data['course'][0]
+        return data['course'][0];
     }
 
     function locationOfLastAssignment() {

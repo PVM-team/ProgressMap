@@ -15,6 +15,26 @@ class StudentsController < ApplicationController
     render json: @student
   end
 
+  def show
+    @assignments = []
+    @course = []
+    @student = []
+
+    student = Student.find_by token: params[:token]
+
+    if student
+      course = student.course
+      @course << course
+      @assignments = course.assignments
+
+      @student << student
+    end
+
+    render 'students/show.json.jbuilder'
+  end
+
+
+
   def add_to_course
     course = Course.find_by id: params[:course_id]
     student = Student.find_by id: params[:student_id]
