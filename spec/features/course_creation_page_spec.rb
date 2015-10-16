@@ -107,7 +107,6 @@ describe "Course creation page", js: true do
 
         before :each do
           for i in 1..@assignment_count
-            byebug
             find_button(i.to_s)
           end
         end
