@@ -44,7 +44,12 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
 
                 var lastIndex = locations.length - 1;
                 var path = new paper.Path();
-                path.strokeColor = 'black';
+
+                path.strokeColor = new paper.Color(122, 33, 195);
+                path.opacity = 0.62;
+                path.strokeWidth = 14;
+                path.strokeJoin = 'round';
+                path.strokeCap = 'round';
 
                 if (locations.length >= 2) {
                     path.add(locations[0]);
@@ -52,11 +57,6 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                     for (var i = 0; i < lastIndex;  i++){
                         drawSmoothPaperCurve(i, locations, path);
                     }
-
-                    //context.lineWidth = 14;
-                    //context.strokeStyle = 'rgba(122, 33, 195, 0.62)';
-                    //context.lineJoin = 'round';
-                    //context.lineCap = 'round';
                 }
             }
 
