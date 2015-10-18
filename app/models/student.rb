@@ -8,8 +8,8 @@ class Student < ActiveRecord::Base
 	has_many :students_tasks, dependent: :destroy
 	has_many :assignments, through: :students_tasks
 
-  validates :firstName, presence: true
-  validates :lastName, presence: true
+  validates_length_of :firstName, :minimum => 1
+  validates_length_of :lastName, :minimum => 1
 
   	def last_done_assignment
   		last_done = nil

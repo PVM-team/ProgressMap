@@ -1,5 +1,36 @@
 class StudentsTasksController < ApplicationController
 
+    def student_finished_task # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
+        assignment = find_assignment(params[:course_id], params[:number].to_i)
+        student = Student.find_by token: params[:student_token]
+
+        if assignment and student
+            if student.assignments.include?(assignment)
+                render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
+            else
+                student.assignments << assignment
+                render_json(201, "created")
+            end
+
+        elsif assignment.nil?
+            course = Course.find_by id: params[:course_id]
+
+            if course.nil?
+                render_json(400, "Invalid parameter for course_id: " + params[:course_id])
+                return
+            end
+
+            render_json(400, "Invalid parameter for number: " + params[:number])
+        
+        elsif student.nil?
+            render_json(400, "Invalid parameter for student_token: " + params[:student_token])
+
+        else
+            render_json(600, "Unexpected behavior from valid input.\nTask wasn't marked for student to be complete.")
+        end
+    end
+
+
     def create
         task = StudentsTask.new(students_task_params)
         task.save
@@ -8,17 +39,6 @@ class StudentsTasksController < ApplicationController
         @students_task << task
 
         render 'students_tasks/show.json.jbuilder'
-    end
-
-    def student_finished_task
-        task = StudentsTask.new(students_task_params)
-
-        if  task.save
-            render plain: "Task added"
-        else
-            render plain: "Adding failed" 
-        end
-
     end
 
     def destroy
@@ -30,7 +50,21 @@ class StudentsTasksController < ApplicationController
 
     private
 
-    def students_task_params
-        params.require(:students_task).permit(:assignment_id, :student_id)
-    end
+        def render_json(code, message)
+            params = {:code => code, :message => message}
+            render json: params.to_json
+        end
+
+        def find_assignment(course_id, number)
+            begin
+                assignments = (Course.find_by id: course_id).assignments
+                assignments[number - 1]
+            rescue NoMethodError => e # Course.find_by id: course_id = 'nil'
+                nil
+            end
+        end
+
+        def students_task_params
+            params.require(:students_task).permit(:assignment_id, :student_id)
+        end
 end
