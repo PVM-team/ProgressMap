@@ -1,15 +1,31 @@
-ProgressApp.directive('paperjsmap', function(CanvasService){
+ProgressApp.directive('paperjsmap', function () {
     return {
         restrict: 'A',
         transclude: true,
         scope: {
-            assignments: '=assignments'
+            assignments: '=assignments',
+            doneAssignments: '=doneAssignments'
         },
-        link: function(scope, element, attrs) {
+        link: function (scope, element, attrs) {
+
+            var smoothConfig = {
+                method: 'lanczos',
+                clip: 'clamp',
+                lanczosFilterSize: 10,
+                cubicTension: 0
+            };
 
             var path;
             paper.setup(element[0]);
             var tool = new paper.Tool();
+
+            /*scope.$watchGroup(['assignments', 'doneAssignments'], function(newValues, oldValues, scope) {
+                drawSmoothPaperPaths();
+                placeCirclesOnAssignmentLocations();
+                paper.view.update();
+                changeAssignmentColors();
+                paper.view.update();
+            }, true);*/
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval) {
@@ -19,33 +35,19 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                 }
             }, true);
 
-            var smoothConfig = {
-                method: 'lanczos',
-                clip: 'clamp',
-                lanczosFilterSize: 10,
-                cubicTension: 0
-            };
-
-            function getLocations(){
-                var locations = [];
-
-                for (var i = 0; i < scope.assignments.length; i++) {
-                    locations.push([scope.assignments[i].location.x, scope.assignments[i].location.y]);
+            scope.$watch('doneAssignments', function (newval, oldval) {
+                if (newval) {
+                    changeAssignmentColors();
+                    paper.view.update();
                 }
-                return locations;
-            }
+            }, true);
 
-            function placeCirclesOnAssignmentLocations(){
-
+            function placeCirclesOnAssignmentLocations() {
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
-                    if (false){
-                        assignmentCircle.fillColor = 'green';
-                    } else {
-                        assignmentCircle.fillColor = 'blue';
-                    }
+                    assignmentCircle.fillColor = 'blue';
                 }
             }
 
@@ -68,10 +70,37 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                 if (locations.length >= 2) {
                     path.add(locations[0]);
 
-                    for (var i = 0; i < lastIndex;  i++){
+                    for (var i = 0; i < lastIndex; i++) {
                         drawSmoothPaperCurve(i, locations, path);
                     }
                 }
+            }
+
+            function changeAssignmentColors() {
+                setAllUndone();
+                for (var i = 0; i <scope.doneAssignments.length; i++){
+                    var assignmentCircle = paper.project.hitTest([scope.doneAssignments[i].location.x, scope.doneAssignments[i].location.y]).item;
+                    if (assignmentCircle){
+                        assignmentCircle.fillColor = 'green';
+                    }
+                }
+            }
+
+            function setAllUndone(){
+                var locations = getLocations();
+                for (var i = 0; i < locations.length; i++){
+                    var assignmentCircle = paper.project.hitTest(locations[i]).item;
+                    assignmentCircle.fillColor = 'blue';
+                }
+            }
+
+            function getLocations() {
+                var locations = [];
+
+                for (var i = 0; i < scope.assignments.length; i++) {
+                    locations.push([scope.assignments[i].location.x, scope.assignments[i].location.y]);
+                }
+                return locations;
             }
 
             function distance(a, b) {
@@ -93,21 +122,21 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                     pieceLength = distance(start, end);
                     wat = averageLineLength / pieceLength;
 
-                    for (var u = 0; 0 <= 1/pieceCount ? u < 1/pieceCount : u > 1/pieceCount; u += wat) {
+                    for (var u = 0; 0 <= 1 / pieceCount ? u < 1 / pieceCount : u > 1 / pieceCount; u += wat) {
                         path.add(s(i + j + u));
                     }
                 }
                 return path.add(s(i + 1));
             };
 
-            tool.onMouseDown = function(event) {
+            tool.onMouseDown = function (event) {
                 path = new paper.Path();
                 path.strokeColor = 'black';
             };
-            tool.onMouseDrag = function(event) {
+            tool.onMouseDrag = function (event) {
                 path.add(event.point);
             };
-            tool.onMouseUp = function(event) {
+            tool.onMouseUp = function (event) {
                 //nothing special here
             };
         }

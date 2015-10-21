@@ -27,7 +27,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         $scope.students = data["students"];
 
         $scope.currentStudent = data["current_student"][0];
-        setDoneAssignments();
+        $scope.doneAssignments = setDoneAssignments();
 
         //CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
         CanvasService.initiatePaperCanvas('canvas2', $scope.assignments.length, 1000);
@@ -63,7 +63,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks', data).then(function (data) {
-            $scope.done_assignments.push(assignment);
+            $scope.doneAssignments.push(assignment);
             assignment.doers.push($scope.currentStudent);
 
             $scope.buttonClicked = false;
@@ -79,8 +79,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
-            var i = $scope.done_assignments.indexOf(assignment);
-            removeValueFromList($scope.done_assignments, i);
+            var i = $scope.doneAssignments.indexOf(assignment);
+            removeValueFromList($scope.doneAssignments, i);
 
             i = $scope.assignments.indexOf(assignment);
             var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
@@ -92,16 +92,16 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     function setDoneAssignments() {
-        var done_assignments = [];
+        var doneAssignments = [];
 
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers;
 
             if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
-                done_assignments.push($scope.assignments[i])
+                doneAssignments.push($scope.assignments[i])
             }
         }
-        $scope.done_assignments = done_assignments;
+        return doneAssignments;
     }
 
     $scope.viewAsStudent = function (student) {
@@ -111,13 +111,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         catch (err) {
             document.getElementById("errorMsg").innerHTML = err
         }
-
-        setDoneAssignments();
+        $scope.doneAssignments = setDoneAssignments();
     }
 
 
     $scope.assignmentCompleted = function (assignment) {
-        return ($scope.done_assignments.indexOf(assignment) >= 0)
+        return ($scope.doneAssignments.indexOf(assignment) >= 0)
     }
 
     function validRequest(data) {
