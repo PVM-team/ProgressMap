@@ -6,11 +6,16 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
             assignments: '=assignments'
         },
         link: function(scope, element, attrs) {
-            //toimii viiveellä
+
+            var path;
+            paper.setup(element[0]);
+            var tool = new paper.Tool();
+
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval) {
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
+                    paper.view.update();
                 }
             }, true);
 
@@ -31,11 +36,16 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
             }
 
             function placeCirclesOnAssignmentLocations(){
+
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
-                    var myCircle = new paper.Path.Circle(locations[i], 25);
-                    myCircle.fillColor = 'blue';
+                    var assignmentCircle = new paper.Path.Circle(locations[i], 25);
+                    if (false){
+                        assignmentCircle.fillColor = 'green';
+                    } else {
+                        assignmentCircle.fillColor = 'blue';
+                    }
                 }
             }
 
@@ -89,10 +99,6 @@ ProgressApp.directive('paperjsmap', function(CanvasService){
                 }
                 return path.add(s(i + 1));
             };
-
-            var path;
-            paper.setup(element[0]);
-            var tool = new paper.Tool();
 
             tool.onMouseDown = function(event) {
                 path = new paper.Path();
