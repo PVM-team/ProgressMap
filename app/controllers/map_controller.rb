@@ -13,7 +13,7 @@ class MapController < ApplicationController
 		if course
 			@course << course
 			@students = course.students
-			@assignments = course.assignments
+			@assignments = course.assignments.order(:number)
 		end
 
 		@current_student << student if student

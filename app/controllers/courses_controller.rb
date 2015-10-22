@@ -5,7 +5,7 @@ class CoursesController < ApplicationController
         @course = []
 
         if course
-            @assignments = course.assignments
+            @assignments = course.assignments.order(:number)
             @students = course.students
 
             @course << course

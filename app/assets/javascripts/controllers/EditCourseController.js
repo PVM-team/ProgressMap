@@ -25,9 +25,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             assignment_id: assignment.id,
             name: assignment.name
         }
-        httpService.putData('assignments/edit_name', data).then(function(data) {
-            alert('name change successful');
-        })
+        httpService.putData('assignments/edit_name', data).then(function(data) {})
     }
 
     $scope.goToCoursePage = function() {
