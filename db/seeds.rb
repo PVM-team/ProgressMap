@@ -43,6 +43,7 @@ assignment7.name = "tehtävä7"
 assignment8.name = "tehtävä8"
 assignment9.name = "tehtävä9"
 
+
 course1.assignments << assignment1
 course1.assignments << assignment2
 course1.assignments << assignment3
