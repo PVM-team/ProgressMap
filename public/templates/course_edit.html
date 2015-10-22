@@ -37,7 +37,7 @@
 
         <div ng-repeat="assignment in assignments">
 
-            <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 25}}px">{{ assignment.number }}</button>
+            <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
         </div>
     </div>
 
