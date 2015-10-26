@@ -8,9 +8,9 @@ ProgressApp.directive('paperjsmap2', function () {
         },
         link: function (scope, element, attrs) {
 
-            var studentOnTheMove = false;
-            var studentMoving;
-            var end;
+            //var studentOnTheMove = false;
+            //var studentMoving;
+            //var end;
 
             var mapInitialized = false;
             var maxStudentsToShowAroundAssignment = 5;
@@ -28,7 +28,7 @@ ProgressApp.directive('paperjsmap2', function () {
             var tool = new paper.Tool();
 
             scope.$watch('assignments', function (newval, oldval) {
-                if (newval && !mapInitialized) {
+                if (newval && ! mapInitialized) {
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
@@ -58,9 +58,9 @@ ProgressApp.directive('paperjsmap2', function () {
 
                         //student id:s over student circles
                         var text = new paper.PointText({
-                         point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
-                         content: scope.assignments[i].latestDoers[j].id,
-                         fillColor: 'white'
+                            point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
+                            content: scope.assignments[i].latestDoers[j].id,
+                            fillColor: 'white'
                          });
 
                         lateralPositionOffset += 30;
@@ -152,7 +152,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-            paper.view.onFrame = function(event) {
+            /*paper.view.onFrame = function(event) {
                 if (studentOnTheMove){
 
                     var vector = new paper.Point(end) - studentMoving.position;
@@ -168,7 +168,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     paper.view.update();
                 }
 
-            }
+            } */
 
             /* tool.onMouseDown = function (event) {
              path = new paper.Path();
@@ -191,25 +191,61 @@ ProgressApp.directive('paperjsmap2', function () {
                         var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                         var originalPositionForStudent = studentShownInMap(student);
 
-                        if (indexOfStudentInLatestDoersOfAssignment(student, assignmentToMoveTo) < 0 &&
+                        if (assignmentToMoveTo != originalPositionForStudent &&
+                            indexOfStudentInLatestDoersOfAssignment(student, assignmentToMoveTo) < 0 &&
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
                             if (originalPositionForStudent) {
-                                studentMoving = getStudentCircle(student, originalPositionForStudent);
+                                var circleToMove = getStudentCircle(student, originalPositionForStudent);
 
-                                console.log(studentMoving);
+                                while (! hasReachedDestination(circleToMove, assignmentToMoveTo)) {
+                                    sleep(1000 / 60);
+                                    moveCircle(circleToMove, assignmentToMoveTo);
+                                }
 
-                                end = assignmentToMoveTo.location;
-                                studentOnTheMove = true;
-
-                                // siirrä piste uuteen paikkaan algoritmin mukaisesti
-
-                                //removeStudentFromPreviousAssignment(student, originalPositionForStudent);
-                                //addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalPositionForStudent);
+                                removeStudentFromPreviousAssignment(student, originalPositionForStudent);
+                                addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalPositionForStudent);
                             }
 
-                            //replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+                            replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                         }
+                    }
+                }
+            }
+
+            function moveCircle(circle, assignment) {
+                var vector = getVector(circle, assignment);
+
+                console.log("Position:" + circle.position);
+
+                circle.position.x += vector[0] / 30;
+                circle.position.y += vector[1] / 30;
+
+                paper.view.update(true);    // forces updates to view but there are no changes?
+            }
+
+            function hasReachedDestination(circle, assignment) {
+                var vector = getVector(circle, assignment);
+
+                console.log("Vector x:" + vector[0])
+                console.log("Vector y:" + vector[1])
+
+                return Math.abs(vector[0]) + Math.abs(vector[1]) < 5;
+            }
+
+            function getVector(circle, assignment) {
+                var position = circle.position;
+                var destination = assignment.location;
+
+                return [destination.x - position.x, destination.y - position.y];                
+            }
+
+            function sleep(milliseconds) {
+                var start = new Date().getTime();
+        
+                for (var i = 0; i < 1e7; i++) {
+                    if ((new Date().getTime() - start) > milliseconds) {
+                        break;
                     }
                 }
             }
@@ -226,9 +262,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 var xOffset = 50 + i * 30;
 
                 var location = [assignment.location.x + xOffset, assignment.location.y + yOffset];
-
                 return paper.project.hitTest(location).item;
-
             }
 
 
