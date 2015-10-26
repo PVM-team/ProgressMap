@@ -8,6 +8,10 @@ ProgressApp.directive('paperjsmap2', function () {
         },
         link: function (scope, element, attrs) {
 
+            var studentOnTheMove = false;
+            var studentMoving;
+            var end;
+
             var mapInitialized = false;
             var maxStudentsToShowAroundAssignment = 5;
             var maxStudentsInRow = 3;
@@ -148,7 +152,21 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-            tool.onFrame = function (event) {
+            paper.view.onFrame = function(event) {
+                if (studentOnTheMove){
+
+                    var vector = new paper.Point(end) - studentMoving.position;
+                    if (event.count <= 10){
+                        console.log("vector: " + vector);
+                        console.log(new paper.Point(end));
+                        console.log(studentMoving.position);
+                    }
+                    studentMoving.position += vector / 30;
+                    if (studentMoving.position == end){
+                        studentOnTheMove = false;
+                    }
+                    paper.view.update();
+                }
 
             }
 
@@ -177,24 +195,26 @@ ProgressApp.directive('paperjsmap2', function () {
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
                             if (originalPositionForStudent) {
-                                var studentCircle = getStudentCircle(student, originalPositionForStudent);
+                                studentMoving = getStudentCircle(student, originalPositionForStudent);
 
-                                removeStudentFromPreviousAssignment(student, originalPositionForStudent);
-                                addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalPositionForStudent);
+                                console.log(studentMoving);
+
+                                end = assignmentToMoveTo.location;
+                                studentOnTheMove = true;
 
                                 // siirrä piste uuteen paikkaan algoritmin mukaisesti
+
+                                //removeStudentFromPreviousAssignment(student, originalPositionForStudent);
+                                //addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalPositionForStudent);
                             }
 
-                            replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+                            //replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                         }
                     }
                 }
             }
 
             function getStudentCircle(student, assignment) {
-                console.log(student);
-                console.log(assignment);
-
                 var yOffset = 0;
 
                 var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
