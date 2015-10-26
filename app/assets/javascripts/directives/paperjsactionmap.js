@@ -1,10 +1,9 @@
-ProgressApp.directive('paperjsmap', function () {
+ProgressApp.directive('paperjsmap2', function () {
     return {
         restrict: 'A',
         transclude: true,
         scope: {
-            assignments: '=assignments',
-            doneAssignments: '=doneAssignments'
+            assignments: '=assignments'
         },
         link: function (scope, element, attrs) {
 
@@ -19,28 +18,40 @@ ProgressApp.directive('paperjsmap', function () {
             paper.setup(element[0]);
             var tool = new paper.Tool();
 
-            /*scope.$watchGroup(['assignments', 'doneAssignments'], function(newValues, oldValues, scope) {
-                drawSmoothPaperPaths();
-                placeCirclesOnAssignmentLocations();
-                paper.view.update();
-                changeAssignmentColors();
-                paper.view.update();
-            }, true);*/
-
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval) {
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
+                    placeLatestStudents();
                     paper.view.update();
                 }
             }, true);
 
-            scope.$watch('doneAssignments', function (newval, oldval) {
-                if (newval) {
-                    changeAssignmentColors();
-                    paper.view.update();
+            function placeLatestStudents(){
+
+                var verticalPositionOffset = 0;
+                var lateralPositionOffset = 50;
+
+                var maxStudentsInRow = 3;
+
+                for (var i = 0; i < scope.assignments.length; i++){
+                    var location = scope.assignments[i].location;
+                    for (var j = 0; j < scope.assignments[i].latestDoers.length; j++){
+                        var studentCircle = new paper.Path.Circle(new paper.Point(location.x + lateralPositionOffset,
+                            location.y + verticalPositionOffset), 15);
+                        studentCircle.fillColor = 'grey';
+                        lateralPositionOffset += 30;
+
+                        if ((j+1) % maxStudentsInRow == 0){
+                            verticalPositionOffset += 30;
+                            lateralPositionOffset = 50;
+                        }
+                    }
+                    //moving on to latest doers of next assignment
+                    lateralPositionOffset = 50;
+                    var verticalPositionOffset = 0;
                 }
-            }, true);
+            }
 
             function placeCirclesOnAssignmentLocations() {
                 var locations = getLocations();
@@ -73,24 +84,6 @@ ProgressApp.directive('paperjsmap', function () {
                     for (var i = 0; i < lastIndex; i++) {
                         drawSmoothPaperCurve(i, locations, path);
                     }
-                }
-            }
-
-            function changeAssignmentColors() {
-                setAllUndone();
-                for (var i = 0; i <scope.doneAssignments.length; i++){
-                    var assignmentCircle = paper.project.hitTest([scope.doneAssignments[i].location.x, scope.doneAssignments[i].location.y]).item;
-                    if (assignmentCircle){
-                        assignmentCircle.fillColor = 'green';
-                    }
-                }
-            }
-
-            function setAllUndone(){
-                var locations = getLocations();
-                for (var i = 0; i < locations.length; i++){
-                    var assignmentCircle = paper.project.hitTest(locations[i]).item;
-                    assignmentCircle.fillColor = 'blue';
                 }
             }
 

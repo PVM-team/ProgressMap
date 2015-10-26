@@ -1,7 +1,7 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
 
     var self = this;
-    var maxStudentsToShowAroundAssigment = 5;
+    var maxStudentsToShowAroundAssignment = 5;
 
     var interval = setInterval(function() {
         self.updateLatestAssignments();
@@ -13,8 +13,9 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $scope.assignments = data["assignments"];
         $scope.students = data["students"];
 
-        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50");
-        CanvasService.drawSmoothPaths($scope.assignments);
+        //CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50");
+        //CanvasService.drawSmoothPaths($scope.assignments);
+        CanvasService.initiatePaperCanvas('canvas3', $scope.assignments.length, 1000);
 
         sortAssignmentsByNumber();
         assignLatestDoersForAssignments();
@@ -98,7 +99,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     }
 
     function replaceLastShownStudentOfAssignmentWithStudent(assignment, student) {
-        if (assignment.latestDoers.length == maxStudentsToShowAroundAssigment) {
+        if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) {
             assignment.latestDoers.pop();    
         }
 
@@ -132,7 +133,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     function studentShouldBeInLatestDoersOfAssignment(student, assignment) {
         if (student.lastDoneAssignment) {
 
-            if (assignment.latestDoers.length < maxStudentsToShowAroundAssigment) {
+            if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
                 return true;
             }
 
@@ -184,12 +185,12 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     function removeStudentsFromLatestDoersOfAssignmentIfThereAreTooMany(assignment) {
         var doers = assignment.latestDoers;
 
-        if (doers.length > maxStudentsToShowAroundAssigment) {
+        if (doers.length > maxStudentsToShowAroundAssignment) {
             //sortLatestDoersForAssignment(assignment);
 
             var new_doers = [];
 
-            for (var j = 0; j < maxStudentsToShowAroundAssigment; j++) {
+            for (var j = 0; j < maxStudentsToShowAroundAssignment; j++) {
                 new_doers.push(doers[j]);
             }
             assignment.latestDoers = new_doers;
