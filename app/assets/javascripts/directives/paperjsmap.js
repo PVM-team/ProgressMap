@@ -1,3 +1,4 @@
+//paperjsmap with done assignments marked as green per student, no dependency display operations or assignment numbers yet
 ProgressApp.directive('paperjsmap', function () {
     return {
         restrict: 'A',

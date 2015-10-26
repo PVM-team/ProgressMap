@@ -66,8 +66,7 @@ ProgressApp.service('CanvasService', function () {
 
     //should not be called before initiateCanvas has been called at least once
     this.redraw = function(bgColor){
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        setCanvasBGColor(bgColor);
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function placeCanvasInDiv(div) {
