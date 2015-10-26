@@ -37,9 +37,17 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < scope.assignments.length; i++){
                     var location = scope.assignments[i].location;
                     for (var j = 0; j < scope.assignments[i].latestDoers.length; j++){
-                        var studentCircle = new paper.Path.Circle(new paper.Point(location.x + lateralPositionOffset,
-                            location.y + verticalPositionOffset), 15);
+                        var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
+                        var studentCircle = new paper.Path.Circle(studentLocation, 15);
                         studentCircle.fillColor = 'grey';
+
+                        //student id:s over student circles
+                        var text = new paper.PointText({
+                            point: studentLocation,
+                            content: scope.assignments[i].latestDoers[j].id,
+                            fillColor: 'white'
+                        });
+
                         lateralPositionOffset += 30;
 
                         if ((j+1) % maxStudentsInRow == 0){
@@ -59,6 +67,13 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
                     assignmentCircle.fillColor = 'blue';
+
+                    //assignment numbers over assignment circles
+                    var text = new paper.PointText({
+                        point: locations[i],
+                        content: i+1,
+                        fillColor: 'white'
+                    });
                 }
             }
 
