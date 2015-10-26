@@ -108,9 +108,11 @@ describe('ActionMapController', function () {
         //ei tee mitään
         CanvasServiceMock = (function () {
             return {
-                initiateCanvas: function (height, width, div, bgColor) {
+                initiateCanvas: function (id, height, width, div) {
                 },
                 drawSmoothPaths: function (locations) {
+                },
+                initiatePaperCanvas: function (id, height, width) {
                 }
             }
         })();

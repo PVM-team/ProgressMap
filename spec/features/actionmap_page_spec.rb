@@ -31,25 +31,6 @@ describe "Action map page", js: true do
   			canvas = page.find("canvas")
   			expect(canvas.visible?).to be(true)
   		end
-
-  		it "it has one button for each assignment" do
-  			@course.assignments.each do |assignment|
-  				expect(page.find('#actionMapElements').find(".action-button", :text => assignment.number))
-  			end
-  		end
-
-  		it "the positions of the assignment buttons are determined by their location" do
-  			@course.assignments.each do |assignment|
-  				button = page.find(".action-button", :text => assignment.number)
-  				style = button[:style]
-  				expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
-  				expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
-        	end
-  		end
-
-    	it 'finds two student-buttons' do
-    		expect(page.all('.student-button').length).to be(2)
-    	end
 	end
 end
 
