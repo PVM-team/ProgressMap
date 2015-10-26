@@ -137,7 +137,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-            tool.onMouseDown = function (event) {
+           /* tool.onMouseDown = function (event) {
                 path = new paper.Path();
                 path.strokeColor = 'black';
             };
@@ -146,7 +146,7 @@ ProgressApp.directive('paperjsmap2', function () {
             };
             tool.onMouseUp = function (event) {
                 //nothing special here
-            };
+            };*/
         }
     }
 })
