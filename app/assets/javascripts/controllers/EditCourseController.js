@@ -19,7 +19,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         setDisplayOfNewAssignmentButton();
 
-        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
@@ -198,7 +198,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     function reDrawCanvas() {
         removeOriginalCanvas();
 
-        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     }
 

@@ -18,8 +18,8 @@ ProgressApp.service('CanvasService', function () {
         cubicTension: 0
     };
 
-    this.initiateCanvas = function (id, assignmentCount, width, div, bgColor) {
-        canvas = document.getElementById(id);
+    this.initiateCanvas = function (id, assignmentCount, width, div) {
+        canvas = document.createElement('canvas');
 
         borderSize = width / 40; // 25
         blockSize = width / 5; // 200
@@ -31,12 +31,10 @@ ProgressApp.service('CanvasService', function () {
         // if (levelAmount % 2 == 0) {
         //    changeDirectionOfCurve();   // direction vaihtuu joka arpomisen jälkeen
         //}
-
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
         canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
-        //placeCanvasInDiv(div);
+        placeCanvasInDiv(div);
         setContext();
-        //setCanvasBGColor(bgColor);
 
         return canvas;
     }
@@ -78,12 +76,6 @@ ProgressApp.service('CanvasService', function () {
     function setContext(){
         context = canvas.getContext("2d");
     }
-
-    function setCanvasBGColor(bgColor) {
-        context.fillStyle = bgColor;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
 
     this.drawLocationForAssignment = function(i, locations) {
         if (i % assignmentsPerLevel == 0) {

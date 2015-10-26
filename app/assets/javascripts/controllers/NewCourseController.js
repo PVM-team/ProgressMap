@@ -52,7 +52,7 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
         if ($scope.assignmentCount) {
             shuffleButtonStyle = 'inline';
 
-            CanvasService.initiateCanvas($scope.assignmentCount, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+            CanvasService.initiateCanvas('canvas', $scope.assignmentCount, 1000, document.getElementById("mapElements"));
 
             var location = null;
             var locations = [];

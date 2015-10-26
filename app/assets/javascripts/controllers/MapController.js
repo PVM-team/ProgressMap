@@ -29,7 +29,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         $scope.currentStudent = data["current_student"][0];
         $scope.doneAssignments = setDoneAssignments();
 
-        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         //CanvasService.initiatePaperCanvas('canvas2', $scope.assignments.length, 1000);
         CanvasService.drawSmoothPaths($scope.assignments);
     })

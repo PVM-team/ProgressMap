@@ -32,7 +32,6 @@
 
 
 <div id="mapElements">
-    <canvas id="canvas"></canvas>
     <div ng-repeat="assignment in assignments">
         <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
                 ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);"
