@@ -5,17 +5,15 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
     var interval = setInterval(function() {
         self.updateLatestAssignments();
-    }, 3000);
+    }, 15000);
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
 
         $scope.course = data["course"][0];
 
-        $scope.students = data["students"]; // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
+        $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
         $scope.assignments = data["assignments"];
 
-        //CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("actionMapElements"), "rgba(30, 85, 205, 0.50");
-        //CanvasService.drawSmoothPaths($scope.assignments);
         CanvasService.initiatePaperCanvas('canvas3', $scope.assignments.length, 1000);
 
         sortAssignmentsByNumber();
@@ -76,8 +74,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         var doers = assignment.latestDoers;
 
         if (doers.length > maxStudentsToShowAroundAssignment) {
-            //sortLatestDoersForAssignment(assignment);
-
             var new_doers = [];
 
             for (var j = 0; j < maxStudentsToShowAroundAssignment; j++) {
