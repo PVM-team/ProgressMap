@@ -90,7 +90,8 @@ ProgressApp.directive('paperjsmap2', function () {
 
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
-                    assignmentCircle.fillColor = 'blue';
+                    assignmentCircle.fillColor = '#29C124';
+                    assignmentCircle.fillColor.hue -= 100 - (scope.assignments[i].doers.length/scope.students.length * 100);
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
