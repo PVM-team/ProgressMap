@@ -8,10 +8,6 @@ ProgressApp.directive('paperjsmap2', function () {
         },
         link: function (scope, element, attrs) {
 
-            //var studentOnTheMove = false;
-            //var studentMoving;
-            //var end;
-
             var minWaitTime = 500;
             var lastWaitTime = (-1) * minWaitTime;
             var waitingQueue = [];
@@ -55,34 +51,38 @@ ProgressApp.directive('paperjsmap2', function () {
             }, true);
 
             function placeLatestStudents() {
+                for (var i = 0; i < scope.assignments.length; i++) {
+                    placeStudentCirclesForAssignment(scope.assignments[i]);
+                }
+            }
+
+            function placeStudentCirclesForAssignment(assignment) {
                 var verticalPositionOffset = 0;
                 var lateralPositionOffset = 50;
+                var location = assignment.location;
 
-                for (var i = 0; i < scope.assignments.length; i++) {
-                    var location = scope.assignments[i].location;
-                    for (var j = 0; j < scope.assignments[i].latestDoers.length; j++) {
-                        var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
-                        var studentCircle = new paper.Path.Circle(studentLocation, 15);
-                        studentCircle.fillColor = 'grey';
+                for (var j = 0; j < assignment.latestDoers.length; j++) {
+                    var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
+                    var studentCircle = new paper.Path.Circle(studentLocation, 15);
+                    studentCircle.fillColor = 'grey';
 
                         //student id:s over student circles
-                        var text = new paper.PointText({
-                            point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
-                            content: scope.assignments[i].latestDoers[j].id,
-                            fillColor: 'white'
-                         });
+                    var text = new paper.PointText({
+                        point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
+                        content: assignment.latestDoers[j].id,
+                        fillColor: 'white'
+                    });
 
-                        lateralPositionOffset += 30;
+                    lateralPositionOffset += 30;
 
-                        if ((j + 1) % maxStudentsInRow == 0) {
-                            verticalPositionOffset += 30;
-                            lateralPositionOffset = 50;
-                        }
+                    if ((j + 1) % maxStudentsInRow == 0) {
+                        verticalPositionOffset += 30;
+                        lateralPositionOffset = 50;
                     }
-                    //moving on to latest doers of next assignment
-                    lateralPositionOffset = 50;
-                    var verticalPositionOffset = 0;
                 }
+                    //moving on to latest doers of next assignment
+                lateralPositionOffset = 50;
+                var verticalPositionOffset = 0;
             }
 
             function placeCirclesOnAssignmentLocations() {
@@ -192,7 +192,7 @@ ProgressApp.directive('paperjsmap2', function () {
                             }
 
                             else {
-                                replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);    
+                                replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                             }
                         }
                     }
