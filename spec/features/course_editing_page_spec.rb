@@ -381,7 +381,7 @@ def visit_course_editing_page
 end
 
 def x_loc(button)
-    (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
+    (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
 end
 
 def y_loc(button)
