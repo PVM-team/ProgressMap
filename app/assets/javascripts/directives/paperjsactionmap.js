@@ -95,12 +95,26 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
                     assignmentCircle.fillColor = '#29C124';
-                    assignmentCircle.fillColor.hue -= 100 - (scope.assignments[i].doers.length/scope.students.length * 100);
+
+                    var percentageCompleted = scope.assignments[i].doers.length/scope.students.length * 100;
+
+                    assignmentCircle.fillColor.hue -= 100 - (percentageCompleted);
+
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
                         point: locations[i],
                         content: i + 1,
+                        fillColor: 'white'
+                    });
+
+                    //percentage over assignment circles
+                    var percentageLocationPoint = locations[i];
+                    percentageLocationPoint[1] = percentageLocationPoint[1] + 20; //percentage moved slightly under circles
+
+                    var percentage = new paper.PointText({
+                        point: percentageLocationPoint,
+                        content: Math.floor(percentageCompleted) + "%",
                         fillColor: 'white'
                     });
                 }
