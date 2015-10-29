@@ -45,7 +45,11 @@ ProgressApp.directive('paperjsmap2', function () {
 
             scope.$watch('students', function (newval, oldval) {
                 if (newval && mapInitialized) {
-                    initializeLatest();
+                    placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe();
+
+                    var students = getMovingStudents();
+                    moveStudents(students);
+
                     paper.view.update();
                 }
             }, true);
@@ -173,30 +177,60 @@ ProgressApp.directive('paperjsmap2', function () {
              //nothing special here
              };*/
 
-
-            function initializeLatest() {
+             function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
 
                 for (var i = 0; i < scope.students.length; i++) {
                     var student = scope.students[i];
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
-                        var originalAssignment = studentShownInMap(student);
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var original = originalAssignment(student); // undefined if not shown anywhere in map
 
-                        if (assignmentToMoveTo != originalAssignment &&
-                            indexOfStudentInLatestDoersOfAssignment(student, assignmentToMoveTo) < 0 &&
+                        if (! original &&
+                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
-                            if (originalAssignment) {
-                                placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo)
-                            }
-
-                            else {
-                                replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
-                            }
+                            replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                         }
                     }
+                }
+             }
+
+            function getMovingStudents() {
+                var movingStudents = [];
+
+                for (var i = 0; i < scope.students.length; i++) {
+                    var student = scope.students[i];
+                    var lastDoneAssignment = student.lastDoneAssignment;
+
+                    if (lastDoneAssignment) {
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var original = originalAssignment(student); // undefined if not shown anywhere in map
+
+                        if (original &&
+                            original != assignmentToMoveTo &&
+                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                            studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
+
+                            movingStudents.push(student);
+                        }
+                    }
+                }
+                return movingStudents;
+            }
+
+            function moveStudents(students) {
+                for (var i = 0; i < students.length; i++) {
+                    var student = students[i];
+                    var lastDoneAssignment = student.lastDoneAssignment;
+
+                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                    var original = originalAssignment(student); // always defined here since all these students move
+
+                    // no reason to compare anything here since the students moves from their original position to assignmentToMoveTo
+
+                    placeStudentInWaitingQueue(student, original, assignmentToMoveTo)
                 }
 
                 lastWaitTime = (-1) * minWaitTime;
@@ -258,7 +292,6 @@ ProgressApp.directive('paperjsmap2', function () {
 
                         console.log("waiting queue: " + waitingQueue)
                         console.log("moving queue: " + movingQueue)
-
                     }
 
                     else {
@@ -355,17 +388,22 @@ ProgressApp.directive('paperjsmap2', function () {
                 sortLatestDoersForAssignment(assignment);
             }
 
-            function studentShownInMap(student) {
+            function originalAssignment(student) {
                 for (var i = 0; i < scope.assignments.length; i++) {
+                    var assignment = scope.assignments[i];
 
-                    for (var j = 0; j < scope.assignments[i].latestDoers.length; j++) {
+                    for (var j = 0; j < assignment.latestDoers.length; j++) {
 
-                        if (indexOfStudentInLatestDoersOfAssignment(student, scope.assignments[i]) >= 0) {
-                            return scope.assignments[i];
+                        if (studentIsInLatestDoersOfAssignment(student, assignment)) {
+                            return assignment;
                         }
                     }
                 }
-                return null;
+                return undefined;
+            }
+
+            function studentIsInLatestDoersOfAssignment(student, assignment) {
+                return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
             }
 
             function indexOfStudentInLatestDoersOfAssignment(student, assignment) {
