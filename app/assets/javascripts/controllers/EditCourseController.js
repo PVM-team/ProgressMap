@@ -14,11 +14,43 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         $scope.name = $scope.course.name;
 
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            var assignment = $scope.assignments[i];
+
+            assignment['dependencyText'] = "";
+
+
+            for (var j = 0; j < assignment.dependencies.length; j++) {
+
+                assignment['dependencyText'] += assignment.dependencies[j].name;
+
+                if (j < assignment.dependencies.length - 1) {
+                    assignment['dependencyText'] += ", ";
+                }
+            }
+        }
+
         setDisplayOfNewAssignmentButton();
 
         CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
         CanvasService.drawSmoothPaths($scope.assignments);
     })
+
+    $scope.changeDependenciesOfAssignment = function(assignment) {
+        var dependencyList = parseDependencies(assignment);
+        var data = {
+            assignment_id: assignment.id,
+            dependencies: dependencyList
+        }
+
+        httpService.putData('assignments/edit_dependencies', data).then(function(data) {})
+    }
+
+    function parseDependencies(assignment) {
+        for (var i = 0; i < assignment.dependencyText.length; i++) {
+
+        }
+    }
 
     $scope.changeNameOfAssignment = function(assignment) {
         var data = {

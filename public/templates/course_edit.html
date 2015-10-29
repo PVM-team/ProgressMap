@@ -28,6 +28,8 @@
                     Id: {{ assignment.id }}, Number: {{ assignment.number }}, Name: <input name="assignmentName" ng-model="assignment.name">
                     <button ng-click='changeNameOfAssignment(assignment);'>Change Assignment Name</button>
                     <button ng-dblclick="return;" ng-disabled="mutex" ng-click='deleteAssignment(assignment);'>Delete assignment</button>
+                    Edit dependencies: <input dependency="assignmentDependencies" type="text" ng-model="assignment.dependencyText">
+                    <button ng-click='changeDependenciesOfAssignment(assignment);'>Change Assignment's Dependencies</button>
                 </li>
             </ol>
         </section>

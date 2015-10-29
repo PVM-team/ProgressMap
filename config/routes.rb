@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
+  put 'assignments/edit_dependencies', to: 'assignments#edit_dependencies'
 
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'

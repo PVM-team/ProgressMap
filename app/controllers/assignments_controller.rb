@@ -35,13 +35,20 @@ class AssignmentsController < ApplicationController
 		render plain: "Assignment deleted"
 	end
 
-    def edit_name
-        assignment= Assignment.find params[:assignment_id]
-        assignment.name = params[:name]
-        assignment.save
+  def edit_name
+      assignment= Assignment.find params[:assignment_id]
+      assignment.name = params[:name]
+      assignment.save
         
-        render 'assignments/show.json.jbuilder'
-    end
+      render 'assignments/show.json.jbuilder'
+  end
+
+  def edit_dependencies
+      assignment = Assignment.find params[:assignment_id]
+      assignment.dependencies #jotain ikävää tänne...
+      assignment.save
+  end
+
 
     def decrease_numbers
         course = Course.find_by id: params[:course_id]

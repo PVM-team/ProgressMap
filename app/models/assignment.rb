@@ -16,6 +16,6 @@ class Assignment < ActiveRecord::Base
     private
     	
     	def set_name
-    		self.name = ""
+    		self.name = self.number.to_s
     	end
 end

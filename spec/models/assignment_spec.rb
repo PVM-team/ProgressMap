@@ -12,8 +12,8 @@ describe Assignment, type: :model do
       expect(Assignment.count).to be(1)
     end
 
-    it "it is given no name at first" do
-      expect(Assignment.first.name).to eq("")
+    it "it is given assignment number as name" do
+      expect(Assignment.first.name).to eq("1")
     end
   end
 
