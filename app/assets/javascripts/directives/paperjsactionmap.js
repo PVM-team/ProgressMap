@@ -295,7 +295,10 @@ ProgressApp.directive('paperjsmap2', function () {
                     var circleToMove = elem.circle;
                     var assignmentToMoveTo = elem.assignmentToMoveTo;
 
+                    paper.view.update();
                     if (hasReachedDestination(circleToMove, assignmentToMoveTo)) {
+                        console.log("perillä!");
+
                         var student = elem.student;
                         var originalAssignment = elem.originalAssignment;
 
@@ -303,6 +306,7 @@ ProgressApp.directive('paperjsmap2', function () {
                         addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalAssignment);
 
                         replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+
 
                         console.log("waiting queue: " + waitingQueue)
                         console.log("moving queue: " + movingQueue)
