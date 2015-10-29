@@ -14,7 +14,8 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
         $scope.assignments = data["assignments"];
 
-        CanvasService.initiatePaperCanvas('canvas3', $scope.assignments.length, 1000);
+        //no longer working as is
+        //CanvasService.initiatePaperCanvas('canvas3', $scope.assignments.length, 1000);
 
         sortAssignmentsByNumber();
         assignLatestDoersForAssignments();

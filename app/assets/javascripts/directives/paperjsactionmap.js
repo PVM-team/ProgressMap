@@ -34,6 +34,7 @@ ProgressApp.directive('paperjsmap2', function () {
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && ! mapInitialized) {
+                    setCanvasSize();
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
@@ -53,6 +54,26 @@ ProgressApp.directive('paperjsmap2', function () {
                     paper.view.update();
                 }
             }, true);
+
+            function setCanvasSize(){
+                //to be changed according to window size?
+                var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
+
+                var canvas = element[0];
+
+                var borderSize = width / 40; // 25
+                var blockSize = width / 5; // 200
+                var assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
+                var levelAmount = Math.ceil(scope.assignments.length / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
+
+                var height = (2 * borderSize + blockSize) * levelAmount + 100;
+
+                canvas.height = height;
+                canvas.width = width;
+
+                paper.view.viewSize = new paper.Size(width, height);
+                paper.view.draw();
+            }
 
             function placeLatestStudents() {
                 for (var i = 0; i < scope.assignments.length; i++) {
