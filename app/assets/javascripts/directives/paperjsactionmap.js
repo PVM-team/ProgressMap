@@ -7,9 +7,9 @@ ProgressApp.directive('paperjsmap2', function () {
             students: '='
         },
         link: function (scope, element, attrs) {
+            var intervalLength = 15000;
 
-            var minWaitTime = 500;
-            var lastWaitTime = (-1) * minWaitTime;
+            var lastWaitTime = 0;
             var waitingQueue = [];
 
             var movingQueue = [];
@@ -251,14 +251,14 @@ ProgressApp.directive('paperjsmap2', function () {
 
                     // no reason to compare anything here since the students moves from their original position to assignmentToMoveTo
 
-                    placeStudentInWaitingQueue(student, original, assignmentToMoveTo)
+                    placeStudentInWaitingQueue(student, original, assignmentToMoveTo, students.length)
                 }
 
-                lastWaitTime = (-1) * minWaitTime;
+                lastWaitTime = 0;
             }
 
-            function placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo) {
-                var time = lastWaitTime + minWaitTime + 1000 * Math.random();
+            function placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo, movingStudentsDuringInterval) {
+                var time = timeToWaitInQueue(movingStudentsDuringInterval);
 
                 var wait = setTimeout(function() {
                                 placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
@@ -268,8 +268,12 @@ ProgressApp.directive('paperjsmap2', function () {
                             }, time);
 
                 waitingQueue.push(wait);
-
+                
                 lastWaitTime = time;
+            }
+
+            function timeToWaitInQueue(movingStudentsDuringInterval) {
+                return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
             }
 
             function placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo) {
