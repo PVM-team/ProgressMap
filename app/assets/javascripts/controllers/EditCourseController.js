@@ -25,7 +25,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                 assignment['dependencyText'] += assignment.dependencies[j].name;
 
                 if (j < assignment.dependencies.length - 1) {
-                    assignment['dependencyText'] += ", ";
+                    assignment['dependencyText'] += ",";
                 }
             }
         }
@@ -43,13 +43,22 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             dependencies: dependencyList
         }
 
-        httpService.putData('assignments/edit_dependencies', data).then(function(data) {})
+        httpService.putData('assignments/edit_dependencies', data).then(function(data) {
+        });
     }
 
     function parseDependencies(assignment) {
-        for (var i = 0; i < assignment.dependencyText.length; i++) {
-
+        var nameList = assignment.dependencyText.split(",");
+        var assignmentList = [];
+        for (var i = 0; i < nameList.length; i++) {
+            
+            for (var j = 0; j < $scope.assignments.length; j++) {
+                if (nameList[i] == $scope.assignments[j].name) {
+                    assignmentList.push($scope.assignments[j]);
+                }
+            }            
         }
+        return assignmentList;
     }
 
     $scope.changeNameOfAssignment = function(assignment) {
@@ -121,13 +130,13 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         var index = $scope.assignments.indexOf(assignment);
 
-            httpService.deleteData('assignments/' + assignment.id).then(function (data) {
-                $scope.assignments.splice(index, 1);
+        httpService.deleteData('assignments/' + assignment.id).then(function (data) {
+            $scope.assignments.splice(index, 1);
 
-                setDisplayOfNewAssignmentButton();
+            setDisplayOfNewAssignmentButton();
 
-                decreaseNumbersOfFollowingAssignments(number, location);
-            })
+            decreaseNumbersOfFollowingAssignments(number, location);
+        })
     }
 
     $scope.deleteStudent = function(student) {
