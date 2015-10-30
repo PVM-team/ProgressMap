@@ -11,17 +11,8 @@ class AssignmentsController < ApplicationController
 		if course
 			assignment = Assignment.create number: number
 			assignment.location = Location.create x: location_json[:x], y: location_json[:y]
-
-			if dependencies_json_array
-				dependencies_json_array.each do |dependency_json|
-					dependency = Assignment.find_by id: dependency_json[:id]
-
-					assignment.dependencies << dependency if dependency
-				end
-			end
-
+      add_dependencies_to_assignment(dependencies_json_array, assignment)
 			course.assignments << assignment
-
 			@assignment << assignment
 		end
 
@@ -47,15 +38,7 @@ class AssignmentsController < ApplicationController
       assignment = Assignment.find params[:assignment_id]
       assignment.dependencies.destroy_all
       dependencies_json_array = params[:dependencies]
-
-      if dependencies_json_array
-          dependencies_json_array.each do |dependency_json|
-              dependency = Assignment.find_by id: dependency_json[:id]
-
-              assignment.dependencies << dependency if dependency
-          end
-      end
-
+      add_dependencies_to_assignment(dependencies_json_array, assignment)
       assignment.save
 
       render 'assignments/show.json.jbuilder'
@@ -100,5 +83,15 @@ class AssignmentsController < ApplicationController
       location.save
 
       next_prev
+  end
+
+  def add_dependencies_to_assignment(dependencies_json_array, assignment)
+    if dependencies_json_array
+      dependencies_json_array.each do |dependency_json|
+        dependency = Assignment.find_by id: dependency_json[:id]
+
+        assignment.dependencies << dependency if dependency
+      end
+    end
   end
 end

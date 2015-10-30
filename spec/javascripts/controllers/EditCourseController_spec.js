@@ -16,7 +16,7 @@ describe('EditCourseController', function () {
             data.course = [{"id": 1, "name": 'ohtu'}];
             data.assignments = [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}], "dependencies": {}},
                                 {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}], "dependencies": {}},
-                                {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": {}}];
+                                {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": {id: 1}}];
             data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
 
             return {
@@ -108,6 +108,13 @@ describe('EditCourseController', function () {
         });
     })
 
+    describe('changeDependenciesOfAssignment', function() {
+        it('should remove old dependencies', function() {
+            scope.changeDependenciesOfAssignment(scope.assignments[2]);
+            expect(scope.assignments[2].dependencyText.length).toEqual(0);
+        })
+    })
+
     describe('initializing EditCourseController', function () {
         it('should set scope variables', function () {
             expect(scope.course.id).toBe(1);
@@ -126,7 +133,7 @@ describe('EditCourseController', function () {
             expect(scope.assignments.length).toBe(amount - 1);
             scope.deleteAssignment(scope.assignments[0]);
             expect(scope.assignments.length).toBe(amount - 2);
-            expect(scope.assignments[0]).toEqual({"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": {}, dependencyText: ''});
+            expect(scope.assignments[0]).toEqual({"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": { id: 1 }, dependencyText: ''});
         })
 
         it('should remove level if there is no assignments left on it after delete', function () {
