@@ -42,7 +42,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             assignment_id: assignment.id,
             dependencies: dependencyList
         }
-
+        
         httpService.putData('assignments/edit_dependencies', data).then(function(data) {
         });
     }
