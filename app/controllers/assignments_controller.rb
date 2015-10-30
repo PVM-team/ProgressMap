@@ -87,7 +87,6 @@ class AssignmentsController < ApplicationController
 
   def add_dependencies_to_assignment(dependencies_json_array, assignment)
     if dependencies_json_array
-      byebug
       dependencies_json_array.each do |dependency_json|
         dependency = Assignment.find_by id: dependency_json[:id]
 
