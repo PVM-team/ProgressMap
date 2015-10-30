@@ -4,6 +4,8 @@ describe('EditCourseController', function () {
     var httpServiceMock;
     var CanvasServiceMock;
     var location;
+    var assignmentOne = {"id": 1, "name": 'one', "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}], "dependencies": []};
+    var assignmentTwo = {"id": 2, "name": 'two', "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}], "dependencies": []};
 
     var assignments;
 
@@ -14,9 +16,8 @@ describe('EditCourseController', function () {
             var data = {};
 
             data.course = [{"id": 1, "name": 'ohtu'}];
-            data.assignments = [{"id": 1, "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}], "dependencies": {}},
-                                {"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}], "dependencies": {}},
-                                {"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": {id: 1}}];
+            data.assignments = [assignmentOne, assignmentTwo,
+                                {"id": 3, "name": 'three', "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": [assignmentOne, assignmentTwo]}];
             data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
 
             return {
@@ -39,7 +40,14 @@ describe('EditCourseController', function () {
                 }, putData: function (path, params) {
                     return {
                         then: function (callback) {
-                            return callback({course: {name: scope.name}});
+                            if (path.match('/courses/edit_name')) {
+                                return callback({course: {name: scope.name}});
+                            }
+                            if (path.match('assignments/edit_dependencies')) {
+                                return callback({assignment: scope.assignments[2]});
+                            } else {
+                                return callback({assignment: scope.assignments});
+                            }
                         }
                     };
                 }, deleteData: function (path, params) {
@@ -109,9 +117,32 @@ describe('EditCourseController', function () {
     })
 
     describe('changeDependenciesOfAssignment', function() {
-        it('should remove old dependencies', function() {
+        beforeEach(function(){
+            scope.assignments[2].dependencyText = '';
             scope.changeDependenciesOfAssignment(scope.assignments[2]);
-            expect(scope.assignments[2].dependencyText.length).toEqual(0);
+        })
+
+        it('should have removed all dependencies', function() {
+            expect(scope.assignments[2].dependencies.length).toEqual(0);
+        })
+
+        it('should add correct dependencies in dependencyText if dependencyText is not empty', function() {
+            scope.assignments[2].dependencyText = 'one';
+            scope.changeDependenciesOfAssignment(scope.assignments[2]);
+            expect(scope.assignments[2].dependencies.length).toEqual(1);
+            expect(scope.assignments[2].dependencies[0]).toEqual(assignmentOne);
+        })
+
+        it('should not add dependencies if dependencyText contains non existing assignment name', function() {
+            scope.assignments[2].dependencyText = 'testi';
+            scope.changeDependenciesOfAssignment(scope.assignments[2]);
+            expect(scope.assignments[2].dependencies.length).toEqual(0);
+        })
+
+        it('should add the dependencies that are given correctly and not add dependencies that are given incorrectly', function() {
+            scope.assignments[2].dependencyText = 'one,teo';
+            scope.changeDependenciesOfAssignment(scope.assignments[2]);
+            expect(scope.assignments[2].dependencies.length).toEqual(1);
         })
     })
 
@@ -129,11 +160,11 @@ describe('EditCourseController', function () {
             var amount = scope.assignments.length;
             scope.deleteAssignment(scope.assignments[0]);
 
-            expect(scope.assignments[0]).toEqual({"id": 2, "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}], "dependencies": {} , dependencyText: ''});
+            expect(scope.assignments[0]).toEqual(assignmentTwo);
             expect(scope.assignments.length).toBe(amount - 1);
             scope.deleteAssignment(scope.assignments[0]);
             expect(scope.assignments.length).toBe(amount - 2);
-            expect(scope.assignments[0]).toEqual({"id": 3, "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": { id: 1 }, dependencyText: ''});
+            expect(scope.assignments[0]).toEqual({"id": 3, name: 'three', "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": [assignmentOne, assignmentTwo], dependencyText: 'one,two' });
         })
 
         it('should remove level if there is no assignments left on it after delete', function () {

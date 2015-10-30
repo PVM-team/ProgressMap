@@ -37,13 +37,15 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     })
 
     $scope.changeDependenciesOfAssignment = function(assignment) {
+        var index = $scope.assignments.indexOf(assignment);
         var dependencyList = parseDependencies(assignment);
         var data = {
             assignment_id: assignment.id,
             dependencies: dependencyList
         }
-        
+
         httpService.putData('assignments/edit_dependencies', data).then(function(data) {
+            $scope.assignments[index].dependencies = dependencyList;
         });
     }
 
