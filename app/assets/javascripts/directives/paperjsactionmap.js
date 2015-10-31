@@ -8,6 +8,9 @@ ProgressApp.directive('paperjsmap2', function () {
         },
         link: function (scope, element, attrs) {
             var intervalLength = 15000;
+            var minSpeed = 90;
+
+            var speedUps = 0;
 
             var lastWaitTime = 0;
             var waitingQueue = [];
@@ -71,7 +74,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 canvas.height = height;
                 canvas.width = width;
 
-                paper.view.viewSize = new paper.Size(width, height);
+                paper.view.viewSize = new paper.Size(width, height); // kun käytössä, niin piirtää ainakin oman koneen selaimilla canvaksen zoomattuna
                 paper.view.draw();
             }
 
@@ -285,7 +288,8 @@ ProgressApp.directive('paperjsmap2', function () {
                                   'assignmentToMoveTo': assignmentToMoveTo,
                                   'originalAssignment': originalAssignment,
                                   'startPosition': circleToMove.position,
-                                  'student': student};
+                                  'student': student,
+                                  'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 
                 movingQueue.push(movingInfo);
             }
@@ -320,27 +324,13 @@ ProgressApp.directive('paperjsmap2', function () {
                     }
 
                     else {
-                        var startPosition = elem.startPosition;
-
-                        moveCircle(circleToMove, assignmentToMoveTo, startPosition);
+                        var newSpeed = moveCircle(circleToMove, assignmentToMoveTo, elem.startPosition, elem.speed);
                         elem.circle = circleToMove;
+                        elem.speed = newSpeed;
 
                         movingQueue.push(elem);
                     }
                 }, 1000 / (60 * movingQueue.length))
-            }
-
-            function moveCircle(circle, assignment, startPosition) {
-                var vector = getVector(circle, assignment);
-
-                // sen sijaan että liikutettaisiin aina vector / 40 eteenpäin, nopeus voisi määräytyä kuljetusta matkasta ja etäisyydestä sekä assignmentiin ja startPositioniin?
-
-                circle.position.x += vector[0] / 40;
-                circle.position.y += vector[1] / 40;
-
-                // poista vanha lokaatio?
-
-                paper.view.update();
             }
 
             function hasReachedDestination(circle, assignment) {
@@ -353,6 +343,31 @@ ProgressApp.directive('paperjsmap2', function () {
                 var destination = assignment.location;
 
                 return [destination.x - position.x, destination.y - position.y];                
+            }
+
+            function moveCircle(circle, assignment, startPosition, speed) {
+                var vector = getVector(circle, assignment);
+                var totalDistance = distanceBetweenPointAndAssignment(startPosition, assignment);
+                var distanceRemaining = distanceBetweenPointAndAssignment(circle.position, assignment);
+
+                circle.position.x += vector[0] / speed;
+                circle.position.y += vector[1] / speed;
+
+                if (distanceRemaining * 7 > totalDistance) {   // etäisyys yli 1/7 kokonaismatkasta kohteeseen
+                    speed -= 0.5;                              // nopeus kasvaa "smoothisti"
+                }
+                else {
+                    speed += 0.1;                              // nopeus alkaa laskemaan "smoothisti"
+                }
+
+                paper.view.update();
+
+                speed = Math.max(10, speed);                   // nopeus tulee olla 10+ ja 100-
+                return Math.min(speed, minSpeed);
+            }
+
+            function distanceBetweenPointAndAssignment(position, assignment) {
+                return distance([position.x, position.y], [assignment.location.x, assignment.location.y]);
             }
 
             function getStudentCircle(student, assignment) {
