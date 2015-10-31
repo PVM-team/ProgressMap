@@ -32,13 +32,16 @@ ProgressApp.directive('paperjsmap2', function () {
             paper.install(window);
             paper.setup(element[0]);
 
+            var previousWindowWidth;
+
             scope.$watch('assignments', function (newval, oldval) {
-                if (newval && ! mapInitialized) {
+                if (newval && !mapInitialized) {
                     setCanvasSize();
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
 
+                    previousWindowWidth = window.innerWidth;
                     mapInitialized = true;
                     paper.view.onResize();
                 }
@@ -56,10 +59,37 @@ ProgressApp.directive('paperjsmap2', function () {
             }, true);
 
             paper.view.onResize = function(event) {
-                setCanvasSize();
+                if (mapInitialized) {
+                    setCanvasSize();
+                    scaleButtonsByWidth();
+                    scalePathByWidth();
+                    previousWindowWidth = window.innerWidth;
+                }
+            }
+
+            function scalePathByWidth(){
+                var segments = path.segments;
+                for (var i = 0; i < segments.length; i++){
+                    segments[i].point.x = getRelativeX(segments[i].point.x);
+                }
+            }
+
+            //the x-position of something in the current window width
+            function getRelativeX(x){
+                return (x/previousWindowWidth) * window.innerWidth;
+            }
+
+            function scaleButtonsByWidth(){
+                var items = paper.project.activeLayer.children;
+                for (var i = 0; i < items.length; i++){
+                    if (items[i] != path){
+                        items[i].position.x = getRelativeX(items[i].position.x);
+                    }
+                }
             }
 
             function setCanvasSize(){
+                //to be changed according to window size?
                 //var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
                 var width = window.innerWidth;
 
@@ -175,7 +205,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 var s = Smooth(locations, smoothConfig);
                 var averageLineLength = 1;
                 var pieceCount = 2;
-                var ref = 1 / pieceCount;
+                ref = 1 / pieceCount;
 
                 for (var j = 0; j < 1; j += ref) {
                     ref2 = [s(i + j), s(i + j + pieceCount)];
