@@ -29,8 +29,8 @@ ProgressApp.directive('paperjsmap2', function () {
             };
 
             var path;
+            paper.install(window);
             paper.setup(element[0]);
-            var tool = new paper.Tool();
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && ! mapInitialized) {
@@ -38,9 +38,9 @@ ProgressApp.directive('paperjsmap2', function () {
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
-                    paper.view.update();
 
                     mapInitialized = true;
+                    paper.view.onResize();
                 }
             }, true);
 
@@ -55,9 +55,13 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }, true);
 
+            paper.view.onResize = function(event) {
+                setCanvasSize();
+            }
+
             function setCanvasSize(){
-                //to be changed according to window size?
-                var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
+                //var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
+                var width = window.innerWidth;
 
                 var canvas = element[0];
 
@@ -107,7 +111,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
                     //moving on to latest doers of next assignment
                 lateralPositionOffset = 50;
-                var verticalPositionOffset = 0;
+                verticalPositionOffset = 0;
             }
 
             function placeCirclesOnAssignmentLocations() {
@@ -131,7 +135,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 var locations = getLocations(scope.assignments);
 
                 var lastIndex = locations.length - 1;
-                var path = new paper.Path();
+                path = new paper.Path();
 
                 //beige vaihtoehto
                 //path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
@@ -165,7 +169,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
             }
 
-            function drawSmoothPaperCurve(i, locations, path) {
+            function drawSmoothPaperCurve(i, locations) {
                 var ref, ref2, start, end, pieceLength, wat;
 
                 var s = Smooth(locations, smoothConfig);
@@ -187,17 +191,6 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-            /* tool.onMouseDown = function (event) {
-             path = new paper.Path();
-             path.strokeColor = 'black';
-             };
-             tool.onMouseDrag = function (event) {
-             path.add(event.point);
-             };
-             tool.onMouseUp = function (event) {
-             //nothing special here
-             };*/
-
              function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
 
                 for (var i = 0; i < scope.students.length; i++) {
@@ -205,7 +198,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                         var original = originalAssignment(student); // undefined if not shown anywhere in map
 
                         if (! original &&
@@ -226,7 +219,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                         var original = originalAssignment(student); // undefined if not shown anywhere in map
 
                         if (original &&
@@ -246,7 +239,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     var student = students[i];
                     var lastDoneAssignment = student.lastDoneAssignment;
 
-                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                     var original = originalAssignment(student); // always defined here since all these students move
 
                     // no reason to compare anything here since the students moves from their original position to assignmentToMoveTo
@@ -268,7 +261,7 @@ ProgressApp.directive('paperjsmap2', function () {
                             }, time);
 
                 waitingQueue.push(wait);
-                
+
                 lastWaitTime = time;
             }
 
