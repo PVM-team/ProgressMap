@@ -314,7 +314,8 @@ ProgressApp.directive('paperjsmap2', function () {
                         removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
                         putStudentToLatestDoersOfAssignment(student, assignmentToMoveTo);
 
-                        console.log("moving queue: " + movingQueue)
+                        circleToMove.remove(); // tuhoa tämä liikutettu versio, joka jäi tehtävänappulan päälle. uusi samanlainen on ylläolevassa funktiossa sijoitettu paikalleen.
+                        paper.view.update();
                     }
 
                     else {
@@ -443,10 +444,10 @@ ProgressApp.directive('paperjsmap2', function () {
 
             function removeItemFromPosition(position) {
                 var item = getItem(position);
-                console.log("item to remove: " + item);
 
                 if (item) {
                     item.remove();
+                    paper.view.update();
                 }
             }
 
@@ -518,12 +519,6 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
                 return false;
             }
-
-            /* function sortLatestDoersForAssignment(assignment) {
-                assignment.latestDoers.sort(function (a, b) {
-                    return new Date(b.lastDoneAssignment.timestamp) - new Date(a.lastDoneAssignment.timestamp);
-                })
-            } */
 
             function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
                 return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
