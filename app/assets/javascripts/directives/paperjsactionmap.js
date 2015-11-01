@@ -7,18 +7,15 @@ ProgressApp.directive('paperjsmap2', function () {
             students: '='
         },
         link: function (scope, element, attrs) {
-            var intervalLength = 15000;
+            var intervalLength = 5000;
             var minSpeed = 90;
 
             var speedUps = 0;
 
             var lastWaitTime = 0;
-            var waitingQueue = [];
 
             var movingQueue = [];
             var movingInterval;
-
-            resetMovingInterval();
 
             var mapInitialized = false;
             var maxStudentsToShowAroundAssignment = 5;
@@ -58,7 +55,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }, true);
 
-            function setCanvasSize(){
+            function setCanvasSize() {
                 //to be changed according to window size?
                 var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
 
@@ -74,7 +71,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 canvas.height = height;
                 canvas.width = width;
 
-                paper.view.viewSize = new paper.Size(width, height); // kun käytössä, niin piirtää ainakin oman koneen selaimilla canvaksen zoomattuna
+                paper.view.viewSize = new paper.Size(width, height); // kun käytössä, niin piirtää ainakin oman koneen selaimilla canvaksen zoomattuna -Mika
                 paper.view.draw();
             }
 
@@ -92,9 +89,12 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var j = 0; j < assignment.latestDoers.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
                     var studentCircle = new paper.Path.Circle(studentLocation, 15);
-                    studentCircle.fillColor = 'grey';
 
-                        //student id:s over student circles
+                    assignment.latestDoers[j]['location'] = {'x': studentLocation.x, 'y': studentLocation.y };
+
+                    studentCircle.fillColor = colorOfCircleOfStudent(assignment.latestDoers[j]);
+
+                     //student id:s over student circles
                     var text = new paper.PointText({
                         point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
                         content: assignment.latestDoers[j].id,
@@ -108,9 +108,6 @@ ProgressApp.directive('paperjsmap2', function () {
                         lateralPositionOffset = 50;
                     }
                 }
-                    //moving on to latest doers of next assignment
-                lateralPositionOffset = 50;
-                var verticalPositionOffset = 0;
             }
 
             function placeCirclesOnAssignmentLocations() {
@@ -190,16 +187,10 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-            /* tool.onMouseDown = function (event) {
-             path = new paper.Path();
-             path.strokeColor = 'black';
-             };
-             tool.onMouseDrag = function (event) {
-             path.add(event.point);
-             };
-             tool.onMouseUp = function (event) {
-             //nothing special here
-             };*/
+
+             /* tool.onMouseHover = function (event) {
+                functionality for showing dependencies
+             }; */
 
              function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
 
@@ -208,14 +199,12 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
-                        var original = originalAssignment(student); // undefined if not shown anywhere in map
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
 
-                        if (! original &&
-                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                        if (! originalAssignment(student) /* undefined if not shown anywhere in map */ &&
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
-                            replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+                            putStudentToLatestDoersOfAssignment(student, assignmentToMoveTo);
                         }
                     }
                 }
@@ -249,49 +238,56 @@ ProgressApp.directive('paperjsmap2', function () {
                     var student = students[i];
                     var lastDoneAssignment = student.lastDoneAssignment;
 
-                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
-                    var original = originalAssignment(student); // always defined here since all these students move
+                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
 
-                    // no reason to compare anything here since the students moves from their original position to assignmentToMoveTo
-
-                    placeStudentInWaitingQueue(student, original, assignmentToMoveTo, students.length)
+                    placeStudentToWait(student, originalAssignment(student), assignmentToMoveTo, students.length)
                 }
 
                 lastWaitTime = 0;
             }
 
-            function placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo, movingStudentsDuringInterval) {
-                var time = timeToWaitInQueue(movingStudentsDuringInterval);
+            function placeStudentToWait(student, originalAssignment, assignmentToMoveTo, movingStudentsDuringInterval) {
+                var time = waitingTime(movingStudentsDuringInterval);
 
-                var wait = setTimeout(function() {
+                var waitTillMove = setTimeout(function() {
                                 placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
                                 resetMovingInterval();
 
-                                clearTimeout(wait);
+                                clearTimeout(waitTillMove);
                             }, time);
 
-                waitingQueue.push(wait);
-                
                 lastWaitTime = time;
             }
 
-            function timeToWaitInQueue(movingStudentsDuringInterval) {
+            function waitingTime(movingStudentsDuringInterval) {
                 return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
             }
 
             function placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo) {
-                waitingQueue.shift(); // poista odotusjonosta. pitäisi olla aina ekana jonossa.
-
                 var circleToMove = getStudentCircle(student, originalAssignment);
 
-                var movingInfo = {'circle': getStudentCircle(student, originalAssignment),
+                var movingInfo = {'circle': circleToMove,
                                   'assignmentToMoveTo': assignmentToMoveTo,
                                   'originalAssignment': originalAssignment,
                                   'startPosition': circleToMove.position,
                                   'student': student,
                                   'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 
-                movingQueue.push(movingInfo);
+                                  movingQueue.push(movingInfo);
+            }
+
+            function getStudentCircle(student, assignment) {
+                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+                return getItem(assignment.latestDoers[i].location);  // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
+            }
+
+            function getItem(location) {
+                var hitTest = paper.project.hitTest(location);
+
+                if (hitTest) {
+                    return hitTest.item;
+                }
+                return null;
             }
 
             function resetMovingInterval() {
@@ -309,22 +305,20 @@ ProgressApp.directive('paperjsmap2', function () {
 
                     var circleToMove = elem.circle;
                     var assignmentToMoveTo = elem.assignmentToMoveTo;
+                    var startPosition = elem.startPosition;
 
                     if (hasReachedDestination(circleToMove, assignmentToMoveTo)) {
                         var student = elem.student;
                         var originalAssignment = elem.originalAssignment;
 
-                        removeStudentFromPreviousAssignment(student, originalAssignment);
-                        addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalAssignment);
+                        removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
+                        putStudentToLatestDoersOfAssignment(student, assignmentToMoveTo);
 
-                        replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
-
-                        console.log("waiting queue: " + waitingQueue)
                         console.log("moving queue: " + movingQueue)
                     }
 
                     else {
-                        var newSpeed = moveCircle(circleToMove, assignmentToMoveTo, elem.startPosition, elem.speed);
+                        var newSpeed = moveCircle(circleToMove, assignmentToMoveTo, startPosition, elem.speed);
                         elem.circle = circleToMove;
                         elem.speed = newSpeed;
 
@@ -342,12 +336,12 @@ ProgressApp.directive('paperjsmap2', function () {
                 var position = circle.position;
                 var destination = assignment.location;
 
-                return [destination.x - position.x, destination.y - position.y];                
+                return [destination.x - position.x, destination.y - position.y];
             }
 
             function moveCircle(circle, assignment, startPosition, speed) {
                 var vector = getVector(circle, assignment);
-                var totalDistance = distanceBetweenPointAndAssignment(startPosition, assignment);
+                var totalDistance = distanceBetweenPointAndAssignment(circle.position, assignment);
                 var distanceRemaining = distanceBetweenPointAndAssignment(circle.position, assignment);
 
                 circle.position.x += vector[0] / speed;
@@ -370,30 +364,18 @@ ProgressApp.directive('paperjsmap2', function () {
                 return distance([position.x, position.y], [assignment.location.x, assignment.location.y]);
             }
 
-            function getStudentCircle(student, assignment) {
-                var yOffset = 0;
-
-                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-
-                while (i >= maxStudentsInRow) {
-                    yOffset += 30;
-                    i -= maxStudentsInRow;
-                }
-                var xOffset = 50 + i * 30;
-
-                var location = [assignment.location.x + xOffset, assignment.location.y + yOffset];
-                return paper.project.hitTest(location).item;
-            }
-
-
-            function removeStudentFromPreviousAssignment(student, assignment) {
+            function removeStudentFromLatestDoersOfAssignment(student, assignment, position) {
                 var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
                 assignment.latestDoers.splice(i, 1);
 
-                // siirrä muut pisteet yhden paikan taaksepäin
+                var student = studentToAddInPlaceOfRemovedOne(assignment);
+
+                if (student) {
+                    putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
+                }
             }
 
-            function addNewStudentInThePlaceOfRemovedOneIfSuchExists(assignment) {
+            function studentToAddInPlaceOfRemovedOne(assignment) {
                 var studentToAdd = null;
 
                 for (var i = 0; i < scope.students.length; i++) {
@@ -401,31 +383,96 @@ ProgressApp.directive('paperjsmap2', function () {
 
                     if (student.lastDoneAssignment &&
                         student.lastDoneAssignment.number == assignment.number &&
-                        indexOfStudentInLatestDoersOfAssignment(student, assignment) < 0) {
+                        ! studentIsInLatestDoersOfAssignment(student, assignment)) {
 
-                        if (!studentToAdd) {
+                        if (! studentToAdd) {
                             studentToAdd = student;
                         }
 
-                        else if (student1HasDoneLastDoneAssignmentAfterStudent2(studentToAdd, student)) {
+                        else if (firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student, studentToAdd)) {
                             studentToAdd = student;
                         }
                     }
                 }
 
-                if (studentToAdd) {
-                    assignment.latestDoers.push(studentToAdd);
-                    sortLatestDoersForAssignment(assignment);
+                return studentToAdd;
+            }
+
+            function putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position) {
+                assignment.latestDoers.push(student);
+                assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
+
+                var circle = new paper.Path.Circle(new paper.Point(position.x, position.y), 15); // luo circle studentToAddille
+                circle.fillColor = colorOfCircleOfStudent(student);
+
+                paper.view.update();
+            }
+
+            function putStudentToLatestDoersOfAssignment(student, assignment) {
+                var position;
+
+                if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
+                    position = positionOfNewStudentAroundAssignment(assignment);
+                }
+
+                else { // remove an existing one and get its position
+                    var studentToGo = studentToRemoveFromLatestDoersOfAssignment(assignment);
+                    var i = indexOfStudentInLatestDoersOfAssignment(studentToGo, assignment);
+
+                    position = assignment.latestDoers[i].location;
+                    removeItemFromPosition(position);
+
+                    assignment.latestDoers.splice(i, 1);
+                }
+
+                putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
+            }
+
+            function studentToRemoveFromLatestDoersOfAssignment(assignment) {
+                var studentToGo = assignment.latestDoers[0];
+
+                for (var i = 1; i < assignment.latestDoers.length; i++) {
+                    var next = assignment.latestDoers[i];
+
+                    if (next && firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(studentToGo, next)) {
+                        studentToGo = next;
+                    }
+                }
+                return studentToGo;
+            }
+
+            function removeItemFromPosition(position) {
+                var item = getItem(position);
+                console.log("item to remove: " + item);
+
+                if (item) {
+                    item.remove();
                 }
             }
 
-            function replaceLastShownStudentOfAssignmentWithStudent(assignment, student) {
-                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) {
-                    assignment.latestDoers.pop();
-                }
+            function positionOfNewStudentAroundAssignment(assignment) {
+                var location = assignment.location;
+                var lateralPositionOffset = 50;
+                var verticalPositionOffset = 0;
 
-                assignment.latestDoers.push(student);
-                sortLatestDoersForAssignment(assignment);
+                var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+
+                for (var i = 0; i < assignment.latestDoers.length; i++) {
+
+                    if (! getItem(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois
+                        return position;
+                    }
+
+                    lateralPositionOffset += 30;
+
+                    if ((i + 1) % maxStudentsInRow == 0) {
+                        verticalPositionOffset += 30;
+                        lateralPositionOffset = 50;                        
+                    }
+
+                    position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+                }
+                return position; // uusi positio perällä, yleisempi tapaus
             }
 
             function originalAssignment(student) {
@@ -464,7 +511,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     }
 
                     for (var i = 0; i < assignment.latestDoers.length; i++) {
-                        if (student1HasDoneLastDoneAssignmentAfterStudent2(student, assignment.latestDoers[i])) {
+                        if (firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student, assignment.latestDoers[i])) {
                             return true;
                         }
                     }
@@ -472,14 +519,25 @@ ProgressApp.directive('paperjsmap2', function () {
                 return false;
             }
 
-            function sortLatestDoersForAssignment(assignment) {
+            /* function sortLatestDoersForAssignment(assignment) {
                 assignment.latestDoers.sort(function (a, b) {
                     return new Date(b.lastDoneAssignment.timestamp) - new Date(a.lastDoneAssignment.timestamp);
                 })
+            } */
+
+            function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
+                return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
             }
 
-            function student1HasDoneLastDoneAssignmentAfterStudent2(student1, student2) {
-                return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
+            function colorOfCircleOfStudent(student) { // ei tarvita kun käyttöön tulee imaget
+                if (student.id % 3 == 0) {
+                    return "#" + Math.round(55 + 200 * student.id / scope.students.length).toString(16) + "3737";
+                }
+                else if (student.id % 3 == 1) {
+                    return "#37" + Math.round(55 + 200 * student.id / scope.students.length).toString(16) + "37";
+                }
+
+                return "#3737" + Math.round(55 + 200 * student.id / scope.students.length).toString(16);
             }
         }
     }
