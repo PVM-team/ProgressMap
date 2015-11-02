@@ -73,7 +73,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                 }
             }
             if (!validName) {
-                return false;x
+                return false;
             }
         }
         return true;

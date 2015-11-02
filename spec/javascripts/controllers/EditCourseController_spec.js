@@ -146,6 +146,34 @@ describe('EditCourseController', function () {
         })
     })
 
+    describe('givenNamesAreCorrect', function() {
+
+        it('should return true if names are correct', function() {
+            scope.assignments[1].dependencyText = 'one,three';
+            expect(scope.givenNamesAreCorrect(scope.assignments[1])).toBeTruthy();
+        })
+
+        it('should return false if dependencyText is empty', function() {
+            scope.assignments[2].dependencyText = '';
+            expect(scope.givenNamesAreCorrect(scope.assignments[2])).toBeFalsy();
+        })
+
+        it('should return false if some of the names are incorrect', function() {
+            scope.assignments[1].dependencyText = 'one,four';
+            expect(scope.givenNamesAreCorrect(scope.assignments[1])).toBeFalsy();
+        })
+
+        it("should return false if dependencyText contains assignment's own name", function() {
+            scope.assignments[0].dependencyText = 'one,two,three';
+            expect(scope.givenNamesAreCorrect(scope.assignments[0])).toBeFalsy();
+        })
+
+        it("should return false if commas are not used", function() {
+            scope.assignments[0].dependencyText = 'one three';
+            expect(scope.givenNamesAreCorrect(scope.assignments[0])).toBeFalsy();
+        })
+    })
+
     describe('initializing EditCourseController', function () {
         it('should set scope variables', function () {
             expect(scope.course.id).toBe(1);
