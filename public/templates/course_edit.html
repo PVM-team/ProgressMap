@@ -30,8 +30,8 @@
                     <button ng-dblclick="return;" ng-disabled="mutex" ng-click='deleteAssignment(assignment);'>Delete assignment</button>
 
                     Edit dependencies: <input dependency="assignmentDependencies" type="text" ng-model="assignment.dependencyText">
-                    <button ng-click='changeDependenciesOfAssignment(assignment);'>Change Assignment's Dependencies</button>
-
+                    <button ng-click='changeDependenciesOfAssignment(assignment);' ng-if="givenNamesAreCorrect(assignment)">Change Assignment's Dependencies</button>
+                    <component id="msg" ng-if="!givenNamesAreCorrect(assignment)">Please enter correct assignment names, separated with commas</component>
                 </li>
             </ol>
         </section>

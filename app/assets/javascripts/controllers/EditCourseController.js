@@ -57,9 +57,26 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                 if (dependenciesNames[i] == $scope.assignments[j].name) {
                     dependencyList.push($scope.assignments[j]);
                 }
-            }            
+            }
         }
         return dependencyList;
+    }
+
+    $scope.givenNamesAreCorrect = function(assignment) {
+        var dependenciesNames = assignment.dependencyText.split(",");
+        var index = $scope.assignments.indexOf(assignment);
+        for (var i = 0; i < dependenciesNames.length; i++) {
+            var validName = false;
+            for (var j = 0; j < $scope.assignments.length; j++) {
+                if (dependenciesNames[i] == $scope.assignments[j].name && j != index) {
+                    validName = true;
+                }
+            }
+            if (!validName) {
+                return false;x
+            }
+        }
+        return true;
     }
 
     $scope.changeNameOfAssignment = function(assignment) {
