@@ -41,9 +41,11 @@ ProgressApp.directive('paperjsmap2', function () {
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
 
-                    previousWindowWidth = window.innerWidth;
+                    //original default value for window width in project design phase
+                    previousWindowWidth = 1100;
                     mapInitialized = true;
-                    paper.view.onResize();
+                    paper.view.draw();
+                    window.onresize();
                 }
             }, true);
 
@@ -58,9 +60,9 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }, true);
 
-            paper.view.onResize = function(event) {
+            window.onresize = function() {
                 if (mapInitialized) {
-                    setCanvasSize();
+                    updateCanvasWidth();
                     scaleButtonsByWidth();
                     scalePathByWidth();
                     previousWindowWidth = window.innerWidth;
@@ -72,6 +74,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < segments.length; i++){
                     segments[i].point.x = getRelativeX(segments[i].point.x);
                 }
+                path.strokeWidth = (path.strokeWidth/previousWindowWidth) * window.innerWidth;
             }
 
             //the x-position of something in the current window width
@@ -84,21 +87,21 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < items.length; i++){
                     if (items[i] != path){
                         items[i].position.x = getRelativeX(items[i].position.x);
+                        items[i].scale(window.innerWidth/previousWindowWidth);
                     }
                 }
             }
 
             function setCanvasSize(){
-                //to be changed according to window size?
-                //var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
                 var width = window.innerWidth;
+                var defaultWidth = 1100;
 
                 var canvas = element[0];
 
-                var borderSize = width / 40; // 25
-                var blockSize = width / 5; // 200
-                var assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
-                var levelAmount = Math.ceil(scope.assignments.length / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
+                var borderSize = defaultWidth / 40; // 25
+                var blockSize = defaultWidth / 5; // 200
+                var assignmentsPerLevel = defaultWidth / (2 * borderSize + blockSize); // 4, kuinka monta tehtävää on per taso
+                var levelAmount = Math.ceil(scope.assignments.length / assignmentsPerLevel); // kuinka paljon tasoja tarvitaan
 
                 var height = (2 * borderSize + blockSize) * levelAmount + 100;
 
@@ -106,6 +109,16 @@ ProgressApp.directive('paperjsmap2', function () {
                 canvas.width = width;
 
                 paper.view.viewSize = new paper.Size(width, height);
+                paper.view.draw();
+            }
+
+            function updateCanvasWidth(){
+                var canvas = element[0];
+                var width = window.innerWidth;
+
+                canvas.width = width;
+                paper.view.viewSize.width = width;
+
                 paper.view.draw();
             }
 
@@ -139,7 +152,7 @@ ProgressApp.directive('paperjsmap2', function () {
                         lateralPositionOffset = 50;
                     }
                 }
-                    //moving on to latest doers of next assignment
+                    //moving on to next assignment
                 lateralPositionOffset = 50;
                 verticalPositionOffset = 0;
             }
