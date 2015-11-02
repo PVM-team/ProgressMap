@@ -157,7 +157,6 @@ ProgressApp.directive('paperjsmap', function () {
                 for (var i = 0; i < scope.doneAssignments.length; i++) {
                     //scope.doneAssignments stores locations with default map width of 1100
                     var relativeX = getRelativeXFromDefaultSize(scope.doneAssignments[i].location.x);
-                    console.log(paper.project.hitTest([relativeX, scope.doneAssignments[i].location.y]));
                     var assignmentCircle = paper.project.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
                     if (assignmentCircle) {
                         assignmentCircle.fillColor = '#29C124';
@@ -168,7 +167,8 @@ ProgressApp.directive('paperjsmap', function () {
             function setAllUndone() {
                 var locations = getLocations();
                 for (var i = 0; i < locations.length; i++) {
-                    var assignmentCircle = paper.project.hitTest(locations[i]).item;
+                    var relativeX = getRelativeXFromDefaultSize(locations[i][0]);
+                    var assignmentCircle = paper.project.hitTest([relativeX, locations[i][1]]).item;
                     assignmentCircle.fillColor = '#F18C3A';
                 }
             }
