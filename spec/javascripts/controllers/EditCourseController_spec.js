@@ -167,6 +167,11 @@ describe('EditCourseController', function () {
             scope.assignments[0].dependencyText = 'one,two,three';
             expect(scope.givenNamesAreCorrect(scope.assignments[0])).toBeFalsy();
         })
+
+        it("should return false if commas are not used", function() {
+            scope.assignments[0].dependencyText = 'one three';
+            expect(scope.givenNamesAreCorrect(scope.assignments[0])).toBeFalsy();
+        })
     })
 
     describe('initializing EditCourseController', function () {
