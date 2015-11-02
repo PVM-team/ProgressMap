@@ -1,4 +1,4 @@
-ProgressApp.directive('paperjsmap2', function () {
+ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -7,19 +7,16 @@ ProgressApp.directive('paperjsmap2', function () {
             students: '='
         },
         link: function (scope, element, attrs) {
-            var intervalLength = 5000;
-            var minSpeed = 90;
+            var mapInitialized = false;
 
-            var speedUps = 0;
-
-            var lastWaitTime = 0;
+            var maxStudentsToShowAroundAssignment = 5;
+            var maxStudentsInRow = 3;
 
             var movingQueue = [];
             var movingInterval;
-
-            var mapInitialized = false;
-            var maxStudentsToShowAroundAssignment = 5;
-            var maxStudentsInRow = 3;
+            var lastWaitTime = 0;
+            var intervalLength = 5000;
+            var minSpeed = 90;
 
             var smoothConfig = {
                 method: 'lanczos',
@@ -46,7 +43,7 @@ ProgressApp.directive('paperjsmap2', function () {
 
             scope.$watch('students', function (newval, oldval) {
                 if (newval && mapInitialized) {
-                    placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe();
+                    placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
 
                     var students = getMovingStudents();
                     moveStudents(students);
@@ -89,15 +86,16 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var j = 0; j < assignment.latestDoers.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
                     var studentCircle = new paper.Path.Circle(studentLocation, 15);
+                    var student = assignment.latestDoers[j];
 
-                    assignment.latestDoers[j]['location'] = {'x': studentLocation.x, 'y': studentLocation.y };
+                    AssignmentLatestDoersService.setLocationOfStudent(student, studentLocation.x, studentLocation.y );
 
-                    studentCircle.fillColor = colorOfCircleOfStudent(assignment.latestDoers[j]);
+                    studentCircle.fillColor = colorOfCircleOfStudent(student);
 
                      //student id:s over student circles
                     var text = new paper.PointText({
                         point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
-                        content: assignment.latestDoers[j].id,
+                        content: student.id,
                         fillColor: 'white'
                     });
 
@@ -192,7 +190,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 functionality for showing dependencies
              }; */
 
-             function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
+             function placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
 
                 for (var i = 0; i < scope.students.length; i++) {
                     var student = scope.students[i];
@@ -201,8 +199,8 @@ ProgressApp.directive('paperjsmap2', function () {
                     if (lastDoneAssignment) {
                         var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
 
-                        if (! originalAssignment(student) /* undefined if not shown anywhere in map */ &&
-                            studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
+                        if (! AssignmentLatestDoersService.originalAssignment(student, scope.assignments) &&
+                            AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
                             putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition(destinationAssignment));
                         }
@@ -218,13 +216,13 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
-                        var original = originalAssignment(student); // undefined if not shown anywhere in map
+                        var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
+                        var originalAssignment = AssignmentLatestDoersService.originalAssignment(student, scope.assignments); // undefined if not shown anywhere in map
 
-                        if (original &&
-                            original != assignmentToMoveTo &&
-                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
-                            studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
+                        if (originalAssignment &&
+                            originalAssignment != destinationAssignment &&
+                            ! AssignmentLatestDoersService.studentIsInLatestDoersOfAssignment(student, destinationAssignment) &&
+                            AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
                             movingStudents.push(student);
                         }
@@ -237,10 +235,10 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < students.length; i++) {
                     var student = students[i];
                     var lastDoneAssignment = student.lastDoneAssignment;
-
+                    var originalAssignment = AssignmentLatestDoersService.originalAssignment(student, scope.assignments);
                     var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
 
-                    placeStudentToWait(student, originalAssignment(student), destinationAssignment, students.length);
+                    placeStudentToWait(student, originalAssignment, destinationAssignment, students.length);
                 }
 
                 lastWaitTime = 0;
@@ -278,8 +276,8 @@ ProgressApp.directive('paperjsmap2', function () {
             }
 
             function getStudentCircle(student, assignment) {
-                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-                return getItem(assignment.latestDoers[i].location);  // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
+                var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
+                return getItem(location); // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
             }
 
             function getItem(location) {
@@ -369,42 +367,16 @@ ProgressApp.directive('paperjsmap2', function () {
             }
 
             function removeStudentFromLatestDoersOfAssignment(student, assignment, position) {
-                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-                assignment.latestDoers.splice(i, 1);
-
-                var student = studentToAddInPlaceOfRemovedOne(assignment);
+                AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, assignment);
+                var student = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(assignment, scope.students);
 
                 if (student) {
                     putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
                 }
             }
 
-            function studentToAddInPlaceOfRemovedOne(assignment) {
-                var studentToAdd = null;
-
-                for (var i = 0; i < scope.students.length; i++) {
-                    var student = scope.students[i];
-
-                    if (student.lastDoneAssignment &&
-                        student.lastDoneAssignment.number == assignment.number &&
-                        ! studentIsInLatestDoersOfAssignment(student, assignment)) {
-
-                        if (! studentToAdd) {
-                            studentToAdd = student;
-                        }
-
-                        else if (firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student, studentToAdd)) {
-                            studentToAdd = student;
-                        }
-                    }
-                }
-
-                return studentToAdd;
-            }
-
             function putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position) {
-                assignment.latestDoers.push(student);
-                assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
+                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, assignment, position);
 
                 var circle = new paper.Path.Circle(new paper.Point(position.x, position.y), 15); // luo circle studentToAddille
                 circle.fillColor = colorOfCircleOfStudent(student);
@@ -413,30 +385,12 @@ ProgressApp.directive('paperjsmap2', function () {
             }
 
             function putStudentToLatestDoersOfAssignment(student, assignment, position) {
-                
-                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) { // remove an existing one and get its position
-                    var studentToGo = studentToRemoveFromLatestDoersOfAssignment(assignment);
-                    var i = indexOfStudentInLatestDoersOfAssignment(studentToGo, assignment);
-
+                if (AssignmentLatestDoersService.latestDoersFull(assignment)) {
+                    AssignmentLatestDoersService.removeTheOldestStudentFromLatestDoers(assignment);
                     removeItemFromPosition(position);
-
-                    assignment.latestDoers.splice(i, 1);
                 }
 
                 putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
-            }
-
-            function studentToRemoveFromLatestDoersOfAssignment(assignment) {
-                var studentToGo = assignment.latestDoers[0];
-
-                for (var i = 1; i < assignment.latestDoers.length; i++) {
-                    var next = assignment.latestDoers[i];
-
-                    if (next && firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(studentToGo, next)) {
-                        studentToGo = next;
-                    }
-                }
-                return studentToGo;
             }
 
             function removeItemFromPosition(position) {
@@ -449,14 +403,11 @@ ProgressApp.directive('paperjsmap2', function () {
             }
 
             function endPosition(assignment) {
-                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) {
-                    var studentToGo = studentToRemoveFromLatestDoersOfAssignment(assignment);
-                    var i = indexOfStudentInLatestDoersOfAssignment(studentToGo, assignment);
-
-                    return assignment.latestDoers[i].location;
+                if (AssignmentLatestDoersService.latestDoersFull(assignment)) {
+                    return AssignmentLatestDoersService.locationOfOldestStudentInLatestDoers(assignment);
                 }
 
-                return positionOfNewStudentAroundAssignment(assignment);                            
+                return positionOfNewStudentAroundAssignment(assignment);
             }
 
             function positionOfNewStudentAroundAssignment(assignment) {
@@ -484,54 +435,6 @@ ProgressApp.directive('paperjsmap2', function () {
                 return position; // uusi positio perällä, yleisempi tapaus
             }
 
-            function originalAssignment(student) {
-                for (var i = 0; i < scope.assignments.length; i++) {
-                    var assignment = scope.assignments[i];
-
-                    for (var j = 0; j < assignment.latestDoers.length; j++) {
-
-                        if (studentIsInLatestDoersOfAssignment(student, assignment)) {
-                            return assignment;
-                        }
-                    }
-                }
-                return undefined;
-            }
-
-            function studentIsInLatestDoersOfAssignment(student, assignment) {
-                return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
-            }
-
-            function indexOfStudentInLatestDoersOfAssignment(student, assignment) {
-                for (var i = 0; i < assignment.latestDoers.length; i++) {
-
-                    if (student.id == assignment.latestDoers[i].id) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-
-            function studentShouldBeInLatestDoersOfAssignment(student, assignment) {    // when called, we know that lastDoneAssignment of student is 'assignment'
-                if (student.lastDoneAssignment) {
-
-                    if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
-                        return true;
-                    }
-
-                    for (var i = 0; i < assignment.latestDoers.length; i++) {
-                        if (firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student, assignment.latestDoers[i])) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
-                return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
-            }
-
             function colorOfCircleOfStudent(student) { // ei tarvita kun käyttöön tulee imaget
                 if (student.id % 3 == 0) {
                     return "#" + Math.round(55 + 200 * student.id / scope.students.length).toString(16) + "3737";
@@ -541,7 +444,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
 
                 return "#3737" + Math.round(55 + 200 * student.id / scope.students.length).toString(16);
-            }
+            }    
         }
     }
 })
