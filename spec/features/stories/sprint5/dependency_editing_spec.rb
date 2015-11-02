@@ -71,7 +71,36 @@ describe "Course editing page", js: true do
                 end
             end
         end
-            
+        
+        describe("when correct input is typed") do
+
+            it("first there are eight buttons") do
+                expect(page.find("#assignmentView").all("button").length).to eq(8)
+            end
+
+            it("after correct input it shows one more button at page") do
+               fields = page.find("#assignmentView").all("input")
+                fields[1].set('2')
+                expect(page.find("#assignmentView").all("button").length).to eq(9)
+            end
+        end   
+
+        describe("when incorrect input is typed") do
+
+            it("first there are eight buttons") do
+                expect(page.find("#assignmentView").all("button").length).to eq(8)
+            end
+            it("after assignments own name is typed there are still eight buttons") do
+               fields = page.find("#assignmentView").all("input")
+                fields[1].set('1')
+                expect(page.find("#assignmentView").all("button").length).to eq(8)
+            end
+            it("after not existing assignments name is typed there are stille eight buttons") do
+               fields = page.find("#assignmentView").all("input")
+                fields[1].set('bad input')
+                expect(page.find("#assignmentView").all("button").length).to eq(8)
+            end
+        end 
     end
 end
 
