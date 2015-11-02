@@ -60,7 +60,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }, true);
 
-            window.onresize = function() {
+            window.onresize = function () {
                 if (mapInitialized) {
                     updateCanvasWidth();
                     scaleButtonsByWidth();
@@ -69,30 +69,30 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }
 
-            function scalePathByWidth(){
+            function scalePathByWidth() {
                 var segments = path.segments;
-                for (var i = 0; i < segments.length; i++){
+                for (var i = 0; i < segments.length; i++) {
                     segments[i].point.x = getRelativeX(segments[i].point.x);
                 }
-                path.strokeWidth = (path.strokeWidth/previousWindowWidth) * window.innerWidth;
+                path.strokeWidth = (path.strokeWidth / previousWindowWidth) * window.innerWidth;
             }
 
             //the x-position of something in the current window width
-            function getRelativeX(x){
-                return (x/previousWindowWidth) * window.innerWidth;
+            function getRelativeX(x) {
+                return (x / previousWindowWidth) * window.innerWidth;
             }
 
-            function scaleButtonsByWidth(){
+            function scaleButtonsByWidth() {
                 var items = paper.project.activeLayer.children;
-                for (var i = 0; i < items.length; i++){
-                    if (items[i] != path){
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i] != path) {
                         items[i].position.x = getRelativeX(items[i].position.x);
-                        items[i].scale(window.innerWidth/previousWindowWidth);
+                        items[i].scale(window.innerWidth / previousWindowWidth);
                     }
                 }
             }
 
-            function setCanvasSize(){
+            function setCanvasSize() {
                 var width = window.innerWidth;
                 var defaultWidth = 1100;
 
@@ -112,7 +112,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 paper.view.draw();
             }
 
-            function updateCanvasWidth(){
+            function updateCanvasWidth() {
                 var canvas = element[0];
                 var width = window.innerWidth;
 
@@ -138,7 +138,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     var studentCircle = new paper.Path.Circle(studentLocation, 20);
                     studentCircle.fillColor = 'grey';
 
-                        //student id:s over student circles
+                    //student id:s over student circles
                     var text = new paper.PointText({
                         point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
                         content: assignment.latestDoers[j].id,
@@ -153,7 +153,7 @@ ProgressApp.directive('paperjsmap2', function () {
                         lateralPositionOffset = 60;
                     }
                 }
-                    //moving on to next assignment
+                //moving on to next assignment
                 lateralPositionOffset = 60;
                 verticalPositionOffset = 0;
             }
@@ -164,7 +164,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 35);
                     assignmentCircle.fillColor = '#29C124';
-                    assignmentCircle.fillColor.hue -= 100 - (scope.assignments[i].doers.length/scope.students.length * 100);
+                    assignmentCircle.fillColor.hue -= 100 - (scope.assignments[i].doers.length / scope.students.length * 100);
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
@@ -236,7 +236,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 return path.add(s(i + 1));
             };
 
-             function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
+            function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
 
                 for (var i = 0; i < scope.students.length; i++) {
                     var student = scope.students[i];
@@ -246,15 +246,14 @@ ProgressApp.directive('paperjsmap2', function () {
                         var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                         var original = originalAssignment(student); // undefined if not shown anywhere in map
 
-                        if (! original &&
-                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                        if (!original && !studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
                             replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
                         }
                     }
                 }
-             }
+            }
 
             function getMovingStudents() {
                 var movingStudents = [];
@@ -268,8 +267,7 @@ ProgressApp.directive('paperjsmap2', function () {
                         var original = originalAssignment(student); // undefined if not shown anywhere in map
 
                         if (original &&
-                            original != assignmentToMoveTo &&
-                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                            original != assignmentToMoveTo && !studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
                             studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
 
                             movingStudents.push(student);
@@ -298,12 +296,12 @@ ProgressApp.directive('paperjsmap2', function () {
             function placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo, movingStudentsDuringInterval) {
                 var time = timeToWaitInQueue(movingStudentsDuringInterval);
 
-                var wait = setTimeout(function() {
-                                placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
-                                resetMovingInterval();
+                var wait = setTimeout(function () {
+                    placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
+                    resetMovingInterval();
 
-                                clearTimeout(wait);
-                            }, time);
+                    clearTimeout(wait);
+                }, time);
 
                 waitingQueue.push(wait);
 
@@ -319,11 +317,13 @@ ProgressApp.directive('paperjsmap2', function () {
 
                 var circleToMove = getStudentCircle(student, originalAssignment);
 
-                var movingInfo = {'circle': getStudentCircle(student, originalAssignment),
-                                  'assignmentToMoveTo': assignmentToMoveTo,
-                                  'originalAssignment': originalAssignment,
-                                  'startPosition': circleToMove.position,
-                                  'student': student};
+                var movingInfo = {
+                    'circle': getStudentCircle(student, originalAssignment),
+                    'assignmentToMoveTo': assignmentToMoveTo,
+                    'originalAssignment': originalAssignment,
+                    'startPosition': circleToMove.position,
+                    'student': student
+                };
 
                 movingQueue.push(movingInfo);
             }
@@ -333,7 +333,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     clearInterval(movingInterval);
                 }
 
-                movingInterval = setInterval(function() {
+                movingInterval = setInterval(function () {
 
                     if (movingQueue.length <= 0) {
                         return;
@@ -390,7 +390,7 @@ ProgressApp.directive('paperjsmap2', function () {
                 var position = circle.position;
                 var destination = assignment.location;
 
-                return [destination.x - position.x, destination.y - position.y];                
+                return [destination.x - position.x, destination.y - position.y];
             }
 
             function getStudentCircle(student, assignment) {
