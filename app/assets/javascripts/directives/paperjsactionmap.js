@@ -199,12 +199,12 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
+                        var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
 
                         if (! originalAssignment(student) /* undefined if not shown anywhere in map */ &&
-                            studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
+                            studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                            putStudentToLatestDoersOfAssignment(student, assignmentToMoveTo);
+                            putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition(destinationAssignment));
                         }
                     }
                 }
@@ -218,7 +218,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     var lastDoneAssignment = student.lastDoneAssignment;
 
                     if (lastDoneAssignment) {
-                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
                         var original = originalAssignment(student); // undefined if not shown anywhere in map
 
                         if (original &&
@@ -238,19 +238,19 @@ ProgressApp.directive('paperjsmap2', function () {
                     var student = students[i];
                     var lastDoneAssignment = student.lastDoneAssignment;
 
-                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];
+                    var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
 
-                    placeStudentToWait(student, originalAssignment(student), assignmentToMoveTo, students.length)
+                    placeStudentToWait(student, originalAssignment(student), destinationAssignment, students.length);
                 }
 
                 lastWaitTime = 0;
             }
 
-            function placeStudentToWait(student, originalAssignment, assignmentToMoveTo, movingStudentsDuringInterval) {
+            function placeStudentToWait(student, originalAssignment, destinationAssignment, movingStudentsDuringInterval) {
                 var time = waitingTime(movingStudentsDuringInterval);
 
                 var waitTillMove = setTimeout(function() {
-                                placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
+                                placeStudentInMovingQueue(student, originalAssignment, destinationAssignment);
                                 resetMovingInterval();
 
                                 clearTimeout(waitTillMove);
@@ -263,13 +263,14 @@ ProgressApp.directive('paperjsmap2', function () {
                 return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
             }
 
-            function placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo) {
+            function placeStudentInMovingQueue(student, originalAssignment, destinationAssignment) {
                 var circleToMove = getStudentCircle(student, originalAssignment);
 
                 var movingInfo = {'circle': circleToMove,
-                                  'assignmentToMoveTo': assignmentToMoveTo,
                                   'originalAssignment': originalAssignment,
+                                  'destinationAssignment': destinationAssignment,
                                   'startPosition': circleToMove.position,
+                                  'endPosition': endPosition(destinationAssignment),
                                   'student': student,
                                   'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 
@@ -304,22 +305,22 @@ ProgressApp.directive('paperjsmap2', function () {
                     var elem = movingQueue.shift(); // pop from queue
 
                     var circleToMove = elem.circle;
-                    var assignmentToMoveTo = elem.assignmentToMoveTo;
                     var startPosition = elem.startPosition;
+                    var endPosition = elem.endPosition;
 
-                    if (hasReachedDestination(circleToMove, assignmentToMoveTo)) {
+                    if (hasReachedDestination(circleToMove, endPosition)) {
                         var student = elem.student;
                         var originalAssignment = elem.originalAssignment;
 
                         removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
-                        putStudentToLatestDoersOfAssignment(student, assignmentToMoveTo);
+                        putStudentToLatestDoersOfAssignment(student, elem.destinationAssignment, endPosition);
 
                         circleToMove.remove(); // tuhoa tämä liikutettu versio, joka jäi tehtävänappulan päälle. uusi samanlainen on ylläolevassa funktiossa sijoitettu paikalleen.
                         paper.view.update();
                     }
 
                     else {
-                        var newSpeed = moveCircle(circleToMove, assignmentToMoveTo, startPosition, elem.speed);
+                        var newSpeed = moveCircle(circleToMove, startPosition, endPosition, elem.speed);
                         elem.circle = circleToMove;
                         elem.speed = newSpeed;
 
@@ -328,22 +329,20 @@ ProgressApp.directive('paperjsmap2', function () {
                 }, 1000 / (60 * movingQueue.length))
             }
 
-            function hasReachedDestination(circle, assignment) {
-                var vector = getVector(circle, assignment);
-                return Math.abs(vector[0]) + Math.abs(vector[1]) < 5;
+            function hasReachedDestination(circle, destination) {
+                var vector = getVector(circle, destination);
+                return Math.abs(vector[0]) + Math.abs(vector[1]) < 1;
             }
 
-            function getVector(circle, assignment) {
+            function getVector(circle, destination) {
                 var position = circle.position;
-                var destination = assignment.location;
-
                 return [destination.x - position.x, destination.y - position.y];
             }
 
-            function moveCircle(circle, assignment, startPosition, speed) {
-                var vector = getVector(circle, assignment);
-                var totalDistance = distanceBetweenPointAndAssignment(circle.position, assignment);
-                var distanceRemaining = distanceBetweenPointAndAssignment(circle.position, assignment);
+            function moveCircle(circle, startPosition, endPosition, speed) {
+                var vector = getVector(circle, endPosition);
+                var totalDistance = distanceBetweenPoints(startPosition, endPosition);
+                var distanceRemaining = distanceBetweenPoints(circle.position, endPosition);
 
                 circle.position.x += vector[0] / speed;
                 circle.position.y += vector[1] / speed;
@@ -351,8 +350,12 @@ ProgressApp.directive('paperjsmap2', function () {
                 if (distanceRemaining * 7 > totalDistance) {   // etäisyys yli 1/7 kokonaismatkasta kohteeseen
                     speed -= 0.5;                              // nopeus kasvaa "smoothisti"
                 }
+
+                else if (distanceRemaining * 20 > totalDistance) { // nopeus alkaa laskemaan "smoothisti"
+                    speed += 0.1
+                }
                 else {
-                    speed += 0.1;                              // nopeus alkaa laskemaan "smoothisti"
+                    speed += 0.02 // speed laskee vain vähän kun ollaan alle 5% etäisyydellä kohteeseen
                 }
 
                 paper.view.update();
@@ -361,8 +364,8 @@ ProgressApp.directive('paperjsmap2', function () {
                 return Math.min(speed, minSpeed);
             }
 
-            function distanceBetweenPointAndAssignment(position, assignment) {
-                return distance([position.x, position.y], [assignment.location.x, assignment.location.y]);
+            function distanceBetweenPoints(point1, point2) {
+                return distance([point1.x, point1.y], [point2.x, point2.y]);
             }
 
             function removeStudentFromLatestDoersOfAssignment(student, assignment, position) {
@@ -409,18 +412,12 @@ ProgressApp.directive('paperjsmap2', function () {
                 paper.view.update();
             }
 
-            function putStudentToLatestDoersOfAssignment(student, assignment) {
-                var position;
-
-                if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
-                    position = positionOfNewStudentAroundAssignment(assignment);
-                }
-
-                else { // remove an existing one and get its position
+            function putStudentToLatestDoersOfAssignment(student, assignment, position) {
+                
+                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) { // remove an existing one and get its position
                     var studentToGo = studentToRemoveFromLatestDoersOfAssignment(assignment);
                     var i = indexOfStudentInLatestDoersOfAssignment(studentToGo, assignment);
 
-                    position = assignment.latestDoers[i].location;
                     removeItemFromPosition(position);
 
                     assignment.latestDoers.splice(i, 1);
@@ -451,6 +448,17 @@ ProgressApp.directive('paperjsmap2', function () {
                 }
             }
 
+            function endPosition(assignment) {
+                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) {
+                    var studentToGo = studentToRemoveFromLatestDoersOfAssignment(assignment);
+                    var i = indexOfStudentInLatestDoersOfAssignment(studentToGo, assignment);
+
+                    return assignment.latestDoers[i].location;
+                }
+
+                return positionOfNewStudentAroundAssignment(assignment);                            
+            }
+
             function positionOfNewStudentAroundAssignment(assignment) {
                 var location = assignment.location;
                 var lateralPositionOffset = 50;
@@ -468,7 +476,7 @@ ProgressApp.directive('paperjsmap2', function () {
 
                     if ((i + 1) % maxStudentsInRow == 0) {
                         verticalPositionOffset += 30;
-                        lateralPositionOffset = 50;                        
+                        lateralPositionOffset = 50;
                     }
 
                     position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
