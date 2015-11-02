@@ -94,12 +94,12 @@ ProgressApp.directive('paperjsmap2', function () {
 
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
-                    assignmentCircle.fillColor = '#29C124';
+                    assignmentCircle.fillColor = 'yellow';
 
                     var percentageCompleted = scope.assignments[i].doers.length/scope.students.length * 100;
-
-                    assignmentCircle.fillColor.hue -= 100 - (percentageCompleted);
-
+                    console.log(scope.assignments[i].doers);
+                    assignmentCircle.fillColor.hue += percentageCompleted;
+                    console.log(percentageCompleted);
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
@@ -117,6 +117,7 @@ ProgressApp.directive('paperjsmap2', function () {
                         content: Math.floor(percentageCompleted) + "%",
                         fillColor: 'white'
                     });
+                    paper.view.update();
                 }
             }
 
@@ -308,6 +309,10 @@ ProgressApp.directive('paperjsmap2', function () {
                         replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
 
 
+                        placeCirclesOnAssignmentLocations();
+                        placeLatestStudents();
+                        paper.view.update();
+
                         console.log("waiting queue: " + waitingQueue)
                         console.log("moving queue: " + movingQueue)
                     }
@@ -402,6 +407,7 @@ ProgressApp.directive('paperjsmap2', function () {
                     assignment.latestDoers.pop();
                 }
 
+                assignment.doers.push(student);
                 assignment.latestDoers.push(student);
                 sortLatestDoersForAssignment(assignment);
             }
