@@ -85,10 +85,6 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
     	return locationOfStudent(student, assignment);
     }
 
-    this.setLocationOfStudent = function(student, x, y) {
-    	student['location'] = {'x': x, 'y': y };
-    }
-
 	function indexOfStudentInLatestDoersOfAssignment(student, assignment) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 

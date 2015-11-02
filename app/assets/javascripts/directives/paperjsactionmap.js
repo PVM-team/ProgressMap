@@ -1,4 +1,4 @@
-ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
+ProgressApp.directive('paperjsmap2', function (CanvasService, MoveStudentService, StudentIconService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -8,15 +8,7 @@ ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
         },
         link: function (scope, element, attrs) {
             var mapInitialized = false;
-
-            var maxStudentsToShowAroundAssignment = 5;
             var maxStudentsInRow = 3;
-
-            var movingQueue = [];
-            var movingInterval;
-            var lastWaitTime = 0;
-            var intervalLength = 5000;
-            var minSpeed = 90;
 
             var smoothConfig = {
                 method: 'lanczos',
@@ -31,7 +23,7 @@ ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && ! mapInitialized) {
-                    setCanvasSize();
+                    setCanvas();
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
@@ -43,33 +35,12 @@ ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
 
             scope.$watch('students', function (newval, oldval) {
                 if (newval && mapInitialized) {
-                    placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
-
-                    var students = getMovingStudents();
-                    moveStudents(students);
-
-                    paper.view.update();
+                    MoveStudentService.update(scope.assignments, scope.students);
                 }
             }, true);
 
-            function setCanvasSize() {
-                //to be changed according to window size?
-                var width = 1000 + 100; // 50 pikseliä lisää reunoja varten
-
-                var canvas = element[0];
-
-                var borderSize = width / 40; // 25
-                var blockSize = width / 5; // 200
-                var assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
-                var levelAmount = Math.ceil(scope.assignments.length / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
-
-                var height = (2 * borderSize + blockSize) * levelAmount + 100;
-
-                canvas.height = height;
-                canvas.width = width;
-
-                paper.view.viewSize = new paper.Size(width, height); // kun käytössä, niin piirtää ainakin oman koneen selaimilla canvaksen zoomattuna -Mika
-                paper.view.draw();
+            function setCanvas() {
+                CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
             }
 
             function placeLatestStudents() {
@@ -88,9 +59,9 @@ ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
                     var studentCircle = new paper.Path.Circle(studentLocation, 15);
                     var student = assignment.latestDoers[j];
 
-                    AssignmentLatestDoersService.setLocationOfStudent(student, studentLocation.x, studentLocation.y );
+                    student['location'] = {'x': studentLocation.x, 'y': studentLocation.y };
 
-                    studentCircle.fillColor = colorOfCircleOfStudent(student);
+                    studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
 
                      //student id:s over student circles
                     var text = new paper.PointText({
@@ -185,266 +156,9 @@ ProgressApp.directive('paperjsmap2', function (AssignmentLatestDoersService) {
                 return path.add(s(i + 1));
             };
 
-
              /* tool.onMouseHover = function (event) {
                 functionality for showing dependencies
              }; */
-
-             function placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
-
-                for (var i = 0; i < scope.students.length; i++) {
-                    var student = scope.students[i];
-                    var lastDoneAssignment = student.lastDoneAssignment;
-
-                    if (lastDoneAssignment) {
-                        var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
-
-                        if (! AssignmentLatestDoersService.originalAssignment(student, scope.assignments) &&
-                            AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
-
-                            putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition(destinationAssignment));
-                        }
-                    }
-                }
-             }
-
-            function getMovingStudents() {
-                var movingStudents = [];
-
-                for (var i = 0; i < scope.students.length; i++) {
-                    var student = scope.students[i];
-                    var lastDoneAssignment = student.lastDoneAssignment;
-
-                    if (lastDoneAssignment) {
-                        var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
-                        var originalAssignment = AssignmentLatestDoersService.originalAssignment(student, scope.assignments); // undefined if not shown anywhere in map
-
-                        if (originalAssignment &&
-                            originalAssignment != destinationAssignment &&
-                            ! AssignmentLatestDoersService.studentIsInLatestDoersOfAssignment(student, destinationAssignment) &&
-                            AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
-
-                            movingStudents.push(student);
-                        }
-                    }
-                }
-                return movingStudents;
-            }
-
-            function moveStudents(students) {
-                for (var i = 0; i < students.length; i++) {
-                    var student = students[i];
-                    var lastDoneAssignment = student.lastDoneAssignment;
-                    var originalAssignment = AssignmentLatestDoersService.originalAssignment(student, scope.assignments);
-                    var destinationAssignment = scope.assignments[lastDoneAssignment.number - 1];
-
-                    placeStudentToWait(student, originalAssignment, destinationAssignment, students.length);
-                }
-
-                lastWaitTime = 0;
-            }
-
-            function placeStudentToWait(student, originalAssignment, destinationAssignment, movingStudentsDuringInterval) {
-                var time = waitingTime(movingStudentsDuringInterval);
-
-                var waitTillMove = setTimeout(function() {
-                                placeStudentInMovingQueue(student, originalAssignment, destinationAssignment);
-                                resetMovingInterval();
-
-                                clearTimeout(waitTillMove);
-                            }, time);
-
-                lastWaitTime = time;
-            }
-
-            function waitingTime(movingStudentsDuringInterval) {
-                return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
-            }
-
-            function placeStudentInMovingQueue(student, originalAssignment, destinationAssignment) {
-                var circleToMove = getStudentCircle(student, originalAssignment);
-
-                var movingInfo = {'circle': circleToMove,
-                                  'originalAssignment': originalAssignment,
-                                  'destinationAssignment': destinationAssignment,
-                                  'startPosition': circleToMove.position,
-                                  'endPosition': endPosition(destinationAssignment),
-                                  'student': student,
-                                  'speed': minSpeed }; // vakionopeus alussa kaikilla sama
-
-                                  movingQueue.push(movingInfo);
-            }
-
-            function getStudentCircle(student, assignment) {
-                var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
-                return getItem(location); // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
-            }
-
-            function getItem(location) {
-                var hitTest = paper.project.hitTest(location);
-
-                if (hitTest) {
-                    return hitTest.item;
-                }
-                return null;
-            }
-
-            function resetMovingInterval() {
-                if (movingInterval) {
-                    clearInterval(movingInterval);
-                }
-
-                movingInterval = setInterval(function() {
-
-                    if (movingQueue.length <= 0) {
-                        return;
-                    }
-
-                    var elem = movingQueue.shift(); // pop from queue
-
-                    var circleToMove = elem.circle;
-                    var startPosition = elem.startPosition;
-                    var endPosition = elem.endPosition;
-
-                    if (hasReachedDestination(circleToMove, endPosition)) {
-                        var student = elem.student;
-                        var originalAssignment = elem.originalAssignment;
-
-                        removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
-                        putStudentToLatestDoersOfAssignment(student, elem.destinationAssignment, endPosition);
-
-                        circleToMove.remove(); // tuhoa tämä liikutettu versio, joka jäi tehtävänappulan päälle. uusi samanlainen on ylläolevassa funktiossa sijoitettu paikalleen.
-                        paper.view.update();
-                    }
-
-                    else {
-                        var newSpeed = moveCircle(circleToMove, startPosition, endPosition, elem.speed);
-                        elem.circle = circleToMove;
-                        elem.speed = newSpeed;
-
-                        movingQueue.push(elem);
-                    }
-                }, 1000 / (60 * movingQueue.length))
-            }
-
-            function hasReachedDestination(circle, destination) {
-                var vector = getVector(circle, destination);
-                return Math.abs(vector[0]) + Math.abs(vector[1]) < 1;
-            }
-
-            function getVector(circle, destination) {
-                var position = circle.position;
-                return [destination.x - position.x, destination.y - position.y];
-            }
-
-            function moveCircle(circle, startPosition, endPosition, speed) {
-                var vector = getVector(circle, endPosition);
-                var totalDistance = distanceBetweenPoints(startPosition, endPosition);
-                var distanceRemaining = distanceBetweenPoints(circle.position, endPosition);
-
-                circle.position.x += vector[0] / speed;
-                circle.position.y += vector[1] / speed;
-
-                if (distanceRemaining * 7 > totalDistance) {   // etäisyys yli 1/7 kokonaismatkasta kohteeseen
-                    speed -= 0.5;                              // nopeus kasvaa "smoothisti"
-                }
-
-                else if (distanceRemaining * 20 > totalDistance) { // nopeus alkaa laskemaan "smoothisti"
-                    speed += 0.1
-                }
-                else {
-                    speed += 0.02 // speed laskee vain vähän kun ollaan alle 5% etäisyydellä kohteeseen
-                }
-
-                paper.view.update();
-
-                speed = Math.max(10, speed);                   // nopeus tulee olla 10+ ja 100-
-                return Math.min(speed, minSpeed);
-            }
-
-            function distanceBetweenPoints(point1, point2) {
-                return distance([point1.x, point1.y], [point2.x, point2.y]);
-            }
-
-            function removeStudentFromLatestDoersOfAssignment(student, assignment, position) {
-                AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, assignment);
-                var student = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(assignment, scope.students);
-
-                if (student) {
-                    putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
-                }
-            }
-
-            function putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position) {
-                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, assignment, position);
-
-                var circle = new paper.Path.Circle(new paper.Point(position.x, position.y), 15); // luo circle studentToAddille
-                circle.fillColor = colorOfCircleOfStudent(student);
-
-                paper.view.update();
-            }
-
-            function putStudentToLatestDoersOfAssignment(student, assignment, position) {
-                if (AssignmentLatestDoersService.latestDoersFull(assignment)) {
-                    AssignmentLatestDoersService.removeTheOldestStudentFromLatestDoers(assignment);
-                    removeItemFromPosition(position);
-                }
-
-                putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
-            }
-
-            function removeItemFromPosition(position) {
-                var item = getItem(position);
-
-                if (item) {
-                    item.remove();
-                    paper.view.update();
-                }
-            }
-
-            function endPosition(assignment) {
-                if (AssignmentLatestDoersService.latestDoersFull(assignment)) {
-                    return AssignmentLatestDoersService.locationOfOldestStudentInLatestDoers(assignment);
-                }
-
-                return positionOfNewStudentAroundAssignment(assignment);
-            }
-
-            function positionOfNewStudentAroundAssignment(assignment) {
-                var location = assignment.location;
-                var lateralPositionOffset = 50;
-                var verticalPositionOffset = 0;
-
-                var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
-
-                for (var i = 0; i < assignment.latestDoers.length; i++) {
-
-                    if (! getItem(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois
-                        return position;
-                    }
-
-                    lateralPositionOffset += 30;
-
-                    if ((i + 1) % maxStudentsInRow == 0) {
-                        verticalPositionOffset += 30;
-                        lateralPositionOffset = 50;
-                    }
-
-                    position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
-                }
-                return position; // uusi positio perällä, yleisempi tapaus
-            }
-
-            function colorOfCircleOfStudent(student) { // ei tarvita kun käyttöön tulee imaget
-                if (student.id % 3 == 0) {
-                    return "#" + Math.round(55 + 200 * student.id / scope.students.length).toString(16) + "3737";
-                }
-                else if (student.id % 3 == 1) {
-                    return "#37" + Math.round(55 + 200 * student.id / scope.students.length).toString(16) + "37";
-                }
-
-                return "#3737" + Math.round(55 + 200 * student.id / scope.students.length).toString(16);
-            }    
         }
     }
 })
