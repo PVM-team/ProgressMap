@@ -53,3 +53,7 @@ RSpec.configure do |config|
 
   config.include Capybara::Angular::DSL, :type => :feature
 end
+
+Capybara.configure do |config|
+  config.default_wait_time = 10
+end
