@@ -80,7 +80,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
     this.locationOfOldestStudentInLatestDoers = function(assignment) {
     	var student = oldestStudentInLatestDoers(assignment);
-    	return self.getLocationOfStudent(student);
+    	return self.getLocationOfStudent(student, assignment);
     }
 
     self.getLocationOfStudent = function(student, assignment) {
