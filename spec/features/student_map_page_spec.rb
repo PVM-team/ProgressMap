@@ -73,27 +73,6 @@ describe "Student map page", js: true do
         end
       end
 
-      describe "and 'Go to action map' button is clicked" do
-
-        before :each do
-          click_button 'Go to action map'
-        end
-
-        it "the action map is displayed" do
-          page.find('.student-button')
-        end
-
-        describe "and when 'Go to normal map' button is clicked" do
-
-          before :each do
-            click_button 'Go to normal map'
-          end
-
-          it "the student is taken back to its normal map" do
-            check_that_student_sees_undone_tasks_as_undone(2)
-          end
-        end
-      end
     end
 end
 
