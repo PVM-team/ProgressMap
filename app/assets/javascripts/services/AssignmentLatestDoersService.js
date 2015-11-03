@@ -1,5 +1,6 @@
 ProgressApp.service('AssignmentLatestDoersService', function () {
 	var maxStudentsToShowAroundAssignment = 5;
+    var self = this;
 
 	this.latestDoersFull = function(assignment) {
 		return assignment.latestDoers.length == maxStudentsToShowAroundAssignment;
@@ -11,7 +12,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
             for (var j = 0; j < assignment.latestDoers.length; j++) {
 
-                if (studentIsInLatestDoers(student, assignment)) {
+                if (self.studentIsInLatestDoersOfAssignment(student, assignment)) {
                     return assignment;
                 }
             }
@@ -19,8 +20,8 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return null;
     }
 
-	this.studentIsInLatestDoersOfAssignment = function(student, assignment) {
-		return studentIsInLatestDoers(student, assignment);
+	self.studentIsInLatestDoersOfAssignment = function(student, assignment) {
+		return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
 	}
 
     this.studentShouldBeInLatestDoersOfAssignment = function(student, assignment) {
@@ -44,13 +45,14 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
     }
 
-    this.removeStudentFromLatestDoersOfAssignment = function(studentToGo, assignment) {
-    	removeStudentFromLatestDoers(studentToGo, assignment);
+    this.removeTheOldestStudentFromLatestDoers = function(assignment) {
+        var studentToGo = oldestStudentInLatestDoers(assignment);
+        self.removeStudentFromLatestDoersOfAssignment(studentToGo, assignment);
     }
 
-    this.removeTheOldestStudentFromLatestDoers = function(assignment) {
-    	var studentToGo = oldestStudentInLatestDoers(assignment);
-    	removeStudentFromLatestDoers(studentToGo, assignment);
+    self.removeStudentFromLatestDoersOfAssignment = function(student, assignment) {
+        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+        assignment.latestDoers.splice(i, 1);
     }
 
     this.studentToAddInPlaceOfRemovedOne = function(assignment, students) {
@@ -61,7 +63,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
             if (student.lastDoneAssignment &&
                 student.lastDoneAssignment.number == assignment.number &&
-                studentIsInLatestDoers(student, assignment)) {
+                ! self.studentIsInLatestDoersOfAssignment(student, assignment)) {
 
                 if (! studentToAdd) {
                     studentToAdd = student;
@@ -78,11 +80,12 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
     this.locationOfOldestStudentInLatestDoers = function(assignment) {
     	var student = oldestStudentInLatestDoers(assignment);
-    	return locationOfStudent(student);
+    	return self.getLocationOfStudent(student);
     }
 
-    this.getLocationOfStudent = function(student, assignment) {
-    	return locationOfStudent(student, assignment);
+    self.getLocationOfStudent = function(student, assignment) {
+        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+        return assignment.latestDoers[i].location;
     }
 
 	function indexOfStudentInLatestDoersOfAssignment(student, assignment) {
@@ -108,21 +111,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return studentToGo;
     }
 
-    function removeStudentFromLatestDoers(student, assignment) {
-        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        assignment.latestDoers.splice(i, 1);
-    }
-
-    function locationOfStudent(student, assignment) { // student in latestDoers of assignment
-        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        return assignment.latestDoers[i].location;
-    }
-
     function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
         return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
-    }
-
-    function studentIsInLatestDoers(student, assignment) {
-    	return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
     }
 })
