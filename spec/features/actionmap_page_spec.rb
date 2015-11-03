@@ -38,6 +38,15 @@ describe "Action map page", js: true do
 				expect(canvas['width']).equal?(window.size[0])
       end
 
+      it "it changes canvas width when window width is changed" do
+				canvas = page.find("canvas")
+        window = page.driver.browser.manage.window
+        window.resize_to(1000,1000)
+        expect(canvas['width']).equal?(1000)
+				window.resize_to(500,1000)
+				expect(canvas['width']).equal?(500)
+      end
+
 	end
 end
 
