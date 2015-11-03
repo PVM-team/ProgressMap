@@ -30,7 +30,14 @@ describe "Action map page", js: true do
   		it "it has a canvas" do
   			canvas = page.find("canvas")
   			expect(canvas.visible?).to be(true)
-  		end
+      end
+
+      it "it has a canvas the same width as the window" do
+				canvas = page.find("canvas")
+        window = page.driver.browser.manage.window
+				expect(canvas['width']).equal?(window.size[0])
+      end
+
 	end
 end
 
