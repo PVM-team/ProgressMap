@@ -94,14 +94,21 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return -1;
     }
 
-    function oldestStudentInLatestDoersOfAssignment(assignment) { // assignmentin latestDoers on täynnä
-        var studentToGo = assignment.latestDoers[0];
+    function oldestStudentInLatestDoersOfAssignment(assignment) { // assignmentin latestDoers on täynnä, ainakin yksi ei reserved olemassa
+        var studentToGo = null;
 
-        for (var i = 1; i < assignment.latestDoers.length; i++) {
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
             var next = assignment.latestDoers[i];
 
-            if (next && firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(studentToGo, next)) {
-                studentToGo = next;
+            if (! next.reserved) {
+
+                if (! studentToGo) {
+                    studentToGo = next;
+                }
+
+                else if (firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(studentToGo, next)) {
+                    studentToGo = next;
+                }
             }
         }
         return studentToGo;
@@ -111,20 +118,52 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
     }
 
-    this.nextPositionToMoveToAroundAssignment = function(assignment) {
+    this.freePosition = function(assignment, position) {
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
+
+            if (locationsAreTheSame(assignment.latestDoers[i].location, position)) {
+                assignment.latestDoers[i].reserved = false;
+                return;
+            }
+        }
+    }
+
+    this.nextPositionToMoveToAroundAssignment = function(student, assignment) {
+        var position = getPositionForMovingNewStudentAroundAssignment(student, assignment);
+        reservePosition(assignment, position);
+
+        return position;
+    }
+
+    function getPositionForMovingNewStudentAroundAssignment(student, assignment) {
         if (self.latestDoersFull(assignment)) {
+
+            if (allPositionsReserved(assignment)) {
+                freeAllPositions();
+            }
             return locationOfOldestStudentInLatestDoers(assignment);
         }
 
-       return positionOfNewStudentAroundAssignment(assignment);
+        return positionOfNewStudentAroundAssignment(student, assignment);
     }
 
-    function locationOfOldestStudentInLatestDoers(assignment) {
-        var student = oldestStudentInLatestDoersOfAssignment(assignment);
-        return self.getLocationOfStudent(student, assignment);
+    function allPositionsReserved(assignment) {
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
+            
+            if (! assignment.latestDoers[i].reserved) { // reserved = null, tai false
+                return false;
+            }
+        }
+        return true;
     }
 
-    function positionOfNewStudentAroundAssignment(assignment) {
+    function freeAllPositions(assignment) {
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
+            assignment.latestDoers[i].reserved == false;
+        }
+    }    
+
+    function positionOfNewStudentAroundAssignment(student, assignment) {
         var location = assignment.location;
         var lateralPositionOffset = 50;
         var verticalPositionOffset = 0;
@@ -133,7 +172,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 
-            if (! paper.project.hitTest(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois
+            if (! paper.project.hitTest(position) && ! assignment.latestDoers[i].reserved) { // uusi positio välissä, josta circle siirtynyt aiemmin pois ja positiota ei varattu kellekään jo liikkuvalle
                 return position;
             }
 
@@ -146,6 +185,33 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
 
             position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
         }
+
+        createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position); // tee uusi varattu dummy student ja lisää doersin perälle
         return position; // uusi positio perällä, yleisempi tapaus
-    }    
+    }
+
+    function locationOfOldestStudentInLatestDoers(assignment) {
+        var student = oldestStudentInLatestDoersOfAssignment(assignment);
+        return self.getLocationOfStudent(student, assignment);
+    }
+
+    function reservePosition(assignment, position) {
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
+
+            if (locationsAreTheSame(assignment.latestDoers[i].location, position)) {
+                assignment.latestDoers[i].reserved = true;
+                return;
+            }
+        }
+    }
+
+    function createDummyStudentInLatestDoersOfAssignment(lastDoneAssignment, assignment, position) {
+        var dummyStudent = {'location': position, 'lastDoneAssignment': lastDoneAssignment };
+        assignment.latestDoers.push(dummyStudent);
+    }
+
+    function locationsAreTheSame(location1, location2) {
+        return location1.x == location2.x &&
+               location1.y == location2.y;
+    }
 })

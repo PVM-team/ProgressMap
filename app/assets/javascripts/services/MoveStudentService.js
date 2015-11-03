@@ -29,10 +29,10 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                 if (! AssignmentLatestDoersService.originalAssignment(student, assignments) &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment);
+                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
                     putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition);
-                    markAssignmentAsDone(student, destinationAssignment);
+                    markAssignmentAsDone(student, destinationAssignment, endPosition);
                 }
             }
         }
@@ -134,7 +134,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                           'originalAssignment': originalAssignment,
                           'destinationAssignment': destinationAssignment,
                           'startPosition': circleToMove.position,
-                          'endPosition': AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment),
+                          'endPosition': AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment),
                           'student': student,
                           'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 
@@ -180,7 +180,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                 removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
                 putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition);
 
-                markAssignmentAsDone(student, destinationAssignment);
+                markAssignmentAsDone(student, destinationAssignment, endPosition);
 
                 circleToMove.remove(); // tuhoa tämä liikutettu versio, joka jäi tehtävänappulan päälle. uusi samanlainen on ylläolevassa funktiossa sijoitettu paikalleen.
                 paper.view.update();
@@ -239,8 +239,10 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
     }
 
-    function markAssignmentAsDone(student, assignment) {
+    function markAssignmentAsDone(student, assignment, position) {
         assignment.doers.push(student);
         AssignmentCirclesService.drawCircle(assignment, students);
+
+        AssignmentLatestDoersService.freePosition(assignment, position);
     }
 })
