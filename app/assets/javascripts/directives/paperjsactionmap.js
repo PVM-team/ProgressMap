@@ -84,8 +84,12 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, MoveStudentService
 
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 25);
-                    assignmentCircle.fillColor = '#29C124';
-                    assignmentCircle.fillColor.hue -= 100 - (scope.assignments[i].doers.length/scope.students.length * 100);
+                    assignmentCircle.fillColor = 'yellow';
+
+                    var percentageCompleted = scope.assignments[i].doers.length/scope.students.length * 100;
+                    console.log(scope.assignments[i].doers);
+                    assignmentCircle.fillColor.hue += percentageCompleted;
+                    console.log(percentageCompleted);
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
@@ -93,6 +97,17 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, MoveStudentService
                         content: i + 1,
                         fillColor: 'white'
                     });
+
+                    //percentage over assignment circles
+                    var percentageLocationPoint = locations[i];
+                    percentageLocationPoint[1] = percentageLocationPoint[1] + 20; //percentage moved slightly under circles
+
+                    var percentage = new paper.PointText({
+                        point: percentageLocationPoint,
+                        content: Math.floor(percentageCompleted) + "%",
+                        fillColor: 'white'
+                    });
+                    paper.view.update();
                 }
             }
 
@@ -159,6 +174,291 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, MoveStudentService
              /* tool.onMouseHover = function (event) {
                 functionality for showing dependencies
              }; */
+
+            /* tool.onMouseDown = function (event) {
+             path = new paper.Path();
+             path.strokeColor = 'black';
+             };
+             tool.onMouseDrag = function (event) {
+             path.add(event.point);
+             };
+             tool.onMouseUp = function (event) {
+             //nothing special here
+             };*/
+
+             function placeNewStudentsOnMapWhichWerentThereYetButNowShouldBe() {
+
+                for (var i = 0; i < scope.students.length; i++) {
+                    var student = scope.students[i];
+                    var lastDoneAssignment = student.lastDoneAssignment;
+
+                    if (lastDoneAssignment) {
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var original = originalAssignment(student); // undefined if not shown anywhere in map
+
+                        if (! original &&
+                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                            studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
+
+                            replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+                        }
+                    }
+                }
+             }
+
+            function getMovingStudents() {
+                var movingStudents = [];
+
+                for (var i = 0; i < scope.students.length; i++) {
+                    var student = scope.students[i];
+                    var lastDoneAssignment = student.lastDoneAssignment;
+
+                    if (lastDoneAssignment) {
+                        var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                        var original = originalAssignment(student); // undefined if not shown anywhere in map
+
+                        if (original &&
+                            original != assignmentToMoveTo &&
+                            ! studentIsInLatestDoersOfAssignment(student, assignmentToMoveTo) &&
+                            studentShouldBeInLatestDoersOfAssignment(student, assignmentToMoveTo)) {
+
+                            movingStudents.push(student);
+                        }
+                    }
+                }
+                return movingStudents;
+            }
+
+            function moveStudents(students) {
+                for (var i = 0; i < students.length; i++) {
+                    var student = students[i];
+                    var lastDoneAssignment = student.lastDoneAssignment;
+
+                    var assignmentToMoveTo = scope.assignments[lastDoneAssignment.number - 1];                    
+                    var original = originalAssignment(student); // always defined here since all these students move
+
+                    // no reason to compare anything here since the students moves from their original position to assignmentToMoveTo
+
+                    placeStudentInWaitingQueue(student, original, assignmentToMoveTo)
+                }
+
+                lastWaitTime = (-1) * minWaitTime;
+            }
+
+            function placeStudentInWaitingQueue(student, originalAssignment, assignmentToMoveTo) {
+                var time = lastWaitTime + minWaitTime + 1000 * Math.random();
+
+                var wait = setTimeout(function() {
+                                placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo);
+                                resetMovingInterval();
+
+                                clearTimeout(wait);
+                            }, time);
+
+                waitingQueue.push(wait);
+
+                lastWaitTime = time;
+            }
+
+            function placeStudentInMovingQueue(student, originalAssignment, assignmentToMoveTo) {
+                waitingQueue.shift(); // poista odotusjonosta. pitäisi olla aina ekana jonossa.
+
+                var circleToMove = getStudentCircle(student, originalAssignment);
+
+                var movingInfo = {'circle': getStudentCircle(student, originalAssignment),
+                                  'assignmentToMoveTo': assignmentToMoveTo,
+                                  'originalAssignment': originalAssignment,
+                                  'startPosition': circleToMove.position,
+                                  'student': student};
+
+                movingQueue.push(movingInfo);
+            }
+
+            function resetMovingInterval() {
+                if (movingInterval) {
+                    clearInterval(movingInterval);
+                }
+
+                movingInterval = setInterval(function() {
+
+                    if (movingQueue.length <= 0) {
+                        return;
+                    }
+
+                    var elem = movingQueue.shift(); // pop from queue
+
+                    var circleToMove = elem.circle;
+                    var assignmentToMoveTo = elem.assignmentToMoveTo;
+
+                    paper.view.update();
+                    if (hasReachedDestination(circleToMove, assignmentToMoveTo)) {
+                        console.log("perillä!");
+
+                        var student = elem.student;
+                        var originalAssignment = elem.originalAssignment;
+
+                        removeStudentFromPreviousAssignment(student, originalAssignment);
+                        addNewStudentInThePlaceOfRemovedOneIfSuchExists(originalAssignment);
+
+                        replaceLastShownStudentOfAssignmentWithStudent(assignmentToMoveTo, student);
+
+
+                        placeCirclesOnAssignmentLocations();
+                        placeLatestStudents();
+                        paper.view.update();
+
+                        console.log("waiting queue: " + waitingQueue)
+                        console.log("moving queue: " + movingQueue)
+                    }
+
+                    else {
+                        var startPosition = elem.startPosition;
+
+                        moveCircle(circleToMove, assignmentToMoveTo, startPosition);
+                        elem.circle = circleToMove;
+
+                        movingQueue.push(elem);
+                    }
+                }, 1000 / (60 * movingQueue.length))
+            }
+
+            function moveCircle(circle, assignment, startPosition) {
+                var vector = getVector(circle, assignment);
+
+                // sen sijaan että liikutettaisiin aina vector / 40 eteenpäin, nopeus voisi määräytyä kuljetusta matkasta ja etäisyydestä sekä assignmentiin ja startPositioniin?
+
+                circle.position.x += vector[0] / 40;
+                circle.position.y += vector[1] / 40;
+
+                // poista vanha lokaatio?
+
+                paper.view.update();
+            }
+
+            function hasReachedDestination(circle, assignment) {
+                var vector = getVector(circle, assignment);
+                return Math.abs(vector[0]) + Math.abs(vector[1]) < 5;
+            }
+
+            function getVector(circle, assignment) {
+                var position = circle.position;
+                var destination = assignment.location;
+
+                return [destination.x - position.x, destination.y - position.y];                
+            }
+
+            function getStudentCircle(student, assignment) {
+                var yOffset = 0;
+
+                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+
+                while (i >= maxStudentsInRow) {
+                    yOffset += 30;
+                    i -= maxStudentsInRow;
+                }
+                var xOffset = 50 + i * 30;
+
+                var location = [assignment.location.x + xOffset, assignment.location.y + yOffset];
+                return paper.project.hitTest(location).item;
+            }
+
+
+            function removeStudentFromPreviousAssignment(student, assignment) {
+                var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+                assignment.latestDoers.splice(i, 1);
+
+                // siirrä muut pisteet yhden paikan taaksepäin
+            }
+
+            function addNewStudentInThePlaceOfRemovedOneIfSuchExists(assignment) {
+                var studentToAdd = null;
+
+                for (var i = 0; i < scope.students.length; i++) {
+                    var student = scope.students[i];
+
+                    if (student.lastDoneAssignment &&
+                        student.lastDoneAssignment.number == assignment.number &&
+                        indexOfStudentInLatestDoersOfAssignment(student, assignment) < 0) {
+
+                        if (!studentToAdd) {
+                            studentToAdd = student;
+                        }
+
+                        else if (student1HasDoneLastDoneAssignmentAfterStudent2(studentToAdd, student)) {
+                            studentToAdd = student;
+                        }
+                    }
+                }
+
+                if (studentToAdd) {
+                    assignment.latestDoers.push(studentToAdd);
+                    sortLatestDoersForAssignment(assignment);
+                }
+            }
+
+            function replaceLastShownStudentOfAssignmentWithStudent(assignment, student) {
+                if (assignment.latestDoers.length == maxStudentsToShowAroundAssignment) {
+                    assignment.latestDoers.pop();
+                }
+
+                assignment.doers.push(student);
+                assignment.latestDoers.push(student);
+                sortLatestDoersForAssignment(assignment);
+            }
+
+            function originalAssignment(student) {
+                for (var i = 0; i < scope.assignments.length; i++) {
+                    var assignment = scope.assignments[i];
+
+                    for (var j = 0; j < assignment.latestDoers.length; j++) {
+
+                        if (studentIsInLatestDoersOfAssignment(student, assignment)) {
+                            return assignment;
+                        }
+                    }
+                }
+                return undefined;
+            }
+
+            function studentIsInLatestDoersOfAssignment(student, assignment) {
+                return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
+            }
+
+            function indexOfStudentInLatestDoersOfAssignment(student, assignment) {
+                for (var i = 0; i < assignment.latestDoers.length; i++) {
+
+                    if (student.id == assignment.latestDoers[i].id) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            function studentShouldBeInLatestDoersOfAssignment(student, assignment) {    // when called, we know that lastDoneAssignment of student is 'assignment'
+                if (student.lastDoneAssignment) {
+
+                    if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
+                        return true;
+                    }
+
+                    for (var i = 0; i < assignment.latestDoers.length; i++) {
+                        if (student1HasDoneLastDoneAssignmentAfterStudent2(student, assignment.latestDoers[i])) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            function sortLatestDoersForAssignment(assignment) {
+                assignment.latestDoers.sort(function (a, b) {
+                    return new Date(b.lastDoneAssignment.timestamp) - new Date(a.lastDoneAssignment.timestamp);
+                })
+            }
+
+            function student1HasDoneLastDoneAssignmentAfterStudent2(student1, student2) {
+                return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
+            }
         }
     }
 })
