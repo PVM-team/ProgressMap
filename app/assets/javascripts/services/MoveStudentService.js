@@ -1,4 +1,4 @@
-ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService, StudentIconService) {
+ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService, AssignmentCirclesService, StudentIconService) {
 
     var maxStudentsInRow = 3;
 
@@ -32,6 +32,8 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
                     putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition(destinationAssignment));
+
+                    markAssignmentAsDone(student, destinationAssignment);
                 }
             }
         }
@@ -207,9 +209,12 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
             if (hasReachedDestination(circleToMove, endPosition)) {
                 var student = elem.student;
                 var originalAssignment = elem.originalAssignment;
+                var destinationAssignment = elem.destinationAssignment;
 
                 removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
-                putStudentToLatestDoersOfAssignment(student, elem.destinationAssignment, endPosition);
+                putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition);
+
+                markAssignmentAsDone(student, destinationAssignment);
 
                 circleToMove.remove(); // tuhoa tämä liikutettu versio, joka jäi tehtävänappulan päälle. uusi samanlainen on ylläolevassa funktiossa sijoitettu paikalleen.
                 paper.view.update();
@@ -266,5 +271,10 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
 
     function distance(a, b) {
         return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+    }
+
+    function markAssignmentAsDone(student, assignment) {
+        assignment.doers.push(student);
+        AssignmentCirclesService.drawCircle(assignment, students);
     }
 })
