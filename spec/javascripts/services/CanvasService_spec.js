@@ -8,7 +8,7 @@ describe('CanvasService', function () {
             service = _CanvasService_
         });
 
-        canvas = service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+        canvas = makeCanvasHappen();
     });
 
 
@@ -48,7 +48,7 @@ describe('CanvasService', function () {
         it('drawn location with index 0 and no previous location returns a valid location', function() {
 
             for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
-                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
+                makeCanvasHappen(); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
                 var locations = [];
                 var location = service.drawLocationForAssignment(0, locations);
 
@@ -64,7 +64,7 @@ describe('CanvasService', function () {
             it ("which can be found anywhere inside its 'block' if the previous location is more than 120px away from the block", function() {
             
                 for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
-                    service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
+                    makeCanvasHappen(); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
 
                     var prev = {'x': 100 + 50, 'y': 250 * 6 + 100 + 37};
 
@@ -81,7 +81,7 @@ describe('CanvasService', function () {
 
             it ("which is in its 'block', but with requirement that distance to the previous location is at least 120px", function() {
                 for (var i = 0; i < 20; i++) {  // satunnaisuuden vuoksi 20 testausta peräkkäin
-                    service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50"); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
+                    makeCanvasHappen(); // servicen tila muuttuu joka drawLocationForAssignmentin jälkeen joten alustetaan uudelleen.
                     var prev = {'x': 100 + 199, 'y': 250 * 6 + 100 + 199};
                     var locations = [prev];
                     var location = service.drawLocationForAssignment(0, locations);
@@ -99,7 +99,7 @@ describe('CanvasService', function () {
             
             for (var j = 0; j < 20; j++) {  // 20 test cases
 
-                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+                makeCanvasHappen();
                 var locations = [];
                 var location = null;
                 var i = 0;
@@ -137,7 +137,7 @@ describe('CanvasService', function () {
 
             for (var j = 0; j < 20; j++) {  // 20 test cases
 
-                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+                makeCanvasHappen();
                 var locations = [];
                 var location = null;
                 var i = 0;
@@ -166,7 +166,7 @@ describe('CanvasService', function () {
         it('locations for new assignment are in correct blocks', function() {
             for (var j = 0; j < 20; j++) {  // 20 test cases
 
-                service.initiateCanvas(25, 1000, "", "rgba(30, 85, 205, 0.50");
+                makeCanvasHappen();
                 var location = null;
                 var prev = null;
                 var i = 0;
@@ -197,6 +197,9 @@ describe('CanvasService', function () {
             }
         })
     })
+    function makeCanvasHappen(){
+        return service.initiateCanvas('id', 25, 1000, "");
+    }
 })
 
 function locationIsInBlock(location, xStart, yStart) {

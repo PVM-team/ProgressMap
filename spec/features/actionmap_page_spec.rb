@@ -30,26 +30,23 @@ describe "Action map page", js: true do
   		it "it has a canvas" do
   			canvas = page.find("canvas")
   			expect(canvas.visible?).to be(true)
-  		end
+      end
 
-  		it "it has one button for each assignment" do
-  			@course.assignments.each do |assignment|
-  				expect(page.find('#actionMapElements').find(".action-button", :text => assignment.number))
-  			end
-  		end
+      it "it has a canvas the same width as the window" do
+				canvas = page.find("canvas")
+        window = page.driver.browser.manage.window
+				expect(canvas['width']).equal?(window.size[0])
+      end
 
-  		it "the positions of the assignment buttons are determined by their location" do
-  			@course.assignments.each do |assignment|
-  				button = page.find(".action-button", :text => assignment.number)
-  				style = button[:style]
-  				expect(style).to have_content("top: " + (assignment.location.y - 25).to_s + "px")
-  				expect(style).to have_content("left: " + (assignment.location.x - 25).to_s + "px")
-        	end
-  		end
+      it "it changes canvas width when window width is changed" do
+				canvas = page.find("canvas")
+        window = page.driver.browser.manage.window
+        window.resize_to(1000,1000)
+        expect(canvas['width']).equal?(1000)
+				window.resize_to(500,1000)
+				expect(canvas['width']).equal?(500)
+      end
 
-    	it 'finds two student-buttons' do
-    		expect(page.all('.student-button').length).to be(2)
-    	end
 	end
 end
 

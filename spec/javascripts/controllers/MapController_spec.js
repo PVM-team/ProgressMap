@@ -117,8 +117,8 @@ describe('MapController', function () {
         it('sets scope.currentStudent to what httpService returns', function(){
             expect(scope.currentStudent.id).toBe(2);
         })
-        it('sets scope.done_assignments to those of scope.currentStudent', function(){
-            expect(scope.done_assignments.length).toBe(1);
+        it('sets scope.doneAssignments to those of scope.currentStudent', function(){
+            expect(scope.doneAssignments.length).toBe(1);
         })
     })
 
@@ -132,11 +132,11 @@ describe('MapController', function () {
             expect(scope.currentStudent.id).toBe(3);
         });
 
-        it('sets done_assignments when student is valid', function () {
-            expect(scope.done_assignments.length).not.toBe(3);
+        it('sets doneAssignments when student is valid', function () {
+            expect(scope.doneAssignments.length).not.toBe(3);
             scope.viewAsStudent(scope.students[0]);
 
-            expect(scope.done_assignments.length).toBe(3);
+            expect(scope.doneAssignments.length).toBe(3);
         });
     })
 
@@ -163,7 +163,7 @@ describe('MapController', function () {
             })
             it('sets them as done', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
-                expect(scope.done_assignments.indexOf(undoneAssignment)).not.toBe(-1);
+                expect(scope.doneAssignments.indexOf(undoneAssignment)).not.toBe(-1);
             })
             it('increases the assignment doers', function(){
                 expect(undoneAssignment.doers.length).toBe(1);
@@ -180,7 +180,7 @@ describe('MapController', function () {
             })
             it ('sets them as undone', function(){
                 scope.markAssignmentAsUndone(doneAssignment);
-                expect(scope.done_assignments.indexOf(doneAssignment)).toBe(-1);
+                expect(scope.doneAssignments.indexOf(doneAssignment)).toBe(-1);
             })
             it('decreases the assignment doers', function(){
                 expect(doneAssignment.doers.length).toBe(2);
@@ -200,7 +200,7 @@ describe('MapController', function () {
 
     describe('goToActionMap', function(){
         it('should call location.path when function is called', function(){
-            scope.moveToActionMap();
+            scope.goToActionMap();
             expect(location.path).toHaveBeenCalledWith('/actionmap/1');
         })
     });

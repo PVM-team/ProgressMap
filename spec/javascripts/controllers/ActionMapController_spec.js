@@ -108,9 +108,11 @@ describe('ActionMapController', function () {
         //ei tee mitään
         CanvasServiceMock = (function () {
             return {
-                initiateCanvas: function (height, width, div, bgColor) {
+                initiateCanvas: function (id, height, width, div) {
                 },
                 drawSmoothPaths: function (locations) {
+                },
+                initiatePaperCanvas: function (id, height, width) {
                 }
             }
         })();
@@ -172,7 +174,7 @@ describe('ActionMapController', function () {
         })
     })
 
-    describe('after interval occurs and data for students is received again', function() {
+    /* describe('after interval occurs and data for students is received again', function() {
 
         describe('and no new data is provided', function() {
 
@@ -225,18 +227,18 @@ describe('ActionMapController', function () {
                 expect(scope.assignments[0].latestDoers[2].id).toBe(1)
                 expect(scope.assignments[0].latestDoers[3].id).toBe(8)
                 expect(scope.assignments[0].latestDoers[4].id).toBe(3)
-            })            
+            })         
 
-        })        
+        })  
 
-    })
+    }) */
 })
 
-function doInterval(times, controller) {
+/* function doInterval(times, controller) {
     for (var i = 0; i < times; i++) {
         controller.updateLatestAssignments();
     }
-}
+} */
 
 function stateInitially(scope) {
     expect(scope.assignments[0].id).toBe(1);

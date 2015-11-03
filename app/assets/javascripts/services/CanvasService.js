@@ -18,8 +18,29 @@ ProgressApp.service('CanvasService', function () {
         cubicTension: 0
     };
 
-    this.initiateCanvas = function (assignmentCount, width, div, bgColor) {
+    this.initiateCanvas = function (id, assignmentCount, width, div) {
         canvas = document.createElement('canvas');
+
+        borderSize = width / 40; // 25
+        blockSize = width / 5; // 200
+        assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
+        levelAmount = Math.ceil(assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
+
+        direction = "left"; // suunta vaihtuu heti drawLocationForAssignment() funktion alussa.
+
+        // if (levelAmount % 2 == 0) {
+        //    changeDirectionOfCurve();   // direction vaihtuu joka arpomisen jälkeen
+        //}
+        canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
+        canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
+        placeCanvasInDiv(div);
+        setContext();
+
+        return canvas;
+    }
+
+    this.initiatePaperCanvas = function (id, assignmentCount, width) {
+        canvas = document.getElementById(id);
 
         borderSize = width / 40; // 25
         blockSize = width / 5; // 200
@@ -34,17 +55,16 @@ ProgressApp.service('CanvasService', function () {
 
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
         canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
-        placeCanvasInDiv(div);
+        //placeCanvasInDiv(div);
         setContext();
-        setCanvasBGColor(bgColor);
+        //setCanvasBGColor(bgColor);
 
         return canvas;
     }
 
     //should not be called before initiateCanvas has been called at least once
     this.redraw = function(bgColor){
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        setCanvasBGColor(bgColor);
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function placeCanvasInDiv(div) {
@@ -56,12 +76,6 @@ ProgressApp.service('CanvasService', function () {
     function setContext(){
         context = canvas.getContext("2d");
     }
-
-    function setCanvasBGColor(bgColor) {
-        context.fillStyle = bgColor;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
 
     this.drawLocationForAssignment = function(i, locations) {
         if (i % assignmentsPerLevel == 0) {

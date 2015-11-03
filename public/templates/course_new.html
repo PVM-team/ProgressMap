@@ -2,10 +2,10 @@
 	<h2>Create a new course</h2>
 
 	<form name="createCourseForm">
-		
+
 		<div class="col-xs-12">
 			<label class="col-md-2 col-sm-3 col-xs-4">Course name</label>
-				
+
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="name" required minlength="2">
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.courseName.$invalid && createCourseForm.courseName.$dirty">
 				Course name should have at least 2 characters
@@ -23,11 +23,11 @@
 				<button id="shuffle-button" ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
 			</div>
 		</div>
-		
+
 		<div id="mapElements" class="col-xs-12">
 
 			<div ng-repeat="assignment in assignments">
-		
+
 				<button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
 			</div>
 		</div>

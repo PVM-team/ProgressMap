@@ -2,10 +2,14 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.buttonClicked = false;
 
+    // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
+
+    //korvataan joskus käyttäjän valintaruudulla?
     if (!StateService.getCurrentStudent()) {
         StateService.setCurrentStudent({id: 2})
     }
 
+    //initiates map with given course id and current student id
     httpService.getData('/map/init.json', {
         params: {
             course_id: $routeParams.course_id,
@@ -14,7 +18,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }).then(function (data) {
 
         if (!validRequest(data)) {
-            $location.path("/");
+            $location.path("/");     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
             return;
         }
 
@@ -23,15 +27,12 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         $scope.students = data["students"];
 
         $scope.currentStudent = data["current_student"][0];
-        setDoneAssignments();
+        $scope.doneAssignments = setDoneAssignments();
 
-        CanvasService.initiateCanvas($scope.assignments.length, 1000, document.getElementById("mapElements"), "rgba(30, 85, 205, 0.50");
+        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
-    $scope.moveToActionMap = function(){
-        $location.path('/actionmap/' + $scope.course.id);
-    }
 
     $scope.moveToCourseCreationView = function () {
         StateService.setCurrentStudent($scope.currentStudent);
@@ -61,7 +62,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks', data).then(function (data) {
-            $scope.done_assignments.push(assignment);
+            $scope.doneAssignments.push(assignment);
             assignment.doers.push($scope.currentStudent);
 
             $scope.buttonClicked = false;
@@ -77,8 +78,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
         }
 
         httpService.postData('students_tasks/destroy', data).then(function (data) {
-            var i = $scope.done_assignments.indexOf(assignment);
-            removeValueFromList($scope.done_assignments, i);
+            var i = $scope.doneAssignments.indexOf(assignment);
+            removeValueFromList($scope.doneAssignments, i);
 
             i = $scope.assignments.indexOf(assignment);
             var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
@@ -90,35 +91,42 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     function setDoneAssignments() {
-        var done_assignments = [];
+        var doneAssignments = [];
 
         for (var i = 0; i < $scope.assignments.length; i++) {
             var doers = $scope.assignments[i].doers;
 
             if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
-                done_assignments.push($scope.assignments[i]);
+                doneAssignments.push($scope.assignments[i])
             }
         }
-        $scope.done_assignments = done_assignments;
+        return doneAssignments;
     }
 
     $scope.viewAsStudent = function (student) {
-        $scope.currentStudent = student;
-        setDoneAssignments();
+        try {
+            $scope.currentStudent = student;
+        }
+        catch (err) {
+            document.getElementById("errorMsg").innerHTML = err
+        }
+        $scope.doneAssignments = setDoneAssignments();
     }
 
+
     $scope.assignmentCompleted = function (assignment) {
-        return $scope.done_assignments.indexOf(assignment) >= 0;
+        return ($scope.doneAssignments.indexOf(assignment) >= 0)
     }
 
     function validRequest(data) {
-        return data['course'][0];
+        return data['course'][0]
     }
 
     function removeValueFromList(list, index) {
         list.splice(index, 1);
     }
 
+    // $scope.currentStudent ja assignment.doers-jäsenet eivät ole tallenettu samalla tavalla, käyttäjä ei löydy suoralla vertailulla (etsitään id:n perusteella)
     function indexOfValueWithId(list, id) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {
@@ -128,4 +136,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         return -1;
     }
+    $scope.goToActionMap = function(){
+        $location.path('/actionmap/' + $scope.course.id)
+    }
+
 })

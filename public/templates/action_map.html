@@ -1,4 +1,4 @@
-<h2>Course: <i>{{ course.name }}</i></h2>
+<!--<h2>Course: <i>{{ course.name }}</i></h2>
 <button ng-click="goToNormalMap()"> Go to normal map </button>
 <h3>Students</h3>
 
@@ -10,8 +10,11 @@
             <td> {{ p.id }}</td>
         </tr>
     </table>
-</div>
-<div id="actionMapElements" style="position: relative">
+</div><-->
+
+<canvas id="canvas3" resize paperjsmap2 assignments="assignments" students="students"></canvas>
+
+<!--<div id="actionMapElements" style="position: relative">
     <div ng-repeat="assignment in assignments">
         <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)"
                 class="button action-button"
@@ -24,4 +27,4 @@
         </div>
 
     </div>
-</div>
+</div>-->
