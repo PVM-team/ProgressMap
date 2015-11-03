@@ -1,7 +1,5 @@
 ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService, AssignmentCirclesService, StudentIconService) {
 
-    var maxStudentsInRow = 3;
-
     var assignments;
     var students;
 
@@ -31,8 +29,9 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                 if (! AssignmentLatestDoersService.originalAssignment(student, assignments) &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition(destinationAssignment));
+                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment);
 
+                    putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition);
                     markAssignmentAsDone(student, destinationAssignment);
                 }
             }
@@ -80,14 +79,6 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
     }
 
-    function endPosition(assignment) {
-        if (AssignmentLatestDoersService.latestDoersFull(assignment)) {
-            return AssignmentLatestDoersService.locationOfOldestStudentInLatestDoers(assignment);
-        }
-
-       return positionOfNewStudentAroundAssignment(assignment);
-    }
-
     function removeItemFromPosition(position) {
         var item = getItem(position);
 
@@ -104,31 +95,6 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         if (student) {
             putStudentToLatestDoersOfAssignmentInPosition(student, assignment, position);
         }
-    }
-
-    function positionOfNewStudentAroundAssignment(assignment) {
-        var location = assignment.location;
-        var lateralPositionOffset = 50;
-        var verticalPositionOffset = 0;
-
-        var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
-
-        for (var i = 0; i < assignment.latestDoers.length; i++) {
-
-            if (! getItem(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois
-                return position;
-            }
-
-            lateralPositionOffset += 30;
-
-            if ((i + 1) % maxStudentsInRow == 0) {
-                verticalPositionOffset += 30;
-                lateralPositionOffset = 50;
-            }
-
-            position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
-        }
-        return position; // uusi positio perällä, yleisempi tapaus
     }
 
    function moveStudents(movingStudents) {
@@ -168,7 +134,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                           'originalAssignment': originalAssignment,
                           'destinationAssignment': destinationAssignment,
                           'startPosition': circleToMove.position,
-                          'endPosition': endPosition(destinationAssignment),
+                          'endPosition': AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment),
                           'student': student,
                           'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 

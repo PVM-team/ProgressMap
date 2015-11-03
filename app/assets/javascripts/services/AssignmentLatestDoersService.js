@@ -1,8 +1,9 @@
 ProgressApp.service('AssignmentLatestDoersService', function () {
+    var maxStudentsInRow = 3;
 	var maxStudentsToShowAroundAssignment = 5;
     var self = this;
 
-	this.latestDoersFull = function(assignment) {
+	self.latestDoersFull = function(assignment) {
 		return assignment.latestDoers.length == maxStudentsToShowAroundAssignment;
 	}
 
@@ -46,7 +47,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
     }
 
     this.removeTheOldestStudentFromLatestDoers = function(assignment) {
-        var studentToGo = oldestStudentInLatestDoers(assignment);
+        var studentToGo = oldestStudentInLatestDoersOfAssignment(assignment);
         self.removeStudentFromLatestDoersOfAssignment(studentToGo, assignment);
     }
 
@@ -78,11 +79,6 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return studentToAdd;    	
     }
 
-    this.locationOfOldestStudentInLatestDoers = function(assignment) {
-    	var student = oldestStudentInLatestDoers(assignment);
-    	return self.getLocationOfStudent(student, assignment);
-    }
-
     self.getLocationOfStudent = function(student, assignment) {
         var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
         return assignment.latestDoers[i].location;
@@ -98,7 +94,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return -1;
     }
 
-    function oldestStudentInLatestDoers(assignment) { // assignmentin latestDoers on täynnä
+    function oldestStudentInLatestDoersOfAssignment(assignment) { // assignmentin latestDoers on täynnä
         var studentToGo = assignment.latestDoers[0];
 
         for (var i = 1; i < assignment.latestDoers.length; i++) {
@@ -114,4 +110,42 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
     function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
         return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
     }
+
+    this.nextPositionToMoveToAroundAssignment = function(assignment) {
+        if (self.latestDoersFull(assignment)) {
+            return locationOfOldestStudentInLatestDoers(assignment);
+        }
+
+       return positionOfNewStudentAroundAssignment(assignment);
+    }
+
+    function locationOfOldestStudentInLatestDoers(assignment) {
+        var student = oldestStudentInLatestDoersOfAssignment(assignment);
+        return self.getLocationOfStudent(student, assignment);
+    }
+
+    function positionOfNewStudentAroundAssignment(assignment) {
+        var location = assignment.location;
+        var lateralPositionOffset = 50;
+        var verticalPositionOffset = 0;
+
+        var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+
+        for (var i = 0; i < assignment.latestDoers.length; i++) {
+
+            if (! paper.project.hitTest(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois
+                return position;
+            }
+
+            lateralPositionOffset += 30;
+
+            if ((i + 1) % maxStudentsInRow == 0) {
+                verticalPositionOffset += 30;
+                lateralPositionOffset = 50;
+            }
+
+            position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+        }
+        return position; // uusi positio perällä, yleisempi tapaus
+    }    
 })
