@@ -138,23 +138,6 @@ describe "Course creation page", js: true do
   describe "when assignmentCount is filled with a valid value" do
 
     before :each do
-      found = false
-
-      begin
-        page.find('canvas')
-        found = true
-      rescue
-      end
-
-      expect(found).to be(false)
-
-      begin
-        find_button('Generate new map')
-        found = true
-      rescue
-      end
-
-      expect(found).to be(false)
       fill_in('assignmentCount', with: '7')
     end
 

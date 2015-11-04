@@ -1,11 +1,10 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
 
-    var self = this;
     var maxStudentsToShowAroundAssignment = 5;
 
     var interval = setInterval(function() {
         self.updateLatestAssignments();
-    }, 15000);
+    }, 5000);
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
 
@@ -23,7 +22,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
     $scope.$on("$destroy", function() {
         clearInterval(interval);
-    });
+    })
 
     $scope.goToNormalMap = function() {
         student = StateService.getCurrentStudent();
@@ -49,7 +48,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         addEachStudentToLatestDoersOfAssignmentTheyBelong();
         sortLatestDoersForEachAssignment();
         removeStudentsFromLatestDoersIfThereAreTooMany();
-
     }
 
     function addLatestDoersArrayForEachAssignment() {

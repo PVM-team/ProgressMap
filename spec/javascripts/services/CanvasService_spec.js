@@ -18,14 +18,16 @@ describe('CanvasService', function () {
             expect(angular.isObject(canvas)).toBe(true)
         })
 
-        it('sets its width and height to the values given as parameters', function () {
-            var expectedWidth = 1000 + 100;
+        it('sets its height to the value given as parameter', function () {
             var expectedHeight = 250 * 7 + 100;
 
-            expect(canvas.width).toBe(expectedWidth);
             expect(canvas.height).toBe(expectedHeight)
             expect(service.levelHeight()).toEqual(250);
             expect(service.lastLevelFull(0)).toBe(true);
+        })
+
+        xit('sets its width to the inner width of window', function () {
+            // to implement later?
         })
     })
 

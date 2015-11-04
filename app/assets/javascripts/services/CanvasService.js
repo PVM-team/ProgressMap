@@ -20,31 +20,25 @@ ProgressApp.service('CanvasService', function () {
 
     this.initiateCanvas = function (id, assignmentCount, width, div) {
         canvas = document.createElement('canvas');
+        initiateCanvas(canvas, assignmentCount, width);
 
-        borderSize = width / 40; // 25
-        blockSize = width / 5; // 200
-        assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
-        levelAmount = Math.ceil(assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
-
-        direction = "left"; // suunta vaihtuu heti drawLocationForAssignment() funktion alussa.
-
-        // if (levelAmount % 2 == 0) {
-        //    changeDirectionOfCurve();   // direction vaihtuu joka arpomisen jälkeen
-        //}
-        canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
-        canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
         placeCanvasInDiv(div);
         setContext();
 
         return canvas;
     }
 
-    this.initiatePaperCanvas = function (id, assignmentCount, width) {
-        canvas = document.getElementById(id);
+    this.initiatePaperCanvas = function(canvas, assignmentCount, defaultWidth) {
+        initiateCanvas(canvas, assignmentCount, defaultWidth);
 
-        borderSize = width / 40; // 25
-        blockSize = width / 5; // 200
-        assignmentsPerLevel = width / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
+        paper.view.viewSize = new paper.Size(canvas.width, canvas.height);
+        paper.view.draw();
+    }
+
+    function initiateCanvas(canvas, assignmentCount, defaultWidth) {
+        borderSize = defaultWidth / 40; // 25
+        blockSize = defaultWidth / 5; // 200
+        assignmentsPerLevel = defaultWidth / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
         levelAmount = Math.ceil(assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
 
         direction = "left"; // suunta vaihtuu heti drawLocationForAssignment() funktion alussa.
@@ -54,16 +48,11 @@ ProgressApp.service('CanvasService', function () {
         //}
 
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
-        canvas.width = width + 100; // 50 pikseliä lisää reunoja varten
-        //placeCanvasInDiv(div);
-        setContext();
-        //setCanvasBGColor(bgColor);
-
-        return canvas;
+        canvas.width = window.innerWidth;
     }
 
     //should not be called before initiateCanvas has been called at least once
-    this.redraw = function(bgColor){
+    this.redraw = function(bgColor) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
