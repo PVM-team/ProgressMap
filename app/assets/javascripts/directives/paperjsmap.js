@@ -1,5 +1,5 @@
 //paperjsmap per student, no dependency display operations yet
-ProgressApp.directive('paperjsmap', function () {
+ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -121,6 +121,8 @@ ProgressApp.directive('paperjsmap', function () {
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 35);
                     assignmentCircle.fillColor = '#f18c3a';
+                    setDependencyFunctions(scope.assignments[i], assignmentCircle);
+
                     assignmentLayer.addChild(assignmentCircle);
 
                     //assignment numbers over assignment circles
@@ -132,6 +134,33 @@ ProgressApp.directive('paperjsmap', function () {
                     });
                     textLayer.addChild(text);
                 }
+            }
+
+            function setDependencyFunctions(assignment, circle){
+                circle.onMouseEnter = function(event) {
+                    for (var i = 0; i < assignment.dependencies.length; i++) {
+                        var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
+                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
+                        if (dependentCircle){
+                            dependentCircle.fillColor = '#ffd700';
+                        }
+                    }
+                }
+
+                circle.onMouseLeave = function(event) {
+                    for (var i = 0; i < assignment.dependencies.length; i++) {
+                        var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
+                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
+                        if (dependentCircle){
+                            if (scope.doneAssignments.indexOf(dependent) >= 0){
+                                dependentCircle.fillColor = '#29C124';
+                            } else {
+                                dependentCircle.fillColor = '#F18C3A';
+                            }
+                        }
+                    }
+                }
+
             }
 
             function drawSmoothPaperPaths() {

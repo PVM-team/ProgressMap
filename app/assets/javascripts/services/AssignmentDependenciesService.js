@@ -1,6 +1,6 @@
 ProgressApp.service('AssignmentDependenciesService', function () {
     
-    this.showDependencies = function(assignment, allAssignments, ctx) {
+  /*  this.showDependencies = function(assignment, allAssignments, ctx) {
         for (var i = 0; i < assignment.dependencies.length; i++) {
             var dependent = findAssignmentById(allAssignments, assignment.dependencies[i].id);
             $("button:contains('" + dependent.number + "')").closest('button').addClass("dependent");
@@ -16,9 +16,9 @@ ProgressApp.service('AssignmentDependenciesService', function () {
             var dependent = findAssignmentById(allAssignments, assignment.dependencies[i].id);
             $("button:contains('" + dependent.number + "')").closest('button').removeClass("dependent");
         }
-    }
+    }*/
 
-    function findAssignmentById(assignments, id) {
+    this.findAssignmentById = function(assignments, id){
         for (var i = 0; i < assignments.length; i++) {
             if (assignments[i].id == id) {
                 return assignments[i];
