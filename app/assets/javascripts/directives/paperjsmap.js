@@ -122,8 +122,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             function scaleLabelsByWidth() {
                 var items = textLayer.children;
                 for (var i = 0; i < items.length; i++) {
-                        items[i].position.x = getRelativeX(items[i].position.x);
-                        items[i].scale(window.innerWidth / previousWindowWidth);
+                    items[i].position.x = getRelativeX(items[i].position.x);
+                    items[i].scale(window.innerWidth / previousWindowWidth);
                 }
             }
 
@@ -203,12 +203,17 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 pathLayer.addChild(path);
 
                 //beige vaihtoehto
-                //path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
-                path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
-
-                //path.opacity = 0.62;
-                path.strokeWidth = 20;
-                path.strokeJoin = 'round';
+               // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
+                //path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
+                path.style = {
+                    strokeColor: '#48003A',
+                    strokeWidth: 20,
+                    strokeJoin: 'round',
+                    shadowColor: 'black',
+                    shadowBlur: 7,
+                    shadowOffset: [7,7]
+                };
+                path.opacity = 0.64;
                 //path.strokeCap = 'round';
                 //path.dashArray = [35, 10];
 
