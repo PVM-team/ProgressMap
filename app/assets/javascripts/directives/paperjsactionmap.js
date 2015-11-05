@@ -25,7 +25,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             scope.$watch('assignments', function (newval, oldval) {
 
-                if (newval && ! mapInitialized) {
+                if (newval && !mapInitialized) {
                     setCanvas();
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
@@ -107,9 +107,10 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
 
                     var studentCircle = new paper.Path.Circle(studentLocation, 20);
-                    studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
 
                     var student = assignment.latestDoers[j];
+                    studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
+
                     student['location'] = {'x': studentLocation.x, 'y': studentLocation.y };
 
                      //student id:s over student circles
