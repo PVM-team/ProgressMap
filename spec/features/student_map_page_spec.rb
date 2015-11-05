@@ -31,13 +31,13 @@ describe "Student map page", js: true do
         expect(canvas.visible?).to be(true)
       end
 
-      it "it has one button for each assignment" do
+      xit "it has one button for each assignment" do
         @course.assignments.each do |assignment|
           page.find("button", :text => assignment.number)
         end
       end
 
-      it "the positions of the buttons are determined by their location" do
+      xit "the positions of the buttons are determined by their location" do
         @course.assignments.each do |assignment|
           button = page.find("button", :text => assignment.number)
           style = button[:style]
@@ -47,11 +47,11 @@ describe "Student map page", js: true do
         end
       end
 
-      it "the student can see the tasks (s)he has done as marked" do
+      xit "the student can see the tasks (s)he has done as marked" do
         check_that_student_sees_done_tasks_as_done(3)
       end
 
-      it "the student can see the tasks (s)he has not done marked as undone" do
+      xit "the student can see the tasks (s)he has not done marked as undone" do
         check_that_student_sees_undone_tasks_as_undone(2)
       end
 
@@ -64,7 +64,7 @@ describe "Student map page", js: true do
           page.find('button', :text => '4').hover
         end
 
-        it "the student can see the assignments this assignments depends on" do
+        xit "the student can see the assignments this assignments depends on" do
           expect(page.find('button', :text => '1')[:class]).to have_content('dependent')
           expect(page.find('button', :text => '2')[:class]).to have_content('dependent')
           expect(page.find('button', :text => '3')[:class]).not_to have_content('dependent')

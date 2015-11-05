@@ -74,13 +74,13 @@ describe('StudentMapController', function () {
     });
 
     describe ('when initializing MapController', function(){
-        it('calls on CanvasService.initiateCanvas', function(){
+        xit('calls on CanvasService.initiateCanvas', function(){
             expect(CanvasServiceMock.initiateCanvas).toHaveBeenCalled();
         })
         it('calls on httpService.getData', function(){
             expect(httpServiceMock.getData).toHaveBeenCalled();
         })
-        it('calls on CanvasService.drawSmoothPaths', function(){
+        xit('calls on CanvasService.drawSmoothPaths', function(){
             expect(CanvasServiceMock.drawSmoothPaths).toHaveBeenCalled();
         })
     })
@@ -101,7 +101,7 @@ describe('StudentMapController', function () {
             expect(scope.assignments[1].location.x).toBe(330);
             expect(scope.assignments[2].doers.length).toBe(1);
         })
-        it('sets scope.done_assignments to those of scope.student', function(){
+        xit('sets scope.done_assignments to those of scope.student', function(){
             expect(scope.done_assignments.length).toBe(2);
             expect(scope.done_assignments[0].id).toBe(1)
             expect(scope.done_assignments[1].id).toBe(3)
@@ -110,11 +110,11 @@ describe('StudentMapController', function () {
 
     describe('assignmentCompleted returns', function() {
 
-        it ('true if student has done the assignment', function () {
+        xit ('true if student has done the assignment', function () {
             expect(scope.assignmentCompleted(scope.assignments[0])).toBe(true)
         })
 
-        it ('false if student has not done the assignment', function () {
+        xit ('false if student has not done the assignment', function () {
             expect(scope.assignmentCompleted(scope.assignments[1])).toBe(false);
         })
     })

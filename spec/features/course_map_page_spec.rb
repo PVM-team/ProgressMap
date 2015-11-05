@@ -128,7 +128,7 @@ describe "Course map page", js: true do
           page.find('button', :text => '4').hover
         end
 
-        it "the student can see the assignments this assignments depends on" do
+        xit "the student can see the assignments this assignments depends on" do
           expect(page.find('button', :text => '1')[:class]).to have_content('dependent')
           expect(page.find('button', :text => '2')[:class]).to have_content('dependent')
           expect(page.find('button', :text => '3')[:class]).not_to have_content('dependent')
