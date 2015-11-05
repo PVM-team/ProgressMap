@@ -19,18 +19,13 @@ ProgressApp.directive('paperjsmap', function () {
                 cubicTension: 0
             };
 
+            var assignmentLayer;
+            var pathLayer;
+            var textLayer;
             var path;
             paper.install(window);
             paper.setup(element[0]);
             var tool = new paper.Tool();
-
-            /*scope.$watchGroup(['assignments', 'doneAssignments'], function(newValues, oldValues, scope) {
-             drawSmoothPaperPaths();
-             placeCirclesOnAssignmentLocations();
-             paper.view.update();
-             changeAssignmentColors();
-             paper.view.update();
-             }, true);*/
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && !mapInitialized) {
@@ -42,7 +37,6 @@ ProgressApp.directive('paperjsmap', function () {
                     mapInitialized = true;
                     paper.view.update();
                     window.onresize();
-                    changeAssignmentColors();
                 }
             }, true);
 
@@ -57,6 +51,7 @@ ProgressApp.directive('paperjsmap', function () {
                 if (mapInitialized) {
                     updateCanvasWidth();
                     scaleButtonsByWidth();
+                    scaleLabelsByWidth();
                     scalePathByWidth();
                     previousWindowWidth = window.innerWidth;
                 }
@@ -93,12 +88,20 @@ ProgressApp.directive('paperjsmap', function () {
             }
 
             function scaleButtonsByWidth() {
-                var items = paper.project.activeLayer.children;
+                var items = assignmentLayer.children;
                 for (var i = 0; i < items.length; i++) {
                     if (items[i] != path) {
                         items[i].position.x = getRelativeX(items[i].position.x);
                         items[i].scale(window.innerWidth / previousWindowWidth);
                     }
+                }
+            }
+
+            function scaleLabelsByWidth() {
+                var items = textLayer.children;
+                for (var i = 0; i < items.length; i++) {
+                        items[i].position.x = getRelativeX(items[i].position.x);
+                        items[i].scale(window.innerWidth / previousWindowWidth);
                 }
             }
 
@@ -111,11 +114,14 @@ ProgressApp.directive('paperjsmap', function () {
             }
 
             function placeCirclesOnAssignmentLocations() {
+                assignmentLayer = new paper.Layer();
+                textLayer = new paper.Layer();
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 35);
                     assignmentCircle.fillColor = '#f18c3a';
+                    assignmentLayer.addChild(assignmentCircle);
 
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
@@ -124,14 +130,17 @@ ProgressApp.directive('paperjsmap', function () {
                         fillColor: 'white',
                         fontSize: 20
                     });
+                    textLayer.addChild(text);
                 }
             }
 
             function drawSmoothPaperPaths() {
                 var locations = getLocations(scope.assignments);
+                pathLayer = new paper.Layer();
 
                 var lastIndex = locations.length - 1;
                 path = new paper.Path();
+                pathLayer.addChild(path);
 
                 //beige vaihtoehto
                 //path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
@@ -157,7 +166,7 @@ ProgressApp.directive('paperjsmap', function () {
                 for (var i = 0; i < scope.doneAssignments.length; i++) {
                     //scope.doneAssignments stores locations with default map width of 1100
                     var relativeX = getRelativeXFromDefaultSize(scope.doneAssignments[i].location.x);
-                    var assignmentCircle = paper.project.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
+                    var assignmentCircle = assignmentLayer.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
                     if (assignmentCircle) {
                         assignmentCircle.fillColor = '#29C124';
                     }
@@ -167,8 +176,9 @@ ProgressApp.directive('paperjsmap', function () {
             function setAllUndone() {
                 var locations = getLocations();
                 for (var i = 0; i < locations.length; i++) {
+                    //scope.doneAssignments stores locations with default map width of 1100
                     var relativeX = getRelativeXFromDefaultSize(locations[i][0]);
-                    var assignmentCircle = paper.project.hitTest([relativeX, locations[i][1]]).item;
+                    var assignmentCircle = assignmentLayer.hitTest([relativeX, locations[i][1]]).item;
                     assignmentCircle.fillColor = '#F18C3A';
                 }
             }

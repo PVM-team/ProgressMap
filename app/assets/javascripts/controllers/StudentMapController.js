@@ -12,10 +12,10 @@ ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $
         $scope.student = data["student"][0];
 
         StateService.setCurrentStudent($scope.student);
-        setDoneAssignments();
+        $scope.doneAssignments = setDoneAssignments();
 
-        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
-        CanvasService.drawSmoothPaths($scope.assignments);
+        //CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
+        //CanvasService.drawSmoothPaths($scope.assignments);
     })
 
     $scope.moveToActionMap = function() {
@@ -42,7 +42,7 @@ ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $
                 done_assignments.push($scope.assignments[i]);
             }
         }
-        $scope.done_assignments = done_assignments;
+        return done_assignments;
     }
 
     $scope.assignmentCompleted = function (assignment) {
