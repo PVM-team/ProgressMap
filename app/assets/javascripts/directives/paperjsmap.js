@@ -197,7 +197,15 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     var relativeX = getRelativeXFromDefaultSize(scope.doneAssignments[i].location.x);
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
                     if (assignmentCircle) {
-                        assignmentCircle.fillColor = '#29C124';
+                        //assignmentCircle.fillColor = '#29C124';
+                        assignmentCircle.fillColor = {
+                            gradient: {
+                                stops: [['#B8e297',0.1], ['#87bc5e', 0.5], ['#3c7113', 1]],
+                                radial: true
+                            },
+                            origin: assignmentCircle.position,
+                            destination: assignmentCircle.bounds.rightCenter
+                        };
                     }
                 }
             }
@@ -208,7 +216,15 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     //scope.doneAssignments stores locations with default map width of 1100
                     var relativeX = getRelativeXFromDefaultSize(locations[i][0]);
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, locations[i][1]]).item;
-                    assignmentCircle.fillColor = '#F18C3A';
+                    //assignmentCircle.fillColor = '#F18C3A';
+                    assignmentCircle.fillColor = {
+                            gradient: {
+                                stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
+                                radial: true
+                            },
+                            origin: assignmentCircle.position,
+                            destination: assignmentCircle.bounds.rightCenter
+                        };
                 }
             }
 

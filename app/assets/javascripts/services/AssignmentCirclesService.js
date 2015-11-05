@@ -7,6 +7,7 @@ ProgressApp.service('AssignmentCirclesService', function () {
         var circle = new paper.Path.Circle(location, 35);
         
         circle.fillColor = 'yellow';
+
         circle.fillColor.hue += percentageCompleted;
 
         //assignment numbers over assignment circles
