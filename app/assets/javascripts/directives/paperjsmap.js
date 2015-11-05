@@ -19,6 +19,28 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 cubicTension: 0
             };
 
+            function getDoneFillColor(assignmentCircle){
+                return {
+                    gradient: {
+                        stops: [['#B8e297',0.1], ['#87bc5e', 0.5], ['#3c7113', 1]],
+                        radial: true
+                    },
+                    origin: assignmentCircle.position,
+                    destination: assignmentCircle.bounds.rightCenter
+                };
+            }
+
+            function getUndoneFillColor(assignmentCircle){
+                return {
+                    gradient: {
+                        stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
+                        radial: true
+                    },
+                    origin: assignmentCircle.position,
+                    destination: assignmentCircle.bounds.rightCenter
+                };
+            }
+
             var assignmentLayer;
             var pathLayer;
             var textLayer;
@@ -126,6 +148,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                         shadowBlur: 12,
                         shadowOffset: [5,5]
                     }
+                    assignmentCircle.opacity = 0.8;
+
                     setDependencyFunctions(scope.assignments[i], assignmentCircle);
 
                     assignmentLayer.addChild(assignmentCircle);
@@ -160,9 +184,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
                         if (dependentCircle){
                             if (scope.doneAssignments.indexOf(dependent) >= 0){
-                                dependentCircle.fillColor = '#29C124';
+                                dependentCircle.fillColor = getDoneFillColor(dependentCircle);
                             } else {
-                                dependentCircle.fillColor = '#F18C3A';
+                                dependentCircle.fillColor = getUndoneFillColor(dependentCircle);
                             }
                         }
                     }
@@ -205,16 +229,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
                     if (assignmentCircle) {
                         //assignmentCircle.fillColor = '#29C124';
-                        assignmentCircle.style = {
-                            fillColor : {
-                                gradient: {
-                                    stops: [['#B8e297',0.1], ['#87bc5e', 0.5], ['#3c7113', 1]],
-                                    radial: true
-                                },
-                                origin: assignmentCircle.position,
-                                destination: assignmentCircle.bounds.rightCenter
-                            }
-                        }
+                        assignmentCircle.fillColor = getDoneFillColor(assignmentCircle);
                     }
                 }
             }
@@ -226,14 +241,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     var relativeX = getRelativeXFromDefaultSize(locations[i][0]);
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, locations[i][1]]).item;
                     //assignmentCircle.fillColor = '#F18C3A';
-                    assignmentCircle.fillColor = {
-                        gradient: {
-                            stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
-                            radial: true
-                        },
-                        origin: assignmentCircle.position,
-                        destination: assignmentCircle.bounds.rightCenter
-                    };
+                    assignmentCircle.fillColor = getUndoneFillColor(assignmentCircle);
                 }
             }
 
