@@ -1,4 +1,4 @@
-ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesService, MoveStudentService, StudentIconService) {
+ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesService, MoveStudentService, StudentIconService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -52,6 +52,8 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     scaleButtonsByWidth();
                     scalePathByWidth();
                     previousWindowWidth = window.innerWidth;
+
+                    MapScaleService.setPreviousWidth(previousWindowWidth)
                 }
             }
 

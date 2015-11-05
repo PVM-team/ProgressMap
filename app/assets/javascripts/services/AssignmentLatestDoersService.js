@@ -213,5 +213,5 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
     function locationsAreTheSame(location1, location2) {
         return location1.x == location2.x &&
                location1.y == location2.y;
-    }
+    }c
 })
