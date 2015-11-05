@@ -36,12 +36,14 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     mapInitialized = true;
                     paper.view.draw();
                     window.onresize();
+
+                    MoveStudentService.initialize(scope.assignments)
                 }
             }, true);
 
             scope.$watch('students', function (newval, oldval) {
                 if (newval && mapInitialized) {
-                    MoveStudentService.update(scope.assignments, scope.students);
+                    MoveStudentService.update(scope.students);
                 }
             }, true);
 

@@ -1,7 +1,7 @@
 ProgressApp.service('MapScaleService', function () {
     var previousWindowWidth = 1100;
 
-    function getRelativeX(x) {
+    this.getRelativeX = function(x) {
         return (x / previousWindowWidth) * window.innerWidth;
     }
 

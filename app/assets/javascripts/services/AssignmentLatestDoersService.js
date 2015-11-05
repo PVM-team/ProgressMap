@@ -1,4 +1,4 @@
-ProgressApp.service('AssignmentLatestDoersService', function () {
+ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     var maxStudentsInRow = 3;
 	var maxStudentsToShowAroundAssignment = 5;
     var self = this;
@@ -41,7 +41,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         return false;
     }
 
-    this.addStudentToLatestDoersWithLocation = function(student, assignment, position) {
+    this.addStudentToLatestDoersWithLocation = function(student, assignment, scaledposition) {
     	assignment.latestDoers.push(student);
         assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
     }
@@ -169,6 +169,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
         var verticalPositionOffset = 0;
 
         var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+        position = scalePositionToWindowWidth(position);
 
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 
@@ -184,6 +185,7 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
             }
 
             position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
+            position = scalePositionToWindowWidth(position);
         }
 
         createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position); // tee uusi varattu dummy student ja lisää doersin perälle
@@ -213,5 +215,10 @@ ProgressApp.service('AssignmentLatestDoersService', function () {
     function locationsAreTheSame(location1, location2) {
         return location1.x == location2.x &&
                location1.y == location2.y;
-    }c
+    }
+
+    function scalePositionToWindowWidth(position) {
+        position.x = MapScaleService.getRelativeX(position.x);
+        return position;
+    }
 })

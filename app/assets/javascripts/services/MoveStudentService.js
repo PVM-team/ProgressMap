@@ -9,8 +9,11 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     var intervalLength = 5000;
     var minSpeed = 90;
 
-    this.update = function(new_assignments, new_students) {
-        assignments = new_assignments;
+    this.initialize = function(initial_assigments) {
+        assignments = initial_assigments;
+    }
+
+    this.update = function(new_students) {
         students = new_students;
 
         placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
