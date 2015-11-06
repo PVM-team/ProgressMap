@@ -32,7 +32,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     mapInitialized = true;
                     paper.view.draw();
 
-                    MoveStudentService.initialize(scope.assignments)
+                    MoveStudentService.initialize(scope.assignments);
 
                     window.onresize();
                 }
@@ -44,15 +44,19 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                 }
             }, true);
 
-
             window.onresize = function () {
-                if (mapInitialized) {
+                if (mapInitialized && MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
+                    console.log("bbb")
+                    console.log(paper.view.viewSize.height);
+
                     updateCanvasWidth();
                     scaleButtonsByWidth();
                     scalePathByWidth();
                     MoveStudentService.updateAssignmentLocations();
                     MoveStudentService.updateAssignmentsLatestDoersLocations();
 
+                    console.log("innerWidth: " + window.innerWidth);
+                    console.log("innerHeight: " + window.innerHeight);
                     MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
             }
@@ -80,6 +84,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             function scalePathByWidth() {
                 var segments = path.segments;
+
                 for (var i = 0; i < segments.length; i++) {
                     segments[i].point.x = MapScaleService.getRelativeX(segments[i].point.x);
                 }
@@ -130,7 +135,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             function placeCirclesOnAssignmentLocations() {
                 for (var i = 0; i < scope.assignments.length; i++) {
-                    AssignmentCirclesService.drawCircle(scope.assignments[i], scope.students);
+                    AssignmentCirclesService.initializeCircle(scope.assignments[i], scope.students);
                 }
             }
 

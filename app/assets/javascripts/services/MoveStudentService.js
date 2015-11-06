@@ -268,7 +268,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
 
     function markAssignmentAsDone(student, assignment, position) {
         assignment.doers.push(student);
-        AssignmentCirclesService.drawCircle(assignment, students);
+        AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students);
 
         AssignmentLatestDoersService.freePosition(assignment, position);
     }
