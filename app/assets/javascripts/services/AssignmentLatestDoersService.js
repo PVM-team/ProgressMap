@@ -43,7 +43,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
     this.addStudentToLatestDoersWithLocation = function(student, assignment, scaledposition) {
     	assignment.latestDoers.push(student);
-        assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
+        assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': scaledposition.x, 'y': scaledposition.y };
     }
 
     this.removeTheOldestStudentFromLatestDoers = function(assignment) {
