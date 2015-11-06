@@ -3,8 +3,6 @@ ProgressApp.service('MapScaleService', function () {
 	var defaultWindowWidth = 1100;
 
     this.getRelativeX = function(x) {
-    	console.log("called")
-
         return (x / previousWindowWidth) * window.innerWidth;
     }
 
@@ -18,5 +16,9 @@ ProgressApp.service('MapScaleService', function () {
 
     this.getDefaultWindowWidth = function() {
     	return defaultWindowWidth;
+    }
+
+    this.scaleByDefaultWidth = function(x) {
+        return (x / defaultWindowWidth) * window.innerWidth;
     }
 })

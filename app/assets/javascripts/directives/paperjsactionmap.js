@@ -30,11 +30,11 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     placeLatestStudents();
 
                     mapInitialized = true;
-                    paper.view.draw();
 
                     MoveStudentService.initialize(scope.assignments);
 
                     window.onresize();
+                    paper.view.draw();
                 }
             }, true);
 
@@ -45,18 +45,15 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
             }, true);
 
             window.onresize = function () {
-                if (mapInitialized && MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
-                    console.log("bbb")
-                    console.log(paper.view.viewSize.height);
-
+                if (MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
+                    console.log("called")
+                    
                     updateCanvasWidth();
                     scaleButtonsByWidth();
                     scalePathByWidth();
                     MoveStudentService.updateAssignmentLocations();
                     MoveStudentService.updateAssignmentsLatestDoersLocations();
 
-                    console.log("innerWidth: " + window.innerWidth);
-                    console.log("innerHeight: " + window.innerHeight);
                     MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
             }
