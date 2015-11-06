@@ -19,10 +19,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 cubicTension: 0
             };
 
-            function getDoneFillColor(assignmentCircle){
+            function getDoneFillColor(assignmentCircle) {
                 return {
                     gradient: {
-                        stops: [['#B8e297',0.1], ['#87bc5e', 0.5], ['#3c7113', 1]],
+                        stops: [['#B8e297', 0.1], ['#87bc5e', 0.5], ['#3c7113', 1]],
                         radial: true
                     },
                     origin: assignmentCircle.position,
@@ -30,10 +30,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 };
             }
 
-            function getUndoneFillColor(assignmentCircle){
+            function getUndoneFillColor(assignmentCircle) {
                 return {
                     gradient: {
-                        stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
+                        stops: [['#ffca6a', 0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
                         radial: true
                     },
                     origin: assignmentCircle.position,
@@ -143,10 +143,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 for (var i = 0; i < locations.length; i++) {
                     var assignmentCircle = new paper.Path.Circle(locations[i], 35);
                     assignmentCircle.style = {
-                        fillColor : '#f18c3a',
+                        fillColor: '#f18c3a',
                         shadowColor: 'black',
                         shadowBlur: 12,
-                        shadowOffset: [5,5]
+                        shadowOffset: [5, 5]
                     }
                     assignmentCircle.opacity = 0.8;
 
@@ -157,36 +157,41 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     //assignment numbers over assignment circles
                     var text = new paper.PointText({
 
-                        point: [locations[i][0], locations[i][1]+6],
+                        point: [locations[i][0], locations[i][1] + 6],
                         content: i + 1,
                         fillColor: 'black',
                         fontSize: 20,
                         justification: 'center'
                     });
+                    setDependencyFunctions(scope.assignments[i], text);
                     textLayer.addChild(text);
                 }
             }
 
-            function setDependencyFunctions(assignment, circle){
-                circle.onMouseEnter = function(event) {
+            function setDependencyFunctions(assignment, item) {
+                item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
-                        if (dependentCircle){
-                            dependentCircle.fillColor = '#ffd700';
+                        if (dependentCircle) {
+                            dependentCircle.style = {
+                                shadowColor: '#ffd700',
+                                shadowBlur: 12,
+                                shadowOffset: [0, 0]
+                            };
                         }
                     }
                 }
 
-                circle.onMouseLeave = function(event) {
+                item.onMouseLeave = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
-                        if (dependentCircle){
-                            if (scope.doneAssignments.indexOf(dependent) >= 0){
-                                dependentCircle.fillColor = getDoneFillColor(dependentCircle);
-                            } else {
-                                dependentCircle.fillColor = getUndoneFillColor(dependentCircle);
+                        if (dependentCircle) {
+                            dependentCircle.style = {
+                                shadowColor: 'black',
+                                shadowBlur: 12,
+                                shadowOffset: [5, 5]
                             }
                         }
                     }
@@ -203,7 +208,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 pathLayer.addChild(path);
 
                 //beige vaihtoehto
-               // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
+                // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
                 //path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
                 path.style = {
                     strokeColor: '#48003A',
@@ -211,7 +216,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     strokeJoin: 'round',
                     shadowColor: 'black',
                     shadowBlur: 7,
-                    shadowOffset: [7,7]
+                    shadowOffset: [7, 7]
                 };
                 path.opacity = 0.64;
                 //path.strokeCap = 'round';
@@ -297,15 +302,15 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             //old testing functions
             /*tool.onMouseDown = function (event) {
-              path = new paper.Path();
-              path.strokeColor = 'black';
-              };
-              tool.onMouseDrag = function (event) {
-              path.add(event.point);
-              };
-              tool.onMouseUp = function (event) {
-            //nothing special here
-            };*/
+             path = new paper.Path();
+             path.strokeColor = 'black';
+             };
+             tool.onMouseDrag = function (event) {
+             path.add(event.point);
+             };
+             tool.onMouseUp = function (event) {
+             //nothing special here
+             };*/
         }
     }
 })
