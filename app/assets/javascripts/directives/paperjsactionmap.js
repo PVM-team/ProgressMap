@@ -16,12 +16,14 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                 lanczosFilterSize: 10,
                 cubicTension: 0
             };
+            
 
             var path;
             paper.install(window);
             paper.setup(element[0]);
 
             var previousWindowWidth;
+            var pathLayer;
 
             scope.$watch('assignments', function (newval, oldval) {
 
@@ -138,19 +140,25 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             function drawSmoothPaperPaths() {
                 var locations = getLocations(scope.assignments);
+                pathLayer = new paper.Layer();
 
                 var lastIndex = locations.length - 1;
                 path = new paper.Path();
+                pathLayer.addChild(path);
 
                 //beige vaihtoehto
-                //path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
-                path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
+               // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
+                //path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
+                path.style = {
+                    strokeColor: '#48003A',
+                    strokeWidth: 20,
+                    strokeJoin: 'round',
+                    shadowColor: 'black',
+                    shadowBlur: 7,
+                    shadowOffset: [5,5]
+                };
+                path.opacity = 0.64;
 
-                //path.opacity = 0.62;
-                path.strokeWidth = 20;
-                path.strokeJoin = 'round';
-                //path.strokeCap = 'round';
-                //path.dashArray = [35, 10];
 
                 if (locations.length >= 2) {
                     path.add(locations[0]);
