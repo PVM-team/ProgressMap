@@ -226,7 +226,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     strokeJoin: 'round',
                     shadowColor: 'black',
                     shadowBlur: 7,
-                    shadowOffset: [7, 7]
+                    shadowOffset: [5,5]
                 };
                 path.opacity = 0.64;
                 //path.strokeCap = 'round';
