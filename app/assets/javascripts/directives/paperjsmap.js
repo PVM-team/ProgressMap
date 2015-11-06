@@ -172,13 +172,23 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
+                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;                        
+
                         if (dependentCircle) {
-                            dependentCircle.style = {
-                                shadowColor: '#ffd700',
-                                shadowBlur: 12,
-                                shadowOffset: [0, 0]
-                            };
+                            //var alphaValue = 0.6;
+/*                                if (alphaValue > 0) {
+                                    alphaValue = alphaValue - 0.05;
+                                }*/
+                            
+                                var dependencyLightColor = new Color('#ffd700');
+
+                                dependentCircle.style = {
+                                    shadowColor: dependencyLightColor,
+                                    shadowBlur: 12,
+                                    shadowOffset: [0, 0]
+                                };
+                                //dependentCircle.shadowColor.hue += event.time*1;
+                                
                         }
                     }
                 }
