@@ -9,6 +9,9 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     var intervalLength = 5000;
     var minSpeed = 90;
 
+    var studentLayer;
+    var assignmentLayer;
+
     this.updateAssignmentLocations = function() {
         for (var i = 0; i < assignments.length; i++) {
             assignments[i].location.x = MapScaleService.getRelativeX(assignments[i].location.x);
@@ -24,8 +27,10 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         }
     }
  
-    this.initialize = function(initial_assigments) {
+    this.initialize = function(initial_assigments, stLayer, assLayer) {
         assignments = initial_assigments;
+        studentLayer = stLayer;
+        assignmentLayer = assLayer;
     }
 
     this.update = function(new_students) {
@@ -47,7 +52,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                 if (! AssignmentLatestDoersService.originalAssignment(student, assignments) &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
+                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment, studentLayer);
 
                     putStudentToLatestDoersOfAssignment(student, destinationAssignment, endPosition);
                     createStudentCircleInPosition(student, endPosition);
@@ -61,6 +66,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     function createStudentCircleInPosition(student, scaledPosition) {
         var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), 15 * window.innerWidth / MapScaleService.getPreviousWindowWidth());
         circle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
+        studentLayer.addChild(circle);
 
         paper.view.update();
     }    
@@ -141,11 +147,11 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
         console.log(location);
 
-        return getItem(location); // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
+        return getItemFromStudentLayer(location); // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
     }
 
-    function getItem(location) {
-        var hitTest = paper.project.hitTest(location);
+    function getItemFromStudentLayer(location) {
+        var hitTest = studentLayer.hitTest(location);
 
         if (hitTest) {
             return hitTest.item;
@@ -205,7 +211,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     }
 
     function removeItemFromPosition(scaledPosition) {
-        var item = getItem(scaledPosition);
+        var item = getItemFromStudentLayer(scaledPosition);
 
         if (item) {
             item.remove();
@@ -268,7 +274,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
 
     function markAssignmentAsDone(student, assignment, position) {
         assignment.doers.push(student);
-        AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students);
+        AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students, assignmentLayer, studentLayer);
 
         AssignmentLatestDoersService.freePosition(assignment, position);
     }

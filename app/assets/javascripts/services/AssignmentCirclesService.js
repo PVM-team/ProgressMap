@@ -1,6 +1,6 @@
 ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
-    this.initializeCircle = function(assignment, students) {
+    this.initializeCircle = function(assignment, students, assignmentLayer, percentageLayer, labelLayer) {
         var location = assignment.location;
         var percentageCompleted = assignment.doers.length / students.length * 100;
 
@@ -9,6 +9,8 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         circle.fillColor = 'yellow';
         circle.fillColor.hue += percentageCompleted;
 
+        assignmentLayer.addChild(circle);
+
         //assignment numbers over assignment circles
         var text = new paper.PointText({
                         point: location,
@@ -16,6 +18,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
                         fillColor: 'white',
                         fontSize: 20
         });
+        labelLayer.addChild(text);
 
         //percentage over assignment circles
         var percentageLocationPoint = {'x': location.x, 'y': location.y + 20 };
@@ -25,6 +28,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
                         content: Math.floor(percentageCompleted) + "%",
                         fillColor: 'white'
         });
+        percentageLayer.addChild(percentage);
         paper.view.update();
     }
 
@@ -57,10 +61,10 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         paper.view.update();
 	} */
 
-    this.updateCircleAfterNewDoer = function(assignment, students) {
+    this.updateCircleAfterNewDoer = function(assignment, students, assignmentLayer, percentageLayer) {
         var location = assignment.location;
 
-        var hitTest = paper.project.hitTest(location);
+        var hitTest = assignmentLayer.hitTest(location);
 
         if (! hitTest) {
             console.log("circle not found. couldn't update.")
@@ -75,7 +79,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
         var percentageLocationPoint = {'x': location.x, 'y': location.y + MapScaleService.getRelativeX(20) };
 
-        var hitTest = paper.project.hitTest(percentageLocationPoint);
+        hitTest = percentageLayer.hitTest(percentageLocationPoint);
         
         if (! hitTest) {
             console.log("percentage not found. couldn't update.")

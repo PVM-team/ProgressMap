@@ -128,14 +128,14 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         }
     }
 
-    this.nextPositionToMoveToAroundAssignment = function(student, assignment) {
-        var position = getPositionStudentToMoveToAroundAssignment(student, assignment);
+    this.nextPositionToMoveToAroundAssignment = function(student, assignment, studentLayer) {
+        var position = getPositionStudentToMoveToAroundAssignment(student, assignment, studentLayer);
         reservePosition(assignment, position);
 
         return position;
     }
 
-    function getPositionStudentToMoveToAroundAssignment(student, assignment) {
+    function getPositionStudentToMoveToAroundAssignment(student, assignment, studentLayer) {
         if (self.latestDoersFull(assignment)) {
 
             if (allPositionsReserved(assignment)) {
@@ -144,7 +144,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             return locationOfOldestStudentInLatestDoers(assignment);
         }
 
-        return positionOfNewStudentAroundAssignment(student, assignment);
+        return positionOfNewStudentAroundAssignment(student, assignment, studentLayer);
     }
 
     function allPositionsReserved(assignment) {
@@ -163,7 +163,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         }
     }    
 
-    function positionOfNewStudentAroundAssignment(student, assignment) {
+    function positionOfNewStudentAroundAssignment(student, assignment, studentLayer) {
         var location = assignment.location;
         var lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
         var verticalPositionOffset = 0;
@@ -172,7 +172,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
         for (var i = 0; i < assignment.latestDoers.length; i++) {
 
-            if (! paper.project.hitTest(position) && ! assignment.latestDoers[i].reserved) { // uusi positio välissä, josta circle siirtynyt aiemmin pois ja positiota ei varattu kellekään jo liikkuvalle
+            if (!studentLayer.hitTest(position) && !assignment.latestDoers[i].reserved) { // uusi positio välissä, josta circle siirtynyt aiemmin pois ja positiota ei varattu kellekään jo liikkuvalle
                 return position;
             }
 

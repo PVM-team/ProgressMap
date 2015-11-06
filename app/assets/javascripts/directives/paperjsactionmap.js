@@ -21,6 +21,12 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
             paper.install(window);
             paper.setup(element[0]);
 
+            var pathLayer = new paper.Layer();
+            var assignmentLayer = new paper.Layer();
+            var studentLayer = new paper.Layer();
+            var percentageLayer = new paper.Layer();
+            var labelLayer = new paper.Layer();
+
             scope.$watch('assignments', function (newval, oldval) {
 
                 if (newval && !mapInitialized) {
@@ -31,7 +37,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
                     mapInitialized = true;
 
-                    MoveStudentService.initialize(scope.assignments);
+                    MoveStudentService.initialize(scope.assignments, studentLayer, assignmentLayer);
 
                     window.onresize();
                     paper.view.draw();
@@ -46,10 +52,12 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             window.onresize = function () {
                 if (MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
-                    console.log("called")
-                    
+
                     updateCanvasWidth();
-                    scaleButtonsByWidth();
+                    scaleItemsByWidth(labelLayer);
+                    scaleItemsByWidth(assignmentLayer);
+                    scaleItemsByWidth(studentLayer);
+                    scaleItemsByWidth(percentageLayer);
                     scalePathByWidth();
                     MoveStudentService.updateAssignmentLocations();
                     MoveStudentService.updateAssignmentsLatestDoersLocations();
@@ -68,14 +76,13 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                 paper.view.draw();
             }
 
-            function scaleButtonsByWidth() {
-                var items = paper.project.activeLayer.children;
-                
+            function scaleItemsByWidth(layer) {
+                var items = layer.children;
+
                 for (var i = 0; i < items.length; i++) {
-                    if (items[i] != path) {
-                        items[i].position.x = MapScaleService.getRelativeX(items[i].position.x);
-                        items[i].scale(window.innerWidth / MapScaleService.getPreviousWindowWidth());
-                    }
+                    items[i].position.x = MapScaleService.getRelativeX(items[i].position.x);
+                    items[i].scale(window.innerWidth / MapScaleService.getPreviousWindowWidth());
+
                 }
             }
 
@@ -110,16 +117,18 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
                     var student = assignment.latestDoers[j];
                     studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
+                    studentLayer.addChild(studentCircle);
 
-                    student['location'] = {'x': studentLocation.x, 'y': studentLocation.y };
+                    student['location'] = {'x': studentLocation.x, 'y': studentLocation.y};
 
-                     //student id:s over student circles
+                    //student id:s over student circles
                     var text = new paper.PointText({
                         point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
                         content: student.id,
                         fillColor: 'white',
                         fontSize: 15
                     });
+                    labelLayer.addChild(text);
 
                     lateralPositionOffset += 30;
 
@@ -132,7 +141,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             function placeCirclesOnAssignmentLocations() {
                 for (var i = 0; i < scope.assignments.length; i++) {
-                    AssignmentCirclesService.initializeCircle(scope.assignments[i], scope.students);
+                    AssignmentCirclesService.initializeCircle(scope.assignments[i], scope.students, assignmentLayer, percentageLayer, labelLayer);
                 }
             }
 
@@ -159,6 +168,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                         drawSmoothPaperCurve(i, locations, path);
                     }
                 }
+                pathLayer.addChild(path);
             }
 
             function getLocations() {
