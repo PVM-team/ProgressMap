@@ -92,7 +92,7 @@ describe('CanvasService', function () {
                     var yStart = 250 * 6 + 100;  // level = 6, border = 100
 
                     locationIsInBlock(location, xStart, yStart);
-                    expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(120);
+                    expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(119);
                 }
             })
         })

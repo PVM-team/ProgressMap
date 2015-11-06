@@ -139,7 +139,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         if (self.latestDoersFull(assignment)) {
 
             if (allPositionsReserved(assignment)) {
-                freeAllPositions();
+                freeAllPositions(assignment);
             }
             return locationOfOldestStudentInLatestDoers(assignment);
         }
@@ -159,7 +159,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
     function freeAllPositions(assignment) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
-            assignment.latestDoers[i].reserved == false;
+            assignment.latestDoers[i].reserved = false;
         }
     }    
 
