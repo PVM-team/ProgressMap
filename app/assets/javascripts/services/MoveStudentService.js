@@ -6,7 +6,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     var movingQueue = [];
     var movingInterval;
     var lastWaitTime = 0;
-    var intervalLength = 5000;
+    var intervalLength = 10000;
     var minSpeed = 90;
 
     var assignmentLayer;
@@ -49,12 +49,11 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     this.update = function(new_students) {
         students = new_students;
 
-        placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
-
         var studentsToMove = movingStudents();
         setLeavingAttributesForAssignmentsLatestDoersMovingStudents(studentsToMove);
 
         moveStudents(studentsToMove);
+        placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
     }
 
     function placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
@@ -69,14 +68,18 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
                 if (! AssignmentLatestDoersService.originalAssignment(student, assignments) &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment, studentLayer);
+                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
-                    markAssignmentAsDone(student, destinationAssignment, endPosition);
+                    var waitTime = setTimeout(function() {
+                        markAssignmentAsDone(student, destinationAssignment, endPosition);
 
-                    AssignmentLatestDoersService.setLeavingToFalseForStudent(student, destinationAssignment);
+                        AssignmentLatestDoersService.setLeavingToFalseForStudent(student, destinationAssignment);
 
-                    createStudentCircleInPosition(student, endPosition); // must be executed after 'markAssignmentAsDone'
+                        createStudentCircleInPosition(student, endPosition); // must be executed after 'markAssignmentAsDone'
 
+                        clearTimeout(waitTime);
+
+                    }, intervalLength / 2); // wait for a little while so that we get the studentCircles in movingQueue for each student first
 
                     console.log("assignment after placing a new student:");
                     console.log(destinationAssignment);
@@ -86,7 +89,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     }
 
     function createStudentCircleInPosition(student, scaledPosition) {
-        var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), MapScaleService.getRelativeX(15));
+        var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), MapScaleService.scaleByDefaultWidth(15));
         circle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
         studentLayer.addChild(circle);
 
@@ -140,9 +143,17 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
 
     function placeStudentToWait(student, originalAssignment, destinationAssignment, movingStudentsDuringInterval) {
         var time = waitingTime(movingStudentsDuringInterval);
+        var circle = getStudentCircle(student, originalAssignment);
+        var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
+
+        console.log(circle)
 
         var waitTillMove = setTimeout(function() {
-                                placeStudentInMovingQueue(student, originalAssignment, destinationAssignment);
+                                console.log("interrupt")
+
+                                console.log(circle) // miksi null?
+
+                                placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition);
                                 AssignmentLatestDoersService.setLeavingToFalseForStudent(student, originalAssignment);
                                 resetMovingInterval();
 
@@ -156,34 +167,21 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
     }
 
-    function placeStudentInMovingQueue(student, originalAssignment, destinationAssignment) {
-        var circleToMove = getStudentCircle(student, originalAssignment);
+    function getStudentCircle(student, assignment) {
+        var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
+        return getItemFromStudentLayer(location);
+    }    
 
-        var movingInfo = {'circle': circleToMove,
+    function placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition) {
+        var movingInfo = {'circle': circle,
                           'originalAssignment': originalAssignment,
                           'destinationAssignment': destinationAssignment,
-                          'startPosition': circleToMove.position,
-                          'endPosition': AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment, studentLayer),
+                          'startPosition': circle.position,
+                          'endPosition': endPosition,
                           'student': student,
                           'speed': minSpeed }; // vakionopeus alussa kaikilla sama
 
         movingQueue.push(movingInfo);
-    }
-
-    function getStudentCircle(student, assignment) {
-        var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
-        console.log(location);
-
-        return getItemFromStudentLayer(location); // huono ratkaisu, voi johtaa ongelmiin... toisaalta Paper -kamaa ei voi tallettaa hashiin, koska herjaa konsolissa ja ohjelma ei toimi myöskään oikein...
-    }
-
-    function getItemFromStudentLayer(location) {
-        var hitTest = studentLayer.hitTest(location);
-
-        if (hitTest) {
-            return hitTest.item;
-        }
-        return null;
     }
 
     function resetMovingInterval() {
@@ -248,26 +246,40 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
             item.remove();
             paper.view.update();
         }
+
         else {
             console.log("item to remove not found")
         }
     }
+    
+    function getItemFromStudentLayer(location) {
+        var hitTest = studentLayer.hitTest(location);
+
+        if (hitTest) {
+            return hitTest.item;
+        }
+        return null;
+    }
 
     /*
-        Poistaa opiskelijan assignmentin latestDoersista ja asettaa tilalle toisen, jos on olemassa sellainen
-        opiskelija, joka on ko. assignmentin viimeksi tehnyt ja ei tällä hetkellä latestDoersissa mukana.
+        Poistaa opiskelijan assignmentin latestDoersista ja asettaa tilalle toisen, jos kukaan muu ei ole
+        tämän positiota varannut, ja on olemassa sellainen opiskelija, joka on ko. assignmentin viimeksi tehnyt
+        ja ei tällä hetkellä latestDoersissa mukana.
 
         Kutsutaan silloin kun joku opiskelija liikkuu paikasta toiseen ja saavuttaa määränpäänsä. Eli opiskelija
         poistetaan siis originalAssignmentin latestDoersista.
     */
 
     function removeStudentFromLatestDoersOfAssignment(student, originalAssignment, scaledPosition) {
-        AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
-        var student = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(originalAssignment, students);
+        var positionReserved = AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
+        
+        if (! positionReserved) {
+            var student = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(originalAssignment, students, assignments, scaledPosition);
 
-        if (student) {
-            AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, originalAssignment, scaledPosition);
-            createStudentCircleInPosition(student, scaledPosition);
+            if (student) {
+                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, originalAssignment, scaledPosition);
+                createStudentCircleInPosition(student, scaledPosition);
+            }
         }
     }    
 

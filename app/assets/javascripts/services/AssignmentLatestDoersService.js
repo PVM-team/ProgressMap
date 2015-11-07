@@ -94,9 +94,28 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         return false;
     }
 
+    /*
+        Poistaa studentin assignmentin latestDoersista.
+        Student ei välttämättä ole siellä enää, jos joku toinen on liikkunut tämän tilalle
+        ja poistanut tämän latestDoersista tätä kautta!
+
+        Palauttaa feedbackinä tiedon siitä, onko joku varannut tämän ko. studentin
+        position, jotta tiedetään, halutaanko poistetun studentin tilalle etsiä uusi
+        student assignmentin tekijöistä, jotka eivät ole latestDoersista vai ei.
+        Ei siis haeta uutta tekijää tilalle, jos joku on tämän varannut ja tähän
+        tulossa.
+    */
+
     this.removeStudentFromLatestDoersOfAssignment = function(student, assignment) {
         var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        assignment.latestDoers.splice(i, 1);
+        var positionReserved;
+
+        if (i >= 0) {
+            positionReserved = assignment.latestDoers[i].reserved;
+            assignment.latestDoers.splice(i, 1);            
+        }
+
+        return positionReserved;
     }
 
     this.studentToAddInPlaceOfRemovedOne = function(assignment, students) {
@@ -155,11 +174,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         Määrittää position, johon studentin circle tulee siirtää sekä varaa ko. position liikkumisen ajaksi.
     */
 
-    this.nextPositionToMoveToAroundAssignment = function(student, assignment, studentLayer) {
-        var position = getPositionStudentToMoveToAroundAssignment(student, assignment, studentLayer);
+    this.nextPositionToMoveToAroundAssignment = function(student, assignment) {
+        var position = getPositionStudentToMoveToAroundAssignment(student, assignment);
         reservePosition(assignment, position);
-
-
 
         return position;
     }
@@ -174,7 +191,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         Muuten (kaikki 5 paikkaa eivät varattuina joten mahtuu), 
     */
 
-    function getPositionStudentToMoveToAroundAssignment(student, assignment, studentLayer) {
+    function getPositionStudentToMoveToAroundAssignment(student, assignment) {
         if (allPositionsReserved(assignment)) {
             freeAllPositions(assignment);
         }
@@ -182,7 +199,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         if (self.latestDoersFull(assignment) && ! atLeastOneStudentLeavingFromAssignment(assignment)) {
             return locationOfOldestStudentInLatestDoersWhichNotReserved(assignment);
         }
-        return positionOfNewStudentAroundAssignment(student, assignment, studentLayer);
+        return positionOfNewStudentAroundAssignment(student, assignment);
     }
 
     /*
@@ -219,22 +236,26 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         }
     }    
 
-    function positionOfNewStudentAroundAssignment(student, assignment, studentLayer) {
+    function positionOfNewStudentAroundAssignment(student, assignment) {
         var location = assignment.location;
         var lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
         var verticalPositionOffset = 0;
 
         var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
 
+        console.log(student);
+
         for (var i = 0; i < maxStudentsToShowAroundAssignment; i++) {
             var doer = getStudentByLocationFromLatestDoersOfAssignment(assignment, position);
+
+            console.log(doer);
 
             if (! doer) {
                 createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position);
                 return position;
             }
 
-            else if (! doer.reserved && doer.leaving) {
+            else if (doer.leaving && ! doer.reserved) {
                 return position;
             }
 
