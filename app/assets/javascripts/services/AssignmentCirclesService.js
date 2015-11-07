@@ -77,7 +77,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         circle.fillColor = 'yellow';
         circle.fillColor.hue += percentageCompleted;
 
-        var percentageLocationPoint = {'x': location.x, 'y': location.y + MapScaleService.getRelativeX(20) };
+        var percentageLocationPoint = {'x': location.x, 'y': location.y + 20 };
 
         hitTest = percentageLayer.hitTest(percentageLocationPoint);
         

@@ -37,7 +37,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
                     mapInitialized = true;
 
-                    MoveStudentService.initialize(scope.assignments, studentLayer, assignmentLayer);
+                    MoveStudentService.initialize(scope.assignments, studentLayer, assignmentLayer, percentageLayer);
 
                     window.onresize();
                     paper.view.draw();
@@ -119,7 +119,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
                     studentLayer.addChild(studentCircle);
 
-                    student['location'] = {'x': studentLocation.x, 'y': studentLocation.y};
+                    MoveStudentService.initializeLatestDoer(student, studentLocation);
 
                     //student id:s over student circles
                     var text = new paper.PointText({

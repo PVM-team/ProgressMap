@@ -5,7 +5,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
     var interval = setInterval(function() {
         updateLatestAssignments();
-    }, 3000);
+    }, 10000);
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
 
