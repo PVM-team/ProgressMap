@@ -243,12 +243,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
         var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
 
-        console.log(student);
-
         for (var i = 0; i < maxStudentsToShowAroundAssignment; i++) {
             var doer = getStudentByLocationFromLatestDoersOfAssignment(assignment, position);
-
-            console.log(doer);
 
             if (! doer) {
                 createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position);
@@ -351,8 +347,14 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         assignment.latestDoers.push(dummyStudent);
     }
 
+    /*
+        Skaalatut positiot voivat heittää x-koordinaatiltaan oikeasta positiosta hyvin vähän, mutta silti.
+        Tuli vastaan tilanne, jossa location1.x = 609.8427272727273 ja location2.x = 609.8427272727272
+        ja positioiden tuli olla samat.
+    */
+
     function locationsAreTheSame(location1, location2) {
-        return location1.x == location2.x &&
+        return Math.abs(location1.x - location2.x) < 0.01 &&
                location1.y == location2.y;
     }
 })
