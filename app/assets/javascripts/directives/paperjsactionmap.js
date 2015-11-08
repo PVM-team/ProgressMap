@@ -1,4 +1,4 @@
-ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesService, MoveStudentService, StudentIconService, MapScaleService) {
+ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -37,7 +37,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
                     mapInitialized = true;
 
-                    MoveStudentService.initialize(scope.assignments, studentLayer, assignmentLayer, percentageLayer);
+                    ActionMapUpdaterService.initialize(scope.assignments, studentLayer, assignmentLayer, percentageLayer);
 
                     window.onresize();
                     paper.view.draw();
@@ -46,7 +46,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             scope.$watch('students', function (newval, oldval) {
                 if (newval && mapInitialized) {
-                    MoveStudentService.update(scope.students);
+                    ActionMapUpdaterService.update(scope.students);
                 }
             }, true);
 
@@ -59,8 +59,8 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     scaleItemsByWidth(studentLayer);
                     scaleItemsByWidth(percentageLayer);
                     scalePathByWidth();
-                    MoveStudentService.updateAssignmentLocations();
-                    MoveStudentService.updateAssignmentsLatestDoersLocations();
+                    ActionMapUpdaterService.updateAssignmentLocations();
+                    ActionMapUpdaterService.updateAssignmentsLatestDoersLocations();
 
                     MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
@@ -119,7 +119,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                     studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
                     studentLayer.addChild(studentCircle);
 
-                    MoveStudentService.initializeLatestDoer(student, studentLocation);
+                    ActionMapUpdaterService.initializeLatestDoer(student, studentLocation);
 
                     //student id:s over student circles
                     var text = new paper.PointText({

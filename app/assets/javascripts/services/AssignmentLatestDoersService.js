@@ -4,7 +4,11 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     var self = this;
 
 	self.latestDoersFull = function(assignment) {
-		return assignment.latestDoers.length == maxStudentsToShowAroundAssignment;
+        if (assignment.latestDoers.length > maxStudentsToShowAroundAssignment) {
+            console.log("Error! Length of latestDoers for assignment no." + assignment.number + " = " + assignment.latestDoers.length)
+        }
+
+		return assignment.latestDoers.length >= maxStudentsToShowAroundAssignment;
 	}
 
     this.originalAssignment = function(student, assignments) {
@@ -28,8 +32,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     this.studentShouldBeInLatestDoersOfAssignment = function(student, assignment) {
         if (student.lastDoneAssignment) {
 
-			if (assignment.latestDoers.length < maxStudentsToShowAroundAssignment) {
-				return true;
+            if (! self.latestDoersFull(assignment)) {
+                return true;
             }
 
             for (var i = 0; i < assignment.latestDoers.length; i++) {
@@ -52,68 +56,43 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     }
 
     /*
-        Merkkaa tekijälle 'leaving' attribuutiksi 'false' eli ei siis liiku tämän intervalin aikana.
-        Kutsutaan kahdesta paikasta MoveStudentServiceä:
-
-        1) Kun asetetaan uusi opiskelija kartalle uuden tehtävän kohdalle (leaving tässä vaiheessa ko. opiskelijalle ei määritelty).
-        2) Kun asetetaan opiskelija liikkumisjonoon ja muutetaan 'leaving' true --> false.
-    */
-
-    this.setLeavingToFalseForStudent = function(student, assignment) {
-        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        assignment.latestDoers[i]['leaving'] = false;
-    }
-
-    /*
         Yrittää poistaa tekijän assignmentinLatestDoereista, jonne toinen opiskelija siirtyy.
-        Palauttaa 'true', mikäli poisto onnistuu ja poistettava ei dummy student, 'false' muulloin.
-
-        Poisto onnistuu, mikäli poistettava tekijä ei itse liiku ko. intervalin aikana muualle.
-
+        Palauttaa 'true', mikäli poistettava opiskelija löytyy ja ko. opiskelija ei ole 'dummy' student.
+        Opiskelija ei ole 'dummy', mikäli se on oikea opiskelija ja siihen liittyy tällöin studentLayerillä circle.
     */
 
-    this.removeStudentFromLatestDoersOfAssignmentWithPosition = function(assignment, position) {
+    this.removeStudentFromLatestDoersOfAssignmentFromPosition = function(assignment, position) {
+        console.log(assignment.latestDoers)
+        console.log(position)
+
         for (var i = 0; i < assignment.latestDoers.length; i++) {
             if (locationsAreTheSame(assignment.latestDoers[i].location, position)) {
 
-                if (assignment.latestDoers[i].leaving) {
-                    return false;
-                }
-                else {
-                    var dummy = assignment.latestDoers[i].dummy;
-                    assignment.latestDoers.splice(i , 1);
+                console.log("found")
+                console.log(assignment.latestDoers[i])
 
-                    if (dummy) {
-                        return false;
-                    }
-                    return true;
-                }
+                var dummy = assignment.latestDoers[i].dummy;
+                assignment.latestDoers.splice(i, 1);
+
+                return ! dummy; // palautetaan käytännössä tiedon siitä, liittyykö tähän poistettuun doeriin circle vai ei. jos liittyy niin dummy = false
             }
         }
 
-        return false;
+        console.log("error with removing. no real or dummy student found!")
     }
 
     /*
         Poistaa studentin assignmentin latestDoersista.
-        Student ei välttämättä ole siellä enää, jos joku toinen on liikkunut tämän tilalle
-        ja poistanut tämän latestDoersista tätä kautta!
 
         Palauttaa feedbackinä tiedon siitä, onko joku varannut tämän ko. studentin
         position, jotta tiedetään, halutaanko poistetun studentin tilalle etsiä uusi
-        student assignmentin tekijöistä, jotka eivät ole latestDoersista vai ei.
-        Ei siis haeta uutta tekijää tilalle, jos joku on tämän varannut ja tähän
-        tulossa.
+        student assignmentin doersista, jotka eivät ole latestDoersista vai ei.
     */
 
     this.removeStudentFromLatestDoersOfAssignment = function(student, assignment) {
         var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        var positionReserved;
-
-        if (i >= 0) {
-            positionReserved = assignment.latestDoers[i].reserved;
-            assignment.latestDoers.splice(i, 1);            
-        }
+        var positionReserved = assignment.latestDoers[i].reserved;
+        assignment.latestDoers.splice(i, 1);
 
         return positionReserved;
     }
@@ -158,16 +137,6 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
     function firstStudentHasDoneLastDoneAssignmentAfterTheSecondOne(student1, student2) {
         return new Date(student1.lastDoneAssignment.timestamp) - new Date(student2.lastDoneAssignment.timestamp) > 0;
-    }
-
-    this.freePosition = function(assignment, position) {
-        for (var i = 0; i < assignment.latestDoers.length; i++) {
-
-            if (locationsAreTheSame(assignment.latestDoers[i].location, position)) {
-                assignment.latestDoers[i].reserved = false;
-                return;
-            }
-        }
     }
 
     /*
@@ -266,30 +235,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         }
 
         console.log("error when trying to find free position to move to around assignment")
-        return null;
     }
-
-        /*
-        for (var i = 0; i < assignment.latestDoers.length; i++) {
-
-            if (! assignment.latestDoers[i].reserved &&
-                assignment.latestDoers[i].leaving || ! studentLayer.hitTest(position)) { // uusi positio välissä, josta circle siirtynyt aiemmin pois ja positiota ei varattu kellekään jo liikkuvalle
-                return position;
-            }
-
-            lateralPositionOffset += MapScaleService.scaleByDefaultWidth(30);
-
-            if ((i + 1) % maxStudentsInRow == 0) {
-                verticalPositionOffset += 30;
-                lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
-            }
-
-            var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
-        }
-
-        createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position); // tee uusi varattu dummy student ja lisää doersin perälle
-        return position; // uusi positio perällä, yleisempi tapaus */
-
 
     function getStudentByLocationFromLatestDoersOfAssignment(assignment, location) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
@@ -354,7 +300,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     */
 
     function locationsAreTheSame(location1, location2) {
-        return Math.abs(location1.x - location2.x) < 0.01 &&
+        return Math.abs(location1.x - location2.x) < 0.000001 &&
                location1.y == location2.y;
     }
 })

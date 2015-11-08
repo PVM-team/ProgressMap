@@ -1,12 +1,17 @@
-ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService, AssignmentCirclesService, StudentIconService, MapScaleService) {
+ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersService, AssignmentCirclesService, MapScaleService, MoveStudentCircleService, StudentIconService) {
 
-    var assignments;
-    var students;
+    var assignments; // muotoa {'id', 'number', latestDoers: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
+                     // latestDoersissa jokaisella tulee olla aina id ja location. Muut attribuutit ovat tilanteesta riippuen olemassa tai sitten ei, jos niitä ei ko. doerin kohdalla tarvita
+                     // reserved = "'true', jos toinen opiskelija on varannut tämän opiskelijan position ja liikkuu tämän paikalle ko. intervalin aikana"
+                     // leaving = "'true' jos tämä opiskelija siirtyy ko. intervalin aikana. on olemassa uusien siirtymälokaatioiden määrityksen aikana olemassa."
+                     // dummy = "määritelty ja 'true', mikäli assignmentilla ei ole oikeasti tätä tekijää, mutta joku liikkuu tämän positioon ja on tehnyt siihen jo varauksen. tarvitaan myöhemmin tietona siitä, tuleeko kartalta poistaa 'circle' tämän positiosta. ei luonnollisesti poisteta circleä, jos dummy = true, sillä "dummy = true" tarkoittaa että kartalla ei ole tämän positiossa mitään.
+
+    var students; // muotoa: {'id', 'lastDoneAssignment': {'number', 'timestamp'}}
 
     var movingQueue = [];
     var movingInterval;
-    var lastWaitTime = 0;
     var intervalLength = 10000;
+    var lastWaitTime = 0;
     var minSpeed = 90;
 
     var assignmentLayer;
@@ -35,24 +40,26 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         percentageLayer = perLayer;
     }
 
-    /*
-        Each student in assignment.latestDoers has attributes location and leaving which students do not have.
-        These are for telling what's the current location of the circle associated with this student, and
-        whether or not this student is leaving its current position during the current moving session (during a interval).
-    */
-
     this.initializeLatestDoer = function(doer, location) {
         doer['location'] = {'x': location.x, 'y': location.y};
-        doer['leaving'] = false;
     }
+
+    /*
+        Päivittää tilanteen siirtämällä opiskelijoita paikoista toisiin sekä lisäämällä kartalle
+        opiskelijat, jotka eivät ole tällä hetkellä näkyvissä, mutta viime intervalin aikana
+        tekivät jonkin tehtävän.
+
+        Metodin sisäiset funktiokutsut tulee suorittaa samassa järjestyksessä kuin ne ovat nytkin.
+    */
 
     this.update = function(new_students) {
         students = new_students;
 
         var studentsToMove = movingStudents();
         setLeavingAttributesForAssignmentsLatestDoersMovingStudents(studentsToMove);
+        setStudentsWaitingForMoving(studentsToMove);
+        removeMovingStudentsFromTheirOriginalAssingmentsLatestDoers();
 
-        moveStudents(studentsToMove);
         placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
     }
 
@@ -72,10 +79,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
 
                     var waitTime = setTimeout(function() {
                         markAssignmentAsDone(student, destinationAssignment, endPosition);
-
-                        AssignmentLatestDoersService.setLeavingToFalseForStudent(student, destinationAssignment);
-
-                        createStudentCircleInPosition(student, endPosition); // must be executed after 'markAssignmentAsDone'
+                        createStudentCircleInPosition(student, endPosition);
 
                         clearTimeout(waitTime);
 
@@ -119,16 +123,7 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         return movingStudents;
     }
 
-    function setLeavingAttributesForAssignmentsLatestDoersMovingStudents(movingStudents) {
-        for (var i = 0; i < movingStudents.length; i++) {
-            var student = movingStudents[i];
-
-            var lastDoneAssignment = AssignmentLatestDoersService.originalAssignment(student, assignments);
-            AssignmentLatestDoersService.setStudentToLeaveItsLastDoneAssignment(student, lastDoneAssignment);
-        }
-    }
-
-    function moveStudents(movingStudents) {
+    function setStudentsWaitingForMoving(movingStudents) {
         for (var i = 0; i < movingStudents.length; i++) {
             var student = movingStudents[i];
             var lastDoneAssignment = student.lastDoneAssignment;
@@ -149,12 +144,9 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         console.log(circle)
 
         var waitTillMove = setTimeout(function() {
-                                console.log("interrupt")
-
                                 console.log(circle) // miksi null?
 
                                 placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition);
-                                AssignmentLatestDoersService.setLeavingToFalseForStudent(student, originalAssignment);
                                 resetMovingInterval();
 
                                 clearTimeout(waitTillMove);
@@ -163,14 +155,24 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         lastWaitTime = time;
     }
 
+    /*
+        Eka opiskelija saa odottaa jonkin aikaa, jotta kaikki siirrettävät opiskelijat ehditään varmasti ensin
+        poistaa oman originalAssignmentin latestDoersista. Tämä suoritetaan, kun kaikille opiskelijoille on määritetty
+        waitTillMove = setTimeout(function() { ... }).
+    */
+
     function waitingTime(movingStudentsDuringInterval) {
+        if (lastWaitTime == 0) {
+            return intervalLength / movingStudentsDuringInterval;
+        }
+
         return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
     }
 
     function getStudentCircle(student, assignment) {
         var location = AssignmentLatestDoersService.getLocationOfStudent(student, assignment);
         return getItemFromStudentLayer(location);
-    }    
+    }
 
     function placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition) {
         var movingInfo = {'circle': circle,
@@ -184,44 +186,58 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         movingQueue.push(movingInfo);
     }
 
-    function resetMovingInterval() {
-        if (movingInterval) {
-            clearInterval(movingInterval);
+    function setLeavingAttributesForAssignmentsLatestDoersMovingStudents(movingStudents) {
+        for (var i = 0; i < movingStudents.length; i++) {
+            var student = movingStudents[i];
+
+            var lastDoneAssignment = AssignmentLatestDoersService.originalAssignment(student, assignments);
+            AssignmentLatestDoersService.setStudentToLeaveItsLastDoneAssignment(student, lastDoneAssignment);
         }
+    }
 
-        movingInterval = setInterval(function() {
+    function removeMovingStudentsFromTheirOriginalAssingmentsLatestDoers(movingStudents) {
+        for (var i = 0; i < movingStudents.length; i++) {
+            var student = movingStudents[i];
 
-            if (movingQueue.length <= 0) {
-                return;
+            var lastDoneAssignment = AssignmentLatestDoersService.originalAssignment(student, assignments);
+            removeStudentFromLatestDoersOfAssignment(student, lastDoneAssignment);
+        }
+    }
+
+    /*
+        Poistaa opiskelijan assignmentin latestDoersista ja asettaa tilalle toisen, jos kukaan muu ei ole
+        tämän positiota varannut, ja on olemassa sellainen opiskelija, joka on ko. assignmentin viimeksi tehnyt
+        ja ei tällä hetkellä latestDoersissa mukana.
+    */
+
+    function removeStudentFromLatestDoersOfAssignment(student, originalAssignment) {
+        var positionReserved = AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
+        
+        if (! positionReserved) {
+            var studentToAdd = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(originalAssignment, students);
+
+            console.log(studentToAdd)
+
+            if (studentToAdd) {
+                var scaledPosition = AssignmentLatestDoersService.getLocationOfStudent(student, originalAssignment);
+
+                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(studentToAdd, originalAssignment, scaledPosition);
+                createStudentCircleInPosition(studentToAdd, scaledPosition);
             }
+        }
+    }    
 
-            var elem = movingQueue.shift(); // pop from queue
+    /*
+        Tehtävän merkkaaminen tehdyksi toimii siten että opiskelija merkitään uuden assignmentin latestDoersiin, josta
+        mahdollisesti poistetaan toinen samaan aikaan.
+        Lisäksi lisätään opiskelija tehtävän tekijöihin ja päivitetään saavutettavan assignmentcirclen ulkonäköä.
+    */
 
-            var circleToMove = elem.circle;
-            var startPosition = elem.startPosition;
-            var endPosition = elem.endPosition;
+    function markAssignmentAsDone(student, assignment, position) {
+        putStudentToLatestDoersOfAssignment(student, assignment, position);
 
-            if (hasReachedDestination(circleToMove, endPosition)) {
-                var student = elem.student;
-                var originalAssignment = elem.originalAssignment;
-                var destinationAssignment = elem.destinationAssignment;
-
-                removeStudentFromLatestDoersOfAssignment(student, originalAssignment, startPosition);
-                markAssignmentAsDone(student, destinationAssignment, endPosition);
-
-                circleToMove.position = endPosition; // must be executed after 'markAssignmentAsDone'
-
-                paper.view.update();
-            }
-
-            else {
-                var newSpeed = moveCircle(circleToMove, startPosition, endPosition, elem.speed);
-                elem.circle = circleToMove;
-                elem.speed = newSpeed;
-
-                movingQueue.push(elem);
-            }
-        }, 1000 / (60 * movingQueue.length))
+        assignment.doers.push(student);
+        AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students, assignmentLayer, percentageLayer);
     }
 
     /*
@@ -232,7 +248,12 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
     */
 
     function putStudentToLatestDoersOfAssignment(student, assignment, scaledPosition) {
-        if (AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignmentWithPosition(assignment, scaledPosition)) {
+        console.log("putStudentToLatestDoersOfAssignment")
+
+        if (AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignmentFromPosition(assignment, scaledPosition)) {
+            console.log("remove")
+            console.log(scaledPosition)
+
             removeItemFromPosition(scaledPosition);
         }
 
@@ -261,90 +282,56 @@ ProgressApp.service('MoveStudentService', function (AssignmentLatestDoersService
         return null;
     }
 
-    /*
-        Poistaa opiskelijan assignmentin latestDoersista ja asettaa tilalle toisen, jos kukaan muu ei ole
-        tämän positiota varannut, ja on olemassa sellainen opiskelija, joka on ko. assignmentin viimeksi tehnyt
-        ja ei tällä hetkellä latestDoersissa mukana.
 
-        Kutsutaan silloin kun joku opiskelija liikkuu paikasta toiseen ja saavuttaa määränpäänsä. Eli opiskelija
-        poistetaan siis originalAssignmentin latestDoersista.
+    /*
+        Resetoi aikavälin, jolloin studenteja liikutetaan eteenpäin.
+        Jos liikutettavia on vielä jäljellä, luo uuden intervalin, jonka sisällä
+        opiskelijoita liikutetaan.
     */
 
-    function removeStudentFromLatestDoersOfAssignment(student, originalAssignment, scaledPosition) {
-        var positionReserved = AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
-        
-        if (! positionReserved) {
-            var student = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(originalAssignment, students, assignments, scaledPosition);
+    function resetMovingInterval() {
+        clearInterval(movingInterval);
 
-            if (student) {
-                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, originalAssignment, scaledPosition);
-                createStudentCircleInPosition(student, scaledPosition);
+        if (movingQueue.length > 0) {
+            setMovingInterval();
+        }
+    }
+
+    /*
+        Määrittää ajanjakson, jonka välein 'movingQueue':ssä olevia opiskelijoita liikutetaan eteenpäin
+        sekä toiminnallisuuden liikkumiseen.
+    */
+
+    function setMovingInterval() {
+
+        movingInterval = setInterval(function() {
+            var elem = movingQueue.shift(); // pop from queue
+
+            var circleToMove = elem.circle;
+            var startPosition = elem.startPosition;
+            var endPosition = elem.endPosition;
+
+            if (MoveStudentCircleService.hasReachedDestination(circleToMove, endPosition)) {
+                var student = elem.student;
+                var originalAssignment = elem.originalAssignment;
+                var destinationAssignment = elem.destinationAssignment;
+
+                console.log(student.id + " reached destination")
+
+                markAssignmentAsDone(student, destinationAssignment, endPosition);
+
+                circleToMove.position = endPosition;
+                paper.view.update();
+
+                resetMovingInterval(); // alusta interval, koska yksi pääsi perille
             }
-        }
-    }    
 
-    function hasReachedDestination(circle, destination) {
-        var vector = getVector(circle, destination);
-        return Math.abs(vector[0]) + Math.abs(vector[1]) < 1;
-    }
+            else {
+                var newSpeed = MoveStudentCircleService.moveCircle(circleToMove, startPosition, endPosition, elem.speed);
+                elem.speed = newSpeed;
 
-    function getVector(circle, destination) {
-        var position = circle.position;
-        return [destination.x - position.x, destination.y - position.y];
-    }
-
-    /*
-        Liikuttaa circleä eteenpäin. Liikkumisen määrä riippuu circlen nopeudesta ko. ajanhetkellä sekä
-        matkasta perille (vector).
-
-        Laskee lopuksi uuden nopeuden circlelle ja palauttaa sen.
-    */
-
-    function moveCircle(circle, startPosition, endPosition, speed) {
-        var vector = getVector(circle, endPosition);
-        var totalDistance = distanceBetweenPoints(startPosition, endPosition);
-        var distanceRemaining = distanceBetweenPoints(circle.position, endPosition);
-
-        circle.position.x += vector[0] / speed;
-        circle.position.y += vector[1] / speed;
-
-        paper.view.update();
-
-        if (distanceRemaining * 7 > totalDistance) {   // etäisyys yli 1/7 kokonaismatkasta kohteeseen
-            speed -= 0.5;                              // nopeus kasvaa "smoothisti"
-        }
-
-        else if (distanceRemaining * 20 > totalDistance) { // nopeus alkaa laskemaan "smoothisti"
-            speed += 0.1
-        }
-        else {
-            speed += 0.02 // speed laskee vain vähän kun ollaan alle 5% etäisyydellä kohteeseen
-        }
-
-        speed = Math.max(10, speed);                   // nopeus tulee olla 10+ ja 100-
-        return Math.min(speed, minSpeed);
-    }
-
-    function distanceBetweenPoints(point1, point2) {
-        return distance([point1.x, point1.y], [point2.x, point2.y]);
-    }
-
-    function distance(a, b) {
-        return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-    }
-
-    /*
-        Tehtävän merkkaaminen tehdyksi toimii siten että opiskelija merkitään uuden assignmentin latestDoersiin, josta
-        mahdollisesti poistetaan toinen samaan aikaan. Lisäksi vapautetaan positio uusia liikkujia varten, mihin siirrytään,
-        lisätään opiskelija tehtävän tekijöihin ja päivitetään saavutettavan assignmentcirclen ulkonäköä.
-    */
-
-    function markAssignmentAsDone(student, assignment, position) {
-        putStudentToLatestDoersOfAssignment(student, assignment, position);
-        AssignmentLatestDoersService.freePosition(assignment, position);
-
-        assignment.doers.push(student);
-
-        AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students, assignmentLayer, percentageLayer);
+                movingQueue.push(elem);
+            }
+        }, 1000 / (60 * movingQueue.length))
     }
 })
