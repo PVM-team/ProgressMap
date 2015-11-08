@@ -62,14 +62,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     */
 
     this.removeStudentFromLatestDoersOfAssignmentFromPosition = function(assignment, position) {
-        console.log(assignment.latestDoers)
-        console.log(position)
 
         for (var i = 0; i < assignment.latestDoers.length; i++) {
             if (locationsAreTheSame(assignment.latestDoers[i].location, position)) {
-
-                console.log("found")
-                console.log(assignment.latestDoers[i])
 
                 var dummy = assignment.latestDoers[i].dummy;
                 assignment.latestDoers.splice(i, 1);
@@ -78,7 +73,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             }
         }
 
-        console.log("error with removing. no real or dummy student found!")
+        return false; // palauttaa tämän, jos paikalla oli toinen student
     }
 
     /*
@@ -91,10 +86,10 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
     this.removeStudentFromLatestDoersOfAssignment = function(student, assignment) {
         var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
-        var positionReserved = assignment.latestDoers[i].reserved;
+        var doer = assignment.latestDoers[i];
         assignment.latestDoers.splice(i, 1);
 
-        return positionReserved;
+        return doer;
     }
 
     this.studentToAddInPlaceOfRemovedOne = function(assignment, students) {

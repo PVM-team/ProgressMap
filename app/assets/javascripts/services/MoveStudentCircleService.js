@@ -1,8 +1,20 @@
 ProgressApp.service('MoveStudentCircleService', function () {
 
 	this.hasReachedDestination = function(circle, destination) {
+        return distanceToDestination(circle, destination) < 1;
+    }
+
+    /*
+        Jos huomaat että liikkuessa toisen opiskelijan päälle, oma circle katoaa, lisää vertailuarvoa (tällä hetkellä '30') suuremmaksi.
+    */
+
+    this.approachingDestination = function(circle, destination) {
+        return distanceToDestination(circle, destination) < 30;
+    }
+
+    function distanceToDestination(circle, destination) {
         var vector = getVector(circle, destination);
-        return Math.abs(vector[0]) + Math.abs(vector[1]) < 1;
+        return Math.abs(vector[0]) + Math.abs(vector[1]);
     }
 
     function getVector(circle, destination) {
@@ -17,7 +29,7 @@ ProgressApp.service('MoveStudentCircleService', function () {
         Laskee lopuksi uuden nopeuden circlelle ja palauttaa sen.
     */
 
-    this.moveCircle = function(circle, startPosition, endPosition, speed) {
+    this.moveCircle = function(circle, startPosition, endPosition, speed, minSpeed) {
         var vector = getVector(circle, endPosition);
         var totalDistance = distance(startPosition, endPosition);
         var distanceRemaining = distance(circle.position, endPosition);

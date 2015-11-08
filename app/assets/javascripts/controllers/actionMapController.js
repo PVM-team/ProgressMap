@@ -1,11 +1,11 @@
-ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService) {
+ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, ActionMapUpdaterService) {
 
     var self = this;
     var maxStudentsToShowAroundAssignment = 5;
 
     var interval = setInterval(function() {
         updateLatestAssignments();
-    }, 10000);
+    }, 20000);
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
 
@@ -35,6 +35,10 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     function updateLatestAssignments() {
         httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
             $scope.students = data["students"];
+
+            console.log("new update")
+
+            ActionMapUpdaterService.update($scope.students);
         })
     }
 

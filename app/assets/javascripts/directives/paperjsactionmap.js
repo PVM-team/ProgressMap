@@ -44,12 +44,6 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                 }
             }, true);
 
-            scope.$watch('students', function (newval, oldval) {
-                if (newval && mapInitialized) {
-                    ActionMapUpdaterService.update(scope.students);
-                }
-            }, true);
-
             window.onresize = function () {
                 if (MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
 

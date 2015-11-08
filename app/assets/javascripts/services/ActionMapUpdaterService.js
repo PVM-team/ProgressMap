@@ -8,9 +8,10 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
     var students; // muotoa: {'id', 'lastDoneAssignment': {'number', 'timestamp'}}
 
+    var waitingQueue = [];
     var movingQueue = [];
     var movingInterval;
-    var intervalLength = 10000;
+    var intervalLength = 20000;
     var lastWaitTime = 0;
     var minSpeed = 90;
 
@@ -56,20 +57,26 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
         students = new_students;
 
         var studentsToMove = movingStudents();
+
+        console.log("moving students during this interval")
+        console.log(studentsToMove)
+
         setLeavingAttributesForAssignmentsLatestDoersMovingStudents(studentsToMove);
         setStudentsWaitingForMoving(studentsToMove);
-        removeMovingStudentsFromTheirOriginalAssingmentsLatestDoers();
+        
+        placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
 
-        placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe();
+        removeMovingStudentsFromTheirOriginalAssingmentsLatestDoers(studentsToMove);
     }
 
-    function placeNewStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
+    function placeStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
 
         for (var i = 0; i < students.length; i++) {
             var student = students[i];
             var lastDoneAssignment = student.lastDoneAssignment;
 
             if (lastDoneAssignment) {
+
                 var destinationAssignment = assignments[lastDoneAssignment.number - 1];
 
                 if (! AssignmentLatestDoersService.originalAssignment(student, assignments) &&
@@ -77,16 +84,9 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
                     var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
-                    var waitTime = setTimeout(function() {
-                        markAssignmentAsDone(student, destinationAssignment, endPosition);
-                        createStudentCircleInPosition(student, endPosition);
-
-                        clearTimeout(waitTime);
-
-                    }, intervalLength / 2); // wait for a little while so that we get the studentCircles in movingQueue for each student first
-
-                    console.log("assignment after placing a new student:");
-                    console.log(destinationAssignment);
+                    removeStudentFromEndPosition(destinationAssignment, endPosition);
+                    markAssignmentAsDone(student, destinationAssignment, endPosition);
+                    createStudentCircleInPosition(student, endPosition);
                 }
             }
         }
@@ -137,36 +137,51 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     }
 
     function placeStudentToWait(student, originalAssignment, destinationAssignment, movingStudentsDuringInterval) {
+        placeStudentToWaitingQueue(student, originalAssignment, destinationAssignment);
+
         var time = waitingTime(movingStudentsDuringInterval);
+
+        console.log(time)
+
+        setTimeout(function() {
+            setNextStudentMoving();
+        }, time);
+
+        lastWaitTime = time;
+    }
+
+    function placeStudentToWaitingQueue(student, originalAssignment, destinationAssignment) {
         var circle = getStudentCircle(student, originalAssignment);
         var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
-        console.log(circle)
+        var movingInfo = {'circle': circle,
+                          'destinationAssignment': destinationAssignment,
+                          'startPosition': circle.position,
+                          'endPosition': endPosition,
+                          'student': student,
+                          'speed': minSpeed }
 
-        var waitTillMove = setTimeout(function() {
-                                console.log(circle) // miksi null?
-
-                                placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition);
-                                resetMovingInterval();
-
-                                clearTimeout(waitTillMove);
-                            }, time);
-
-        lastWaitTime = time;
+        waitingQueue.push(movingInfo);
     }
 
     /*
         Eka opiskelija saa odottaa jonkin aikaa, jotta kaikki siirrettävät opiskelijat ehditään varmasti ensin
         poistaa oman originalAssignmentin latestDoersista. Tämä suoritetaan, kun kaikille opiskelijoille on määritetty
         waitTillMove = setTimeout(function() { ... }).
+
+        Viimeinen mahdollinen liikkeellelähtöaika on ajoitettu ajaksi 'intervalLength / 2', jotta opiskelija pääsee
+        varmasti perille ennen kuin interval päättyy. Jos ei ehdi, niin teleporttaa seuraavan intervalin aikana ja
+        ei poista vanhaa palluraa.
     */
 
     function waitingTime(movingStudentsDuringInterval) {
         if (lastWaitTime == 0) {
-            return intervalLength / movingStudentsDuringInterval;
+            lastWaitTime = intervalLength / 10;
+
+            return lastWaitTime;
         }
 
-        return lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval;
+        return Math.min(intervalLength / 2, lastWaitTime + intervalLength * Math.random() / movingStudentsDuringInterval);
     }
 
     function getStudentCircle(student, assignment) {
@@ -174,16 +189,18 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
         return getItemFromStudentLayer(location);
     }
 
-    function placeStudentInMovingQueue(circle, student, originalAssignment, destinationAssignment, endPosition) {
-        var movingInfo = {'circle': circle,
-                          'originalAssignment': originalAssignment,
-                          'destinationAssignment': destinationAssignment,
-                          'startPosition': circle.position,
-                          'endPosition': endPosition,
-                          'student': student,
-                          'speed': minSpeed }; // vakionopeus alussa kaikilla sama
+    /*
+        Hae waitingQueue:sta sitä studentia koskeva movingInfo, joka aiheutti 'timeout' keskeytyksen (ko. movingInfo
+        sattuu olemaan aina ensimmäisenä).
+        Tämän jälkeen laita movingInfo movingQueueen ja aloita movingInfoa koskevan studentCirclen liikuttaminen
+        resetMovingIntervalilla.
+    */
+
+    function setNextStudentMoving() {
+        var movingInfo = waitingQueue.shift(); // pop first
 
         movingQueue.push(movingInfo);
+        resetMovingInterval();
     }
 
     function setLeavingAttributesForAssignmentsLatestDoersMovingStudents(movingStudents) {
@@ -211,30 +228,20 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     */
 
     function removeStudentFromLatestDoersOfAssignment(student, originalAssignment) {
-        var positionReserved = AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
-        
-        if (! positionReserved) {
+        var doer = AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignment(student, originalAssignment);
+
+        if (! doer.reserved) {
             var studentToAdd = AssignmentLatestDoersService.studentToAddInPlaceOfRemovedOne(originalAssignment, students);
 
-            console.log(studentToAdd)
-
             if (studentToAdd) {
-                var scaledPosition = AssignmentLatestDoersService.getLocationOfStudent(student, originalAssignment);
-
-                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(studentToAdd, originalAssignment, scaledPosition);
-                createStudentCircleInPosition(studentToAdd, scaledPosition);
+                AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(studentToAdd, originalAssignment, doer.location);
+                createStudentCircleInPosition(studentToAdd, doer.location);
             }
         }
     }    
 
-    /*
-        Tehtävän merkkaaminen tehdyksi toimii siten että opiskelija merkitään uuden assignmentin latestDoersiin, josta
-        mahdollisesti poistetaan toinen samaan aikaan.
-        Lisäksi lisätään opiskelija tehtävän tekijöihin ja päivitetään saavutettavan assignmentcirclen ulkonäköä.
-    */
-
     function markAssignmentAsDone(student, assignment, position) {
-        putStudentToLatestDoersOfAssignment(student, assignment, position);
+        AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, assignment, position);
 
         assignment.doers.push(student);
         AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students, assignmentLayer, percentageLayer);
@@ -243,25 +250,20 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     /*
         Yrittää poistaa opiskelijan assignmentin latestDoersista. Mikäli poisto-operaatio onnistuu ja palauttaa 'true',
         poistetaan kartalta myös poistettavaa opiskelijaa vastaava circle.
-
-        Lopuksi asetetaan uusi opiskelija assignmentin latestDoersiin.
     */
 
-    function putStudentToLatestDoersOfAssignment(student, assignment, scaledPosition) {
-        console.log("putStudentToLatestDoersOfAssignment")
-
-        if (AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignmentFromPosition(assignment, scaledPosition)) {
-            console.log("remove")
-            console.log(scaledPosition)
-
-            removeItemFromPosition(scaledPosition);
+    function removeStudentFromEndPosition(assignment, endPosition) {
+        if (AssignmentLatestDoersService.removeStudentFromLatestDoersOfAssignmentFromPosition(assignment, endPosition)) {
+            removeItemFromPosition(endPosition);
         }
-
-        AssignmentLatestDoersService.addStudentToLatestDoersWithLocation(student, assignment, scaledPosition);
     }
 
     function removeItemFromPosition(scaledPosition) {
         var item = getItemFromStudentLayer(scaledPosition);
+
+        console.log("removing item")
+
+        console.log(item)
 
         if (item) {
             item.remove();
@@ -290,48 +292,52 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     */
 
     function resetMovingInterval() {
-        clearInterval(movingInterval);
+        if (movingInterval) {
+            clearInterval(movingInterval);
+        }
 
         if (movingQueue.length > 0) {
-            setMovingInterval();
+
+            movingInterval = setInterval(function() {
+                moveNextStudent();
+            }, 1000 / (60 * movingQueue.length));
         }
     }
 
-    /*
-        Määrittää ajanjakson, jonka välein 'movingQueue':ssä olevia opiskelijoita liikutetaan eteenpäin
-        sekä toiminnallisuuden liikkumiseen.
-    */
 
-    function setMovingInterval() {
+    function moveNextStudent() {
+        var movingInfo = movingQueue.shift(); // pop from queue
 
-        movingInterval = setInterval(function() {
-            var elem = movingQueue.shift(); // pop from queue
+        var circle = movingInfo.circle;
+        var endPosition = movingInfo.endPosition;
 
-            var circleToMove = elem.circle;
-            var startPosition = elem.startPosition;
-            var endPosition = elem.endPosition;
+        var newSpeed = MoveStudentCircleService.moveCircle(circle, movingInfo.startPosition, endPosition, movingInfo.speed, minSpeed);
+        movingInfo.speed = newSpeed;
 
-            if (MoveStudentCircleService.hasReachedDestination(circleToMove, endPosition)) {
-                var student = elem.student;
-                var originalAssignment = elem.originalAssignment;
-                var destinationAssignment = elem.destinationAssignment;
+        if (MoveStudentCircleService.hasReachedDestination(circle, endPosition)) {
+            updateViewAfterStudentHasReachedDestination(movingInfo);
+            return;
+        }
 
-                console.log(student.id + " reached destination")
+        else if (! movingInfo.studentRemovedFromEndPosition &&
+                 MoveStudentCircleService.approachingDestination(circle, endPosition)) {
 
-                markAssignmentAsDone(student, destinationAssignment, endPosition);
+            removeStudentFromEndPosition(movingInfo.destinationAssignment, endPosition);
+            movingInfo.studentRemovedFromEndPosition = true;
+        }
 
-                circleToMove.position = endPosition;
-                paper.view.update();
+        movingQueue.push(movingInfo);
+    }
 
-                resetMovingInterval(); // alusta interval, koska yksi pääsi perille
-            }
+    function updateViewAfterStudentHasReachedDestination(movingInfo) {
+        var student = movingInfo.student;
+        var destinationAssignment = movingInfo.destinationAssignment;
+        var endPosition = movingInfo.endPosition;
 
-            else {
-                var newSpeed = MoveStudentCircleService.moveCircle(circleToMove, startPosition, endPosition, elem.speed);
-                elem.speed = newSpeed;
+        markAssignmentAsDone(movingInfo.student, movingInfo.destinationAssignment, endPosition);
+        movingInfo.circle.position = endPosition;
 
-                movingQueue.push(elem);
-            }
-        }, 1000 / (60 * movingQueue.length))
+        paper.view.update();
+        resetMovingInterval();
     }
 })
