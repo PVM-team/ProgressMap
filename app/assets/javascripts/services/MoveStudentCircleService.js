@@ -1,7 +1,7 @@
-ProgressApp.service('MoveStudentCircleService', function () {
+ProgressApp.service('MoveStudentCircleService', function (MapScaleService) {
 
 	this.hasReachedDestination = function(circle, destination) {
-        return distanceToDestination(circle, destination) < 1;
+        return distanceToDestination(circle, destination) < MapScaleService.scaleByDefaultWidth(1);
     }
 
     /*
@@ -9,7 +9,7 @@ ProgressApp.service('MoveStudentCircleService', function () {
     */
 
     this.approachingDestination = function(circle, destination) {
-        return distanceToDestination(circle, destination) < 30;
+        return distanceToDestination(circle, destination) < MapScaleService.scaleByDefaultWidth(30);
     }
 
     function distanceToDestination(circle, destination) {

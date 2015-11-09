@@ -152,7 +152,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         Jos latestDoereja 5 kpl ja kukaan niistä ei intervalin aikana liikkumassa, uusi positio määräytyy näistä
         kauiten olleen paikalle, joka ei ole vielä tämän intervalin aikana varattu.
 
-        Muuten (kaikki 5 paikkaa eivät varattuina joten mahtuu), 
+        Muuten (kaikki 5 paikkaa eivät varattuina joten mahtuu), positio määräytyy ensimmäisen vapaan position
+        mukaan liikuttaessa x-suunnassa vasemmalta oikealle ja y-suunnassa ylhäältä alas.
     */
 
     function getPositionStudentToMoveToAroundAssignment(student, assignment) {
@@ -160,10 +161,11 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             freeAllPositions(assignment);
         }
 
-        if (self.latestDoersFull(assignment) && ! atLeastOneStudentLeavingFromAssignment(assignment)) {
-            return locationOfOldestStudentInLatestDoersWhichNotReserved(assignment);
+        if (atLeastOneFreePositionToGoTo(assignment)) {
+            return positionOfNewStudentAroundAssignment(student, assignment);
         }
-        return positionOfNewStudentAroundAssignment(student, assignment);
+
+        return locationOfOldestStudentInLatestDoersWhichNotReserved(assignment);
     }
 
     /*
@@ -185,13 +187,26 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         return false;
     }
 
-    function atLeastOneStudentLeavingFromAssignment(assignment) {
-        for (var i = 0; i < assignment.latestDoers.length; i++) {
-            if (assignment.latestDoers[i].leaving) {
-                return true;
+    /*
+        Palauttaa 'true', jos tehtävän ympärillä on ainakin yksi positio, joka on vapaa.
+        Jos siis kaikki positiot eivät ole täynnä, palauttaa true.
+
+        Mikäli latestDoers on täynnä, tarkistaa, onko joku lähdössä, ja jos on ja kukaan ei ole lähtevän
+        positiota varannut, palauttaa myös true.
+    */
+
+    function atLeastOneFreePositionToGoTo(assignment) {
+        if (self.latestDoersFull(assignment)) {
+
+            for (var i = 0; i < assignment.latestDoers.length; i++) {
+                if (assignment.latestDoers[i].leaving && ! assignment.latestDoers[i].reserved) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+
+        return true;
     }
 
     function freeAllPositions(assignment) {
