@@ -15,11 +15,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         for (var i = 0; i < assignments.length; i++) {
             var assignment = assignments[i];
 
-            for (var j = 0; j < assignment.latestDoers.length; j++) {
-
-                if (self.studentIsInLatestDoersOfAssignment(student, assignment)) {
-                    return assignment;
-                }
+            if (self.studentIsInLatestDoersOfAssignment(student, assignment)) {
+                return assignment;
             }
         }
         return null;
