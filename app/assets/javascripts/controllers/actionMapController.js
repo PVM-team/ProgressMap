@@ -3,9 +3,22 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     var self = this;
     var maxStudentsToShowAroundAssignment = 5;
 
-    var interval = setInterval(function() {
-        updateLatestAssignments();
+    var backendCaller = setInterval(function() {
+        httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
+            console.log("got new data from backend")
+
+            $scope.students = data["students"];
+        })
     }, 20000);
+
+    var updater = setInterval(function() {
+        if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
+            console.log("new update")
+
+            ActionMapUpdaterService.update($scope.students);
+        }
+    }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.
+
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
 
@@ -30,16 +43,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $location.path('/student/' + student.token);
 
         //$location.path('/map/' + $scope.course.id);
-    }
-
-    function updateLatestAssignments() {
-        httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
-            $scope.students = data["students"];
-
-            console.log("new update")
-
-            ActionMapUpdaterService.update($scope.students);
-        })
     }
 
     function sortAssignmentsByNumber() {

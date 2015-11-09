@@ -8,6 +8,8 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
     var students; // muotoa: {'id', 'lastDoneAssignment': {'number', 'timestamp'}}
 
+    var readyForNextUpdate = true; // true mikäli
+
     var waitingQueue = [];
     var movingQueue = [];
     var movingInterval;
@@ -18,6 +20,31 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     var assignmentLayer;
     var percentageLayer;
     var studentLayer;
+
+    this.upToDate = function(new_students) {
+        if (! students && new_students) {
+            return false;
+        }
+
+        for (var i = 0; i < students.length; i++) {
+            if (students[i].lastDoneAssignment != new_students[i].lastDoneAssignment) {
+
+                console.log(students[i])
+                console.log(new_students[i])
+                
+                return false;
+            }
+        }
+        console.log("up to date")
+        return true;
+    }
+
+    this.readyForNextUpdate = function() {
+        console.log("readyForNextUpdate: ")
+        console.log(readyForNextUpdate)
+
+        return readyForNextUpdate;
+    }
 
     this.updateAssignmentLocations = function() {
         for (var i = 0; i < assignments.length; i++) {
@@ -57,6 +84,10 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
         students = new_students;
 
         var studentsToMove = movingStudents();
+
+        if (studentsToMove.length > 0) {
+            readyForNextUpdate = false;
+        }
 
         console.log("moving students during this interval")
         console.log(studentsToMove)
@@ -301,6 +332,10 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
             movingInterval = setInterval(function() {
                 moveNextStudent();
             }, 1000 / (60 * movingQueue.length));
+        }
+
+        else if (waitingQueue.length == 0) {
+            readyForNextUpdate = true;
         }
     }
 
