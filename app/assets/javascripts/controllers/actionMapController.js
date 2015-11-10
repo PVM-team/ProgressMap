@@ -3,25 +3,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     var self = this;
     var maxStudentsToShowAroundAssignment = 5;
 
-    var backendCaller = setInterval(function() {
-        httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
-            console.log("got new data from backend")
-
-            $scope.students = data["students"];
-        })
-    }, 20000);
-
-    var updater = setInterval(function() {
-        if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
-            console.log("new update")
-
-            ActionMapUpdaterService.update($scope.students);
-        }
-    }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.
-
-
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
-
         $scope.course = data["course"][0];
 
         $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
@@ -32,6 +14,29 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         sortAssignmentsByNumber();
         assignLatestDoersForAssignments();
+
+        // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
+
+        var backendCaller = setInterval(function() {
+            var data = {
+                course_id: $scope.course.id,
+                course_name: $scope.course.name
+            }
+
+            httpService.getData('/map/action_students.json', { params: data }).then(function (data) {
+                console.log("got new data from backend")
+
+                $scope.students = data["students"];
+            })
+        }, 20000);
+
+        var updater = setInterval(function() {
+            if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
+                console.log("new update")
+
+                ActionMapUpdaterService.update($scope.students);
+            }
+        }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
     })
 
     $scope.$on("$destroy", function() {
