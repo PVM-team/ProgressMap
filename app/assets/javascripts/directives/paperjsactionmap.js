@@ -23,9 +23,9 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
 
             var pathLayer = new paper.Layer();
             var assignmentLayer = new paper.Layer();
-            var studentLayer = new paper.Layer();
             var percentageLayer = new paper.Layer();
             var labelLayer = new paper.Layer();
+            var studentLayer = new paper.Layer();
 
             scope.$watch('assignments', function (newval, oldval) {
 
