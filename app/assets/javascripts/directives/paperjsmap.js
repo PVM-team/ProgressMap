@@ -12,6 +12,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             var previousWindowWidth;
             var mapInitialized = false;
 
+            //dependent circles of circle mouse is currently hovering over
+            var dependents = [];
+            var hoveredCircle = null;
+
             var smoothConfig = {
                 method: 'lanczos',
                 clip: 'clamp',
@@ -44,6 +48,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             var assignmentLayer;
             var pathLayer;
             var textLayer;
+            var dependencyArrowLayer;
+
             var path;
             paper.install(window);
             paper.setup(element[0]);
@@ -52,6 +58,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && !mapInitialized) {
                     setCanvasSize();
+                    initializeLayers();
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
 
@@ -68,6 +75,26 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     paper.view.update();
                 }
             }, true);
+
+            paper.view.onFrame = function (event) {
+                if (hoveredCircle) {
+                    var end = hoveredCircle.position;
+                    var paths = dependencyArrowLayer.children;
+
+                    for (var i = 0; i < paths.length; i++) {
+                        if (!(paths[i].intersects(hoveredCircle))) {
+                            var start = paths[i].firstSegment.point;
+                            var vector = end.subtract(start);
+                            growPath(paths[i], vector.normalize().multiply(event.delta));
+                        }
+                    }
+                }
+            }
+
+            function growPath(path, position) {
+                var lastPos = path.lastSegment.point;
+                path.add(lastPos.add((position.multiply(1000))));
+            }
 
             window.onresize = function () {
                 if (mapInitialized) {
@@ -109,6 +136,13 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 paper.view.draw();
             }
 
+            function initializeLayers() {
+                pathLayer = new paper.Layer();
+                assignmentLayer = new paper.Layer();
+                textLayer = new paper.Layer();
+                dependencyArrowLayer = new paper.Layer();
+            }
+
             function scaleButtonsByWidth() {
                 var items = assignmentLayer.children;
                 for (var i = 0; i < items.length; i++) {
@@ -136,8 +170,6 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
             function placeCirclesOnAssignmentLocations() {
-                assignmentLayer = new paper.Layer();
-                textLayer = new paper.Layer();
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
@@ -172,28 +204,42 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;                        
+                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
 
                         if (dependentCircle) {
-                            //var alphaValue = 0.6;
-/*                                if (alphaValue > 0) {
-                                    alphaValue = alphaValue - 0.05;
-                                }*/
-                            
-                                var dependencyLightColor = new Color('#ffd700');
 
-                                dependentCircle.style = {
-                                    shadowColor: dependencyLightColor,
-                                    shadowBlur: 12,
-                                    shadowOffset: [0, 0]
-                                };
-                                //dependentCircle.shadowColor.hue += event.time*1;
-                                
+                            dependents.push(dependentCircle);
+                            var startingPoint = dependentCircle.position;
+                            dependencyArrowLayer.activate();
+                            var path = new paper.Path();
+                            path.add(startingPoint);
+                            path.strokeWidth = 10;
+                            path.strokeColor = 'yellow';
+
+
+                            //var alphaValue = 0.6;
+                            /*                                if (alphaValue > 0) {
+                             alphaValue = alphaValue - 0.05;
+                             }*/
+
+                            var dependencyLightColor = new Color('#ffd700');
+
+                            dependentCircle.style = {
+                                shadowColor: dependencyLightColor,
+                                shadowBlur: 12,
+                                shadowOffset: [0, 0]
+                            };
+                            //dependentCircle.shadowColor.hue += event.time*1;
+
                         }
                     }
+                    hoveredCircle = item;
                 }
 
                 item.onMouseLeave = function (event) {
+                    hoveredCircle = null;
+                    dependents = [];
+                    dependencyArrowLayer.removeChildren();
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
@@ -211,7 +257,6 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             function drawSmoothPaperPaths() {
                 var locations = getLocations(scope.assignments);
-                pathLayer = new paper.Layer();
 
                 var lastIndex = locations.length - 1;
                 path = new paper.Path();
@@ -226,7 +271,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     strokeJoin: 'round',
                     shadowColor: 'black',
                     shadowBlur: 7,
-                    shadowOffset: [5,5]
+                    shadowOffset: [5, 5]
                 };
                 path.opacity = 0.64;
                 //path.strokeCap = 'round';
