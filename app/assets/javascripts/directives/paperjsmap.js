@@ -168,6 +168,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 }
             }
 
+            function onFrame(event) {
+                dependentCircle.shadowColor.hue += event.time*10;
+            }
+
             function setDependencyFunctions(assignment, item) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
@@ -187,8 +191,6 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                                     shadowBlur: 12,
                                     shadowOffset: [0, 0]
                                 };
-                                //dependentCircle.shadowColor.hue += event.time*1;
-                                
                         }
                     }
                 }
