@@ -131,13 +131,13 @@ describe('AssignmentLatestDoersService', function () {
         })
 
         it('should return correct position if atleast 1 student leaving', function() {
-            var position = {x: 146.5909090909091, y: 250};
+            var position = {x: 144.95454545454544, y: 250};
             service.setStudentToLeaveItsLastDoneAssignment(assignments[0].latestDoers[4], assignments[0]);
             expect(service.nextPositionToMoveToAroundAssignment(students[0], assignments[0])).toEqual(position);
         })
 
         it('should return correct position if positions are the same', function() {
-            var position = {x: 574.5454545454545, y: 130};
+            var position = {x: 544.9545454545455, y: 130};
             expect(service.nextPositionToMoveToAroundAssignment(students[0], assignments[2])).toEqual(position);
         })
 
