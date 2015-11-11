@@ -3,6 +3,9 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     var self = this;
     var maxStudentsToShowAroundAssignment = 5;
 
+    var backendCaller;
+    var updater;
+
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
         $scope.course = data["course"][0];
 
@@ -17,7 +20,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
 
-        var backendCaller = setInterval(function() {
+        backendCaller = setInterval(function() {
             var data = {
                 course_id: $scope.course.id,
                 course_name: $scope.course.name
@@ -30,7 +33,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
             })
         }, 20000);
 
-        var updater = setInterval(function() {
+        updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
                 console.log("new update")
 
@@ -40,7 +43,13 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     })
 
     $scope.$on("$destroy", function() {
-        clearInterval(interval);
+        if (backendCaller) {
+            clearInterval(backendCaller);    
+        }
+
+        if (updater) {
+            clearInterval(updater);    
+        }
     });
 
     $scope.goToNormalMap = function() {

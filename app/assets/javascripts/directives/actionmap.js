@@ -1,4 +1,4 @@
-ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
+ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -90,7 +90,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
             }
 
             function setCanvas() {
-                CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, MapScaleService.getDefaultWindowWidth());
+                CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
             }
 
             function placeLatestStudents() {
@@ -162,6 +162,7 @@ ProgressApp.directive('paperjsmap2', function (CanvasService, AssignmentCirclesS
                         drawSmoothPaperCurve(i, locations, path);
                     }
                 }
+                path.simplify(); // nopeuttaa liikkumista jatkossa. alussa hidas operaatio.
                 pathLayer.addChild(path);
             }
 

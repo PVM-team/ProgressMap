@@ -14,10 +14,6 @@ ProgressApp.service('MapScaleService', function () {
     	return previousWindowWidth;
     }
 
-    this.getDefaultWindowWidth = function() {
-    	return defaultWindowWidth;
-    }
-
     this.scaleByDefaultWidth = function(x) {
         return (x / defaultWindowWidth) * window.innerWidth;
     }
