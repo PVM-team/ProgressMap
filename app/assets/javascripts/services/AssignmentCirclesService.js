@@ -90,7 +90,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         //console.log("what is says: " + percentageLayer.children[assignment.number - 1].content);
 
         //hitTest.item.content = Math.floor(percentageCompleted) + "%";
-        
+
         if (Math.floor(percentageCompleted) <= 100) {
             percentageLayer.children[assignment.number - 1].content = Math.floor(percentageCompleted) + "%";
         }
