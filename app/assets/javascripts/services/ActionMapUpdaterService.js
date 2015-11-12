@@ -122,7 +122,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     function createStudentCircleInPosition(student, scaledPosition) {
         var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), MapScaleService.scaleByDefaultWidth(15));
         circle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
-        studentLayer.appendBottom(circle);
+        circle.sendToBack();
 
         paper.view.update();
     }    
@@ -179,7 +179,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
     function placeStudentToWaitingQueue(student, originalAssignment, destinationAssignment) {
         var circle = getStudentCircle(student, originalAssignment);
-        studentLayer.bringToFront(circle);
+        circle.bringToFront();
 
         var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 

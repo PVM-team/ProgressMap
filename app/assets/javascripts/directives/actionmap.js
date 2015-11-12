@@ -24,8 +24,8 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
             var pathLayer = new paper.Layer();
             var assignmentLayer = new paper.Layer();
             var percentageLayer = new paper.Layer();
-            var labelLayer = new paper.Layer();
             var studentLayer = new paper.Layer();
+            var labelLayer = new paper.Layer();
 
             scope.$watch('assignments', function (newval, oldval) {
 
@@ -117,7 +117,7 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
 
                     //student id:s over student circles
                     var text = new paper.PointText({
-                        point: new paper.Point(location.x + lateralPositionOffset - 20, location.y + verticalPositionOffset - 20),
+                        point: new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset),
                         content: student.id,
                         fillColor: 'white',
                         fontSize: 15

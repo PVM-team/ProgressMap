@@ -15,7 +15,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         var text = new paper.PointText({
             point: location,
             content: assignment.number,
-            fillColor: 'white',
+            fillColor: 'black',
             fontSize: 20
         });
         labelLayer.addChild(text);
@@ -26,7 +26,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         var percentage = new paper.PointText({
             point: percentageLocationPoint,
             content: Math.floor(percentageCompleted) + "%",
-            fillColor: 'white'
+            fillColor: 'black'
         });
         percentageLayer.addChild(percentage);
         paper.view.update();
@@ -67,11 +67,11 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         //var hitTest = assignmentLayer.hitTest(location);
 
         /*if (!hitTest) {
-            console.log("circle not found. couldn't update.")
-            return;
-        }*/
+         console.log("circle not found. couldn't update.")
+         return;
+         }*/
 
-        var circle = assignmentLayer.children[assignment.number-1];
+        var circle = assignmentLayer.children[assignment.number - 1];
         var percentageCompleted = assignment.doers.length / students.length * 100;
 
         circle.fillColor = 'yellow';
@@ -90,7 +90,10 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         //console.log("what is says: " + percentageLayer.children[assignment.number - 1].content);
 
         //hitTest.item.content = Math.floor(percentageCompleted) + "%";
-        percentageLayer.children[assignment.number - 1].content = Math.floor(percentageCompleted) + "%";
+        
+        if (Math.floor(percentageCompleted) <= 100) {
+            percentageLayer.children[assignment.number - 1].content = Math.floor(percentageCompleted) + "%";
+        }
         paper.view.update();
     }
 })
