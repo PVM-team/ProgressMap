@@ -78,7 +78,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
          for (var i = 0; i < $scope.students.length; i++) {
             var student = $scope.students[i];
 
-            if (student.lastDoneAssignment) {
+            if (student.lastDoneAssignment && student.lastDoneAssignment.number <= $scope.assignments.length) {
                 $scope.assignments[student.lastDoneAssignment.number - 1].latestDoers.push(student);
             }
         }
