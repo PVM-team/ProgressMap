@@ -28,10 +28,6 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
         for (var i = 0; i < students.length; i++) {
             if (students[i].lastDoneAssignment != new_students[i].lastDoneAssignment) {
-
-                console.log(students[i])
-                console.log(new_students[i])
-                
                 return false;
             }
         }

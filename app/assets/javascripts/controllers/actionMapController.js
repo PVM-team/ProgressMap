@@ -12,9 +12,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
         $scope.assignments = data["assignments"];
 
-        //no longer working as is
-        //CanvasService.initiatePaperCanvas('canvas3', $scope.assignments.length, 1000);
-
         sortAssignmentsByNumber();
         assignLatestDoersForAssignments();
 
@@ -35,8 +32,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
-                console.log("new update")
-
                 ActionMapUpdaterService.update($scope.students);
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        

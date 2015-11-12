@@ -79,9 +79,23 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
         var percentageLocationPoint = {'x': location.x, 'y': location.y + 20 };
 
+        // while true ratkaisu ei toimi. jos ei löydy ekalla kerralla ko. positiosta mitään, niin ei löydy jatkossakaan
+        // ongelma näyttäisi olevan spesifinen. ts. esim. mennessä tehtävään '9' Ohtuprojekti -kurssilla,
+        // prosenttiluku päivittyy aina, mutta mennessä tehtävänää '3', ei koskaan.
+
+        console.log(location)
+
         hitTest = percentageLayer.hitTest(percentageLocationPoint);
-        
+
         if (! hitTest) {
+            // etsi child, jonka positio on x -ja y-suunnissa esim. alle 10px etäisyydellä assignmentin lokaatiosta (location).
+
+            for (var i = 0; i < percentageLayer.children.length; i++) {
+                var loc = percentageLayer.children[i].position;
+
+                console.log(loc);
+            }
+
             console.log("percentage not found. couldn't update.")
             return;
         }
