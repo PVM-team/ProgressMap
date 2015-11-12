@@ -13,8 +13,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             var mapInitialized = false;
 
             //dependent circles of circle mouse is currently hovering over
-            var dependents = [];
-            var hoveredCircle = null;
+            var DEPENDENTS = [];
+            var HOVERED_CIRCLE = null;
 
             var smoothConfig = {
                 method: 'lanczos',
@@ -77,12 +77,12 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }, true);
 
             paper.view.onFrame = function (event) {
-                if (hoveredCircle) {
-                    var end = hoveredCircle.position;
+                if (HOVERED_CIRCLE) {
+                    var end = HOVERED_CIRCLE.position;
                     var paths = dependencyArrowLayer.children;
 
                     for (var i = 0; i < paths.length; i++) {
-                        if (!(paths[i].intersects(hoveredCircle))) {
+                        if (!(paths[i].intersects(HOVERED_CIRCLE))) {
                             var start = paths[i].firstSegment.point;
                             var vector = end.subtract(start);
                             growPath(paths[i], vector.normalize().multiply(event.delta));
@@ -212,7 +212,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                         if (dependentCircle) {
 
-                            dependents.push(dependentCircle);
+                            DEPENDENTS.push(dependentCircle);
                             var startingPoint = dependentCircle.position;
                             dependencyArrowLayer.activate();
                             var path = new paper.Path();
@@ -237,12 +237,12 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                         }
                     }
-                    hoveredCircle = item;
+                    HOVERED_CIRCLE = item;
                 }
 
                 item.onMouseLeave = function (event) {
-                    hoveredCircle = null;
-                    dependents = [];
+                    HOVERED_CIRCLE = null;
+                    DEPENDENTS = [];
                     dependencyArrowLayer.removeChildren();
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
