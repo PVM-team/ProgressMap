@@ -11,7 +11,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 		return assignment.latestDoers.length >= maxStudentsToShowAroundAssignment;
 	}
 
-    this.originalAssignment = function(student, assignments) {
+    /*this.originalAssignment = function(student, assignments) {
         for (var i = 0; i < assignments.length; i++) {
             var assignment = assignments[i];
 
@@ -20,7 +20,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             }
         }
         return null;
-    }
+    } */
 
 	self.studentIsInLatestDoersOfAssignment = function(student, assignment) {
 		return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
@@ -42,9 +42,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         return false;
     }
 
-    this.setStudentToLeaveItsLastDoneAssignment = function(student, lastDoneAssignment) {
-        var i = indexOfStudentInLatestDoersOfAssignment(student, lastDoneAssignment);
-        lastDoneAssignment.latestDoers[i].leaving = true;
+    this.setStudentToLeaveItsLastDoneAssignment = function(student, assignment) {
+        var i = indexOfStudentInLatestDoersOfAssignment(student, assignment);
+        assignment.latestDoers[i].leaving = true;
     }
 
     this.addStudentToLatestDoersWithLocation = function(student, assignment, scaledPosition) {

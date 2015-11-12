@@ -31,7 +31,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         }, 20000);
 
         updater = setInterval(function() {
-            if (ActionMapUpdaterService.readyForNextUpdate() && ! ActionMapUpdaterService.upToDate($scope.students)) {
+            if (ActionMapUpdaterService.readyForNextUpdate()) {
                 ActionMapUpdaterService.update($scope.students);
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
