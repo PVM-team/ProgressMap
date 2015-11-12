@@ -97,33 +97,25 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     for (var i = 0; i < DEPENDENTS.length; i++) {
                         var dependentCircle = DEPENDENTS[i];
                         putDependencyLightOff(dependentCircle);
-
-                        if (i == DEPENDENTS.length - 1) {}
+                       // DEPENDENTS.splice(DEPENDENTS.indexOf(dependentCircle), 1);
                     }
+                    DEPENDENTS = [];
                 }
+
+
             }
 
             function putDependencyLightOn(dependentCircle) {
-                if (dependentCircle.shadowColor.alpha < 1) {
-                    dependentCircle.shadowColor.alpha += 0.05;
-                }
-                
+                dependentCircle.shadowColor.alpha += 0.1
             }
 
             function putDependencyLightOff(dependentCircle) {
-                if (dependentCircle.shadowColor.alpha > 0) {
-                    dependentCircle.shadowColor.alpha -= 0.05;
-                }
-
-                if (dependentCircle.shadowColor.alpha == 0) {
-                    dependentCircle.style = {
-                                shadowColor: 'black',
-                                shadowBlur: 12,
-                                shadowOffset: [5, 5]
-                            }
-                    DEPENDENTS.splice(DEPENDENTS.indexOf(dependentCircle), 1);
-                }
-                
+               setInterval(function(){
+                   if(dependentCircle.shadowColor.alpha == 0) {
+                        dependentCircle.remove();
+                   }
+                  dependentCircle.shadowColor.alpha -= 0.1;
+               }, 60); 
             }
 
             function growPath(path, position) {
@@ -243,10 +235,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
+                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item.clone();
 
                         if (dependentCircle) {
-
                             DEPENDENTS.push(dependentCircle);
                             var startingPoint = dependentCircle.position;
                             dependencyArrowLayer.activate();
@@ -254,15 +245,15 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             path.add(startingPoint);
                             path.strokeWidth = 10;
                             path.strokeColor = 'yellow';
-                            
-                                var dependencyLightColor = new Color('#ffd700');
-                                dependencyLightColor.alpha = 0;
 
-                                dependentCircle.style = {
-                                    shadowColor: dependencyLightColor,
-                                    shadowBlur: 50,
-                                    shadowOffset: [0, 0]
-                                };
+                            var dependencyLightColor = new Color('#ffd700');
+                            dependencyLightColor.alpha = 0;
+
+                            dependentCircle.style = {
+                                shadowColor: dependencyLightColor,
+                                shadowBlur: 30,
+                                shadowOffset: [0, 0]
+                            };
 
                         }
                     }
@@ -271,17 +262,16 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 item.onMouseLeave = function (event) {
                     HOVERED_CIRCLE = null;
-                    //DEPENDENTS = [];
                     dependencyArrowLayer.removeChildren();
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
                         if (dependentCircle) {
                             /*dependentCircle.style = {
-                                shadowColor: 'black',
-                                shadowBlur: 12,
-                                shadowOffset: [5, 5]
-                            }*/
+                              shadowColor: 'black',
+                              shadowBlur: 12,
+                              shadowOffset: [5, 5]
+                              }*/
                         }
                     }
                 }
@@ -390,15 +380,15 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             //old testing functions
             /*tool.onMouseDown = function (event) {
-             path = new paper.Path();
-             path.strokeColor = 'black';
-             };
-             tool.onMouseDrag = function (event) {
-             path.add(event.point);
-             };
-             tool.onMouseUp = function (event) {
-             //nothing special here
-             };*/
+              path = new paper.Path();
+              path.strokeColor = 'black';
+              };
+              tool.onMouseDrag = function (event) {
+              path.add(event.point);
+              };
+              tool.onMouseUp = function (event) {
+            //nothing special here
+            };*/
         }
     }
 })
