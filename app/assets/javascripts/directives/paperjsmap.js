@@ -88,7 +88,42 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             growPath(paths[i], vector.normalize().multiply(event.delta));
                         }
                     }
+
+                    for (var i = 0; i < DEPENDENTS.length; i++) {
+                        var dependentCircle = DEPENDENTS[i];
+                        putDependencyLightOn(dependentCircle);
+                    }
+                } else {
+                    for (var i = 0; i < DEPENDENTS.length; i++) {
+                        var dependentCircle = DEPENDENTS[i];
+                        putDependencyLightOff(dependentCircle);
+
+                        if (i == DEPENDENTS.length - 1) {}
+                    }
                 }
+            }
+
+            function putDependencyLightOn(dependentCircle) {
+                if (dependentCircle.shadowColor.alpha < 1) {
+                    dependentCircle.shadowColor.alpha += 0.05;
+                }
+                
+            }
+
+            function putDependencyLightOff(dependentCircle) {
+                if (dependentCircle.shadowColor.alpha > 0) {
+                    dependentCircle.shadowColor.alpha -= 0.05;
+                }
+
+                if (dependentCircle.shadowColor.alpha == 0) {
+                    dependentCircle.style = {
+                                shadowColor: 'black',
+                                shadowBlur: 12,
+                                shadowOffset: [5, 5]
+                            }
+                    DEPENDENTS.splice(DEPENDENTS.indexOf(dependentCircle), 1);
+                }
+                
             }
 
             function growPath(path, position) {
@@ -228,6 +263,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                                 }*/
                             
                                 var dependencyLightColor = new Color('#ffd700');
+                                dependencyLightColor.alpha = 0;
 
                                 dependentCircle.style = {
                                     shadowColor: dependencyLightColor,
@@ -242,17 +278,17 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 item.onMouseLeave = function (event) {
                     HOVERED_CIRCLE = null;
-                    DEPENDENTS = [];
+                    //DEPENDENTS = [];
                     dependencyArrowLayer.removeChildren();
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
                         if (dependentCircle) {
-                            dependentCircle.style = {
+                            /*dependentCircle.style = {
                                 shadowColor: 'black',
                                 shadowBlur: 12,
                                 shadowOffset: [5, 5]
-                            }
+                            }*/
                         }
                     }
                 }
