@@ -19,7 +19,6 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
                 return assignment;
             }
         }
-        return null;
     } */
 
 	self.studentIsInLatestDoersOfAssignment = function(student, assignment) {

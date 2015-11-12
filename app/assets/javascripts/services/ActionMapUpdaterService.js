@@ -22,6 +22,9 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
     var studentLayer;
 
     this.readyForNextUpdate = function() {
+        console.log("readyForNextUpdate: ")
+        console.log(readyForNextUpdate)
+
         return readyForNextUpdate;
     }
 
@@ -39,6 +42,8 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
             }
         }
     }
+
+
  
     this.initialize = function(initial_assigments, stLayer, assLayer, perLayer) {
         assignments = initial_assigments;
@@ -375,13 +380,5 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
 
         paper.view.update();
         resetMovingInterval();
-    }
-
-    function originalAssignmentForStudent(index) {
-        var lastDoneAssignment = students[index].lastDoneAssignment;
-
-        if (lastDoneAssignment) {
-            return assignments[lastDoneAssignment.number - 1];
-        }
     }
 })

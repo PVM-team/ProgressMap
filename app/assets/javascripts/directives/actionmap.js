@@ -53,6 +53,7 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
                     scaleItemsByWidth(studentLayer);
                     scaleItemsByWidth(percentageLayer);
                     scalePathByWidth();
+
                     ActionMapUpdaterService.updateAssignmentLocations();
                     ActionMapUpdaterService.updateAssignmentsLatestDoersLocations();
 
