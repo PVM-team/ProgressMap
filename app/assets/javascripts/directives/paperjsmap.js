@@ -254,20 +254,13 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             path.add(startingPoint);
                             path.strokeWidth = 10;
                             path.strokeColor = 'yellow';
-
-
-                            //var alphaValue = 0.6;
-
-/*                                if (alphaValue > 0) {
-                                    alphaValue = alphaValue - 0.05;
-                                }*/
                             
                                 var dependencyLightColor = new Color('#ffd700');
                                 dependencyLightColor.alpha = 0;
 
                                 dependentCircle.style = {
                                     shadowColor: dependencyLightColor,
-                                    shadowBlur: 12,
+                                    shadowBlur: 50,
                                     shadowOffset: [0, 0]
                                 };
 
