@@ -103,7 +103,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
             function putDependencyLightOn(dependentCircle) {
-                dependentCircle.shadowColor.alpha += 0.1
+                dependentCircle.shadowColor.alpha += 0.1;
+
             }
 
             function putDependencyLightOff(dependentCircle) {
@@ -238,8 +239,11 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item.clone();
-
+                        var dependentCircle = new Path.Circle([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y], 65);
+                        dependentCircle.strokeColor = 'black';
+                        dependentCircle.fillColor = 'yellow';
+                        //var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item.clone();
+                        
                         if (dependentCircle) {
                             DEPENDENTS.push(dependentCircle);
                             var startingPoint = dependentCircle.position;
@@ -251,7 +255,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                             pathLayer.addChild(dependentCircle);
 
-                            var dependencyLightColor = new Color('#ffd700');
+                            var dependencyLightColor = new Color('yellow');
                             dependencyLightColor.alpha = 0;
 
                             dependentCircle.style = {
