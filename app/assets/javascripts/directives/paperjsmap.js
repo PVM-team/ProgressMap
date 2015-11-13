@@ -97,12 +97,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     for (var i = 0; i < DEPENDENTS.length; i++) {
                         var dependentCircle = DEPENDENTS[i];
                         putDependencyLightOff(dependentCircle);
-                       // DEPENDENTS.splice(DEPENDENTS.indexOf(dependentCircle), 1);
                     }
                     DEPENDENTS = [];
                 }
-
-
             }
 
             function putDependencyLightOn(dependentCircle) {
@@ -110,9 +107,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
             function putDependencyLightOff(dependentCircle) {
-               setInterval(function(){
+               var interval = setInterval(function(){
                    if(dependentCircle.shadowColor.alpha == 0) {
                         dependentCircle.remove();
+                        clearInterval(interval);
                    }
                   dependentCircle.shadowColor.alpha -= 0.1;
                }, 60); 
@@ -167,7 +165,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 pathLayer = new paper.Layer();
                 assignmentLayer = new paper.Layer();
                 textLayer = new paper.Layer();
+                textLayer.locked = true;
                 dependencyArrowLayer = new paper.Layer();
+                dependencyArrowLayer.locked = true;
             }
 
             function scaleButtonsByWidth() {
@@ -222,7 +222,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                         fontSize: 20,
                         justification: 'center'
                     });
-                    setDependencyFunctions(scope.assignments[i], text);
+
+
+                    //mitä tämä tekee?
+                     setDependencyFunctions(scope.assignments[i], text);
                     textLayer.addChild(text);
                 }
             }
@@ -245,6 +248,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             path.add(startingPoint);
                             path.strokeWidth = 10;
                             path.strokeColor = 'yellow';
+
+                            pathLayer.addChild(dependentCircle);
 
                             var dependencyLightColor = new Color('#ffd700');
                             dependencyLightColor.alpha = 0;
@@ -275,7 +280,6 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                         }
                     }
                 }
-
             }
 
             function drawSmoothPaperPaths() {
