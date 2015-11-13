@@ -11,16 +11,6 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 		return assignment.latestDoers.length >= maxStudentsToShowAroundAssignment;
 	}
 
-    /*this.originalAssignment = function(student, assignments) {
-        for (var i = 0; i < assignments.length; i++) {
-            var assignment = assignments[i];
-
-            if (self.studentIsInLatestDoersOfAssignment(student, assignment)) {
-                return assignment;
-            }
-        }
-    } */
-
 	self.studentIsInLatestDoersOfAssignment = function(student, assignment) {
 		return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
 	}

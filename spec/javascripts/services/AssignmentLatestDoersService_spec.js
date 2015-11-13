@@ -7,7 +7,7 @@ describe('AssignmentLatestDoersService', function () {
     beforeEach(function () {
         module('ProgressApp');
 
-        students = [{"id": 1,  "lastDoneAssignment": null, location: {},  reserved: false, leaving: false, dummy: false},
+        students = [{"id": 1},
             {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 9}},
             {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 8}},
             {"id": 4,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
@@ -30,33 +30,38 @@ describe('AssignmentLatestDoersService', function () {
             {"id": 21, "lastDoneAssignment": {"number": 4, "timestamp": 8}},
             {"id": 22, "lastDoneAssignment": {"number": 4, "timestamp": 8}}];
 
-        studentinfo = [{"id": 1,  "lastDoneAssignment": null, location: {},  reserved: false, leaving: false, dummy: false},
-            {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 9}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 4,  "lastDoneAssignment": {"number": 1, "timestamp": 7}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 5,  "lastDoneAssignment": {"number": 1, "timestamp": 6}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 6,  "lastDoneAssignment": {"number": 2, "timestamp": 5}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 7,  "lastDoneAssignment": {"number": 2, "timestamp": 6}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 8,  "lastDoneAssignment": {"number": 1, "timestamp": 5}, location: {x: 146.5909090909091, y: 250}, reserved: false, leaving: false, dummy: false},
-            {"id": 9,  "lastDoneAssignment": {"number": 3, "timestamp": 8}, location: {x: 546.5909090909091, y: 130}, reserved: false, leaving: false, dummy: false},
-            {"id": 10, "lastDoneAssignment": {"number": 2, "timestamp": 9}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 13, "lastDoneAssignment": {"number": 4, "timestamp": 1}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 14, "lastDoneAssignment": {"number": 4, "timestamp": 2}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 15, "lastDoneAssignment": {"number": 4, "timestamp": 3}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 16, "lastDoneAssignment": {"number": 4, "timestamp": 4}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 17, "lastDoneAssignment": {"number": 4, "timestamp": 5}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 18, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 19, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 20, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 21, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false},
-            {"id": 22, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}, reserved: false, leaving: false, dummy: false}]
+        studentinfo = [{"id": 1,  "lastDoneAssignment": null, location: {}},
+            {"id": 2,  "lastDoneAssignment": {"number": 1, "timestamp": 9}, location: {"x": 1, "y":1}},
+            {"id": 3,  "lastDoneAssignment": {"number": 1, "timestamp": 8}, location: {"x": 1, "y":1}},
+            {"id": 4,  "lastDoneAssignment": {"number": 1, "timestamp": 7}, location: {"x": 1, "y":1}},
+            {"id": 5,  "lastDoneAssignment": {"number": 1, "timestamp": 6}, location: {"x": 1, "y":1}},
+            {"id": 6,  "lastDoneAssignment": {"number": 2, "timestamp": 5}, location: {"x": 1, "y":1}},
+            {"id": 7,  "lastDoneAssignment": {"number": 2, "timestamp": 6}, location: {"x": 1, "y":1}},
+            {"id": 8,  "lastDoneAssignment": {"number": 1, "timestamp": 5}, location: {x: 146.5909090909091, y: 250}},
+            {"id": 9,  "lastDoneAssignment": {"number": 3, "timestamp": 8}, location: {x: 546.5909090909091, y: 130}},
+            {"id": 10, "lastDoneAssignment": {"number": 2, "timestamp": 9}, location: {"x": 1, "y":1}},
+            {"id": 11, "lastDoneAssignment": {"number": 2, "timestamp": 10}, location: {"x": 1, "y":1}},
+            {"id": 12, "lastDoneAssignment": {"number": 3, "timestamp": 11}, location: {"x": 1, "y":1}},
+            {"id": 13, "lastDoneAssignment": {"number": 4, "timestamp": 1}, location: {"x": 1, "y":1}},
+            {"id": 14, "lastDoneAssignment": {"number": 4, "timestamp": 2}, location: {"x": 1, "y":1}},
+            {"id": 15, "lastDoneAssignment": {"number": 4, "timestamp": 3}, location: {"x": 1, "y":1}},
+            {"id": 16, "lastDoneAssignment": {"number": 4, "timestamp": 4}, location: {"x": 1, "y":1}},
+            {"id": 17, "lastDoneAssignment": {"number": 4, "timestamp": 5}, location: {"x": 1, "y":1}},
+            {"id": 18, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}},
+            {"id": 19, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}},
+            {"id": 20, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}},
+            {"id": 21, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}},
+            {"id": 22, "lastDoneAssignment": {"number": 4, "timestamp": 8}, location: {"x": 1, "y":1}}]
 
         assignments = [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "latestDoers": [studentinfo[1], studentinfo[2], studentinfo[3], studentinfo[4], studentinfo[7]], "number": 1},
             {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "latestDoers": [studentinfo[5], studentinfo[6] , studentinfo[9], studentinfo[10]], "number": 2},
             {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "latestDoers": [studentinfo[8], studentinfo[11]], "number": 3},
-            {"id": 4, "location": {"id": 4, "x": 850, "y": 88}, "latestDoers": [studentinfo[12], studentinfo[13], studentinfo[14]], "number": 4}];
+            {"id": 4, "location": {"id": 4, "x": 850, "y": 88}, "latestDoers": [studentinfo[12], studentinfo[13], studentinfo[14]], "number": 4},
+            {"id": 5, "location": {"id": 4, "x": 415, "y": 350}, "latestDoers": [], "number": 5}
+        ];
+
+        assignment = undefined;
+        student = undefined;
 
         inject(function (_AssignmentLatestDoersService_) {
             service = _AssignmentLatestDoersService_;
@@ -73,36 +78,105 @@ describe('AssignmentLatestDoersService', function () {
         })
     })
 
-    describe('originalAssignment', function() {
-        it('should return correct assignment if student has last done assignment', function() {
-            expect(service.originalAssignment(students[8], assignments)).toEqual(assignments[2]);
+    describe('studentIsInLatestDoersOfAssignment', function() {
+
+        beforeEach(function() {
+            assignment = {"latestDoers": [{"id": 15}, {"id": 13}]};
         })
 
-        it('should return null if student has no last done assignment', function() {
-            expect(service.originalAssignment(students[0], assignments)).toBeNull();
+        it("should return true if student is in latestDoers of assignment", function() {
+            student = {"id": 15};
+            expect(service.studentIsInLatestDoersOfAssignment(student, assignment)).toBeTruthy();
+        })
+
+        it("should return false if student is not in latestDoers of assignment", function() {
+            student = {"id": 12};
+            expect(service.studentIsInLatestDoersOfAssignment(student, assignment)).toBeFalsy();
         })
     })
+
 
     describe('studentShouldBeInLatestDoersofAssignment', function() {
-        it("should return true if assignment's latestDoers is less than maxStudentsToShowAroundAssignment", function() {
-            expect(service.studentShouldBeInLatestDoersOfAssignment(students[1], assignments[1])).toBeTruthy();
+
+        beforeEach(function() {
+            assignment = {"latestDoers": [{"id": 15}, {"id": 13}]};
+            student = {"id": 21,  "lastDoneAssignment": {"number": 1, "timestamp": 8}};
         })
-        it('should return false if student has no last done assignment', function() {
-            expect(service.studentShouldBeInLatestDoersOfAssignment(students[0], assignments[1])).toBeFalsy();
+
+        it("should return false if student has no lastDoneAssignment", function() {
+            student.lastDoneAssignment = undefined;
+            expect(service.studentShouldBeInLatestDoersOfAssignment(student, assignment)).toBeFalsy();            
         })
-        it("should return true if first student has done last done assignment after the second one", function() {
-            expect(service.studentShouldBeInLatestDoersOfAssignment(students[2], assignments[0])).toBeTruthy();
+
+        it("should return true if latestDoers of assignment is not full", function() {
+            expect(service.studentShouldBeInLatestDoersOfAssignment(student, assignment)).toBeTruthy();    
+        })
+
+        describe("if latestDoers of assignment is full", function() {
+
+            beforeEach(function() {
+                assignment = {"latestDoers": [{"id": 20,  "lastDoneAssignment": {"number": 1, "timestamp": 9}},
+                                              {"id": 22,  "lastDoneAssignment": {"number": 1, "timestamp": 10}},
+                                              {"id": 24,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
+                                              {"id": 23,  "lastDoneAssignment": {"number": 1, "timestamp": 13}},
+                                              {"id": 21,  "lastDoneAssignment": {"number": 1, "timestamp": 14}} ]};
+            })
+
+            it("returns true if student has a newer timestamp for lastDoneAssignment than someone in latestDoers", function() {
+                student.lastDoneAssignment.timestamp = 8;
+                expect(service.studentShouldBeInLatestDoersOfAssignment(student, assignment)).toBeTruthy();
+
+                student.lastDoneAssignment.timestamp = 15;
+                expect(service.studentShouldBeInLatestDoersOfAssignment(student, assignment)).toBeTruthy();
+            })
+
+            it("return false if student has an older timestamp than any doer in latestDoers of assignment", function() {
+                student.lastDoneAssignment.timestamp = 6;
+                expect(service.studentShouldBeInLatestDoersOfAssignment(student, assignment)).toBeFalsy();
+            })
+
         })
     })
 
-    describe('addStudentToLatestDoersWithLocation', function() {
-        it ('should return correct position after add', function() {
-            var position = {"x": 666, "y": 666};
-            service.addStudentToLatestDoersWithLocation(students[1], assignments[2], position);
-            var assignment = assignments[2];
-            expect(assignment.latestDoers[assignment.latestDoers.length - 1].location).toEqual(position);
+
+    describe("setStudentToLeaveItsLastDoneAssignment", function() {
+
+        it("sets leaving attribute to true for student in latestDoers of assignment", function() {
+            assignment = {"latestDoers": [{"id": 15}, {"id": 13}]};
+            student = {"id": 13,  "lastDoneAssignment": {"number": 1, "timestamp": 8}};
+
+            service.setStudentToLeaveItsLastDoneAssignment(student, assignment);
+            expect(assignment.latestDoers[1].leaving).toBeTruthy();
         })
     })
+
+
+    describe('addStudentToLatestDoersWithLocation', function() {
+
+        it("adds student to latestDoers of assignment and attaches it given position as location", function() {
+            assignment = {"latestDoers": [{"id": 15}, {"id": 13}]};
+            student = {"id": 22,  "lastDoneAssignment": {"number": 1, "timestamp": 8}};
+
+            service.addStudentToLatestDoersWithLocation(student, assignment, {'x': 100, 'y': 125});
+            expect(assignment.latestDoers.length).toBe(3)
+            expect(assignment.latestDoers[2].id).toBe(22)
+            expect(assignment.latestDoers[2].location).toEqual({'x': 100, 'y': 125});
+        })
+    })
+
+
+    describe('removeStudentFromLatestDoersOfAssignmentFromPosition', function() {
+        it('should return true if there is student in that location', function() {
+            var position = {"x": 1, "y": 1};
+            expect(service.removeStudentFromLatestDoersOfAssignmentFromPosition(assignments[2], position)).toBeTruthy();
+        })
+
+        it('should return false if there is no student in that location', function() {
+            var position = {"x": 66, "y": 66};
+            expect(service.removeStudentFromLatestDoersOfAssignmentFromPosition(assignments[2], position)).toBeFalsy();
+        })
+    })
+
 
     describe('studentToAddInPlaceOfRemovedOne', function() {
         it('should remove oldest student from latest doers', function() {
@@ -119,11 +193,12 @@ describe('AssignmentLatestDoersService', function () {
     })
 
     describe('nextPositionToMoveToAroundAssignment', function() {
-        beforeEach(function(){
+        /*beforeEach(function(){
             for (var i = 0; i < assignments[0].latestDoers.length - 1; i++) {
                 assignments[0].latestDoers[i].reserved = true;
             }
-        })
+        }) */
+
         it('should return correct position if all positions are reserved', function() {
             var position = {x: 146.5909090909091, y: 250};
             assignments[0].latestDoers[4].reserved = true;
@@ -144,18 +219,6 @@ describe('AssignmentLatestDoersService', function () {
         it('should return correct positions in complex scenario', function() {
             service.setStudentToLeaveItsLastDoneAssignment(students[1], assignments[0]);
             service.removeStudentFromLatestDoersOfAssignment(students[1], assignments[0]);
-        })
-    })
-
-    describe('removeStudentFromLatestDoersOfAssignmentWithPosition', function() {
-        it('should return true if there is student in that location', function() {
-            var position = {"x": 1, "y": 1};
-            expect(service.removeStudentFromLatestDoersOfAssignmentFromPosition(assignments[2], position)).toBeTruthy();
-        })
-
-        it('should return false if there is no student in that location', function() {
-            var position = {"x": 66, "y": 66};
-            expect(service.removeStudentFromLatestDoersOfAssignmentFromPosition(assignments[2], position)).toBeFalsy();
         })
     })
 
