@@ -55,7 +55,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
                 var dummy = assignment.latestDoers[i].dummy;
                 assignment.latestDoers.splice(i, 1);
 
-                return ! dummy; // palautetaan käytännössä tiedon siitä, liittyykö tähän poistettuun doeriin circle vai ei. jos liittyy niin dummy = false
+                return ! dummy; // palautetaan käytännössä tiedon siitä, liittyykö tähän poistettuun doeriin circle vai ei. jos liittyy niin dummy = undefined
             }
         }
 
