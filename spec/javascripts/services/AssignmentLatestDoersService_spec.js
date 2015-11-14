@@ -32,13 +32,13 @@ describe('AssignmentLatestDoersService', function ($provide) {
     });
 
     describe("latestDoersFull", function(){
-        it('should return true if there is 5 or more latestDoers for the assignment', function() {
-            assignment.latestDoers = [{"id": 15}, {"id": 13}, {"id": 10}, {"id": 14}, {"id": 18}];
+        it('should return true if there is 9 or more latestDoers for the assignment', function() {
+            assignment.latestDoers = [{"id": 15}, {"id": 13}, {"id": 10}, {"id": 14}, {"id": 18}, {"id": 9}, {"id": 31}, {"id": 34}, {"id": 28}];
             expect(service.latestDoersFull(assignment)).toBeTruthy();
         })
 
-        it('should return false if there is 4 or less latestDoers for the assignment', function() {
-            assignment.latestDoers = [{"id": 15}, {"id": 13}, {"id": 10}, {"id": 14}];
+        it('should return false if there is 8 or less latestDoers for the assignment', function() {
+            assignment.latestDoers = [{"id": 15}, {"id": 13}, {"id": 10}, {"id": 14}, {"id": 25}, {"id": 23}, {"id": 20}, {"id": 24}];
             expect(service.latestDoersFull(assignment)).toBeFalsy();
         })
     })
@@ -86,7 +86,11 @@ describe('AssignmentLatestDoersService', function ($provide) {
                                           {"id": 22,  "lastDoneAssignment": {"number": 1, "timestamp": 10}},
                                           {"id": 24,  "lastDoneAssignment": {"number": 1, "timestamp": 7}},
                                           {"id": 23,  "lastDoneAssignment": {"number": 1, "timestamp": 13}},
-                                          {"id": 21,  "lastDoneAssignment": {"number": 1, "timestamp": 14}} ];
+                                          {"id": 21,  "lastDoneAssignment": {"number": 1, "timestamp": 14}},
+                                          {"id": 26,  "lastDoneAssignment": {"number": 1, "timestamp": 25}},
+                                          {"id": 28,  "lastDoneAssignment": {"number": 1, "timestamp": 23}},
+                                          {"id": 33,  "lastDoneAssignment": {"number": 1, "timestamp": 34}},
+                                          {"id": 34,  "lastDoneAssignment": {"number": 1, "timestamp": 19}}, ];
             })
 
             it("returns true if student has a newer timestamp for lastDoneAssignment than someone in latestDoers", function() {
@@ -223,11 +227,14 @@ describe('AssignmentLatestDoersService', function ($provide) {
             expect(assignment.number).toBe(2);
         })
 
-        it("returns a falsy value if no student has assignment nro. 2 as its lastDoneAssignment", function() {
+        it("returns a falsy value if no student has assignment nro. 2 as its originalAssignment and lastDoneAssignment", function() {
             var idNrTs = [[7, 3, 1], [12, 4, 5], [19, 1, 16], [10, 62, 55]];
 
             for (var i = 0; i < idNrTs.length; i++) {
-                students.push({"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]} })
+                var doer = {"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]}};
+                doer.originalAssignment = doer.lastDoneAssignment;
+
+                students.push(doer);
             }
             students.push({"id": 16});
 
@@ -236,11 +243,14 @@ describe('AssignmentLatestDoersService', function ($provide) {
         })
 
 
-        it("if one student has assignment nro. 2 as its lastDoneAssignment, returns that", function() {
+        it("if one student has assignment nro. 2 as its originalAssignment and lastDoneAssignment, returns that", function() {
             var idNrTs = [[7, 3, 1], [12, 4, 5], [19, 2, 16], [10, 62, 55]];
 
             for (var i = 0; i < idNrTs.length; i++) {
-                students.push({"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]} })
+                var doer = {"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]}};
+                doer.originalAssignment = doer.lastDoneAssignment;
+
+                students.push(doer);
             }
 
             var studentToAdd = service.studentToAddInPlaceOfRemovedOne(assignment, students);
@@ -250,11 +260,14 @@ describe('AssignmentLatestDoersService', function ($provide) {
             expect(studentToAdd.lastDoneAssignment.timestamp).toBe(16);
         })
 
-        it("if several students have assignment nro. 2 as their lastDoneAssignment, returns the one who has done it last", function() {
+        it("if several students have assignment nro. 2 as their originalAssignment and lastDoneAssignment, returns the one who has done it last", function() {
             var idNrTs = [[7, 3, 1], [12, 4, 5], [19, 2, 16], [10, 62, 55], [21, 2, 33], [22, 4, 66], [35, 2, 32]];
 
             for (var i = 0; i < idNrTs.length; i++) {
-                students.push({"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]} })
+                var doer = {"id": idNrTs[i][0], "lastDoneAssignment": {"number": idNrTs[i][1], "timestamp": idNrTs[i][2]}};
+                doer.originalAssignment = doer.lastDoneAssignment;
+
+                students.push(doer);
             }
             students.push({"id": 16});
             students.push({"id": 1});
@@ -296,7 +309,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
             student.lastDoneAssignment = {"number": 42, "timestamp": 22};
         })
 
-        describe("when assignment has less than 5 latestDoers", function() {
+        describe("when assignment has less than 9 latestDoers", function() {
 
             beforeEach(function() {
                 var x = assignment.location.x;
@@ -321,7 +334,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                 })
 
                 it("returns the first free position which no doer has taken, and places a dummy, reserved doer with that position in latestDoers of assignment", function() {
-                    var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                    var position = service.nextPositionToMoveToAroundAssignment(student, assignment);
                     expect(position).toEqual({'x': assignment.location.x + 110, 'y': assignment.location.y});
                     
                     expect(assignment.latestDoers.length).toBe(4);
@@ -332,7 +345,9 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     expect(doer.reserved).toBeTruthy();
                     expect(doer.location).toEqual(position);
 
-                    position = service.nextPositionToMoveToAroundAssignment(assignment);
+                    var student2 = {'id': 75, 'lastDoneAssignment': {'number': 33, 'timestamp': 2}};
+
+                    position = service.nextPositionToMoveToAroundAssignment(student2, assignment);
                     expect(position).toEqual({'x': assignment.location.x + 80, 'y': assignment.location.y + 30});
 
                     expect(assignment.latestDoers.length).toBe(5);
@@ -355,7 +370,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                 })
 
                 it("returns the first free position, and when a doer has taken that, sets the reserved flag of that doer to true", function() {
-                    var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                    var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                     expect(position).toEqual({'x': assignment.location.x + 80, 'y': assignment.location.y});
 
                     expect(assignment.latestDoers.length).toBe(3);
@@ -371,7 +386,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
         })
 
 
-        describe("when assignment has 5 latestDoers", function() {
+        describe("when assignment has 9 latestDoers", function() {
 
             beforeEach(function() {
                 var x = assignment.location.x;
@@ -381,7 +396,11 @@ describe('AssignmentLatestDoersService', function ($provide) {
                                           {"id": 22,  "lastDoneAssignment": {"number": 18, "timestamp": 10}, "location": {'x': x + 80, 'y': y}},
                                           {"id": 24,  "lastDoneAssignment": {"number": 18, "timestamp": 7}, "location": {'x': x + 50, 'y': y + 30}},
                                           {"id": 23,  "lastDoneAssignment": {"number": 18, "timestamp": 13}, "location": {'x': x + 80, 'y': y + 30}},
-                                          {"id": 21,  "lastDoneAssignment": {"number": 18, "timestamp": 14}, "location": {'x': x + 110, 'y': y }} ];                
+                                          {"id": 21,  "lastDoneAssignment": {"number": 18, "timestamp": 14}, "location": {'x': x + 110, 'y': y + 60}},
+                                          {"id": 27,  "lastDoneAssignment": {"number": 18, "timestamp": 18}, "location": {'x': x + 110, 'y': y }},
+                                          {"id": 31,  "lastDoneAssignment": {"number": 18, "timestamp": 19}, "location": {'x': x + 110, 'y': y + 30}},
+                                          {"id": 36,  "lastDoneAssignment": {"number": 18, "timestamp": 23}, "location": {'x': x + 80, 'y': y + 60}},
+                                          {"id": 55,  "lastDoneAssignment": {"number": 18, "timestamp": 25}, "location": {'x': x + 50, 'y': y + 60}} ];                
             })
 
             describe("and no one is leaving", function() {
@@ -403,7 +422,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     it("returns the position, and sets the reserved flag of the oldest doer in latestDoers of assignment", function() {
                         expect(assignment.latestDoers[2].reserved).toBeFalsy();
 
-                        var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                         expect(position).toEqual(assignment.latestDoers[2].location);
 
                         expect(assignment.latestDoers[2].reserved).toBeTruthy();
@@ -421,7 +440,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     it("returns the position, and sets the reserved flag of the oldest doer which is not reserved in latestDoers of assignment", function() {
                         expect(assignment.latestDoers[1].reserved).toBeFalsy();
 
-                        var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                         expect(position).toEqual(assignment.latestDoers[1].location);
 
                         expect(assignment.latestDoers[1].reserved).toBeTruthy();
@@ -439,7 +458,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     it("sets all doers as not reserved, returns the position, and sets the reserved flag of the oldest doer in latestDoers of assignment", function() {
                         expect(assignment.latestDoers[2].reserved).toBeTruthy();
 
-                        var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                         expect(position).toEqual(assignment.latestDoers[2].location);
 
                         for (var i = 0; i < assignment.latestDoers.length; i++) {
@@ -473,7 +492,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     it("returns the position, and sets the reserved flag of the oldest doer which is not reserved in latestDoers of assignment", function() {
                         expect(assignment.latestDoers[3].reserved).toBeFalsy();
 
-                        var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                         expect(position).toEqual(assignment.latestDoers[3].location);
 
                         expect(assignment.latestDoers[3].reserved).toBeTruthy();
@@ -491,7 +510,7 @@ describe('AssignmentLatestDoersService', function ($provide) {
                     it("returns the position of that doer and sets the reserved flag of that to true", function() {
                         expect(assignment.latestDoers[0].reserved).toBeFalsy();
 
-                        var position = service.nextPositionToMoveToAroundAssignment(assignment);
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
                         expect(position.x).toBe(Math.round(assignment.latestDoers[0].location.x));
                         expect(position.y).toBe(assignment.latestDoers[0].location.y);
 

@@ -249,7 +249,7 @@ function stateInitially(scope) {
     expect(scope.assignments[0].latestDoers[2].id).toBe(2)
 
     expect(scope.assignments[1].id).toBe(2);
-    expect(scope.assignments[1].latestDoers.length).toBe(5)
+    expect(scope.assignments[1].latestDoers.length).toBe(6)
 
     expect(scope.assignments[1].latestDoers[0].id).toBe(11)
     expect(scope.assignments[1].latestDoers[1].id).toBe(10)

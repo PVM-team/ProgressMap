@@ -1,7 +1,7 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, ActionMapUpdaterService) {
 
     var self = this;
-    var maxStudentsToShowAroundAssignment = 5;
+    var maxStudentsToShowAroundAssignment = 9;
 
     var backendCaller;
     var updater;
@@ -28,7 +28,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
                 $scope.students = data["students"];
             })
-        }, 20000);
+        }, 40000);
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {

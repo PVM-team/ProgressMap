@@ -1,6 +1,6 @@
 ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     var maxStudentsInRow = 3;
-	var maxStudentsToShowAroundAssignment = 5;
+	var maxStudentsToShowAroundAssignment = 9;
     var self = this;
 
 	self.latestDoersFull = function(assignment) {
@@ -10,6 +10,12 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
 
 		return assignment.latestDoers.length >= maxStudentsToShowAroundAssignment;
 	}
+
+    self.originalAssignment = function(student, assignments) {
+        if (student.originalAssignment) {
+            return assignments[student.originalAssignment.number - 1];
+        }
+    }
 
 	self.studentIsInLatestDoersOfAssignment = function(student, assignment) {
 		return indexOfStudentInLatestDoersOfAssignment(student, assignment) >= 0;
@@ -37,6 +43,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
     }
 
     self.addStudentToLatestDoersWithLocation = function(student, assignment, position) {
+        student.leaving = false;
+        student.reserved = false;
     	assignment.latestDoers.push(student);
         assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
     }
@@ -84,7 +92,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         for (var i = 0; i < students.length; i++) {
             var student = students[i];
 
-            if (student.lastDoneAssignment &&
+            if (student.originalAssignment &&
+                student.originalAssignment.number == assignment.number &&
+                student.lastDoneAssignment &&
                 student.lastDoneAssignment.number == assignment.number &&
                 ! self.studentIsInLatestDoersOfAssignment(student, assignment)) {
 
@@ -124,8 +134,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         Määrittää position, johon studentin circle tulee siirtää sekä varaa ko. position liikkumisen ajaksi.
     */
 
-    this.nextPositionToMoveToAroundAssignment = function(assignment) {
-        var position = getPositionStudentToMoveToAroundAssignment(assignment);
+    this.nextPositionToMoveToAroundAssignment = function(student, assignment) {
+        var position = getPositionStudentToMoveToAroundAssignment(student, assignment);
         reservePosition(assignment, position);
 
         return position;
@@ -142,13 +152,13 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         mukaan liikuttaessa x-suunnassa vasemmalta oikealle ja y-suunnassa ylhäältä alas.
     */
 
-    function getPositionStudentToMoveToAroundAssignment(assignment) {
+    function getPositionStudentToMoveToAroundAssignment(student, assignment) {
         if (allPositionsReserved(assignment)) {
             freeAllPositions(assignment);
         }
 
         if (atLeastOneFreePositionToGoTo(assignment)) {
-            return positionOfNewStudentAroundAssignment(assignment);
+            return positionOfNewStudentAroundAssignment(student, assignment);
         }
 
         return locationOfOldestStudentInLatestDoersWhichNotReserved(assignment);
@@ -207,7 +217,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         poistetaan myöhemmin kun liikkuja saapuu sen paikalle.
     */
 
-    function positionOfNewStudentAroundAssignment(assignment) {
+    function positionOfNewStudentAroundAssignment(student, assignment) {
         var location = assignment.location;
         var lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
         var verticalPositionOffset = 0;
@@ -218,7 +228,7 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             var doer = getStudentByLocationFromLatestDoersOfAssignment(assignment, position);
 
             if (! doer) {
-                var dummyStudent = {'dummy': true};
+                var dummyStudent = {'lastDoneAssignment': student.lastDoneAssignment, 'dummy': true};
                 self.addStudentToLatestDoersWithLocation(dummyStudent, assignment, position);
 
                 return position;
