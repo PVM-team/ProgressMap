@@ -58,7 +58,8 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         var data = {
             assignment_id: assignment.id,
-            student_id: $scope.currentStudent.id
+            student_id: $scope.currentStudent.id,
+            complete: true
         }
 
         httpService.postData('students_tasks', data).then(function (data) {

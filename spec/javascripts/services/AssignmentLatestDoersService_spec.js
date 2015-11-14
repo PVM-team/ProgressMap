@@ -201,6 +201,10 @@ describe('AssignmentLatestDoersService', function () {
 
         it('should return correct position if all positions are reserved', function() {
             var position = {x: 146.5909090909091, y: 250};
+            assignments[0].latestDoers[0].reserved = true;
+            assignments[0].latestDoers[1].reserved = true;
+            assignments[0].latestDoers[2].reserved = true;
+            assignments[0].latestDoers[3].reserved = true;
             assignments[0].latestDoers[4].reserved = true;
             expect(service.nextPositionToMoveToAroundAssignment(students[1], assignments[0])).toEqual(position);
         })

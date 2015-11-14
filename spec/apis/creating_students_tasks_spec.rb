@@ -117,7 +117,7 @@ describe "Creating StudentsTasks", type: :api do
 end
 
 def create_students_task(course_id, number, token)
-  params = {:course_id => course_id, :number => number, :student_token => token}
+  params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
   response = post("/students_tasks/student_finished_task", params)
 
   @response = JSON.parse(response.body)

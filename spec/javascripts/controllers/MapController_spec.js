@@ -158,7 +158,7 @@ describe('MapController', function () {
         describe('when undone', function(){
             it('calls on httpService.postData with assignment id, current student id and path students_tasks', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
-                var data2 = {assignment_id: 2, student_id: scope.currentStudent.id}
+                var data2 = {assignment_id: 2, student_id: scope.currentStudent.id, complete:true}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks", data2);
             })
             it('sets them as done', function(){
