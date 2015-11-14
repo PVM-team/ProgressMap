@@ -36,9 +36,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         assignment.latestDoers[i].leaving = true;
     }
 
-    this.addStudentToLatestDoersWithLocation = function(student, assignment, scaledPosition) {
+    self.addStudentToLatestDoersWithLocation = function(student, assignment, position) {
     	assignment.latestDoers.push(student);
-        assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': scaledPosition.x, 'y': scaledPosition.y };
+        assignment.latestDoers[assignment.latestDoers.length - 1]['location'] = {'x': position.x, 'y': position.y };
     }
 
     /*
@@ -124,8 +124,8 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         Määrittää position, johon studentin circle tulee siirtää sekä varaa ko. position liikkumisen ajaksi.
     */
 
-    this.nextPositionToMoveToAroundAssignment = function(student, assignment) {
-        var position = getPositionStudentToMoveToAroundAssignment(student, assignment);
+    this.nextPositionToMoveToAroundAssignment = function(assignment) {
+        var position = getPositionStudentToMoveToAroundAssignment(assignment);
         reservePosition(assignment, position);
 
         return position;
@@ -142,13 +142,13 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         mukaan liikuttaessa x-suunnassa vasemmalta oikealle ja y-suunnassa ylhäältä alas.
     */
 
-    function getPositionStudentToMoveToAroundAssignment(student, assignment) {
+    function getPositionStudentToMoveToAroundAssignment(assignment) {
         if (allPositionsReserved(assignment)) {
             freeAllPositions(assignment);
         }
 
         if (atLeastOneFreePositionToGoTo(assignment)) {
-            return positionOfNewStudentAroundAssignment(student, assignment);
+            return positionOfNewStudentAroundAssignment(assignment);
         }
 
         return locationOfOldestStudentInLatestDoersWhichNotReserved(assignment);
@@ -199,9 +199,15 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
         for (var i = 0; i < assignment.latestDoers.length; i++) {
             assignment.latestDoers[i].reserved = false;
         }
-    }    
+    }
 
-    function positionOfNewStudentAroundAssignment(student, assignment) {
+    /*
+        Etsii ekan vapaan position assignmentin ympäriltä ja palauttaa sen.
+        Mikäli ko. positiossa ei ole doeria lainkaan, luodaan siihen kohtaan 'dummyStudent', joka
+        poistetaan myöhemmin kun liikkuja saapuu sen paikalle.
+    */
+
+    function positionOfNewStudentAroundAssignment(assignment) {
         var location = assignment.location;
         var lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
         var verticalPositionOffset = 0;
@@ -212,7 +218,9 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
             var doer = getStudentByLocationFromLatestDoersOfAssignment(assignment, position);
 
             if (! doer) {
-                createDummyStudentInLatestDoersOfAssignment(student.lastDoneAssignment, assignment, position);
+                var dummyStudent = {'dummy': true};
+                self.addStudentToLatestDoersWithLocation(dummyStudent, assignment, position);
+
                 return position;
             }
 
@@ -239,7 +247,6 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
                 return assignment.latestDoers[i];
             }
         }
-        return null;
     }
 
     function locationOfOldestStudentInLatestDoersWhichNotReserved(assignment) {
@@ -275,18 +282,6 @@ ProgressApp.service('AssignmentLatestDoersService', function (MapScaleService) {
                 return;
             }
         }
-    }
-
-    /*
-        Lisää uuden 'dummyStudetin' assignmentin latestDoersiin, joka luodaan sitä varten, että ko. lokaatio
-        voidaan varata siihen liikkuvalle studentille. Tarvitsee 'dummy' määreen (true) sitä varten että
-        kun myöhemmin tämä opiskelija poistetaan assignmentin latestDoersista uuden siihen siirtyvän tieltä,
-        ei kartalta yritetä poistaa palluraa ko. kohdasta.
-    */
-
-    function createDummyStudentInLatestDoersOfAssignment(lastDoneAssignment, assignment, position) {
-        var dummyStudent = {'location': position, 'lastDoneAssignment': lastDoneAssignment, 'dummy': true };
-        assignment.latestDoers.push(dummyStudent);
     }
 
     /*

@@ -119,7 +119,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
                 if (! originalAssignment &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
+                    var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment);
 
                     removeStudentFromEndPosition(destinationAssignment, endPosition);
                     markAssignmentAsDone(student, destinationAssignment, endPosition);
@@ -191,7 +191,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
         var circle = getStudentCircle(student, originalAssignment);
         circle.bringToFront();
 
-        var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
+        var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(destinationAssignment);
 
         var movingInfo = {'circle': circle,
                           'destinationAssignment': destinationAssignment,
