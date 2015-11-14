@@ -1,5 +1,7 @@
-describe('AssignmentLatestDoersService', function () {
+describe('AssignmentLatestDoersService', function ($provide) {
     var service;
+    var mapScaleServiceMock;
+
     var assignments;
     var students;
     var studentinfo;
@@ -11,9 +13,22 @@ describe('AssignmentLatestDoersService', function () {
         student = {};
         students = [];
 
+        mapScaleServiceMock = (function() {
+
+            return {
+                scaleByDefaultWidth: function(x) {
+                    return x;
+                }
+            }
+        })();
+
+        module(function($provide) {
+            $provide.value('MapScaleService', mapScaleServiceMock)  // sets MapScaleService as mapScaleServiceMock
+        })
+
         inject(function (_AssignmentLatestDoersService_) {
             service = _AssignmentLatestDoersService_;
-        });
+        })
     });
 
     describe("latestDoersFull", function(){
@@ -272,7 +287,151 @@ describe('AssignmentLatestDoersService', function () {
     describe("nextPositionToMoveToAroundAssignment", function() {
 
         beforeEach(function() {
+            assignment.id = 6503;
+            assignment.number = 18;
+            assignment.location = {'x': 327, 'y': 451};
+            assignment.latestDoers = [];
 
+            student.id = 35;
+            student.lastDoneAssignment = {"number": 42, "timestamp": 22};
+        })
+
+        describe("when assignment has less than 5 latestDoers", function() {
+
+
+            // yet to implement!
+        
+        })
+
+
+        describe("when assignment has 5 latestDoers", function() {
+
+            beforeEach(function() {
+                var x = assignment.location.x;
+                var y = assignment.location.y;
+
+                assignment.latestDoers = [{"id": 20,  "lastDoneAssignment": {"number": 18, "timestamp": 9}, "location": {'x': x + 50 + 0.000000002, 'y': y}},
+                                          {"id": 22,  "lastDoneAssignment": {"number": 18, "timestamp": 10}, "location": {'x': x + 80, 'y': y}},
+                                          {"id": 24,  "lastDoneAssignment": {"number": 18, "timestamp": 7}, "location": {'x': x + 50, 'y': y + 30}},
+                                          {"id": 23,  "lastDoneAssignment": {"number": 18, "timestamp": 13}, "location": {'x': x + 80, 'y': y + 30}},
+                                          {"id": 21,  "lastDoneAssignment": {"number": 18, "timestamp": 14}, "location": {'x': x + 110, 'y': y }} ];                
+            })
+
+            describe("and no one is leaving", function() {
+
+                beforeEach(function() {
+                    for (var i = 0; i < assignment.latestDoers.length; i++) {
+                        assignment.latestDoers[i].leaving = false;
+                    }
+                })
+
+                describe("and no position is reserved", function() {
+
+                    beforeEach(function() {
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            assignment.latestDoers[i].reserved = false;
+                        }
+                    })
+
+                    it("returns the position, and sets the reserved flag of the oldest doer in latestDoers of assignment", function() {
+                        expect(assignment.latestDoers[2].reserved).toBeFalsy();
+
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
+                        expect(position).toEqual(assignment.latestDoers[2].location);
+
+                        expect(assignment.latestDoers[2].reserved).toBeTruthy();
+                    })
+                })
+
+                describe("and some, but not all positions are reserved", function() {
+                    
+                    beforeEach(function() {
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            assignment.latestDoers[i].reserved = [true, false, true, true, false][i];
+                        }
+                    })
+
+                    it("returns the position, and sets the reserved flag of the oldest doer which is not reserved in latestDoers of assignment", function() {
+                        expect(assignment.latestDoers[1].reserved).toBeFalsy();
+
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
+                        expect(position).toEqual(assignment.latestDoers[1].location);
+
+                        expect(assignment.latestDoers[1].reserved).toBeTruthy();
+                    })              
+                })
+
+                describe("and all positions are reserved", function() {
+                    
+                    beforeEach(function() {
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            assignment.latestDoers[i].reserved = true;
+                        }
+                    })
+
+                    it("puts all doers as not reserved, returns the position, and sets the reserved flag of the oldest doer in latestDoers of assignment", function() {
+                        expect(assignment.latestDoers[2].reserved).toBeTruthy();
+
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
+                        expect(position).toEqual(assignment.latestDoers[2].location);
+
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            if (i != 2) {
+                                expect(assignment.latestDoers[i].reserved).toBeFalsy();
+                            }
+                            else {
+                                expect(assignment.latestDoers[i].reserved).toBeTruthy();
+                            }
+                        }
+                    })
+                })
+            })
+
+            describe("and some doers are leaving", function() {
+
+                beforeEach(function() {
+                    for (var i = 0; i < assignment.latestDoers.length; i++) {
+                        assignment.latestDoers[i].leaving = [true, false, true, false, false][i];
+                    }
+                })
+
+                describe("but leaving doers have reserved flags set to true", function() {
+                    
+                    beforeEach(function() {
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            assignment.latestDoers[i].reserved = [true, true, true, false, false][i];
+                        }
+                    })
+
+                    it("returns the position, and sets the reserved flag of the oldest doer which is not reserved in latestDoers of assignment", function() {
+                        expect(assignment.latestDoers[3].reserved).toBeFalsy();
+
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
+                        expect(position).toEqual(assignment.latestDoers[3].location);
+
+                        expect(assignment.latestDoers[3].reserved).toBeTruthy();
+                    })
+                })
+
+                describe("and one doer who leaves has its reserved flag set to a falsy value", function() {
+
+                    beforeEach(function() {
+                        for (var i = 0; i < assignment.latestDoers.length; i++) {
+                            assignment.latestDoers[i].reserved = [false, true, true, false, false][i];
+                        }
+                    })
+
+                    it("returns the position of that doer and sets the reserved flag of that to true", function() {
+                        expect(assignment.latestDoers[0].reserved).toBeFalsy();
+
+                        var position = service.nextPositionToMoveToAroundAssignment(undefined, assignment);
+                        expect(position.x).toBe(Math.round(assignment.latestDoers[0].location.x));
+                        expect(position.y).toBe(assignment.latestDoers[0].location.y);
+
+                        expect(assignment.latestDoers[0].reserved).toBeTruthy();
+                    })
+                })
+            })
         })
     })
 })

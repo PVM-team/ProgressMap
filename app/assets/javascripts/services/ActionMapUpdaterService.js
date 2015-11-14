@@ -1,6 +1,6 @@
 ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersService, AssignmentCirclesService, MapScaleService, MoveStudentCircleService, StudentIconService) {
 
-    var assignments; // muotoa {'id', 'number', latestDoers: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
+    var assignments; // muotoa {'id', 'number', 'location': {'x', 'y'}, latestDoers: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
                      // latestDoersissa jokaisella tulee olla aina id ja location. Muut attribuutit ovat tilanteesta riippuen olemassa tai sitten ei, jos niitä ei ko. doerin kohdalla tarvita
                      // reserved = "'true', jos toinen opiskelija on varannut tämän opiskelijan position ja liikkuu tämän paikalle ko. intervalin aikana"
                      // leaving = "'true' jos tämä opiskelija siirtyy ko. intervalin aikana. on olemassa uusien siirtymälokaatioiden määrityksen aikana olemassa."
