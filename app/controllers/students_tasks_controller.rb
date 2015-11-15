@@ -46,7 +46,7 @@ class StudentsTasksController < ApplicationController
 
     def create
         task = StudentsTask.new(students_task_params)
-        if params[:complete]
+        if params[:complete] == 'true'
             task.complete = true
         end
         task.save
