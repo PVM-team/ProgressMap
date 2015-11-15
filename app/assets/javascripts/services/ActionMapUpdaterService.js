@@ -119,8 +119,6 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestDoersSe
                     ! AssignmentLatestDoersService.studentIsInLatestDoersOfAssignment(student, destinationAssignment) &&
                     AssignmentLatestDoersService.studentShouldBeInLatestDoersOfAssignment(student, destinationAssignment)) {
 
-                    console.log(student)
-
                     var endPosition = AssignmentLatestDoersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
                     removeStudentFromEndPosition(destinationAssignment, endPosition);
