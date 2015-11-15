@@ -3,7 +3,10 @@ class StudentsTasksController < ApplicationController
     def update # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
         assignment = find_assignment(params[:course_id], params[:number].to_i)
         student = Student.find_by token: params[:student_token]
-        attempt = params[:complete]
+        attempt = false
+        if params[:complete] == 'true'
+            attempt = true
+        end
 
         task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
 

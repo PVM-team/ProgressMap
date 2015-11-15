@@ -68,6 +68,48 @@ describe "Creating StudentsTasks", type: :api do
       end
     end
 
+    describe "and student has attempted to do the assignment before and this time succeeds" do
+
+      before :each do
+        @count2 = @student2.assignments.length
+        create_students_task(@course.id, @assignment2.number, @student2.token, true)
+      end
+
+      it "no new new students_task is saved to database" do
+        expect(StudentsTask.count).to be(@tasks_in_db)
+      end
+
+      it "the students_tasks, of the student whose token matches that of given, doesn't change" do
+        expect(@student2.assignments.length).to be(@count2)
+        expect(@student2.assignments[@count2 - 1]).to eq(@assignment2)
+      end
+
+      it "and the HTTP response contains information behind what happened" do
+        expect(@response["code"]).to be(200)
+        expect(@response["message"]).to eq("task marked as done")
+      end
+    end
+
+    describe "and student has attempted to do the assignment before and it fails again" do
+
+      before :each do
+        @count2 = @student2.assignments.length
+        create_students_task(@course.id, @assignment2.number, @student2.token, false)
+      end
+
+      it "no new new students_task is saved to database" do
+        expect(StudentsTask.count).to be(@tasks_in_db)
+      end
+
+      it "the students_tasks, of the student whose token matches that of given, doesn't change" do
+        expect(@student2.assignments.length).to be(@count2)
+        expect(@student2.assignments[@count2 - 1]).to eq(@assignment2)
+      end
+
+      it "and the HTTP response contains information behind what happened" do
+        check_that_response_contains_the_following(412, "course_id: " + @course.id.to_s, "number: " + @assignment2.number.to_s)
+      end
+    end
 
     describe "and no course exists with provided course_id" do
 
@@ -117,10 +159,10 @@ describe "Creating StudentsTasks", type: :api do
 end
 
 def create_students_task(course_id, number, token, complete)
-  if complete
-    params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
-  else
+  if !complete or complete.nil?
     params = {:course_id => course_id, :number => number, :student_token => token, :complete => false}
+  else
+    params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
   end
 
   response = post("/students_tasks/update", params)
@@ -152,6 +194,7 @@ def course_details
   task = StudentsTask.first
   task.complete = true
   task.save
+  @student2.assignments << @assignment2
 end
 
 def check_that_response_contains_the_following(code, msg_part1, msg_part2)
