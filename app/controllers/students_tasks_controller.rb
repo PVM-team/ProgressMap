@@ -1,19 +1,24 @@
 class StudentsTasksController < ApplicationController
 
-    def student_finished_task # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
+    def update # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
         assignment = find_assignment(params[:course_id], params[:number].to_i)
         student = Student.find_by token: params[:student_token]
-        complete = params[:complete]
+        attempt = params[:complete]
 
-        if assignment and student and complete
-            if student.assignments.include?(assignment)
+        task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
+
+        if assignment and student and task
+            if task.complete
                 render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
+            elsif !task.complete and attempt
+                task.complete = true
+                task.save
+                render_json(200, "task marked as done")
             else
-                student.assignments << assignment
-                render_json(201, "created")
+                render_json(412, "Student has already attempted the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
             end
 
-        elsif !complete
+        elsif assignment and student and task.nil?
             student.assignments << assignment
             render_json(201, "created")
 
@@ -38,6 +43,9 @@ class StudentsTasksController < ApplicationController
 
     def create
         task = StudentsTask.new(students_task_params)
+        if params[:complete]
+            task.complete = true
+        end
         task.save
 
         @students_task = []

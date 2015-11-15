@@ -24,7 +24,7 @@ describe "Creating StudentsTasks", type: :api do
       describe "and student has not done assignment yet" do
         
         before :each do
-          create_students_task(@course.id, @assignment2.number, @student1.token)
+          create_students_task(@course.id, @assignment2.number, @student1.token, true)
         end
 
         describe "a new students_task is saved to database" do
@@ -50,7 +50,7 @@ describe "Creating StudentsTasks", type: :api do
       describe "and student has already done the assignment" do
 
         before :each do
-          create_students_task(@course.id, @assignment1.number, @student1.token)
+          create_students_task(@course.id, @assignment1.number, @student1.token, true)
         end
 
         it "no new new students_task is saved to database" do
@@ -72,7 +72,7 @@ describe "Creating StudentsTasks", type: :api do
     describe "and no course exists with provided course_id" do
 
       before :each do
-        create_students_task(Course.count + 1, @assignment2.number, @student1.token)
+        create_students_task(Course.count + 1, @assignment2.number, @student1.token, true)
       end
 
       it "no new new students_task is saved to database" do
@@ -87,7 +87,7 @@ describe "Creating StudentsTasks", type: :api do
     describe "and no assignment exists with given number on a valid course with provided course_id" do
 
       before :each do
-        create_students_task(@course.id, @course.assignments.length + 1, @student1.token)
+        create_students_task(@course.id, @course.assignments.length + 1, @student1.token, true)
       end
 
       it "no new new students_task is saved to database" do
@@ -102,7 +102,7 @@ describe "Creating StudentsTasks", type: :api do
     describe "and no student has the provided student_token" do
 
       before :each do
-        create_students_task(@course.id, @assignment2, "abc-123-def")
+        create_students_task(@course.id, @assignment2, "abc-123-def", true)
       end
 
       it "no new new students_task is saved to database" do
@@ -116,10 +116,14 @@ describe "Creating StudentsTasks", type: :api do
   end
 end
 
-def create_students_task(course_id, number, token)
-  params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
-  response = post("/students_tasks/student_finished_task", params)
+def create_students_task(course_id, number, token, complete)
+  if complete
+    params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
+  else
+    params = {:course_id => course_id, :number => number, :student_token => token, :complete => false}
+  end
 
+  response = post("/students_tasks/update", params)
   @response = JSON.parse(response.body)
 end
 
@@ -145,6 +149,9 @@ def course_details
   @course.assignments << @assignment4
 
   @student1.assignments << @assignment1
+  task = StudentsTask.first
+  task.complete = true
+  task.save
 end
 
 def check_that_response_contains_the_following(code, msg_part1, msg_part2)

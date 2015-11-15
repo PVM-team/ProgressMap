@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   post 'locations/move', to: 'locations#move'
 
   post 'students_tasks/destroy', to: 'students_tasks#destroy'
-  post 'students_tasks/student_finished_task', to: 'students_tasks#student_finished_task'
+  post 'students_tasks/update', to: 'students_tasks#update'
 
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]
