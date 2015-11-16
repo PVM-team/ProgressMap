@@ -46,10 +46,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 };
             }
 
-            var assignmentLayer;
             var pathLayer;
-            var textLayer;
             var dependencyArrowLayer;
+            var assignmentLayer;
+            var textLayer;
 
             var path;
             paper.install(window);
@@ -79,16 +79,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             paper.view.onFrame = function (event) {
                 if (HOVERED_CIRCLE) {
-                    var end = HOVERED_CIRCLE.position;
-                    var paths = dependencyArrowLayer.children;
-
-                    for (var i = 0; i < paths.length; i++) {
-                        if (!(paths[i].intersects(HOVERED_CIRCLE))) {
-                            var start = paths[i].firstSegment.point;
-                            var vector = end.subtract(start);
-                            growPath(paths[i], vector.normalize().multiply(event.delta));
-                        }
-                    }
+                    growDependencyPathsByOne(event);
 
                     for (var i = 0; i < DEPENDENTS.length; i++) {
                         putDependencyLightOn(i);
@@ -123,6 +114,19 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                    dependentCircle.fillColor.alpha -= 0.1;
                    originalCircle.shadowColor.alpha += 0.1;
                }, 60); 
+            }
+
+            function growDependencyPathsByOne(event){
+                var end = HOVERED_CIRCLE.position;
+                var paths = dependencyArrowLayer.children;
+
+                for (var i = 0; i < paths.length; i++) {
+                    if (!(paths[i].intersects(HOVERED_CIRCLE))) {
+                        var start = paths[i].firstSegment.point;
+                        var vector = end.subtract(start);
+                        growPath(paths[i], vector.normalize().multiply(event.delta));
+                    }
+                }
             }
 
             function growPath(path, position) {
@@ -172,11 +176,11 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             function initializeLayers() {
                 pathLayer = new paper.Layer();
+                dependencyArrowLayer = new paper.Layer();
+                dependencyArrowLayer.locked = true;
                 assignmentLayer = new paper.Layer();
                 textLayer = new paper.Layer();
                 textLayer.locked = true;
-                dependencyArrowLayer = new paper.Layer();
-                dependencyArrowLayer.locked = true;
             }
 
             function scaleButtonsByWidth() {
