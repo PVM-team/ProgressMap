@@ -45,7 +45,7 @@ describe Assignment, type: :model do
         student = FactoryGirl.create :student
 
         if i < 3
-          @assignment.doers << student
+          @assignment.attempters << student
         else
           student.assignments << (FactoryGirl.create :assignment)
         end  
@@ -59,7 +59,7 @@ describe Assignment, type: :model do
       expect(Assignment.count).to be(count - 1)
     end
 
-    it "all completed tasks associated with it are deleted" do
+    it "all tasks associated with it are deleted" do
       expect(StudentsTask.count).to be(3)
 
       @assignment.destroy

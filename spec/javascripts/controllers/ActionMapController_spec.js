@@ -186,47 +186,47 @@ describe('ActionMapController', function () {
 
         describe('and after a second interval and student ID = 1 does assignment 1', function() {
 
-            it ('student 1 is added to latestDoers of assignment 1', function() {
+            it ('student 1 is added to latestAttempters of assignment 1', function() {
                 doInterval(2, controller);
 
-                expect(scope.assignments[0].latestDoers.length).toBe(4)
-                expect(scope.assignments[0].latestDoers[0].id).toBe(1)
-                expect(scope.assignments[0].latestDoers[1].id).toBe(8)
-                expect(scope.assignments[0].latestDoers[2].id).toBe(3)
-                expect(scope.assignments[0].latestDoers[3].id).toBe(2)
+                expect(scope.assignments[0].latestAttempters.length).toBe(4)
+                expect(scope.assignments[0].latestAttempters[0].id).toBe(1)
+                expect(scope.assignments[0].latestAttempters[1].id).toBe(8)
+                expect(scope.assignments[0].latestAttempters[2].id).toBe(3)
+                expect(scope.assignments[0].latestAttempters[3].id).toBe(2)
 
-                expect(scope.assignments[2].latestDoers.length).toBe(2)
+                expect(scope.assignments[2].latestAttempters.length).toBe(2)
             })
 
         })
 
-        describe('and after a third interval student ID = 9 who had previously done assignment 3 does assignment 2, student ID = 7 who had previously done assignment 2 and was in latestDoers of that assignment does assignment 1, and student ID = 12 who had previously done assignment 3, and was in latestDoers of that assignment does assignment 1', function() {
+        describe('and after a third interval student ID = 9 who had previously done assignment 3 does assignment 2, student ID = 7 who had previously done assignment 2 and was in latestAttempters of that assignment does assignment 1, and student ID = 12 who had previously done assignment 3, and was in latestAttempters of that assignment does assignment 1', function() {
 
-            it ('student 12 is removed from latestDoers of assignment 3', function() {
+            it ('student 12 is removed from latestAttempters of assignment 3', function() {
                 doInterval(3, controller);
-                expect(scope.assignments[2].latestDoers.length).toBe(0)
+                expect(scope.assignments[2].latestAttempters.length).toBe(0)
             })
 
-            it ('student 7 is removed from latestDoers of assignment 2, and after the funtion, it contains the 5 latest doers', function() {
+            it ('student 7 is removed from latestAttempters of assignment 2, and after the funtion, it contains the 5 latest doers', function() {
                 doInterval(3, controller);
 
-                expect(scope.assignments[1].latestDoers.length).toBe(5)
-                expect(scope.assignments[1].latestDoers[0].id).toBe(9)
-                expect(scope.assignments[1].latestDoers[1].id).toBe(11)
-                expect(scope.assignments[1].latestDoers[2].id).toBe(10)
-                expect(scope.assignments[1].latestDoers[3].id).toBe(5)
-                expect(scope.assignments[1].latestDoers[4].id).toBe(6)
+                expect(scope.assignments[1].latestAttempters.length).toBe(5)
+                expect(scope.assignments[1].latestAttempters[0].id).toBe(9)
+                expect(scope.assignments[1].latestAttempters[1].id).toBe(11)
+                expect(scope.assignments[1].latestAttempters[2].id).toBe(10)
+                expect(scope.assignments[1].latestAttempters[3].id).toBe(5)
+                expect(scope.assignments[1].latestAttempters[4].id).toBe(6)
             })
 
             it ('after the functuion, assignment 1 contains the 5 latest doers', function() {
                 doInterval(3, controller);
 
-                expect(scope.assignments[0].latestDoers.length).toBe(5)
-                expect(scope.assignments[0].latestDoers[0].id).toBe(12)
-                expect(scope.assignments[0].latestDoers[1].id).toBe(7)
-                expect(scope.assignments[0].latestDoers[2].id).toBe(1)
-                expect(scope.assignments[0].latestDoers[3].id).toBe(8)
-                expect(scope.assignments[0].latestDoers[4].id).toBe(3)
+                expect(scope.assignments[0].latestAttempters.length).toBe(5)
+                expect(scope.assignments[0].latestAttempters[0].id).toBe(12)
+                expect(scope.assignments[0].latestAttempters[1].id).toBe(7)
+                expect(scope.assignments[0].latestAttempters[2].id).toBe(1)
+                expect(scope.assignments[0].latestAttempters[3].id).toBe(8)
+                expect(scope.assignments[0].latestAttempters[4].id).toBe(3)
             })         
 
         })  
@@ -242,24 +242,24 @@ describe('ActionMapController', function () {
 
 function stateInitially(scope) {
     expect(scope.assignments[0].id).toBe(1);
-    expect(scope.assignments[0].latestDoers.length).toBe(3)
+    expect(scope.assignments[0].latestAttempters.length).toBe(3)
 
-    expect(scope.assignments[0].latestDoers[0].id).toBe(8)
-    expect(scope.assignments[0].latestDoers[1].id).toBe(3)
-    expect(scope.assignments[0].latestDoers[2].id).toBe(2)
+    expect(scope.assignments[0].latestAttempters[0].id).toBe(8)
+    expect(scope.assignments[0].latestAttempters[1].id).toBe(3)
+    expect(scope.assignments[0].latestAttempters[2].id).toBe(2)
 
     expect(scope.assignments[1].id).toBe(2);
-    expect(scope.assignments[1].latestDoers.length).toBe(5)
+    expect(scope.assignments[1].latestAttempters.length).toBe(6)
 
-    expect(scope.assignments[1].latestDoers[0].id).toBe(11)
-    expect(scope.assignments[1].latestDoers[1].id).toBe(10)
-    expect(scope.assignments[1].latestDoers[2].id).toBe(5)
-    expect(scope.assignments[1].latestDoers[3].id).toBe(7)
-    expect(scope.assignments[1].latestDoers[4].id).toBe(6)
+    expect(scope.assignments[1].latestAttempters[0].id).toBe(11)
+    expect(scope.assignments[1].latestAttempters[1].id).toBe(10)
+    expect(scope.assignments[1].latestAttempters[2].id).toBe(5)
+    expect(scope.assignments[1].latestAttempters[3].id).toBe(7)
+    expect(scope.assignments[1].latestAttempters[4].id).toBe(6)
 
     expect(scope.assignments[2].id).toBe(3);
-    expect(scope.assignments[2].latestDoers.length).toBe(2)
+    expect(scope.assignments[2].latestAttempters.length).toBe(2)
 
-    expect(scope.assignments[2].latestDoers[0].id).toBe(12)
-    expect(scope.assignments[2].latestDoers[1].id).toBe(9)
+    expect(scope.assignments[2].latestAttempters[0].id).toBe(12)
+    expect(scope.assignments[2].latestAttempters[1].id).toBe(9)
 }

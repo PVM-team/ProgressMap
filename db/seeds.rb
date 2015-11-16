@@ -43,6 +43,11 @@ course1.assignments << assignment7
 course1.assignments << assignment8
 course1.assignments << assignment9
 
+course1.assignments.each do |assignment|
+	assignment.name = "tehtävä" + assignment.number.to_s
+	assignment.save
+end
+
 assignment1.location = Location.create x: 256, y: 664
 assignment2.location = Location.create x: 386, y: 718
 assignment3.location = Location.create x: 669, y: 634

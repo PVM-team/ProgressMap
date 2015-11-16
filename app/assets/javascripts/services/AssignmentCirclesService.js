@@ -1,10 +1,11 @@
-ProgressApp.service('AssignmentCirclesService', function () {
+ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
-	this.drawCircle = function(assignment, students) {
-		var location = assignment.location;
-		var percentageCompleted = assignment.doers.length / students.length * 100;
+    this.initializeCircle = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
+        var location = assignment.location;
+        var percentageCompleted = assignment.doers.length / students.length * 100;
 
         var circle = new paper.Path.Circle(location, 35);
+        assignmentLayer.addChild(circle);
 
         circle.style = {
             fillColor: {
@@ -38,7 +39,10 @@ ProgressApp.service('AssignmentCirclesService', function () {
             fillColor: 'black',
             fontSize: 20,
             justification: 'center'
+
+
         });
+        labelLayer.addChild(text);
 
         //percentage over assignment circles
         var percentageLocationPoint = {'x': location.x, 'y': location.y + 30};
@@ -49,6 +53,21 @@ ProgressApp.service('AssignmentCirclesService', function () {
             fillColor: 'black',
             justification: 'center'
         });
+        percentageLayer.addChild(percentage);
+        paper.view.update();
+    }
+
+
+    this.updateCircleAfterNewDoer = function (assignment, students, assignmentLayer, percentageLayer) {
+        var circle = assignmentLayer.children[assignment.number - 1];
+        var percentageCompleted = assignment.doers.length / students.length * 100;
+
+        circle.fillColor = 'yellow';
+        circle.fillColor.hue += percentageCompleted;
+
+        if (Math.floor(percentageCompleted) <= 100) {
+            percentageLayer.children[assignment.number - 1].content = Math.floor(percentageCompleted) + "%";
+        }
         paper.view.update();
     }
 })

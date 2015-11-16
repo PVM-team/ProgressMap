@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   get 'map/init', to: 'map#init'
   get 'map/action_init', to: 'map#action_init'
+  get 'map/action_students', to: 'map#action_students'
 
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
@@ -12,8 +13,7 @@ Rails.application.routes.draw do
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'
 
-  post 'students_tasks/destroy', to: 'students_tasks#destroy'
-  post 'students_tasks/student_finished_task', to: 'students_tasks#student_finished_task'
+  post 'students_tasks/update', to: 'students_tasks#update'
 
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]

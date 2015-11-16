@@ -156,10 +156,10 @@ describe('MapController', function () {
     describe('marking assignments', function(){
         
         describe('when undone', function(){
-            it('calls on httpService.postData with assignment id, current student id and path students_tasks', function(){
+            it('calls on httpService.postData with assignment id, current student id and path students_tasks/update', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
-                var data2 = {assignment_id: 2, student_id: scope.currentStudent.id}
-                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks", data2);
+                var data2 = {assignment_id: 2, student_id: scope.currentStudent.id, complete: true}
+                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/update", data2);
             })
             it('sets them as done', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
@@ -173,10 +173,10 @@ describe('MapController', function () {
         })
 
         describe('when done', function(){
-            it('calls on httpService.postData with assignment id, current student id and path students_tasks/destroy', function(){
+            it('calls on httpService.postData with assignment id, current student id and path students_tasks/update', function(){
                 scope.markAssignmentAsUndone(doneAssignment);
-                var data2 = {assignment_id: 1, student_id: scope.currentStudent.id}
-                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/destroy", data2);
+                var data2 = {assignment_id: 1, student_id: scope.currentStudent.id, complete: false}
+                expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/update", data2);
             })
             it ('sets them as undone', function(){
                 scope.markAssignmentAsUndone(doneAssignment);

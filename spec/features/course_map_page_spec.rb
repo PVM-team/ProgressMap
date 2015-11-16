@@ -94,10 +94,10 @@ describe "Course map page", js: true do
               button = page.find('button', :text => '1')
               expect(button['class']).to have_content "done-task"
 
-              @doers_size = @task1.doers.length
+              @doers_size = @task1.attempters.length
               @students_tasks_size = StudentsTask.count
 
-              expect(@task1.doers.include?(@student2)).to be(true)
+              expect(@task1.attempters.include?(@student2)).to be(true)
 
               button.click
             end
@@ -107,13 +107,11 @@ describe "Course map page", js: true do
               expect(button['class']).to have_content "undone-task"
             end
 
-            it "the StudentsTask between @student2 and the assignment is deleted" do
+            it "the StudentsTask between @student2 and the assignment is not deleted" do
               task1 = Assignment.find(@task1.id)
 
-              expect(StudentsTask.count).to be(@students_tasks_size - 1)
-              
-              expect(task1.doers.length).to be(@doers_size - 1)
-              expect(task1.doers.include?(@student2)).to be(false)
+              expect(task1.attempters.length).to be(@doers_size)
+              expect(task1.attempters.include?(@student2)).to be(true)
             end
           end
         end
