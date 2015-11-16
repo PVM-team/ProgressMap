@@ -5,4 +5,5 @@ class StudentsTask < ActiveRecord::Base
 
 	validates :assignment_id, numericality: { only_integer: true }
 	validates :student_id, numericality: { only_integer: true }
+	validates :complete, :inclusion => {:in => [true, false] }
 end

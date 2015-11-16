@@ -1,19 +1,18 @@
 class StudentsTasksController < ApplicationController
 
-    def update # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
+    def create # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
         assignment = find_assignment(params[:course_id], params[:number].to_i)
         student = Student.find_by token: params[:student_token]
-        attempt = false
-        if params[:complete] == 'true'
-            attempt = true
-        end
+
+        complete = params[:complete] == true ? true : false
 
         task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
 
         if assignment and student and task
             if task.complete
                 render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
-            elsif !task.complete and attempt
+            
+            elsif !task.complete and complete
                 task.complete = true
                 task.save
                 render_json(200, "task marked as done")
@@ -44,11 +43,16 @@ class StudentsTasksController < ApplicationController
     end
 
 
-    def create
-        task = StudentsTask.new(students_task_params)
-        if params[:complete] == 'true'
-            task.complete = true
-        end
+    def update
+        assignment = Assignment.find_by id: params[:assignment_id]
+        student = Student.find_by id: params[:student_id]
+
+        task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
+        task = StudentsTask.new(students_task_params) if not task
+
+        byebug
+
+        task.complete = params[:complete]
         task.save
 
         @students_task = []
@@ -57,12 +61,6 @@ class StudentsTasksController < ApplicationController
         render 'students_tasks/show.json.jbuilder'
     end
 
-    def destroy
-        task = StudentsTask.find_by_assignment_id_and_student_id(params[:assignment_id], params[:student_id])
-        task.destroy if task
-
-        render plain: "StudentsTask deleted"
-    end
 
     private
 
@@ -81,6 +79,6 @@ class StudentsTasksController < ApplicationController
         end
 
         def students_task_params
-            params.require(:students_task).permit(:assignment_id, :student_id)
+            params.require(:students_task).permit(:assignment_id, :student_id, :complete)
         end
 end
