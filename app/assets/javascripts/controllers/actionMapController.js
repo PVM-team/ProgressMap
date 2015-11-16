@@ -13,7 +13,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $scope.assignments = data["assignments"];
 
         sortAssignmentsByNumber();
-        assignLatestDoersForAssignments();
+        assignLatestAttemptersForAssignments();
 
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
 
@@ -60,57 +60,57 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         })
     }
 
-    function assignLatestDoersForAssignments() {
-        addLatestDoersArrayForEachAssignment();
-        addEachStudentToLatestDoersOfAssignmentTheyBelong();
-        sortLatestDoersForEachAssignment();
-        removeStudentsFromLatestDoersIfThereAreTooMany();
+    function assignLatestAttemptersForAssignments() {
+        addLatestAttemptersArrayForEachAssignment();
+        addEachStudentToLatestAttemptersOfAssignmentTheyBelong();
+        sortLatestAttemptersForEachAssignment();
+        removeStudentsFromLatestAttemptersIfThereAreTooMany();
 
     }
 
-    function addLatestDoersArrayForEachAssignment() {
+    function addLatestAttemptersArrayForEachAssignment() {
         for (var i = 0; i < $scope.assignments.length; i++) {
-            $scope.assignments[i]['latestDoers'] = [];
+            $scope.assignments[i]['latestAttempters'] = [];
         }
     }
 
-    function addEachStudentToLatestDoersOfAssignmentTheyBelong() {
+    function addEachStudentToLatestAttemptersOfAssignmentTheyBelong() {
          for (var i = 0; i < $scope.students.length; i++) {
             var student = $scope.students[i];
 
-            if (student.lastDoneAssignment && student.lastDoneAssignment.number <= $scope.assignments.length) {
-                $scope.assignments[student.lastDoneAssignment.number - 1].latestDoers.push(student);
+            if (student.lastDoneAssignment) {
+                $scope.assignments[student.lastDoneAssignment.number - 1].latestAttempters.push(student);
             }
         }
     }
     
-    function removeStudentsFromLatestDoersIfThereAreTooMany() {
+    function removeStudentsFromLatestAttemptersIfThereAreTooMany() {
         for (var i = 0; i < $scope.assignments.length; i++) {
-            removeStudentsFromLatestDoersOfAssignmentIfThereAreTooMany($scope.assignments[i]);
+            removeStudentsFromLatestAttemptersOfAssignmentIfThereAreTooMany($scope.assignments[i]);
         }
     }
 
-    function removeStudentsFromLatestDoersOfAssignmentIfThereAreTooMany(assignment) {
-        var doers = assignment.latestDoers;
+    function removeStudentsFromLatestAttemptersOfAssignmentIfThereAreTooMany(assignment) {
+        var attempters = assignment.latestAttempters;
 
-        if (doers.length > maxStudentsToShowAroundAssignment) {
-            var new_doers = [];
+        if (attempters.length > maxStudentsToShowAroundAssignment) {
+            var new_attempters = [];
 
             for (var j = 0; j < maxStudentsToShowAroundAssignment; j++) {
-                new_doers.push(doers[j]);
+                new_attempters.push(attempters[j]);
             }
-            assignment.latestDoers = new_doers;
+            assignment.latestAttempters = new_attempters;
         }
     }
 
-    function sortLatestDoersForEachAssignment() {
+    function sortLatestAttemptersForEachAssignment() {
         for (var i = 0; i < $scope.assignments.length; i++) {
-            sortLatestDoersForAssignment($scope.assignments[i]);
+            sortLatestAttemptersForAssignment($scope.assignments[i]);
         }
     }
 
-    function sortLatestDoersForAssignment(assignment) {
-        assignment.latestDoers.sort(function (a, b) {
+    function sortLatestAttemptersForAssignment(assignment) {
+        assignment.latestAttempters.sort(function (a, b) {
             return new Date(b.lastDoneAssignment.timestamp) - new Date(a.lastDoneAssignment.timestamp);
         })
     }
@@ -120,12 +120,12 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         var studentButtonHeight = 25;
         var radius = 40;
 
-        var step = 2 * Math.PI / assignment.latestDoers.length;
+        var step = 2 * Math.PI / assignment.latestAttempters.length;
         var angle = 0;
 
-        for (var i = 0; i < assignment.latestDoers.length; i++) {
+        for (var i = 0; i < assignment.latestAttempters.length; i++) {
 
-            if (student.id == assignment.latestDoers[i].id) {
+            if (student.id == assignment.latestAttempters[i].id) {
                 var x = Math.round(assignment.location.x + radius * Math.cos(angle) - studentButtonWidth / 2);
                 var y = Math.round(assignment.location.y + radius * Math.sin(angle) - studentButtonHeight / 2);
 

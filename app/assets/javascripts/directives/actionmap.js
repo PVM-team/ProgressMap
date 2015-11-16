@@ -55,7 +55,7 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
                     scalePathByWidth();
 
                     ActionMapUpdaterService.updateAssignmentLocations();
-                    ActionMapUpdaterService.updateAssignmentsLatestDoersLocations();
+                    ActionMapUpdaterService.updateAssignmentsLatestAttemptersLocations();
 
                     MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
@@ -105,12 +105,12 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
                 var lateralPositionOffset = 50;
                 var location = assignment.location;
 
-                for (var j = 0; j < assignment.latestDoers.length; j++) {
+                for (var j = 0; j < assignment.latestAttempters.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
 
                     var studentCircle = new paper.Path.Circle(studentLocation, 15);
 
-                    var student = assignment.latestDoers[j];
+                    var student = assignment.latestAttempters[j];
                     studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
                     studentLayer.addChild(studentCircle);
 

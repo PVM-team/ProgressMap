@@ -58,10 +58,11 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         var data = {
             assignment_id: assignment.id,
-            student_id: $scope.currentStudent.id
+            student_id: $scope.currentStudent.id,
+            complete: true
         }
 
-        httpService.postData('students_tasks', data).then(function (data) {
+        httpService.postData('students_tasks/update', data).then(function (data) {
             $scope.doneAssignments.push(assignment);
             assignment.doers.push($scope.currentStudent);
 
@@ -74,17 +75,21 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
         var data = {
             assignment_id: assignment.id,
-            student_id: $scope.currentStudent.id
+            student_id: $scope.currentStudent.id,
+            complete: false
         }
 
-        httpService.postData('students_tasks/destroy', data).then(function (data) {
+        httpService.postData('students_tasks/update', data).then(function (data) {
             var i = $scope.doneAssignments.indexOf(assignment);
-            removeValueFromList($scope.doneAssignments, i);
+            
+            if (i >= 0) {
+                removeValueFromList($scope.doneAssignments, i);   
+            
+                i = $scope.assignments.indexOf(assignment);
+                var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
 
-            i = $scope.assignments.indexOf(assignment);
-            var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
-
-            removeValueFromList($scope.assignments[i].doers, j);
+                removeValueFromList($scope.assignments[i].doers, j);
+            }
 
             $scope.buttonClicked = false;
         })
