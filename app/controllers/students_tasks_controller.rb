@@ -4,11 +4,11 @@ class StudentsTasksController < ApplicationController
         assignment = find_assignment(params[:course_id], params[:number].to_i)
         student = Student.find_by token: params[:student_token]
 
-        complete = params[:complete] == true ? true : false
+        complete = params[:complete] === 'true' ? true : false
 
         task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
 
-        if assignment and student and task
+        if task
             if task.complete
                 render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
             
@@ -16,12 +16,13 @@ class StudentsTasksController < ApplicationController
                 task.complete = true
                 task.save
                 render_json(200, "task marked as done")
+
             else
                 render_json(412, "Student has already attempted the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
             end
 
-        elsif assignment and student and task.nil?
-            student.assignments << assignment
+        elsif assignment and student
+            task = StudentsTask.create assignment_id: assignment.id, student_id: student.id, complete: complete
             render_json(201, "created")
 
         elsif assignment.nil?
@@ -49,8 +50,6 @@ class StudentsTasksController < ApplicationController
 
         task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
         task = StudentsTask.new(students_task_params) if not task
-
-        byebug
 
         task.complete = params[:complete]
         task.save

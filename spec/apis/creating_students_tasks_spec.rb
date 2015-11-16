@@ -13,7 +13,7 @@ describe "Creating StudentsTasks", type: :api do
     @tasks_in_db = StudentsTask.count
   end
 
-  describe "when a HTTP post request to '/students/student_finished_task' is done" do
+  describe "when a HTTP post request to '/students' is done" do
 
     describe "and the given parameters are valid" do
 
@@ -22,29 +22,54 @@ describe "Creating StudentsTasks", type: :api do
       end
 
       describe "and student has not done assignment yet" do
-        
-        before :each do
-          create_students_task(@course.id, @assignment2.number, @student1.token, true)
-        end
 
-        describe "a new students_task is saved to database" do
+        describe "and the complete value of created task is set to true" do
 
           before :each do
-            expect(StudentsTask.count).to be(@tasks_in_db + 1)
+            create_students_task(@course.id, @assignment2.number, @student1.token, true)
           end
 
-          it "and the added students_task is put in the tasks of the student whose token matches that of given" do
-            @student1 = (Course.find_by id: @course.id).students[0]
+          describe "a new students_task is saved to database" do
 
-            expect(@student1.assignments.length).to be(@count + 1)
-            expect(@student1.assignments[@count]).to eq(@assignment2)
-          end
+            before :each do
+              expect(StudentsTask.count).to be(@tasks_in_db + 1)
+            end
 
-          it "and the HTTP response contains a valid code and message" do
-            expect(@response["code"]).to be(201)
-            expect(@response["message"]).to eq("created")
+            it "and the complete value of the task is 'true'" do
+              expect(StudentsTask.last.complete).to be(true)
+            end
+
+            it "and the added students_task is put in the tasks of the student whose token matches that of given" do
+              @student1 = (Course.find_by id: @course.id).students[0]
+
+              expect(@student1.assignments.length).to be(@count + 1)
+              expect(@student1.assignments[@count]).to eq(@assignment2)
+            end
+
+            it "and the HTTP response contains a valid code and message" do
+              expect(@response["code"]).to be(201)
+              expect(@response["message"]).to eq("created")
+            end
           end
         end
+
+        describe "and the complete value of created task is not defined" do
+
+          before :each do
+            create_students_task(@course.id, @assignment2.number, @student1.token)
+          end
+
+          describe "a new students_task is saved to database" do
+
+            before :each do
+              expect(StudentsTask.count).to be(@tasks_in_db + 1)
+            end
+
+            it "and the complete value of the task is 'false'" do
+              expect(StudentsTask.last.complete).to be(false)
+            end
+          end
+        end        
       end
 
       describe "and student has already done the assignment" do
@@ -94,7 +119,7 @@ describe "Creating StudentsTasks", type: :api do
 
       before :each do
         @count2 = @student2.assignments.length
-        create_students_task(@course.id, @assignment2.number, @student2.token, false)
+        create_students_task(@course.id, @assignment2.number, @student2.token)
       end
 
       it "no new new students_task is saved to database" do
@@ -158,14 +183,10 @@ describe "Creating StudentsTasks", type: :api do
   end
 end
 
-def create_students_task(course_id, number, token, complete)
-  if !complete or complete.nil?
-    params = {:course_id => course_id, :number => number, :student_token => token, :complete => false}
-  else
-    params = {:course_id => course_id, :number => number, :student_token => token, :complete => true}
-  end
+def create_students_task(course_id, number, token, complete = nil)
+  params = {:course_id => course_id, :number => number, :student_token => token, :complete => complete}
 
-  response = post("/students_tasks/update", params)
+  response = post("/students_tasks", params)
   @response = JSON.parse(response.body)
 end
 
