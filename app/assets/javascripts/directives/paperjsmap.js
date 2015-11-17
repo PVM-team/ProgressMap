@@ -50,6 +50,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             var dependencyArrowLayer;
             var assignmentLayer;
             var textLayer;
+            var triangleLayer;
 
             var path;
             paper.install(window);
@@ -178,6 +179,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 pathLayer = new paper.Layer();
                 dependencyArrowLayer = new paper.Layer();
                 dependencyArrowLayer.locked = true;
+                triangleLayer = new paper.Layer();
                 assignmentLayer = new paper.Layer();
                 textLayer = new paper.Layer();
                 textLayer.locked = true;
@@ -237,21 +239,23 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     });
 
 
-                    //mitä tämä tekee?
+                    //asettaa funktiot joita kutsutaan kun tekstin päälle viedään hiiri ja viedään se pois
+                    //funktiot ovat samat kuin assignment circleillä
                     setDependencyFunctions(scope.assignments[i], text);
                     textLayer.addChild(text);
                 }
             }
 
+            /*
             function onFrame(event) {
                 dependentCircle.shadowColor.hue += event.time*10;
-            }
+            }*/
 
             function setDependencyFunctions(assignment, item) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = new Path.Circle([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y], 50);
+                        var dependentCircle = new paper.Path.Circle([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y], 50);
                         var originalCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
 
                         if (dependentCircle) {
@@ -264,6 +268,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             path.add(startingPoint);
                             path.strokeWidth = 10;
                             path.strokeColor = 'yellow';
+
+                            createArrowhead(item, originalCircle);
+
 
                             pathLayer.addChild(dependentCircle);
 
@@ -294,6 +301,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 item.onMouseLeave = function (event) {
                     HOVERED_CIRCLE = null;
                     dependencyArrowLayer.removeChildren();
+                    triangleLayer.removeChildren();
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
                         var dependentCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
@@ -306,6 +314,18 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                         }
                     }
                 }
+            }
+
+            function createArrowhead(pointsAt, startsAt){
+                triangleLayer.activate();
+                var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, 50);
+                triangle.fillColor = 'yellow';
+                var angle = Math.atan2(pointsAt.position.y - startsAt.position.y, pointsAt.position.x - startsAt.position.x);
+                angle = angle*(180/Math.PI);
+                if (angle < 0){
+                    angle = 360 - (-angle);
+                }
+                triangle.rotate(90+angle)
             }
 
             function drawSmoothPaperPaths() {
