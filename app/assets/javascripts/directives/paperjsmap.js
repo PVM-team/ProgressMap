@@ -80,7 +80,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             paper.view.onFrame = function (event) {
                 if (HOVERED_CIRCLE) {
-                    growDependencyPathsByOne(event);
+                    moveDependencyArrows(event);
 
                     for (var i = 0; i < DEPENDENTS.length; i++) {
                         putDependencyLightOn(i);
@@ -117,22 +117,31 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                }, 60); 
             }
 
-            function growDependencyPathsByOne(event){
+            function moveDependencyArrows(event){
                 var end = HOVERED_CIRCLE.position;
                 var paths = dependencyArrowLayer.children;
+
+                var arrowheads = triangleLayer.children;
 
                 for (var i = 0; i < paths.length; i++) {
                     if (!(paths[i].intersects(HOVERED_CIRCLE))) {
                         var start = paths[i].firstSegment.point;
                         var vector = end.subtract(start);
-                        growPath(paths[i], vector.normalize().multiply(event.delta));
+                        vector = vector.normalize().multiply(event.delta);
+                        moveArrow(arrowheads[i], vector);
+                        growPath(paths[i], vector);
                     }
                 }
             }
 
+            function moveArrow(arrow, position){
+                arrow.position = arrow.position.add(position.multiply(1000));
+            }
+
+
             function growPath(path, position) {
                 var lastPos = path.lastSegment.point;
-                path.add(lastPos.add((position.multiply(1000))));
+                path.add(lastPos.add(position.multiply(1000)));
             }
 
             window.onresize = function () {
@@ -318,7 +327,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             function createArrowhead(pointsAt, startsAt){
                 triangleLayer.activate();
-                var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, 50);
+                var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, 25);
                 triangle.fillColor = 'yellow';
                 var angle = Math.atan2(pointsAt.position.y - startsAt.position.y, pointsAt.position.x - startsAt.position.x);
                 angle = angle*(180/Math.PI);
