@@ -26,7 +26,7 @@ describe "Creating StudentsTasks", type: :api do
         describe "and the complete value of created task is set to true" do
 
           before :each do
-            create_students_task(@course.id, @assignment2.number, @student1.token, true)
+            create_students_task(@course.token, @assignment2.number, @student1.token, true)
           end
 
           describe "a new students_task is saved to database" do
@@ -40,7 +40,7 @@ describe "Creating StudentsTasks", type: :api do
             end
 
             it "and the added students_task is put in the tasks of the student whose token matches that of given" do
-              @student1 = (Course.find_by id: @course.id).students[0]
+              @student1 = (Course.find_by token: @course.token).students[0]
 
               expect(@student1.assignments.length).to be(@count + 1)
               expect(@student1.assignments[@count]).to eq(@assignment2)
@@ -56,7 +56,7 @@ describe "Creating StudentsTasks", type: :api do
         describe "and the complete value of created task is not defined" do
 
           before :each do
-            create_students_task(@course.id, @assignment2.number, @student1.token)
+            create_students_task(@course.token, @assignment2.number, @student1.token)
           end
 
           describe "a new students_task is saved to database" do
@@ -75,7 +75,7 @@ describe "Creating StudentsTasks", type: :api do
       describe "and student has already done the assignment" do
 
         before :each do
-          create_students_task(@course.id, @assignment1.number, @student1.token, true)
+          create_students_task(@course.token, @assignment1.number, @student1.token, true)
         end
 
         it "no new new students_task is saved to database" do
@@ -88,7 +88,7 @@ describe "Creating StudentsTasks", type: :api do
         end
         
         it "and the HTTP response contains information behind what happened" do
-          check_that_response_contains_the_following(412, "course_id: " + @course.id.to_s, "number: " + @assignment1.number.to_s)
+          check_that_response_contains_the_following(412, "course_token: " + @course.token, "number: " + @assignment1.number.to_s)
         end
       end
     end
@@ -97,7 +97,7 @@ describe "Creating StudentsTasks", type: :api do
 
       before :each do
         @count2 = @student2.assignments.length
-        create_students_task(@course.id, @assignment2.number, @student2.token, true)
+        create_students_task(@course.token, @assignment2.number, @student2.token, true)
       end
 
       it "no new new students_task is saved to database" do
@@ -119,7 +119,7 @@ describe "Creating StudentsTasks", type: :api do
 
       before :each do
         @count2 = @student2.assignments.length
-        create_students_task(@course.id, @assignment2.number, @student2.token)
+        create_students_task(@course.token, @assignment2.number, @student2.token)
       end
 
       it "no new new students_task is saved to database" do
@@ -132,14 +132,15 @@ describe "Creating StudentsTasks", type: :api do
       end
 
       it "and the HTTP response contains information behind what happened" do
-        check_that_response_contains_the_following(412, "course_id: " + @course.id.to_s, "number: " + @assignment2.number.to_s)
+        check_that_response_contains_the_following(412, "course_token: " + @course.token, "number: " + @assignment2.number.to_s)
       end
     end
 
-    describe "and no course exists with provided course_id" do
+    describe "and no course exists with provided course_token" do
 
       before :each do
-        create_students_task(Course.count + 1, @assignment2.number, @student1.token, true)
+        @invalid_token = SecureRandom.uuid
+        create_students_task(@invalid_token, @assignment2.number, @student1.token, true)
       end
 
       it "no new new students_task is saved to database" do
@@ -147,14 +148,14 @@ describe "Creating StudentsTasks", type: :api do
       end
 
       it "HTTP response contains error information about invalid course_id" do
-        check_that_response_contains_the_following(400, "Invalid", "course_id: " + (Course.count + 1).to_s)
+        check_that_response_contains_the_following(400, "Invalid", "course_token: " + @invalid_token)
       end
     end
 
     describe "and no assignment exists with given number on a valid course with provided course_id" do
 
       before :each do
-        create_students_task(@course.id, @course.assignments.length + 1, @student1.token, true)
+        create_students_task(@course.token, @course.assignments.length + 1, @student1.token, true)
       end
 
       it "no new new students_task is saved to database" do
@@ -169,7 +170,7 @@ describe "Creating StudentsTasks", type: :api do
     describe "and no student has the provided student_token" do
 
       before :each do
-        create_students_task(@course.id, @assignment2.number, "abc-123-def", true)
+        create_students_task(@course.token, @assignment2.number, "abc-123-def", true)
       end
 
       it "no new new students_task is saved to database" do
@@ -183,8 +184,8 @@ describe "Creating StudentsTasks", type: :api do
   end
 end
 
-def create_students_task(course_id, number, token, complete = nil)
-  json_params = {:course_id => course_id, :number => number, :student_token => token, :complete => complete}.to_json
+def create_students_task(course_token, number, token, complete = nil)
+  json_params = {:course_token => course_token, :number => number, :student_token => token, :complete => complete}.to_json
 
   response = post("/students_tasks", json_params, "CONTENT_TYPE" => "application/json")
   @response = JSON.parse(response.body)

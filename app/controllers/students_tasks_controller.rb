@@ -3,7 +3,7 @@ class StudentsTasksController < ApplicationController
     def create
         params = JSON.parse(request.body.read.to_s)
 
-        assignment = find_assignment(params["course_id"], params["number"])
+        assignment = find_assignment(params["course_token"], params["number"])
         student = Student.find_by token: params["student_token"]
 
         complete = params["complete"] === true ? true : false
@@ -12,7 +12,7 @@ class StudentsTasksController < ApplicationController
 
         if task
             if task.complete
-                render_json(412, "Student has already done the assignment defined by course_id: " + params["course_id"].to_s + ", and number: " + params["number"].to_s)
+                render_json(412, "Student has already done the assignment defined by course_token: " + params["course_token"] + ", and number: " + params["number"].to_s)
             
             elsif !task.complete and complete
                 task.complete = true
@@ -20,7 +20,7 @@ class StudentsTasksController < ApplicationController
                 render_json(200, "task marked as done")
 
             else
-                render_json(412, "Student has already attempted the assignment defined by course_id: " + params["course_id"].to_s + ", and number: " + params["number"].to_s)
+                render_json(412, "Student has already attempted the assignment defined by course_token: " + params["course_token"] + ", and number: " + params["number"].to_s)
             end
 
         elsif assignment and student
@@ -28,10 +28,10 @@ class StudentsTasksController < ApplicationController
             render_json(201, "created")
 
         elsif assignment.nil?
-            course = Course.find_by id: params["course_id"]
+            course = Course.find_by token: params["course_token"]
 
             if course.nil?
-                render_json(400, "Invalid parameter for course_id: " + params["course_id"].to_s)
+                render_json(400, "Invalid parameter for course_token: " + params["course_token"])
                 return
             end
 
@@ -70,11 +70,11 @@ class StudentsTasksController < ApplicationController
             render json: params.to_json
         end
 
-        def find_assignment(course_id, number)
+        def find_assignment(course_token, number)
             begin
-                assignments = (Course.find_by id: course_id).assignments
+                assignments = (Course.find_by token: course_token).assignments
                 assignments[number - 1]
-            rescue NoMethodError => e # Course.find_by id: course_id = 'nil'
+            rescue NoMethodError => e # Course.find_by token: course_token = 'nil'
                 nil
             end
         end

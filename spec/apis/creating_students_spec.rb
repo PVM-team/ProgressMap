@@ -19,7 +19,7 @@ describe "Creating Students", type: :api do
     describe "and the given parameters are valid" do
 
       before :each do
-        create_student(@course.id, "Erkki", "Mäkelä")
+        create_student(@course.token, "Erkki", "Mäkelä")
       end
 
       describe "a new student is saved to database" do
@@ -51,30 +51,30 @@ describe "Creating Students", type: :api do
       end
     end
 
-    describe "and the given course_id doesn't refer to any course in database" do
+    describe "and the given course_token doesn't refer to any course in database" do
 
       before :each do
-        @id = Course.count + 1
-        create_student(@id, "Erkki", "Mäkelä")
+        @token = SecureRandom.uuid
+        create_student(@token, "Erkki", "Mäkelä")
       end
 
       it "the student is not saved to database" do
         expect(Student.count).to be(0)
       end
 
-      it "HTTP response contains error information about invalid course_id" do
-        check_that_response_contains_the_following(400, "Invalid", "course_id: " + @id.to_s)
+      it "HTTP response contains error information about invalid course_token" do
+        check_that_response_contains_the_following(400, "Invalid", "course_token: " + @token)
       end
 
       it "HTTP response doesn't provide a token" do
         expect(@response["token"]).to be(nil)
-      end      
+      end
     end
 
     describe "and the firstName is empty" do
 
       before :each do
-        create_student(@course.id, "", "Mäkelä")
+        create_student(@course.token, "", "Mäkelä")
       end
 
       it "the student is not saved to database" do
@@ -93,7 +93,7 @@ describe "Creating Students", type: :api do
     describe "and the lastName is empty" do
 
       before :each do
-        create_student(@course.id, "Erkki", "")
+        create_student(@course.token, "Erkki", "")
       end
 
       it "the student is not saved to database" do
@@ -111,8 +111,8 @@ describe "Creating Students", type: :api do
   end
 end
 
-def create_student(course_id, firstName, lastName)
-  json_params = {:course_id => course_id, :firstName => firstName, :lastName => lastName }.to_json
+def create_student(course_token, firstName, lastName)
+  json_params = {:course_token => course_token, :firstName => firstName, :lastName => lastName }.to_json
   response = post("/students", json_params, "CONTENT_TYPE" => "application/json")
 
   @response = JSON.parse(response.body)
