@@ -1,16 +1,18 @@
 class StudentsTasksController < ApplicationController
 
-    def create # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
-        assignment = find_assignment(params[:course_id], params[:number].to_i)
-        student = Student.find_by token: params[:student_token]
+    def create
+        params = JSON.parse(request.body.read.to_s)
 
-        complete = params[:complete] === 'true' ? true : false
+        assignment = find_assignment(params["course_id"], params["number"])
+        student = Student.find_by token: params["student_token"]
+
+        complete = params["complete"] === true ? true : false
 
         task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
 
         if task
             if task.complete
-                render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
+                render_json(412, "Student has already done the assignment defined by course_id: " + params["course_id"].to_s + ", and number: " + params["number"].to_s)
             
             elsif !task.complete and complete
                 task.complete = true
@@ -18,7 +20,7 @@ class StudentsTasksController < ApplicationController
                 render_json(200, "task marked as done")
 
             else
-                render_json(412, "Student has already attempted the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
+                render_json(412, "Student has already attempted the assignment defined by course_id: " + params["course_id"].to_s + ", and number: " + params["number"].to_s)
             end
 
         elsif assignment and student
@@ -26,17 +28,17 @@ class StudentsTasksController < ApplicationController
             render_json(201, "created")
 
         elsif assignment.nil?
-            course = Course.find_by id: params[:course_id]
+            course = Course.find_by id: params["course_id"]
 
             if course.nil?
-                render_json(400, "Invalid parameter for course_id: " + params[:course_id])
+                render_json(400, "Invalid parameter for course_id: " + params["course_id"].to_s)
                 return
             end
 
-            render_json(400, "Invalid parameter for number: " + params[:number])
+            render_json(400, "Invalid parameter for number: " + params["number"].to_s)
         
         elsif student.nil?
-            render_json(400, "Invalid parameter for student_token: " + params[:student_token])
+            render_json(400, "Invalid parameter for student_token: " + params["student_token"])
 
         else
             render_json(600, "Unexpected behavior from valid input.\nTask wasn't marked for student to be complete.")

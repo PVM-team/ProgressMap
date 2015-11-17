@@ -112,8 +112,8 @@ describe "Creating Students", type: :api do
 end
 
 def create_student(course_id, firstName, lastName)
-  params = {:course_id => course_id, :firstName => firstName, :lastName => lastName }
-  response = post("/students", params)
+  json_params = {:course_id => course_id, :firstName => firstName, :lastName => lastName }.to_json
+  response = post("/students", json_params, "CONTENT_TYPE" => "application/json")
 
   @response = JSON.parse(response.body)
 end

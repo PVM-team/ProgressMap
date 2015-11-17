@@ -169,7 +169,7 @@ describe "Creating StudentsTasks", type: :api do
     describe "and no student has the provided student_token" do
 
       before :each do
-        create_students_task(@course.id, @assignment2, "abc-123-def", true)
+        create_students_task(@course.id, @assignment2.number, "abc-123-def", true)
       end
 
       it "no new new students_task is saved to database" do
@@ -184,9 +184,9 @@ describe "Creating StudentsTasks", type: :api do
 end
 
 def create_students_task(course_id, number, token, complete = nil)
-  params = {:course_id => course_id, :number => number, :student_token => token, :complete => complete}
+  json_params = {:course_id => course_id, :number => number, :student_token => token, :complete => complete}.to_json
 
-  response = post("/students_tasks", params)
+  response = post("/students_tasks", json_params, "CONTENT_TYPE" => "application/json")
   @response = JSON.parse(response.body)
 end
 
