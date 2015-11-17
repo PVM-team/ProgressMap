@@ -1,4 +1,5 @@
 class CoursesController < ApplicationController
+    include LocationDrawer
 
     def show
         course = Course.find_by id: params[:course_id]
@@ -14,6 +15,8 @@ class CoursesController < ApplicationController
         render 'courses/show.json.jbuilder'
     end
 
+
+    # Add possibility of giving names to assignments and possibly dependencies as well
 
     def create_from_outside
         params = JSON.parse(request.body.read.to_s)
@@ -33,10 +36,10 @@ class CoursesController < ApplicationController
             render_json(201, "Course created successfully.", @course.token)
 
         elsif @course.invalid?
-            render_json(400, "Invalid parameter for course_name: " + name ".\nName must be at least 2 characters long.")
+            render_json(400, "Invalid parameter for course_name: " + name + ".\nName must be at least 2 characters long.")
 
         elsif ! validate_assignment_count(assignment_count)
-            render_json(400, "Invalid parameter for assignment_count: " + assignment_count.to_s ".\nMust be between 1 and 500.")
+            render_json(400, "Invalid parameter for assignment_count: " + assignment_count.to_s + ".\nMust be between 1 and 500.")
 
         elsif ! validate_students(students)
             students.each do |student|
@@ -89,11 +92,8 @@ class CoursesController < ApplicationController
 
         def validate_students(students)
             students.each do |student|
-                s = Student.new student["firstName"], student["lastName"]
-
+                s = Student.new :firstName => student["firstName"], :lastName => student["lastName"]
                 return false if s.invalid?
-
-                # raise ValidationError.new("Array of given students is invalid!\nContains invalid student: " + student.to_s) if s.invalid?
             end
             true
         end
@@ -116,18 +116,21 @@ class CoursesController < ApplicationController
         end
 
         def add_assignments_to_course_on_random_locations(assignment_count)
+            prev_location = nil
 
             for i in 1..assignment_count do
                 assignment = Assignment.create number: i
-                assignments.location = (Location.create x: i, y: i)
+                assignment.location = LocationDrawer.next_location(i, prev_location, assignment_count)
 
                 @course.assignments << assignment
+
+                prev_location = assignment.location
             end
         end
 
         def add_students_to_course(students)
             students.each do |student|
-                course.students << (Student.create firstName: student["firstName"], lastName: student["lastName"])
+                @course.students << (Student.create firstName: student["firstName"], lastName: student["lastName"])
             end
         end
 
