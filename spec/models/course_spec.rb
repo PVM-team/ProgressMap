@@ -14,6 +14,10 @@ describe Course, type: :model do
 
 		  expect(Course.count).to be(count + 1)
     end
+
+    it "it has a random UUID as token" do
+      expect(@course.token.length).to be(SecureRandom.uuid.length)
+    end
   end
 
   describe "when an invalid course is created" do
