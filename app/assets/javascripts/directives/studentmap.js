@@ -1,5 +1,5 @@
 //paperjsmap per student, no dependency display operations yet
-ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
+ProgressApp.directive('studentmap', function (CanvasService, AssignmentDependenciesService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -51,7 +51,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
             scope.$watch('assignments', function (newval, oldval) {
                 if (newval && !mapInitialized) {
-                    setCanvasSize();
+                    CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
 
@@ -86,26 +86,6 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 canvas.width = width;
                 paper.view.viewSize.width = width;
 
-                paper.view.draw();
-            }
-
-            function setCanvasSize() {
-                var width = window.innerWidth;
-                var defaultWidth = 1100;
-
-                var canvas = element[0];
-
-                var borderSize = defaultWidth / 40; // 25
-                var blockSize = defaultWidth / 5; // 200
-                var assignmentsPerLevel = defaultWidth / (2 * borderSize + blockSize); // 4, kuinka monta tehtävää on per taso
-                var levelAmount = Math.ceil(scope.assignments.length / assignmentsPerLevel); // kuinka paljon tasoja tarvitaan
-
-                var height = (2 * borderSize + blockSize) * levelAmount + 100;
-
-                canvas.height = height;
-                canvas.width = width;
-
-                paper.view.viewSize = new paper.Size(width, height);
                 paper.view.draw();
             }
 

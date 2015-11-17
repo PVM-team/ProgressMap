@@ -22,6 +22,8 @@ ProgressApp.service('CanvasService', function () {
         canvas = document.createElement('canvas');
         initiateCanvas(canvas, assignmentCount, width);
 
+        canvas.width = window.innerWidth;
+
         placeCanvasInDiv(div);
         setContext();
 
@@ -48,7 +50,6 @@ ProgressApp.service('CanvasService', function () {
         //}
 
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
-        canvas.width = window.innerWidth;
     }
 
     //should not be called before initiateCanvas has been called at least once

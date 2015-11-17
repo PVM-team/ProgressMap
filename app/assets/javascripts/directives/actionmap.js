@@ -31,7 +31,7 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
             scope.$watch('assignments', function (newval, oldval) {
 
                 if (newval && !mapInitialized) {
-                    setCanvas();
+                    CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
                     drawSmoothPaperPaths();
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
@@ -89,10 +89,6 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
                     segments[i].point.x = MapScaleService.getRelativeX(segments[i].point.x);
                 }
                 path.strokeWidth = (path.strokeWidth / MapScaleService.getPreviousWindowWidth()) * window.innerWidth;
-            }
-
-            function setCanvas() {
-                CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
             }
 
             function placeLatestStudents() {
