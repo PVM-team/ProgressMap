@@ -16,16 +16,38 @@ class CoursesController < ApplicationController
 
 
     def create_from_outside
-        name = params[:course_name]
-        students = params[:students]
+        params = JSON.parse(request.body.read.to_s)
 
-        course = Course.create name: name
-        
-        students.each do |student|
-            course.students << (Student.create firstName: student.firstName, lastName: student.lastName)
+        assignment_count = params["assignment_count"]
+        name = params["course_name"]
+        students = params["students"]
+
+        @course = Course.new name: name
+
+        if @course.valid? && validate_assignment_count(assignment_count) && validate_students(students)
+            @course.save
+
+            add_assignments_to_course_on_random_locations(assignment_count)
+            add_students_to_course(students)
+
+            render_json(201, "Course created successfully.", @course.token)
+
+        elsif @course.invalid?
+            render_json(400, "Invalid parameter for course_name: " + name ".\nName must be at least 2 characters long.")
+
+        elsif ! validate_assignment_count(assignment_count)
+            render_json(400, "Invalid parameter for assignment_count: " + assignment_count.to_s ".\nMust be between 1 and 500.")
+
+        elsif ! validate_students(students)
+            students.each do |student|
+                s = Student.new student["firstName"], student["lastName"]
+
+                render_json(400, "Array of given students is invalid!\nContains invalid student: " + student.to_s) if s.invalid?
+            end
+
+        else
+            render_json(600, "Unexpected behavior from valid input.\nCourse was not created.")
         end
-
-        render json: course
     end
 
 
@@ -34,16 +56,9 @@ class CoursesController < ApplicationController
         @course = Course.new(course_params)
         assignments = params[:assignments]
 
-        begin
-            validate_course_name
-            validate_assignment_count(assignments.length)
-
-        rescue ValidationError => e # What now?
-
-        else	# Validations OK
-            if @course.save
-                assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
-            end
+        if @course.valid? && validate_assignment_count(assignment_count)
+            @course.save
+            assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
         end
 
         render json: @course
@@ -64,12 +79,23 @@ class CoursesController < ApplicationController
             params.require(:course).permit(:name)
         end
 
-        def validate_course_name
-            raise ValidationError.new("Invalid course name: " + @course.name) if @course.name.length < 2
+        def validate_course_name(name)
+            name.length >= 2
         end
 
         def validate_assignment_count(amount)
-            raise ValidationError.new("Invalid amount of assignments: " + amount) if  amount < 1 or amount > 500
+            amount >= 1 && amount < 500
+        end
+
+        def validate_students(students)
+            students.each do |student|
+                s = Student.new student["firstName"], student["lastName"]
+
+                return false if s.invalid?
+
+                # raise ValidationError.new("Array of given students is invalid!\nContains invalid student: " + student.to_s) if s.invalid?
+            end
+            true
         end
 
         def add_assignment_to_course(assignment_json)
@@ -87,5 +113,28 @@ class CoursesController < ApplicationController
             end
 
             @course.assignments << assignment
+        end
+
+        def add_assignments_to_course_on_random_locations(assignment_count)
+
+            for i in 1..assignment_count do
+                assignment = Assignment.create number: i
+                assignments.location = (Location.create x: i, y: i)
+
+                @course.assignments << assignment
+            end
+        end
+
+        def add_students_to_course(students)
+            students.each do |student|
+                course.students << (Student.create firstName: student["firstName"], lastName: student["lastName"])
+            end
+        end
+
+        def render_json(code, message, token = nil)
+          params = {:code => code, :message => message}
+          params[:token] = token if token
+
+          render json: params.to_json
         end
 end

@@ -11,7 +11,7 @@ class StudentsController < ApplicationController
       render_json(201, "created", @student.token)
     
     elsif course.nil?
-      render_json(400, "Invalid parameter for course_token: " + params["course_token"]) if course.nil?
+      render_json(400, "Invalid parameter for course_token: " + params["course_token"])
 
     else
       if @student.firstName.nil? or @student.firstName.empty?
