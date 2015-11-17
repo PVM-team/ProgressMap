@@ -14,6 +14,22 @@ class CoursesController < ApplicationController
         render 'courses/show.json.jbuilder'
     end
 
+
+    def create_from_outside
+        name = params[:course_name]
+        students = params[:students]
+
+        course = Course.create name: name
+        
+        students.each do |student|
+            course.students << (Student.create firstName: student.firstName, lastName: student.lastName)
+        end
+
+        render json: course
+    end
+
+
+
     def create
         @course = Course.new(course_params)
         assignments = params[:assignments]
