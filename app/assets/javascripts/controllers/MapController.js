@@ -2,6 +2,13 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
     $scope.buttonClicked = false;
 
+    $scope.email = 's4knet@gmail.com';
+    $scope.options = {
+        secure: true,
+        size: 100,
+        defaultImage: 'mm'
+    };
+
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
 
     //korvataan joskus käyttäjän valintaruudulla?

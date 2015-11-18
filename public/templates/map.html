@@ -5,6 +5,9 @@
 <button ng-click="goToActionMap()"> Go to action map</button>
 <h3>Students</h3>
 
+<gravatar-image email="s4knet@email.com" size="50"></gravatar-image>
+
+
 <div>
     <table>
         <tr ng-repeat="p in students">
@@ -18,6 +21,8 @@
 
 <button ng-click="moveToCourseCreationView()">Create a new course</button>
 <button ng-click="moveToCourseEditView()">Edit course</button>
+
+<ui-gravatar gravatar-email="email" gravatar-options="options"></ui-gravatar>
 
 <p>Current student: <strong>{{ currentStudent.firstName }} {{ currentStudent.lastName }}</strong>
 
