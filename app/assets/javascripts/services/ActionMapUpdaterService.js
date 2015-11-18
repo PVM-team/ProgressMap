@@ -123,8 +123,8 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
 
                     var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
-                    removeStudentFromEndPosition(destinationAssignment, endPosition);
                     markAssignmentAsDone(student, destinationAssignment, endPosition);
+                    removeStudentFromEndPosition(destinationAssignment, endPosition);
                     createStudentCircleInPosition(student, endPosition);
                 }
             }
