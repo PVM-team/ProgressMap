@@ -124,10 +124,11 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 var arrowheads = triangleLayer.children;
 
                 for (var i = 0; i < paths.length; i++) {
-                    if (!(paths[i].intersects(HOVERED_CIRCLE))) {
-                        var start = paths[i].firstSegment.point;
-                        var vector = end.subtract(start);
-                        vector = vector.normalize().multiply(event.delta);
+                    var start = paths[i].firstSegment.point;
+                    var vector = end.subtract(start);
+                    vector = vector.normalize().multiply(event.delta);
+                    
+                    if (!(arrowheads[i].intersects(HOVERED_CIRCLE))) {
                         moveArrow(arrowheads[i], vector);
                         growPath(paths[i], vector);
                     }
@@ -276,7 +277,10 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             var path = new paper.Path();
                             path.add(startingPoint);
                             path.strokeWidth = 10;
-                            path.strokeColor = 'yellow';
+                            path.strokeColor = '#F2D27E';
+                            //path.strokeColor.alpha = 0.8;
+                            path.shadowColor = 'black';
+                            path.shadowOffset = [5,5];
 
                             createArrowhead(item, originalCircle);
 
@@ -328,7 +332,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             function createArrowhead(pointsAt, startsAt){
                 triangleLayer.activate();
                 var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, 25);
-                triangle.fillColor = 'yellow';
+                triangle.fillColor = '#F2D27E';
+                //triangle.fillColor.alpha = 0.8;
                 var angle = Math.atan2(pointsAt.position.y - startsAt.position.y, pointsAt.position.x - startsAt.position.x);
                 angle = angle*(180/Math.PI);
                 if (angle < 0){
