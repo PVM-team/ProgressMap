@@ -125,13 +125,17 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 for (var i = 0; i < paths.length; i++) {
                     var start = paths[i].firstSegment.point;
-                    var vector = end.subtract(start);
+                    var radius = HOVERED_CIRCLE.radius;
+                    console.log(radius);
+                    var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
+
+                    var vector = circleEdge.subtract(start);
 
                     var vectorLength = vector.length;
 
                     if (paths[i].length <= vectorLength) {
                         vector = vector.normalize().multiply(event.delta);
-                        growPath(paths[i], arrowheads[i], vector, vectorLength, end);
+                        growPath(paths[i], arrowheads[i], vector, vectorLength, circleEdge);
                     }
                 }
             }
@@ -141,13 +145,13 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
 
-            function growPath(path, arrowH, position, vectorLength, end) {
+            function growPath(path, arrowH, position, vectorLength, circleEdge) {
                 var lastPos = path.lastSegment.point;
                 var newPos = lastPos.add(position.multiply(1000));
                 var newPieceLength = (newPos.subtract(lastPos)).length;
                 if ((path.length + newPieceLength) > vectorLength) {
-                    moveArrow(arrowH, end);
-                    path.add(end);
+                    moveArrow(arrowH, circleEdge);
+                    path.add(circleEdge);
                 } else {
                     moveArrow(arrowH, newPos);
                     path.add(newPos);
@@ -234,7 +238,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
-                    var assignmentCircle = new paper.Path.Circle(locations[i], 35);
+                    var assignmentCircle = new paper.Shape.Circle(locations[i], 35);
                     assignmentCircle.style = {
                         fillColor: '#f18c3a',
                         shadowColor: 'black',
