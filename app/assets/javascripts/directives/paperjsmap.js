@@ -126,23 +126,32 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 for (var i = 0; i < paths.length; i++) {
                     var start = paths[i].firstSegment.point;
                     var vector = end.subtract(start);
-                    vector = vector.normalize().multiply(event.delta);
-                    
-                    if (!(arrowheads[i].intersects(HOVERED_CIRCLE))) {
-                        moveArrow(arrowheads[i], vector);
-                        growPath(paths[i], vector);
+
+                    var vectorLength = vector.length;
+
+                    if (paths[i].length <= vectorLength) {
+                        vector = vector.normalize().multiply(event.delta);
+                        growPath(paths[i], arrowheads[i], vector, vectorLength, end);
                     }
                 }
             }
 
             function moveArrow(arrow, position){
-                arrow.position = arrow.position.add(position.multiply(1000));
+                arrow.position = position;
             }
 
 
-            function growPath(path, position) {
+            function growPath(path, arrowH, position, vectorLength, end) {
                 var lastPos = path.lastSegment.point;
-                path.add(lastPos.add(position.multiply(1000)));
+                var newPos = lastPos.add(position.multiply(1000));
+                var newPieceLength = (newPos.subtract(lastPos)).length;
+                if ((path.length + newPieceLength) > vectorLength) {
+                    moveArrow(arrowH, end);
+                    path.add(end);
+                } else {
+                    moveArrow(arrowH, newPos);
+                    path.add(newPos);
+                }
             }
 
             window.onresize = function () {
