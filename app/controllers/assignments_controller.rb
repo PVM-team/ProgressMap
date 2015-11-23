@@ -9,10 +9,12 @@ class AssignmentsController < ApplicationController
 		@assignment = []
 
 		if course
-			assignment = Assignment.create number: number
+			assignment = Assignment.create name: "tehtävä" + number.to_s, number: number
 			assignment.location = Location.create x: location_json[:x], y: location_json[:y]
+      
       add_dependencies_to_assignment(dependencies_json_array, assignment)
-			course.assignments << assignment
+			
+      course.assignments << assignment
 			@assignment << assignment
 		end
 

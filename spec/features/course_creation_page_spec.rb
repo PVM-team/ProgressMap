@@ -179,7 +179,7 @@ def submit_button_is_enabled
 end
 
 def x_loc(button)
-  (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
+  (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
 end
 
 def y_loc(button)
@@ -202,6 +202,8 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
   end
 
   y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
+
+  byebug
 
   expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
   expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)

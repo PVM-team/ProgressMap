@@ -92,7 +92,7 @@ class CoursesController < ApplicationController
         @course = Course.new(course_params)
         assignments = params[:assignments]
 
-        if @course.valid? && validate_assignment_count(assignment_count)
+        if @course.valid? && validate_assignment_count(assignments.length)
             @course.save
             assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
         end
@@ -167,7 +167,7 @@ class CoursesController < ApplicationController
             location_json = assignment_json[:location]
             dependencies_json_array = assignment_json[:dependencies]
 
-            assignment = Assignment.create number: assignment_json[:number]
+            assignment = Assignment.create name: "tehtävä" + assignment_json[:number].to_s, number: assignment_json[:number]
             assignment.location = (Location.create x: location_json[:x], y: location_json[:y])
 
             if dependencies_json_array

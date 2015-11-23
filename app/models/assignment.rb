@@ -1,7 +1,6 @@
 class Assignment < ActiveRecord::Base
-	before_create :set_name
 	
-	belongs_to :course
+    belongs_to :course
 	has_one :location, dependent: :destroy
 	
 	has_many :students_tasks, dependent: :destroy
@@ -33,10 +32,4 @@ class Assignment < ActiveRecord::Base
 
         super # kutsuu ActiveRecord::Base -luokan to_s metodia
     end
-
-    private
-    	
-    	def set_name
-    		self.name = self.number.to_s unless self.name
-    	end
 end

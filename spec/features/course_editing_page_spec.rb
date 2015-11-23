@@ -17,13 +17,13 @@ describe "Course editing page", js: true do
         @course = FactoryGirl.create :course, name: "Ohtuprojekti"
         @course.students << (FactoryGirl.create :student, firstName: "Mauno", lastName: "Tammi")
 
-        assignment1 = FactoryGirl.create :assignment, number: 1
+        assignment1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
         assignment1.location = (FactoryGirl.create :location, x: 125, y: 160)
-        assignment2 = FactoryGirl.create :assignment, number: 2
+        assignment2 = FactoryGirl.create :assignment, name: "tehtävä2", number: 2
         assignment2.location = (FactoryGirl.create :location, x: 425, y: 104)
-        assignment3 = FactoryGirl.create :assignment, number: 3
+        assignment3 = FactoryGirl.create :assignment, name: "tehtävä3", number: 3
         assignment3.location = (FactoryGirl.create :location, x: 725, y: 201)
-        assignment4 = FactoryGirl.create :assignment, number: 4
+        assignment4 = FactoryGirl.create :assignment, name: "tehtävä4", number: 4
         assignment4.location = (FactoryGirl.create :location, x: 999, y: 137)
 
         @course.assignments << assignment1

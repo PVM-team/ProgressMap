@@ -141,17 +141,17 @@ end
 def course_details
   @course = FactoryGirl.create :course
   course2 = FactoryGirl.create :course
-  course2.assignments << (FactoryGirl.create :assignment)
+  course2.assignments << (FactoryGirl.create :assignment, name: "tehtävä1", number: 1)
 
   @student1 = FactoryGirl.create :student
   @student2 = FactoryGirl.create :student
   @student3 = FactoryGirl.create :student
 
-  @task1 = FactoryGirl.create :assignment, number: 1
-  @task2 = FactoryGirl.create :assignment, number: 2
-  @task3 = FactoryGirl.create :assignment, number: 3
-  @task4 = FactoryGirl.create :assignment, number: 4
-  @task5 = FactoryGirl.create :assignment, number: 5
+  @task1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
+  @task2 = FactoryGirl.create :assignment, name: "tehtävä2", number: 2
+  @task3 = FactoryGirl.create :assignment, name: "tehtävä3", number: 3
+  @task4 = FactoryGirl.create :assignment, name: "tehtävä4", number: 4
+  @task5 = FactoryGirl.create :assignment, name: "tehtävä5", number: 5
 
   @task2.dependencies << @task1
   @task3.dependencies << @task1
