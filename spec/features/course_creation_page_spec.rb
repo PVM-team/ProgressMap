@@ -120,7 +120,7 @@ describe "Course creation page", js: true do
             x_loc = x_loc(button)
             y_loc = y_loc(button)
 
-            validate_location(x_loc, y_loc, i, @assignment_count, button)
+            validate_location(x_loc, y_loc, i, @assignment_count)
           end
         end
       end

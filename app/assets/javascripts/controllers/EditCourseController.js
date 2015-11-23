@@ -32,8 +32,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         setDisplayOfNewAssignmentButton();
 
-        console.log($scope.assignments)
-
         CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     })

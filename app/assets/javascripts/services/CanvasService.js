@@ -92,11 +92,6 @@ ProgressApp.service('CanvasService', function () {
             }
         }
 
-        console.log(i)
-
-        console.log(xStart)
-        console.log("location.x: " + location.x)        
-
         return location;
     }
 
