@@ -104,11 +104,11 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
 
                 for (var j = 0; j < assignment.latestAttempters.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
-
-                    var studentCircle = new paper.Path.Circle(studentLocation, 15);
+                    var imageElement = document.getElementById('gravatar');
+                    var studentCircle = new paper.Raster(imageElement);
+                    studentCircle.position = studentLocation;
 
                     var student = assignment.latestAttempters[j];
-                    studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
                     studentLayer.addChild(studentCircle);
 
                     ActionMapUpdaterService.initializeLatestDoer(student, studentLocation);
