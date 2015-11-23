@@ -1,4 +1,4 @@
-ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
+ProgressApp.directive('actionmap', function (GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -104,23 +104,14 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
 
                 for (var j = 0; j < assignment.latestAttempters.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
-                    var imageElement = document.getElementById('gravatar');
-                    var studentCircle = new paper.Raster(imageElement);
-                    studentCircle.position = studentLocation;
-
                     var student = assignment.latestAttempters[j];
-                    studentLayer.addChild(studentCircle);
+
+                    var studentIcon = GravatarService.gravatarImage(student.email);
+                    studentIcon.position = studentLocation;
+
+                    studentLayer.addChild(studentIcon);
 
                     ActionMapUpdaterService.initializeLatestDoer(student, studentLocation);
-
-                    //student id:s over student circles
-                    var text = new paper.PointText({
-                        point: new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset),
-                        content: student.id,
-                        fillColor: 'white',
-                        fontSize: 15
-                    });
-                    labelLayer.addChild(text);
 
                     lateralPositionOffset += 30;
 

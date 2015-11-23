@@ -11,6 +11,11 @@ ProgressApp.directive('gravatarImage', function () {
         template: '<img ng-src="https://www.gravatar.com/avatar/{{hash}}?s={{size}}&d=identicon" />',
         link: function (scope, element, attrs) {
             attrs.$observe('email', function (value) {
+
+                console.log(attrs.email)
+                console.log(attrs.size)
+                console.log(value)
+
                 if(!value) { return; }
 
                 // MD5 (Message-Digest Algorithm) by WebToolkit

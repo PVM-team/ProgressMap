@@ -10,8 +10,8 @@ student4 = Student.create firstName: "Aulis", lastName: "Homelius", email: "ohtu
 student5 = Student.create firstName: "Asko", lastName: "Vilenius", email: "ohtupvmteam3@gmail.com"
 student6 = Student.create firstName: "Sam", lastName: "Makkonen", email: "ohtupvmteam4@gmail.com"
 student7 = Student.create firstName: "Rivo", lastName: "Riitta", email: "ohtupvmteam5@gmail.com"
-student8 = Student.create firstName: "Inkeri", lastName: "Kääriäinen", email: "andreas.andra@cs.helsinki.fi"
-student9 = Student.create firstName: "Gootti", lastName: "Kusta", email: "viral112@hotmail.com"
+student8 = Student.create firstName: "Inkeri", lastName: "Kääriäinen", email: "ohtupvmteam6@gmail.com"
+student9 = Student.create firstName: "Gootti", lastName: "Kusta", email: "andreas.andra@cs.helsinki.fi"
 
 course1.students << student1
 course1.students << student2

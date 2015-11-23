@@ -1,4 +1,5 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, ActionMapUpdaterService) {
+    // "use strict";
 
     var self = this;
     var maxStudentsToShowAroundAssignment = 9;
@@ -14,10 +15,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         sortAssignmentsByNumber();
         assignLatestAttemptersForAssignments();
-
-        for (var i = 0; i < $scope.students.length; i++) {
-            $(".gravatar").append($scope.students[i].email);
-        }
 
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
 

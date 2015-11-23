@@ -1,4 +1,4 @@
-ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttemptersService, AssignmentCirclesService, MapScaleService, MoveStudentCircleService, StudentIconService) {
+ProgressApp.service('ActionMapUpdaterService', function (GravatarService, AssignmentLatestAttemptersService, AssignmentCirclesService, MapScaleService, MoveStudentCircleService, StudentIconService) {
 
     var assignments; // muotoa {'id', 'number', 'location': {'x', 'y'}, latestAttempters: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
                      // latestAttemptersissa jokaisella tulee olla aina id ja location. Muut attribuutit ovat tilanteesta riippuen olemassa tai sitten ei, jos niitä ei ko. doerin kohdalla tarvita
@@ -141,8 +141,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     }
 
     function createStudentCircleInPosition(student, scaledPosition) {
-        var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), MapScaleService.scaleByDefaultWidth(15));
-        circle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
+        var icon = GravatarService.gravatarImage(student.email)
         studentLayer.appendBottom(circle);
 
         paper.view.update();
@@ -228,7 +227,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     */
 
     function placeStudentToWaitingQueue(student, queue, destinationAssignment) {
-        var circle = getStudentCircle(student);
+        var circle = getStudentIcon(student);
         circle.bringToFront();
 
         var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
@@ -243,7 +242,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         queue.push(movingInfo);
     }
 
-    function getStudentCircle(student) {
+    function getStudentIcon(student) {
         var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
         var location = AssignmentLatestAttemptersService.getLocationOfStudent(student, originalAssignment);
 
