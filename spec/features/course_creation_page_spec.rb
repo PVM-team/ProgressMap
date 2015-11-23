@@ -120,15 +120,7 @@ describe "Course creation page", js: true do
             x_loc = x_loc(button)
             y_loc = y_loc(button)
 
-            if (i % 4 == 0)
-              if direction === 'left'
-                direction = "right"
-              else
-                direction = "left"
-              end
-            end
-
-            validate_location(x_loc, y_loc, i, @assignment_count, direction)
+            validate_location(x_loc, y_loc, i, @assignment_count, button)
           end
         end
       end
@@ -179,14 +171,14 @@ def submit_button_is_enabled
 end
 
 def x_loc(button)
-  (button[:style].split("left: ")[1]).split("px")[0].to_i + 25
+  (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
 end
 
 def y_loc(button)
   (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
 end
 
-def validate_location(x_loc, y_loc, index, assignment_count, direction)
+def validate_location(x_loc, y_loc, index, assignment_count)
   border_size = 1000 / 40
   block_size = 1000 / 5
   left_border = 50 + 2 * border_size
@@ -194,6 +186,12 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
 
   assignments_per_level = 4
   level_amount = (assignment_count / assignments_per_level) + 1
+
+  if index % (2 * assignments_per_level) >= assignments_per_level
+    direction = "left"
+  else
+    direction = "right"
+  end
 
   if (direction === 'right')
     x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)

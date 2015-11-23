@@ -42,11 +42,11 @@ describe Course, type: :model do
   	before :each do
   		@student1 = FactoryGirl.create :student
   		@student2 = FactoryGirl.create :student
-  		@assignment1 = FactoryGirl.create :assignment
+  		@assignment1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
 
   		@course.assignments << @assignment1
-  		@course.assignments << (FactoryGirl.create :assignment)
-  		FactoryGirl.create :assignment
+  		@course.assignments << (FactoryGirl.create :assignment, name: "tehtävä2", number: 2)
+  		FactoryGirl.create :assignment, name: "tehtävä1", number: 1
 
   		@course.students << @student1
   		@course.students << @student2

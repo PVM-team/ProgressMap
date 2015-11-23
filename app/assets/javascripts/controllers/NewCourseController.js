@@ -16,11 +16,11 @@ ProgressApp.controller('NewCourseController', function ($scope, $location, httpS
     }
 
     $scope.showDependencies = function (assignment) {
-        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+        //AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
     }
 
     $scope.hideDependencies = function (assignment) {
-        AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+        //AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
     }
 
     $scope.placeAssignmentButtonsOnCanvas = function () {

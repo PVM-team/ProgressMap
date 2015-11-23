@@ -80,11 +80,11 @@ def course_details
   @student = FactoryGirl.create :student
   @course = FactoryGirl.create :course
 
-  @task1 = FactoryGirl.create :assignment, number: 1
-  @task2 = FactoryGirl.create :assignment, number: 2
-  @task3 = FactoryGirl.create :assignment, number: 3
-  @task4 = FactoryGirl.create :assignment, number: 4
-  @task5 = FactoryGirl.create :assignment, number: 5
+  @task1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
+  @task2 = FactoryGirl.create :assignment, name: "tehtävä2", number: 2
+  @task3 = FactoryGirl.create :assignment, name: "tehtävä3", number: 3
+  @task4 = FactoryGirl.create :assignment, name: "tehtävä4", number: 4
+  @task5 = FactoryGirl.create :assignment, name: "tehtävä5", number: 5
 
   @task2.dependencies << @task1
   @task3.dependencies << @task1

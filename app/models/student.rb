@@ -22,6 +22,9 @@ class Student < ActiveRecord::Base
       nil
     end
 
+    def to_s
+      self.firstName + " " + self.lastName
+    end
 
     private
   	

@@ -32,6 +32,8 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         setDisplayOfNewAssignmentButton();
 
+        console.log($scope.assignments)
+
         CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     })
@@ -103,11 +105,11 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
     $scope.showDependencies = function (assignment) {
-        AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+        //AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
     }
 
     $scope.hideDependencies = function (assignment) {
-        AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+        //AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
     }
 
     $scope.addAssignment = function() {

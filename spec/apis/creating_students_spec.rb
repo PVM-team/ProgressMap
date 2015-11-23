@@ -46,6 +46,7 @@ describe "Creating Students", type: :api do
 
           it "token of the created student" do
             expect(@response["token"].length).to be(SecureRandom.uuid.length)
+            expect(@response["token"]).to eq(Student.last.token)
           end
         end
       end

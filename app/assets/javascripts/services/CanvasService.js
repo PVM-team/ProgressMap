@@ -3,9 +3,6 @@ ProgressApp.service('CanvasService', function () {
     var canvas;
     var context;
 
-    var direction;
-    //var direction = left; // direction vaihtuu joka arpomisen jälkeen
-
     var borderSize;
     var blockSize;
     var assignmentsPerLevel;
@@ -22,7 +19,7 @@ ProgressApp.service('CanvasService', function () {
         canvas = document.createElement('canvas');
         initiateCanvas(canvas, assignmentCount, width);
 
-        canvas.width = window.innerWidth;
+        canvas.width = width + 100;
 
         placeCanvasInDiv(div);
         setContext();
@@ -43,12 +40,6 @@ ProgressApp.service('CanvasService', function () {
         assignmentsPerLevel = defaultWidth / (2 * borderSize + blockSize) // 4, kuinka monta tehtävää on per taso
         levelAmount = Math.ceil(assignmentCount / assignmentsPerLevel) // kuinka paljon tasoja tarvitaan
 
-        direction = "left"; // suunta vaihtuu heti drawLocationForAssignment() funktion alussa.
-
-        // if (levelAmount % 2 == 0) {
-        //    changeDirectionOfCurve();   // direction vaihtuu joka arpomisen jälkeen
-        //}
-
         canvas.height = (2 * borderSize + blockSize) * levelAmount + 100;
     }
 
@@ -68,31 +59,21 @@ ProgressApp.service('CanvasService', function () {
     }
 
     this.drawLocationForAssignment = function(i, locations) {
-        if (i % assignmentsPerLevel == 0) {
-            changeDirectionOfCurve();
-        }
-
         return drawLocation(i, locations);
     }
 
     this.locationOfNewAssignment = function(i, prevLocation) {
-        direction = "right";    // jos direction = "left", arpoo pisteet toiseen suuntaan alhaalta ylös
-
-        if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
-            changeDirectionOfCurve();
-        }
+        prevLocations = []
 
         if (prevLocation == null) {
-            return drawLocation(i, []);
+            prevLocations << prevLocation
         }
 
-        var locations = [prevLocation];
-
-        return drawLocation(i, locations);
+        return drawLocation(i, prevLocations);
     }
 
     function drawLocation(i, locations) {
-        var xStart = defineXStart(i, direction);
+        var xStart = defineXStart(i);
         var yStart = defineYStart(i);
 
         var amountOfPreviousLocationsToCheck = Math.max(0, locations.length - 7);
@@ -111,18 +92,17 @@ ProgressApp.service('CanvasService', function () {
             }
         }
 
+        console.log(i)
+
+        console.log(xStart)
+        console.log("location.x: " + location.x)        
+
         return location;
     }
 
-    function changeDirectionOfCurve() {
-        if (direction === "left") {
-            direction = "right";
-            return;
-        }
-        direction = "left";
-    }
+    function defineXStart(i) {
+        var direction = getDirection(i);
 
-    function defineXStart(i, direction) {
         //50 pixeliä otettaan huomioon reunaa varten
         var border = 50 + 2 * borderSize;
         var relativeStartingPosition = (i % assignmentsPerLevel) * (2 * borderSize + blockSize);
@@ -135,6 +115,14 @@ ProgressApp.service('CanvasService', function () {
         }
 
         throw "Direction value not defined";
+    }
+
+    function getDirection(i) {
+        if (i % (2 * assignmentsPerLevel) >= assignmentsPerLevel) {
+            return "left";
+        }
+
+        return "right";
     }
 
     function defineYStart(i) {
