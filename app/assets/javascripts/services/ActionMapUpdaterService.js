@@ -44,8 +44,6 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         }
     }
 
-
- 
     this.initialize = function(initial_assigments, stLayer, assLayer, perLayer) {
         assignments = initial_assigments;
         studentLayer = stLayer;
@@ -56,6 +54,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     this.initializeLatestDoer = function(doer, location) {
         doer['location'] = {'x': location.x, 'y': location.y};
     }
+
 
     this.update = function(new_students) {
         if (! students) {
@@ -93,41 +92,17 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
 
         if (studentsToMove.length > 0) {
             readyForNextUpdate = false;
+
+            console.log("moving students during this interval")
+            console.log(studentsToMove)
+
+            setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(studentsToMove);
+            setStudentsWaitingForMoving(studentsToMove);
+
+            removeMovingStudentsFromTheirOriginalAssingmentsLatestAttempters(studentsToMove);
         }
-
-        console.log("moving students during this interval")
-        console.log(studentsToMove)
-
-        setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(studentsToMove);
-        setStudentsWaitingForMoving(studentsToMove);
-
-        removeMovingStudentsFromTheirOriginalAssingmentsLatestAttempters(studentsToMove);
-
-        placeStudentsOnMapWhichAreNotThereYetButNowShouldBe(studentsToMove);
-    }
-
-    function placeStudentsOnMapWhichAreNotThereYetButNowShouldBe(movingStudents) {
-
-        for (var i = 0; i < students.length; i++) {
-            var student = students[i];
-            var lastDoneAssignment = student.lastDoneAssignment;
-
-            if (lastDoneAssignment) {
-                var destinationAssignment = assignments[lastDoneAssignment.number - 1];
-                var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
-
-                if ((! originalAssignment || ! AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, originalAssignment)) &&
-                    ! studentInMovingStudents(student, movingStudents) &&
-                    ! AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, destinationAssignment) &&
-                    AssignmentLatestAttemptersService.studentShouldBeInLatestAttemptersOfAssignment(student, destinationAssignment)) {
-
-                    var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
-
-                    markAssignmentAsDone(student, destinationAssignment, endPosition);
-                    removeStudentFromEndPosition(destinationAssignment, endPosition);
-                    createStudentCircleInPosition(student, endPosition);
-                }
-            }
+        else {
+            placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
         }
     }
 
@@ -368,6 +343,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         }
 
         else if (normalWaitingQueue.length == 0 && endlessWaitingQueue.length == 0) {
+            placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
             readyForNextUpdate = true;
         }
     }
@@ -411,5 +387,30 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         else {
             resetMovingInterval();
         }
+    }
+
+    function placeStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
+
+        for (var i = 0; i < students.length; i++) {
+            var student = students[i];
+            var lastDoneAssignment = student.lastDoneAssignment;
+
+            if (lastDoneAssignment) {
+                var destinationAssignment = assignments[lastDoneAssignment.number - 1];
+                var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
+
+                if ((! originalAssignment || ! AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, originalAssignment)) &&
+                    ! AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, destinationAssignment) &&
+                    AssignmentLatestAttemptersService.studentShouldBeInLatestAttemptersOfAssignment(student, destinationAssignment)) {
+
+                    var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
+
+                    markAssignmentAsDone(student, destinationAssignment, endPosition);
+                    removeStudentFromEndPosition(destinationAssignment, endPosition);
+                    createStudentCircleInPosition(student, endPosition);
+                }
+            }
+        }
+        console.log(readyForNextUpdate)
     }
 })
