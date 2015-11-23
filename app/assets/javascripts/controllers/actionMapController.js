@@ -15,6 +15,10 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         sortAssignmentsByNumber();
         assignLatestAttemptersForAssignments();
 
+        for (var i = 0; i < $scope.students.length; i++) {
+            $(".gravatar").append($scope.students[i].email);
+        }
+
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
 
         backendCaller = setInterval(function() {
@@ -36,6 +40,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
     })
+
 
     $scope.$on("$destroy", function() {
         if (backendCaller) {
