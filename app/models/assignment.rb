@@ -11,7 +11,9 @@ class Assignment < ActiveRecord::Base
 	has_many :dependencies, through: :assignment_dependencies	# has_many perässä oleva 'dependencies' kuvaa sitä että assignment_dependencyn kautta Assignment modelin riveihin viittaa foreign_key 'dependency_id'
 
 	validates :number, numericality: { greater_than_or_equal_to: 1 }
-	validates_uniqueness_of :name, :scope => "course_id" # nimi kaikilla tehtävillä uniikki jolla sama course_id
+	
+    validates :name, presence: true
+    validates_uniqueness_of :name, :scope => "course_id" # nimi kaikilla tehtävillä uniikki jolla sama course_id
 
     def doers
         doers = []
@@ -24,9 +26,17 @@ class Assignment < ActiveRecord::Base
         doers
      end
 
+    def to_s
+        return "name: " + self.name + ", number: " + self.number.to_s if self.name and self.number
+        return "name: " + self.name if self.name
+        return "number: " + self.number.to_s if self.number
+
+        super # kutsuu ActiveRecord::Base -luokan to_s metodia
+    end
+
     private
     	
     	def set_name
-    		self.name = self.number.to_s
+    		self.name = self.number.to_s unless self.name
     	end
 end
