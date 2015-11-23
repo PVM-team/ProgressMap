@@ -25,29 +25,41 @@ class CoursesController < ApplicationController
         name = params["course_name"]
         students = params["students"]
 
+        unless name
+            render_json(400, "course_name missing!")
+            return
+        end
+
         @course = Course.new name: name
 
-        if @course.valid? && validate_assignment_count(assignment_count) && validate_students(students)
+        if @course.valid? && validate_students(students)
             @course.save
 
             add_assignments_to_course_on_random_locations(assignment_count)
-            add_students_to_course(students)
+            add_students_to_course(students) if students
 
             render_json(201, "Course created successfully.", @course.token)
 
         elsif @course.invalid?
             render_json(400, "Invalid parameter for course_name: " + name + ".\nName must be at least 2 characters long.")
 
-        elsif ! validate_assignment_count(assignment_count)
+        elsif not validate_assignment_count(assignment_count)
             render_json(400, "Invalid parameter for assignment_count: " + assignment_count.to_s + ".\nMust be between 1 and 500.")
 
-        elsif ! validate_students(students)
-            students.each do |student|
-                s = Student.new student["firstName"], student["lastName"]
+        elsif not validate_students(students)
+            if students.kind_of?(Array)
+                
+                students.each do |student|
+                    s = Student.new :firstName => student["firstName"], :lastName => student["lastName"]
 
-                render_json(400, "Array of given students is invalid!\nContains invalid student: " + student.to_s) if s.invalid?
+                    if s.invalid?
+                        render_json(400, "Array of given students is invalid!\nContains invalid student: " + s.to_s) if s.invalid?
+                        break
+                    end
+                end
+            else
+                render_json(400, "Parameter given as students is not an array.\nCourse was not created.")
             end
-
         else
             render_json(600, "Unexpected behavior from valid input.\nCourse was not created.")
         end
@@ -90,7 +102,20 @@ class CoursesController < ApplicationController
             amount >= 1 && amount < 500
         end
 
+        def validate_assignments(assignments)
+            return true unless assignments
+
+            assignments.each do |assignment|
+                a = Assignment.new :name => assignment["name"], :number => assignment["number"]
+                return false if a.invalid?
+            end
+            true
+        end
+
         def validate_students(students)
+            return true unless students
+            return false unless students.kind_of?(Array)
+
             students.each do |student|
                 s = Student.new :firstName => student["firstName"], :lastName => student["lastName"]
                 return false if s.invalid?
@@ -120,7 +145,7 @@ class CoursesController < ApplicationController
 
             for i in 1..assignment_count do
                 assignment = Assignment.create number: i
-                assignment.location = LocationDrawer.next_location(i, prev_location, assignment_count)
+                assignment.location = LocationDrawer.next_location(i - 1, prev_location, assignment_count)
 
                 @course.assignments << assignment
 
