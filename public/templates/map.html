@@ -1,48 +1,47 @@
-
 <p id="errorMsg"></p>
+<div class="col-xs-12">
 
-<h2>Course: <i>{{ course.name }}</i></h2>
-<button ng-click="goToActionMap()"> Go to action map</button>
-<h3>Students</h3>
+    <h2>Course: <i>{{ course.name }}</i></h2>
+    <button ng-click="goToActionMap()"> Go to action map</button>
 
-<div>
-    <table>
-        <tr ng-repeat="p in students">
-            <td> {{ p.firstName }}</td>
-            <td> {{ p.lastName }}</td>
-        </tr>
-    </table>
+    <h3>Students</h3>
+
+    <div>
+        <table>
+            <tr ng-repeat="p in students">
+                <td> {{ p.firstName }}</td>
+                <td> {{ p.lastName }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <br>
+
+    <button ng-click="moveToCourseCreationView()">Create a new course</button>
+    <button ng-click="moveToCourseEditView()">Edit course</button>
+
+    <p>Current student: <strong>{{ currentStudent.firstName }} {{ currentStudent.lastName }}</strong>
+
+    <p>View the map as student:</p>
+
+    <select ng-model="student" ng-change="viewAsStudent(student)"
+            ng-options="student as (student.firstName + ' ' + student.lastName) for student in  students"></select>
+
+    <br>
 </div>
 
-<br>
-
-<button ng-click="moveToCourseCreationView()">Create a new course</button>
-<button ng-click="moveToCourseEditView()">Edit course</button>
-
-<p>Current student: <strong>{{ currentStudent.firstName }} {{ currentStudent.lastName }}</strong>
-
-<p>View the map as student:</p>
-
-<select ng-model="student" ng-change="viewAsStudent(student)"
-        ng-options="student as (student.firstName + ' ' + student.lastName) for student in  students"></select>
-
-<br>
-
-<!--canvas that uses paperjs, assignments green when done-->
-<!--<canvas id="canvas2" resize paperjsmap assignments="assignments" done-assignments="doneAssignments"></canvas>-->
-
-
-<div id="mapElements">
+<div id="mapElements" class="col-xs-12">
     <div ng-repeat="assignment in assignments">
         <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
                 ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);"
                 ng-click="markAssignmentAsDone(assignment)" class="button undone-task"
-                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
+                style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number}}
         </button>
+        
         <button ng-disabled="buttonClicked" ng-mouseover="showDependencies(assignment)"
                 ng-mouseleave="hideDependencies(assignment)" ng-if="assignmentCompleted(assignment);"
                 ng-click="markAssignmentAsUndone(assignment)" class="button done-task"
-                style="top:{{assignment.location.y -25}}px; left:{{assignment.location.x -25}}px">{{ assignment.number}}
+                style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number}}
         </button>
 
     </div>

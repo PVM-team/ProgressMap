@@ -158,11 +158,10 @@ describe "Course editing page", js: true do
 
             it "the added assignment is located in correct block" do
                 assignment_count = 5
-                direction = "left"
                 button = find_button(assignment_count.to_s)
                 x_loc = x_loc(button)
                 y_loc = y_loc(button)
-                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count, direction)
+                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count)
             end
 
             it "a new assignment is added to database" do
@@ -196,11 +195,10 @@ describe "Course editing page", js: true do
 
             it 'the last assignment in map is in correct block after delete' do
                 assignment_count = @assignments_initially - 1
-                direction = "right"
                 button = find_button(assignment_count.to_s)
                 x_loc = x_loc(button)
                 y_loc = y_loc(button)
-                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count, direction)
+                validate_location(x_loc, y_loc, assignment_count - 1, assignment_count)
             end
 
             it "the assignment is removed from database" do
@@ -234,7 +232,7 @@ describe "Course editing page", js: true do
 
                 it "its button is placed to the correct block" do
                     button = find_button('1')
-                    validate_location(x_loc(button), y_loc(button), 0, 1, "right")
+                    validate_location(x_loc(button), y_loc(button), 0, 1)
                 end
             end
         end
@@ -272,15 +270,7 @@ describe "Course editing page", js: true do
                     x_loc = x_loc(button)
                     y_loc = y_loc(button)
 
-                    if (i % 4 == 0)
-                        if direction === 'left'
-                            direction = "right"
-                        else
-                            direction = "left"
-                        end
-                    end
-
-                    validate_location(x_loc, y_loc, i, @assignment_count, direction)
+                    validate_location(x_loc, y_loc, i, @assignment_count)
                 end
             end
 
@@ -344,15 +334,7 @@ describe "Course editing page", js: true do
                             x_loc = x_loc(button)
                             y_loc = y_loc(button)
 
-                            if (i % 4 == 0)
-                                if direction === 'left'
-                                    direction = "right"
-                                else
-                                    direction = "left"
-                                end
-                            end
-
-                            validate_location(x_loc, y_loc, i, @assignment_count, direction)
+                            validate_location(x_loc, y_loc, i, @assignment_count)
                         end                        
                     end
 
@@ -388,7 +370,7 @@ def y_loc(button)
     (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
 end
 
-def validate_location(x_loc, y_loc, index, assignment_count, direction)
+def validate_location(x_loc, y_loc, index, assignment_count)
     border_size = 1000 / 40
     block_size = 1000 / 5
     left_border = 50 + 2 * border_size
@@ -396,6 +378,12 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
 
     assignments_per_level = 4
     level_amount = (assignment_count / assignments_per_level) + 1
+
+    if index % (2 * assignments_per_level) >= assignments_per_level
+        direction = "left"
+    else
+        direction = "right"
+    end
 
     if (direction === 'right')
         x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)
