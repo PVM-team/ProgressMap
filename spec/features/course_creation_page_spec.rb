@@ -203,8 +203,6 @@ def validate_location(x_loc, y_loc, index, assignment_count, direction)
 
   y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
 
-  byebug
-
   expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
   expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end
