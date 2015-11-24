@@ -125,8 +125,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 for (var i = 0; i < paths.length; i++) {
                     var start = paths[i].firstSegment.point;
-                    var radius = HOVERED_CIRCLE.radius;
-                    console.log(radius);
+                    //needs something added to the radius to stop arrowheads at edges (doesn't yet scale properly)
+                    var radius = HOVERED_CIRCLE.radius + 30;
+                    //finds the edge of the target assignment circle from the dependent assignment
                     var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
 
                     var vector = circleEdge.subtract(start);
@@ -135,7 +136,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                     if (paths[i].length <= vectorLength) {
                         vector = vector.normalize().multiply(event.delta);
-                        growPath(paths[i], arrowheads[i], vector, vectorLength, circleEdge);
+                        growPath(start, end, paths[i], arrowheads[i], vector, vectorLength, circleEdge);
                     }
                 }
             }
@@ -145,16 +146,41 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
 
-            function growPath(path, arrowH, position, vectorLength, circleEdge) {
+            function growPath(start, end, path, arrowH, position, vectorLength, circleEdge) {
+                //path's actual latest point
                 var lastPos = path.lastSegment.point;
-                var newPos = lastPos.add(position.multiply(1000));
+
+                var speed = 500;
+                var newPos = lastPos.add(position.multiply(speed));
+
+                /* experimental curvature for dependency-arrows
+                //the position of the path's latest point along a straight line from start to end
+                var lastStraightVectorPos = start.add((lastPos.subtract(start)).project(position));
+
+                var point = position.clone();
+                point.x = position.y * -1;
+                point.y = position.x;
+
+                var newPos = lastStraightVectorPos.add(position.multiply(speed));
+
+                var halfwayLength = vectorLength/2;
+
+                var magic = 1 - ((Math.abs(((newPos.subtract(start)).length) - halfwayLength)) / halfwayLength);
+                magic = Math.sqrt(magic);
+
+                var curveLength = 50;
+
+                newPos = newPos.add(point.normalize().multiply(magic * curveLength));
+            */
                 var newPieceLength = (newPos.subtract(lastPos)).length;
-                if ((path.length + newPieceLength) > vectorLength) {
+                if ((path.length + newPieceLength) >= vectorLength) {
                     moveArrow(arrowH, circleEdge);
                     path.add(circleEdge);
+                    //path.smooth();
                 } else {
                     moveArrow(arrowH, newPos);
                     path.add(newPos);
+                    //path.smooth();
                 }
             }
 
@@ -202,8 +228,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 pathLayer = new paper.Layer();
                 dependencyArrowLayer = new paper.Layer();
                 dependencyArrowLayer.locked = true;
-                triangleLayer = new paper.Layer();
                 assignmentLayer = new paper.Layer();
+                triangleLayer = new paper.Layer();
                 textLayer = new paper.Layer();
                 textLayer.locked = true;
             }
@@ -352,7 +378,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 if (angle < 0){
                     angle = 360 - (-angle);
                 }
-                triangle.rotate(90+angle)
+                triangle.rotate(90+angle);
             }
 
             function drawSmoothPaperPaths() {
