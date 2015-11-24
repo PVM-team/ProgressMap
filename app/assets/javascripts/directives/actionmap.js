@@ -1,4 +1,4 @@
-ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
+ProgressApp.directive('actionmap', function (GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -93,34 +93,25 @@ ProgressApp.directive('actionmap', function (CanvasService, AssignmentCirclesSer
 
             function placeLatestStudents() {
                 for (var i = 0; i < scope.assignments.length; i++) {
-                    placeStudentCirclesForAssignment(scope.assignments[i]);
+                    placeStudentIconsForAssignment(scope.assignments[i]);
                 }
             }
 
-            function placeStudentCirclesForAssignment(assignment) {
+            function placeStudentIconsForAssignment(assignment) {
                 var verticalPositionOffset = 0;
                 var lateralPositionOffset = 50;
                 var location = assignment.location;
 
                 for (var j = 0; j < assignment.latestAttempters.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
-
-                    var studentCircle = new paper.Path.Circle(studentLocation, 15);
-
                     var student = assignment.latestAttempters[j];
-                    studentCircle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
-                    studentLayer.addChild(studentCircle);
+
+                    var studentIcon = GravatarService.gravatarImage(student);
+                    studentIcon.position = studentLocation;
+
+                    studentLayer.addChild(studentIcon);
 
                     ActionMapUpdaterService.initializeLatestDoer(student, studentLocation);
-
-                    //student id:s over student circles
-                    var text = new paper.PointText({
-                        point: new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset),
-                        content: student.id,
-                        fillColor: 'white',
-                        fontSize: 15
-                    });
-                    labelLayer.addChild(text);
 
                     lateralPositionOffset += 30;
 

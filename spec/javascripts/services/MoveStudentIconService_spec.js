@@ -1,4 +1,4 @@
-describe('MoveStudentCircleService', function () {
+describe('MoveStudentIconService', function () {
     var assignments;
     var students;
     var studentinfo;
@@ -82,8 +82,8 @@ describe('MoveStudentCircleService', function () {
 
     spyOn(MapScaleServiceMock, 'scaleByDefaultWidth').and.callThrough();
 
-        inject(function (_MoveStudentCircleService_, MapScaleService) {
-            service = _MoveStudentCircleService_;
+        inject(function (_MoveStudentIconService_, MapScaleService) {
+            service = _MoveStudentIconService_;
             MapScaleService = MapScaleServiceMock;
         });
 

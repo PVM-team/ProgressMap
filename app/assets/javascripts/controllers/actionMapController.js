@@ -1,4 +1,5 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, ActionMapUpdaterService) {
+    // "use strict";
 
     var self = this;
     var maxStudentsToShowAroundAssignment = 9;
@@ -36,6 +37,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
     })
+
 
     $scope.$on("$destroy", function() {
         if (backendCaller) {
