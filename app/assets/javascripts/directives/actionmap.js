@@ -106,7 +106,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
                     var student = assignment.latestAttempters[j];
 
-                    var studentIcon = GravatarService.gravatarImage(student.email);
+                    var studentIcon = GravatarService.gravatarImage(student);
                     studentIcon.position = studentLocation;
 
                     studentLayer.addChild(studentIcon);

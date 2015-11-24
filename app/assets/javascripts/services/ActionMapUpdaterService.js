@@ -141,7 +141,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     }
 
     function createStudentIconInPosition(student, scaledPosition) {
-        var icon = GravatarService.gravatarImage(student.email)
+        var icon = GravatarService.gravatarImage(student)
         studentLayer.appendBottom(icon);
 
         paper.view.update();
