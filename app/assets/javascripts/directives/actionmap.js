@@ -1,4 +1,4 @@
-ProgressApp.directive('actionmap', function (GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, StudentIconService, MapScaleService) {
+ProgressApp.directive('actionmap', function (GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -93,11 +93,11 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
 
             function placeLatestStudents() {
                 for (var i = 0; i < scope.assignments.length; i++) {
-                    placeStudentCirclesForAssignment(scope.assignments[i]);
+                    placeStudentIconsForAssignment(scope.assignments[i]);
                 }
             }
 
-            function placeStudentCirclesForAssignment(assignment) {
+            function placeStudentIconsForAssignment(assignment) {
                 var verticalPositionOffset = 0;
                 var lateralPositionOffset = 50;
                 var location = assignment.location;

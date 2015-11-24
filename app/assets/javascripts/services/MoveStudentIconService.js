@@ -1,24 +1,24 @@
-ProgressApp.service('MoveStudentCircleService', function (MapScaleService) {
+ProgressApp.service('MoveStudentIconService', function (MapScaleService) {
 
-	this.hasReachedDestination = function(circle, destination) {
-        return distanceToDestination(circle, destination) < MapScaleService.scaleByDefaultWidth(1);
+	this.hasReachedDestination = function(icon, destination) {
+        return distanceToDestination(icon, destination) < MapScaleService.scaleByDefaultWidth(1);
     }
 
     /*
         Jos huomaat että liikkuessa toisen opiskelijan päälle, oma circle katoaa, lisää vertailuarvoa (tällä hetkellä '30') suuremmaksi.
     */
 
-    this.approachingDestination = function(circle, destination) {
-        return distanceToDestination(circle, destination) < MapScaleService.scaleByDefaultWidth(30);
+    this.approachingDestination = function(icon, destination) {
+        return distanceToDestination(icon, destination) < MapScaleService.scaleByDefaultWidth(30);
     }
 
-    function distanceToDestination(circle, destination) {
-        var vector = getVector(circle, destination);
+    function distanceToDestination(icon, destination) {
+        var vector = getVector(icon, destination);
         return Math.abs(vector[0]) + Math.abs(vector[1]);
     }
 
-    function getVector(circle, destination) {
-        var position = circle.position;
+    function getVector(icon, destination) {
+        var position = icon.position;
         return [destination.x - position.x, destination.y - position.y];
     }
 
@@ -29,13 +29,13 @@ ProgressApp.service('MoveStudentCircleService', function (MapScaleService) {
         Laskee lopuksi uuden nopeuden circlelle ja palauttaa sen.
     */
 
-    this.moveCircle = function(circle, startPosition, endPosition, speed, minSpeed) {
-        var vector = getVector(circle, endPosition);
+    this.moveIcon = function(icon, startPosition, endPosition, speed, minSpeed) {
+        var vector = getVector(icon, endPosition);
         var totalDistance = distance(startPosition, endPosition);
-        var distanceRemaining = distance(circle.position, endPosition);
+        var distanceRemaining = distance(icon.position, endPosition);
 
-        circle.position.x += vector[0] / speed;
-        circle.position.y += vector[1] / speed;
+        icon.position.x += vector[0] / speed;
+        icon.position.y += vector[1] / speed;
 
         paper.view.update();
 
