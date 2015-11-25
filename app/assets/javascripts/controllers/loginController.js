@@ -13,8 +13,6 @@ ProgressApp.controller('LoginController', function($scope, $routeParams, $locati
 
     $scope.signOut = function() {
         var auth2 = gapi.auth2.getAuthInstance();
-
-        console.log(auth2.currentUser.get().getBasicProfile());
         auth2.signOut().then(function () {
             console.log('User signed out.');
         });
