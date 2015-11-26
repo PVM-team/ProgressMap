@@ -1,5 +1,12 @@
 ProgressApp.controller('LoginController', function($scope, $routeParams, $location, httpService) {
     window.onSignIn = onSignIn;
+    var teachers = [];
+
+    function getTeachers() {
+        httpService.getData('/teachers/show.json').then(function(data){
+         teachers = data['teachers'];
+        });
+    }
     
     function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();

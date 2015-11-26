@@ -5,6 +5,9 @@ class TeachersController < ApplicationController
   end
 
   def show
+      @teachers = Teacher.all
+
+    render 'teachers/show.json.jbuilder'
   end
 
   def new
@@ -17,8 +20,4 @@ class TeachersController < ApplicationController
   def destroy
   end
 
-  private
-    def teacher_params
-      params.require(:teacher).permit(:username, :password, :password_confirmation)
-   end
 end
