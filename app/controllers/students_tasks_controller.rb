@@ -1,29 +1,44 @@
 class StudentsTasksController < ApplicationController
 
-    def student_finished_task # vaihda metodiksi 'create' kun poistetaan MapControllerista angularin puolelta ko. toiminnallisuus
-        assignment = find_assignment(params[:course_id], params[:number].to_i)
-        student = Student.find_by token: params[:student_token]
+    def create
+        params = JSON.parse(request.body.read.to_s)
 
-        if assignment and student
-            if student.assignments.include?(assignment)
-                render_json(412, "Student has already done the assignment defined by course_id: " + params[:course_id] + ", and number: " + params[:number])
+        assignment = find_assignment(params["course_token"], params["number"])
+        student = Student.find_by token: params["student_token"]
+
+        complete = params["complete"] === true ? true : false
+
+        task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
+
+        if task
+            if task.complete
+                render_json(412, "Student has already done the assignment defined by course_token: " + params["course_token"] + ", and number: " + params["number"].to_s)
+            
+            elsif !task.complete and complete
+                task.complete = true
+                task.save
+                render_json(200, "task marked as done")
+
             else
-                student.assignments << assignment
-                render_json(201, "created")
+                render_json(412, "Student has already attempted the assignment defined by course_token: " + params["course_token"] + ", and number: " + params["number"].to_s)
             end
 
+        elsif assignment and student
+            task = StudentsTask.create assignment_id: assignment.id, student_id: student.id, complete: complete
+            render_json(201, "created")
+
         elsif assignment.nil?
-            course = Course.find_by id: params[:course_id]
+            course = Course.find_by token: params["course_token"]
 
             if course.nil?
-                render_json(400, "Invalid parameter for course_id: " + params[:course_id])
+                render_json(400, "Invalid parameter for course_token: " + params["course_token"])
                 return
             end
 
-            render_json(400, "Invalid parameter for number: " + params[:number])
+            render_json(400, "Invalid parameter for number: " + params["number"].to_s)
         
         elsif student.nil?
-            render_json(400, "Invalid parameter for student_token: " + params[:student_token])
+            render_json(400, "Invalid parameter for student_token: " + params["student_token"])
 
         else
             render_json(600, "Unexpected behavior from valid input.\nTask wasn't marked for student to be complete.")
@@ -31,8 +46,14 @@ class StudentsTasksController < ApplicationController
     end
 
 
-    def create
-        task = StudentsTask.new(students_task_params)
+    def update
+        assignment = Assignment.find_by id: params[:assignment_id]
+        student = Student.find_by id: params[:student_id]
+
+        task = StudentsTask.find_by_assignment_id_and_student_id(assignment, student)
+        task = StudentsTask.new(students_task_params) if not task
+
+        task.complete = params[:complete]
         task.save
 
         @students_task = []
@@ -41,12 +62,6 @@ class StudentsTasksController < ApplicationController
         render 'students_tasks/show.json.jbuilder'
     end
 
-    def destroy
-        task = StudentsTask.find_by_assignment_id_and_student_id(params[:assignment_id], params[:student_id])
-        task.destroy if task
-
-        render plain: "StudentsTask deleted"
-    end
 
     private
 
@@ -55,16 +70,16 @@ class StudentsTasksController < ApplicationController
             render json: params.to_json
         end
 
-        def find_assignment(course_id, number)
+        def find_assignment(course_token, number)
             begin
-                assignments = (Course.find_by id: course_id).assignments
+                assignments = (Course.find_by token: course_token).assignments
                 assignments[number - 1]
-            rescue NoMethodError => e # Course.find_by id: course_id = 'nil'
+            rescue NoMethodError => e # Course.find_by token: course_token = 'nil'
                 nil
             end
         end
 
         def students_task_params
-            params.require(:students_task).permit(:assignment_id, :student_id)
+            params.require(:students_task).permit(:assignment_id, :student_id, :complete)
         end
 end

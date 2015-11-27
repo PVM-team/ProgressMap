@@ -1,15 +1,17 @@
 class StudentsController < ApplicationController
 
   def create
-    course = Course.find_by id: params[:course_id]
-    @student = Student.new(:firstName => params[:firstName], :lastName => params[:lastName])
+    params = JSON.parse(request.body.read.to_s)
+
+    course = Course.find_by token: params["course_token"]
+    @student = Student.new(:firstName => params["firstName"], :lastName => params["lastName"])
 
     if course and @student.save
       course.students << @student
       render_json(201, "created", @student.token)
     
     elsif course.nil?
-      render_json(400, "Invalid parameter for course_id: " + params[:course_id]) if course.nil?
+      render_json(400, "Invalid parameter for course_token: " + params["course_token"])
 
     else
       if @student.firstName.nil? or @student.firstName.empty?

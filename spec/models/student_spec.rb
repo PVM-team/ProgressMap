@@ -52,7 +52,7 @@ describe Student, type: :model do
       @course.students << @student
 
       for i in 1..3
-        @student.assignments << (FactoryGirl.create :assignment)
+        @student.assignments << (FactoryGirl.create :assignment, name: "tehtävä" + i.to_s, number: i)
       end
     end
 

@@ -18,10 +18,13 @@ class Student < ActiveRecord::Base
         last_done = task if task_done_after_last_done(task, last_done)
   		end
 
-      return { 'number': (Assignment.find_by id: last_done.assignment_id).number, 'timestamp': last_done.updated_at } if last_done
+      return { 'number': (Assignment.find_by id: last_done.assignment_id).number, 'timestamp': last_done.updated_at, 'complete': last_done.complete } if last_done
       nil
     end
 
+    def to_s
+      self.firstName + " " + self.lastName
+    end
 
     private
   	

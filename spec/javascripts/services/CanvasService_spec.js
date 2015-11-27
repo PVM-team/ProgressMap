@@ -92,7 +92,7 @@ describe('CanvasService', function () {
                     var yStart = 250 * 6 + 100;  // level = 6, border = 100
 
                     locationIsInBlock(location, xStart, yStart);
-                    expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(120);
+                    expect(distanceBetweenLocations(location, locations[0])).toBeGreaterThan(119);
                 }
             })
         })
@@ -173,14 +173,12 @@ describe('CanvasService', function () {
                 var prev = null;
                 var i = 0;
 
-
                 while (i < 4) {
                     location = service.locationOfNewAssignment(i, prev);
                     locationIsInBlock(location, i * 250 + 100, 250 * 6 + 100);
 
-
                     if (prev) {
-                        expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+                        expect(distanceBetweenLocations(location, prev)).toBeGreaterThan(119);
                     }
 
                     prev = location;
@@ -191,7 +189,7 @@ describe('CanvasService', function () {
                     location = service.locationOfNewAssignment(i, prev);
                     locationIsInBlock(location, 100 - (i % 4) * 250 + 3 * 250, 250 * 5 + 100);
 
-                    expect(distanceBetweenLocations(location, prev) >= 120).toBe(true);
+                    expect(distanceBetweenLocations(location, prev)).toBeGreaterThan(119);
 
                     prev = location;
                     i++;
