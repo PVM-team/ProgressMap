@@ -19,8 +19,12 @@ ProgressApp.controller('LoginController', function($scope, $routeParams, $locati
                     name: profile.getName(),
                     email: profile.getEmail()
                 };
+
+                httpService.postData('/teachers', teacher).then(function (data) {
+                    console.log(data);
+                })
                 $scope.setCurrentUser(teacher);
-                console.log(teacer.name);
+                console.log(teacher.name);
             };
             
         });
