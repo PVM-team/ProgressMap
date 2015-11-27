@@ -358,7 +358,7 @@ describe "Course editing page", js: true do
 end
 
 def visit_course_editing_page
-    visit '/'
+    visit '#/map/1'
     click_button 'Edit course'
 end
 

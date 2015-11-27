@@ -150,57 +150,57 @@ describe "Course creation page", js: true do
 end
 
 def visit_course_creation_page
- visit '/'
- click_button 'Create a new course'
+    visit '#/map/1'
+    click_button 'Create a new course'
 end
 
 def fill_course_name_and_assignment_count_with(course_name, assignment_count)
-  fill_in('courseName', with: course_name)
-  fill_in('assignmentCount', with: assignment_count)
+    fill_in('courseName', with: course_name)
+    fill_in('assignmentCount', with: assignment_count)
 end
 
 def submit_button_is_disabled
-  button = page.find('button', :text => 'Submit')
-  expect(button.visible?).to be(true)
-  expect(button[:disabled]).to eq("true")
+    button = page.find('button', :text => 'Submit')
+    expect(button.visible?).to be(true)
+    expect(button[:disabled]).to eq("true")
 end
 
 def submit_button_is_enabled
-  button = page.find('button', :text => 'Submit')
-  expect(button[:disabled]).to be(nil)
+    button = page.find('button', :text => 'Submit')
+    expect(button[:disabled]).to be(nil)
 end
 
 def x_loc(button)
-  (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
+    (button[:style].split("left: ")[1]).split("px")[0].to_i + 5
 end
 
 def y_loc(button)
-  (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
+    (button[:style].split("top: ")[1]).split("px")[0].to_i + 25
 end
 
 def validate_location(x_loc, y_loc, index, assignment_count)
-  border_size = 1000 / 40
-  block_size = 1000 / 5
-  left_border = 50 + 2 * border_size
-  top_border = 50 + 2 * border_size
+    border_size = 1000 / 40
+    block_size = 1000 / 5
+    left_border = 50 + 2 * border_size
+    top_border = 50 + 2 * border_size
 
-  assignments_per_level = 4
-  level_amount = (assignment_count / assignments_per_level) + 1
+    assignments_per_level = 4
+    level_amount = (assignment_count / assignments_per_level) + 1
 
-  if index % (2 * assignments_per_level) >= assignments_per_level
-    direction = "left"
-  else
-    direction = "right"
-  end
+    if index % (2 * assignments_per_level) >= assignments_per_level
+        direction = "left"
+    else
+        direction = "right"
+    end
 
-  if (direction === 'right')
-    x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)
-  else
-    x_start = left_border - (index % assignments_per_level) * (2 * border_size + block_size) + (assignments_per_level - 1) * (2 * border_size + block_size)
-  end
+    if (direction === 'right')
+        x_start = left_border + (index % assignments_per_level) * (2 * border_size + block_size)
+    else
+        x_start = left_border - (index % assignments_per_level) * (2 * border_size + block_size) + (assignments_per_level - 1) * (2 * border_size + block_size)
+    end
 
-  y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
+    y_start = top_border + ((level_amount - (index / assignments_per_level)).ceil - 1) * (2 * border_size + block_size)
 
-  expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
-  expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
+    expect(x_loc >= x_start && x_loc < x_start + block_size).to be(true)
+    expect(y_loc >= y_start && y_loc < y_start + block_size).to be(true)
 end

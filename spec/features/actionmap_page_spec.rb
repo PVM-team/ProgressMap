@@ -51,7 +51,7 @@ describe "Action map page", js: true do
 end
 
 def visit_map_page
-	visit '/'
+    visit '#/map/1'
 end
 
 def visit_action_map_page
