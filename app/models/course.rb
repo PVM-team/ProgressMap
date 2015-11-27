@@ -3,6 +3,7 @@ require 'securerandom'
 class Course < ActiveRecord::Base
 	before_create :generate_token
 
+	belongs_to :teacher
 	has_many :students, dependent: :destroy
 	has_many :assignments, dependent: :destroy
 

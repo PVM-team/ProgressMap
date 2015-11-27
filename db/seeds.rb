@@ -1,7 +1,11 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+teacher1 = Teacher.create email: "ijasteemu@gmail.com", name: "testiope1"
+teacher2  = Teacher.create email: "s4knet@gmail.com", name: "testiope2"
 
 course1 = Course.create name: "Ohtuprojekti"
+
+teacher1.courses << course1
 
 student1 = Student.create firstName: "Heimo", lastName: "Vesa", email: "s4knet@gmail.com"
 student2 = Student.create firstName: "Allan", lastName: "Kurma", email: "mikhuttu@cs.helsinki.fi"

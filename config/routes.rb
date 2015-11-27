@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get 'map/init', to: 'map#init'
   get 'map/action_init', to: 'map#action_init'
   get 'map/action_students', to: 'map#action_students'
-
+  get 'signin', to: 'sessions#new'
+  
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
   put 'assignments/edit_dependencies', to: 'assignments#edit_dependencies'
@@ -17,11 +18,15 @@ Rails.application.routes.draw do
 
   post 'courses/create', to: 'courses#create_from_outside'                              # API call
 
+  delete 'signout', to: 'sessions#destroy'
+
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]
+  resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]
   resources :students, only: [:create, :show, :destroy]                                 # create = API call
   resources :students_tasks, only: [:create]                                            # create = API call
+  resource :session, only: [:new, :create, :delete]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

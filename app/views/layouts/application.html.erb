@@ -7,8 +7,9 @@
  	<%= csrf_meta_tags %>
 </head>
 
-<body ng-app="ProgressApp">
-	
+<body ng-app="ProgressApp" ng-controller="ApplicationController">
+
+    <p>moi {{ currentUser.name }} </p>	
 	<div ng-view></div>
 
 	<!-- Muuttujat laitettava ' ' -sisälle sen sijaan että käyttäisi "" -merkkejä. -->
