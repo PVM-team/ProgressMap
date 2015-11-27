@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20151125115531) do
     t.datetime "updated_at", null: false
     t.string   "name"
     t.string   "token"
+    t.integer  "teacher_id"
   end
 
   create_table "locations", force: :cascade do |t|

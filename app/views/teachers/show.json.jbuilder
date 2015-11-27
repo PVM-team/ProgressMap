@@ -1,2 +1,2 @@
-json.course @course, partial:'courses/course', as: :course
-json.student @teacher, partial:'teachers/teacher', as: :teacher
+#json.courses @courses, partial:'courses/course', as: :course
+json.teachers @teachers, partial:'teachers/teacher', as: :teacher
