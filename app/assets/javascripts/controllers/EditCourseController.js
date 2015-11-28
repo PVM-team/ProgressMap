@@ -1,4 +1,4 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, StateService, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
     $scope.mutex = false;
 

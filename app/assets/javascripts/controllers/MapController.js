@@ -1,19 +1,14 @@
-ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService, StateService) {
+ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService, SessionService) {
 
     $scope.buttonClicked = false;
 
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
 
-    //korvataan joskus käyttäjän valintaruudulla?
-    if (!StateService.getCurrentStudent()) {
-        StateService.setCurrentStudent({id: 2})
-    }
-
     //initiates map with given course id and current student id
     httpService.getData('/map/init.json', {
         params: {
             course_id: $routeParams.course_id,
-            student_id: StateService.getCurrentStudent().id
+            student_id: 2
         }
     }).then(function (data) {
 
@@ -35,7 +30,6 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
 
 
     $scope.moveToCourseCreationView = function () {
-        StateService.setCurrentStudent($scope.currentStudent);
         $location.path("/course/new");
     }
 

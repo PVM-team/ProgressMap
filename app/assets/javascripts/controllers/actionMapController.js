@@ -1,5 +1,5 @@
-ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, StateService, ActionMapUpdaterService) {
-    // "use strict";
+ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, ActionMapUpdaterService) {
+    "use strict";
 
     var self = this;
     var maxStudentsToShowAroundAssignment = 9;
@@ -48,13 +48,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
             clearInterval(updater);    
         }
     });
-
-    $scope.goToNormalMap = function() {
-        var student = StateService.getCurrentStudent();
-        $location.path('/student/' + student.token);
-
-        //$location.path('/map/' + $scope.course.id);
-    }
 
     function sortAssignmentsByNumber() {
         $scope.assignments.sort(function (a, b) {

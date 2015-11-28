@@ -1,4 +1,5 @@
-ProgressApp.controller('IndexController', function($scope, $location, $compile, httpService) {
+ProgressApp.controller('IndexController', function($scope, $location, $compile, httpService, SessionService) {
+    window.onSignIn = onSignIn;
     placeNavigationLinksInHTML();
 
     function placeNavigationLinksInHTML() {
@@ -10,20 +11,20 @@ ProgressApp.controller('IndexController', function($scope, $location, $compile, 
         }
 
         makeLinksReactiveToFunctionCalls(parent);
-    }
+    }    
 
     function getNavigationLinks() {
         var links = [];
 
-        if ($scope.getCurrentUser()) {
+        if (SessionService.loggedIn()) {
             links.push('<a ng-click="ownPage()">Oma sivu</a>');
             links.push('<a ng-click="infoToTeachers()">Opettajalle</a>');
-            links.push('a ng-click="logOut()">Kirjaudu ulos</a>');
+            links.push('<a ng-click="signOut()">Kirjaudu ulos</a>');
         }
 
         else {
             links.push('<a ng-click="infoToTeachers()">Opettajalle</a>');
-            links.push('<a ng-click="logIn()">Kirjaudu Google-tunnuksella</a>');
+            links.push('<a class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></a>');
         }
 
         return links;
@@ -33,7 +34,7 @@ ProgressApp.controller('IndexController', function($scope, $location, $compile, 
         for (var i = 0; i < parent.children().length; i++) {
             var elem = parent.children()[i];
             $compile(elem)($scope);
-        }       
+        }
     }
 
     $scope.ownPage = function () {
@@ -43,17 +44,16 @@ ProgressApp.controller('IndexController', function($scope, $location, $compile, 
 
     $scope.infoToTeachers = function () {
         console.log("infoToTeachers")
-
         // $location.path('/info_to_teachers');
     }
 
-    $scope.logIn = function () {
-        console.log("logIn")
-        // do stuff 1
+    function onSignIn(googleUser) {
+        SessionService.signIn(googleUser);
+        $location.path("/");
     }
 
-     $scope.logOut = function () {
-        console.log("logOut")
-        // do stuff 2
-    }   
+     $scope.signOut = function () {
+        SessionService.signOut();
+        $location.path("/");
+    }
 })

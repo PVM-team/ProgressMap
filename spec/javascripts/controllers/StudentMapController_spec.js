@@ -3,7 +3,6 @@ describe('StudentMapController', function () {
     var controller, scope;
     var CanvasServiceMock;
     var httpServiceMock;
-    var StateServiceMock;
     var location;
 
     beforeEach(function () {
@@ -40,25 +39,12 @@ describe('StudentMapController', function () {
             }
         })();
 
-        StateServiceMock = (function () {
-            return {
-                setCurrentStudent: function (currentStudent) {
-                    student = currentStudent;
-                },
-                getCurrentStudent: function() {
-                    return student;
-                }
-            }
-        })();
-
-
-        spyOn(StateServiceMock, 'setCurrentStudent').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService, $location) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
@@ -66,8 +52,7 @@ describe('StudentMapController', function () {
                 $scope: scope,
                 $routeParams: $routeParams,
                 httpService: httpServiceMock,
-                CanvasService: CanvasServiceMock,
-                StateService: StateServiceMock
+                CanvasService: CanvasServiceMock
             });
 
         });
@@ -89,18 +74,21 @@ describe('StudentMapController', function () {
         it('sets scope.course.id to 1', function(){
             expect(scope.course.id).toBe(1);
         })
+
         it('sets scope.student to Eetu Esimerkki', function(){
             expect(scope.student.id).toBe(1)
             expect(scope.student.firstName).toEqual("Eetu")
             expect(scope.student.lastName).toEqual("Esimerkki")
             expect(scope.student.token).toEqual("eetu-123-esimerkki")
         })
+
         it('sets scope.assignments to what httpService returns', function(){
             expect(scope.assignments.length).toBe(3);
             expect(scope.assignments[0].id).toBe(1);
             expect(scope.assignments[1].location.x).toBe(330);
             expect(scope.assignments[2].doers.length).toBe(1);
         })
+        
         xit('sets scope.done_assignments to those of scope.student', function(){
             expect(scope.done_assignments.length).toBe(2);
             expect(scope.done_assignments[0].id).toBe(1)

@@ -1,4 +1,4 @@
-ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $location, AssignmentDependenciesService, CanvasService, httpService, StateService) {
+ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $location, AssignmentDependenciesService, CanvasService, httpService) {
 
     httpService.getData('/students/show', { params: { token: $routeParams.token }}).then(function (data) {
 
@@ -11,7 +11,6 @@ ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $
         $scope.course = data["course"][0];
         $scope.student = data["student"][0];
 
-        StateService.setCurrentStudent($scope.student);
         $scope.doneAssignments = setDoneAssignments();
     })
 

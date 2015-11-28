@@ -7,10 +7,9 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
         controller: 'IndexController',
            templateUrl: 'templates/index.html'
        })
-       .when('/courselist', {
-           controller: 'MapController',
+       .when('/course_list', {
            templateUrl: 'templates/course_list.html'
-       }) 
+       })
        .when('/map/:course_id', {
            controller: 'MapController',
            templateUrl: 'templates/map.html'
@@ -31,10 +30,7 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            controller: 'StudentMapController',
            templateUrl: 'templates/student_map.html'
        })
-       .when('/login', {
-            controller: 'LoginController',
-            templateUrl: 'templates/login.html'
-       })
+       
        .otherwise({
            redirectTo: '/index'
        });
