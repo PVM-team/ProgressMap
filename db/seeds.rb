@@ -3,7 +3,7 @@
 teacher1 = Teacher.create email: "ijasteemu@gmail.com", name: "testiope1"
 teacher2  = Teacher.create email: "s4knet@gmail.com", name: "testiope2"
 
-course1 = Course.create name: "Ohtuprojekti"
+course1 = Course.new name: "Ohtuprojekti"
 
 teacher1.courses << course1
 
