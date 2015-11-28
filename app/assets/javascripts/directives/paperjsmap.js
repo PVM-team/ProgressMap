@@ -10,6 +10,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
         link: function (scope, element, attrs) {
 
             var previousWindowWidth;
+            var scale = 1;
             var mapInitialized = false;
 
             //dependent circles of circle mouse is currently hovering over
@@ -125,8 +126,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 for (var i = 0; i < paths.length; i++) {
                     var start = paths[i].firstSegment.point;
-                    //needs something added to the radius to stop arrowheads at edges (doesn't yet scale properly)
-                    var radius = HOVERED_CIRCLE.radius + 30;
+                    //radius + arrowhead size scaled
+                    var radius = HOVERED_CIRCLE.radius + 16*scale;
                     //finds the edge of the target assignment circle from the dependent assignment
                     var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
 
@@ -134,7 +135,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                     var vectorLength = vector.length;
 
-                    if (paths[i].length <= vectorLength) {
+                    if (paths[i].length < vectorLength) {
                         vector = vector.normalize().multiply(event.delta);
                         growPath(start, end, paths[i], arrowheads[i], vector, vectorLength, circleEdge);
                     }
@@ -173,7 +174,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 newPos = newPos.add(point.normalize().multiply(magic * curveLength));
             */
                 var newPieceLength = (newPos.subtract(lastPos)).length;
-                if ((path.length + newPieceLength) >= vectorLength) {
+                if ((path.length + newPieceLength) > vectorLength) {
                     moveArrow(arrowH, circleEdge);
                     path.add(circleEdge);
                     //path.smooth();
@@ -190,6 +191,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                     scaleButtonsByWidth();
                     scaleLabelsByWidth();
                     scalePathByWidth();
+                    scale = window.innerWidth/previousWindowWidth;
                     previousWindowWidth = window.innerWidth;
                 }
             }
@@ -239,7 +241,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 for (var i = 0; i < items.length; i++) {
                     if (items[i] != path) {
                         items[i].position.x = getRelativeX(items[i].position.x);
-                        items[i].scale(window.innerWidth / previousWindowWidth);
+                        items[i].radius *= (window.innerWidth / previousWindowWidth);
                     }
                 }
             }
@@ -315,14 +317,13 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             dependencyArrowLayer.activate();
                             var path = new paper.Path();
                             path.add(startingPoint);
-                            path.strokeWidth = 10;
+                            path.strokeWidth = 10 * scale;
                             path.strokeColor = '#F2D27E';
                             //path.strokeColor.alpha = 0.8;
                             path.shadowColor = 'black';
                             path.shadowOffset = [5,5];
 
-                            createArrowhead(item, originalCircle);
-
+                            createArrowhead(item, originalCircle, 15*scale);
 
                             pathLayer.addChild(dependentCircle);
 
@@ -368,9 +369,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 }
             }
 
-            function createArrowhead(pointsAt, startsAt){
+            function createArrowhead(pointsAt, startsAt, size){
                 triangleLayer.activate();
-                var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, 25);
+                var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, size);
                 triangle.fillColor = '#F2D27E';
                 //triangle.fillColor.alpha = 0.8;
                 var angle = Math.atan2(pointsAt.position.y - startsAt.position.y, pointsAt.position.x - startsAt.position.x);
