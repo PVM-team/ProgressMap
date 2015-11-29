@@ -144,7 +144,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             function getCircleEdge(circle, start){
                 //radius + arrowhead size scaled
                 var scaleToOne = window.innerWidth/900;
-                var radius = circle.radius + 17*scaleToOne;
+                var radius = (circle.length/(2*Math.PI)) + 17*scaleToOne;
                 var end = circle.position;
                 var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
                 return circleEdge;
@@ -249,7 +249,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 for (var i = 0; i < items.length; i++) {
                     if (items[i] != path) {
                         items[i].position.x = getRelativeX(items[i].position.x);
-                        items[i].radius *= (window.innerWidth / previousWindowWidth);
+                        items[i].scale(window.innerWidth / previousWindowWidth);
                     }
                 }
             }
@@ -274,7 +274,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
-                    var assignmentCircle = new paper.Shape.Circle(locations[i], 35);
+                    var assignmentCircle = new paper.Path.Circle(locations[i], 35);
                     assignmentCircle.style = {
                         fillColor: '#f18c3a',
                         shadowColor: 'black',
