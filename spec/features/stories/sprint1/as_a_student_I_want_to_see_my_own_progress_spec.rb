@@ -94,7 +94,7 @@ def course_details
 end
 
 def visit_map_page
-	visit '/'
+    visit '#/map/1'
 end
 
 def check_that_student_sees_tasks_with_status_as_status(course, assignments, status, amount)

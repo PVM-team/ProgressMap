@@ -42,24 +42,24 @@ context "As a teacher I want to create a course", js: true do
 end
 
 def visit_course_creation_page
- visit '/'
- click_button 'Create a new course'
+    visit '#/map/1'
+    click_button 'Create a new course'
 end
 
 def submit_button_is_disabled
-  button = page.find('button', :text => 'Submit')
+    button = page.find('button', :text => 'Submit')
 
-  expect(button.visible?).to be(true)
-  expect(button[:disabled]).to eq("true")
+    expect(button.visible?).to be(true)
+    expect(button[:disabled]).to eq("true")
 end
 
 def submit_button_is_enabled
-  button = find_button('Submit')
+    button = find_button('Submit')
 
-  expect(button[:disabled]).to be(nil)
+    expect(button[:disabled]).to be(nil)
 end
 
 def fill_course_name_and_assignment_count_with(course_name, assignment_count)
-  fill_in('courseName', with: course_name)
-  fill_in('assignmentCount', with: assignment_count)
+    fill_in('courseName', with: course_name)
+    fill_in('assignmentCount', with: assignment_count)
 end

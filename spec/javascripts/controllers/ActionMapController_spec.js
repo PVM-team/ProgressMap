@@ -2,7 +2,6 @@ describe('ActionMapController', function () {
     var controller, scope;
     var CanvasServiceMock;
     var httpServiceMock;
-    var StateServiceMock;
     var location;
    
     beforeEach(function () {
@@ -117,23 +116,13 @@ describe('ActionMapController', function () {
             }
         })();
 
-        StateServiceMock = (function () {
-            var currentStudent = {"id": 1, "token": "abc123"};
-
-            return {
-                getCurrentStudent: function() {
-                    return currentStudent;
-                }
-            }
-        })();
-
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService, $location) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
@@ -141,18 +130,10 @@ describe('ActionMapController', function () {
                 $scope: scope,
                 $routeParams: $routeParams,
                 httpService: httpServiceMock,
-                CanvasService: CanvasServiceMock,
-                StateService: StateServiceMock
+                CanvasService: CanvasServiceMock
             });
         });
     });
-
-    describe('goToNormalMap', function(){
-        it('should go to the map of the current student when function is called', function() {
-            scope.goToNormalMap();
-            expect(location.path).toHaveBeenCalledWith('/student/abc123');
-        })
-    })
 
     describe ('initializing ActionMapController initializes scope with correct data from httpService', function(){
 

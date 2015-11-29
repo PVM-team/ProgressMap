@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'map/action_init', to: 'map#action_init'
   get 'map/action_students', to: 'map#action_students'
 
+  get 'teachers/exists', to: 'teachers#exists'
+
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
   put 'assignments/edit_dependencies', to: 'assignments#edit_dependencies'
@@ -19,9 +21,11 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]
+  resources :teachers, only: [:create]
   resources :locations, only: [:update]
   resources :students, only: [:create, :show, :destroy]                                 # create = API call
   resources :students_tasks, only: [:create]                                            # create = API call
+  resource :session, only: [:new, :create, :delete]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

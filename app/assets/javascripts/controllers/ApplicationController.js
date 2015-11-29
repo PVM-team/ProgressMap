@@ -1,0 +1,2 @@
+ProgressApp.controller('ApplicationController', function () {
+})

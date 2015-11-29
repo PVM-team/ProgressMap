@@ -3,7 +3,7 @@ describe('MapController', function () {
     var controller, scope;
     var CanvasServiceMock;
     var httpServiceMock;
-    var StateServiceMock;
+
     var undoneAssignment;
     var doneAssignment;
     var location;
@@ -50,26 +50,13 @@ describe('MapController', function () {
             }
         })();
 
-        StateServiceMock = (function () {
-            var student;
-            return {
-                setCurrentStudent: function (currentStudent) {
-                    student = currentStudent;
-                },
-                getCurrentStudent: function() {
-                    return student;
-                }
-            }
-        })();
-
-        spyOn(StateServiceMock, 'setCurrentStudent').and.callThrough();
         spyOn(httpServiceMock, 'getData').and.callThrough();
         spyOn(httpServiceMock, 'postData').and.callThrough();
         spyOn(CanvasServiceMock, 'initiateCanvas').and.callThrough();
         spyOn(CanvasServiceMock, 'drawSmoothPaths').and.callThrough();
 
 
-        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, StateService, $location) {
+        inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
@@ -77,8 +64,7 @@ describe('MapController', function () {
                 $scope: scope,
                 $routeParams: $routeParams,
                 httpService: httpServiceMock,
-                CanvasService: CanvasServiceMock,
-                StateService: StateServiceMock
+                CanvasService: CanvasServiceMock
             });
 
         });
@@ -104,19 +90,19 @@ describe('MapController', function () {
         it('sets scope.course to 1', function(){
             expect(scope.course.id).toBe(1);
         })
+
         it('sets scope.assignments to what httpService returns', function(){
             expect(scope.assignments.length).toBe(3);
             expect(scope.assignments[0].id).toBe(1);
             expect(scope.assignments[1].location.x).toBe(330);
             expect(scope.assignments[2].doers.length).toBe(1);
         })
+
         it('sets scope.students to what httpService returns', function(){
             expect(scope.students.length).toBe(3);
             expect(scope.students[0].id).toBe(1);
         })
-        it('sets scope.currentStudent to what httpService returns', function(){
-            expect(scope.currentStudent.id).toBe(2);
-        })
+
         it('sets scope.doneAssignments to those of scope.currentStudent', function(){
             expect(scope.doneAssignments.length).toBe(1);
         })
@@ -156,15 +142,18 @@ describe('MapController', function () {
     describe('marking assignments', function(){
         
         describe('when undone', function(){
+            
             it('calls on httpService.postData with assignment id, current student id and path students_tasks/update', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
                 var data2 = {assignment_id: 2, student_id: scope.currentStudent.id, complete: true}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/update", data2);
             })
+
             it('sets them as done', function(){
                 scope.markAssignmentAsDone(undoneAssignment);
                 expect(scope.doneAssignments.indexOf(undoneAssignment)).not.toBe(-1);
             })
+            
             it('increases the assignment doers', function(){
                 expect(undoneAssignment.doers.length).toBe(1);
                 scope.markAssignmentAsDone(undoneAssignment);
@@ -178,10 +167,12 @@ describe('MapController', function () {
                 var data2 = {assignment_id: 1, student_id: scope.currentStudent.id, complete: false}
                 expect(httpServiceMock.postData).toHaveBeenCalledWith("students_tasks/update", data2);
             })
+            
             it ('sets them as undone', function(){
                 scope.markAssignmentAsUndone(doneAssignment);
                 expect(scope.doneAssignments.indexOf(doneAssignment)).toBe(-1);
             })
+            
             it('decreases the assignment doers', function(){
                 expect(doneAssignment.doers.length).toBe(2);
                 scope.markAssignmentAsUndone(doneAssignment);
@@ -189,13 +180,6 @@ describe('MapController', function () {
             })
         })
 
-    })
-
-    describe('moveToCourseCreationView', function(){
-        it ('should call StateService.setCurrentStudent with correct value', function() {
-            scope.moveToCourseCreationView();
-            expect(StateServiceMock.setCurrentStudent).toHaveBeenCalledWith(scope.currentStudent);
-        })
     })
 
     describe('goToActionMap', function(){

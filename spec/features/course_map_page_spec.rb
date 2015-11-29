@@ -188,24 +188,24 @@ def course_details
 end
 
 def visit_map_page
-  visit '/'
+    visit '#/map/1'
 end
 
 def check_that_student_sees_tasks_with_status_as_status(course, assignments, status, amount)
-  index = 0
+    index = 0
 
     assignments.each do |assignment|
 
-      course.assignments.each do |course_assignment|
-        if course_assignment === assignment
+        course.assignments.each do |course_assignment|
+            if course_assignment === assignment
 
-          button = page.find("button", :text => assignment.number)
-          clas = button[:class]
+                button = page.find("button", :text => assignment.number)
+                clas = button[:class]
 
-          expect(clas).to have_content(status)
-          index = index + 1
+                expect(clas).to have_content(status)
+                index = index + 1
+            end
         end
-      end
     end
     expect(index).to be(amount)
 end
@@ -215,24 +215,24 @@ def check_that_student_sees_done_tasks_as_done(course, student, amount)
 end
 
 def check_that_student_sees_undone_tasks_as_undone(course, student, amount)
-  undone_tasks = []
+    undone_tasks = []
 
-  course.assignments.each do |assignment|
+    course.assignments.each do |assignment|
 
-    undone_tasks << assignment unless student_has_done_assignment(student, assignment)
-  end
+        undone_tasks << assignment unless student_has_done_assignment(student, assignment)
+    end
 
-  check_that_student_sees_tasks_with_status_as_status(course, undone_tasks, "undone-task", amount)
+    check_that_student_sees_tasks_with_status_as_status(course, undone_tasks, "undone-task", amount)
 end
 
 def student_has_done_assignment(student, assignment)
-  student.assignments.each do |a|
+    student.assignments.each do |a|
 
-    return true if a === assignment
-  end
-  false
+        return true if a === assignment
+    end
+    false
 end
 
 def style_by_assignment(assignment)
-  "top: " + (assignment.location.y + 5).to_s + "px; left: " + (assignment.location.x + 25).to_s + "px;"
+    "top: " + (assignment.location.y + 5).to_s + "px; left: " + (assignment.location.x + 25).to_s + "px;"
 end

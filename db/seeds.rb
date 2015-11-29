@@ -1,16 +1,20 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+teacher1 = Teacher.create email: "ijasteemu@gmail.com", name: "testiope1"
+teacher2  = Teacher.create email: "s4knet@gmail.com", name: "testiope2"
 
-course1 = Course.create name: "Ohtuprojekti"
+course1 = Course.new name: "Ohtuprojekti"
 
-student1 = Student.create firstName: "Heimo", lastName: "Vesa"
-student2 = Student.create firstName: "Allan", lastName: "Kurma"
-student3 = Student.create firstName: "Irma", lastName: "Kääriäinen"
-student4 = Student.create firstName: "Aulis", lastName: "Homelius"
-student5 = Student.create firstName: "Asko", lastName: "Vilenius"
-student6 = Student.create firstName: "Sam", lastName: "Makkonen"
-student7 = Student.create firstName: "Rivo", lastName: "Riitta"
-student8 = Student.create firstName: "Inkeri", lastName: "Kääriäinen"
+teacher1.courses << course1
+
+student1 = Student.create firstName: "Heimo", lastName: "Vesa", email: "s4knet@gmail.com"
+student2 = Student.create firstName: "Allan", lastName: "Kurma", email: "mikhuttu@cs.helsinki.fi"
+student3 = Student.create firstName: "Irma", lastName: "Kääriäinen", email: "ohtupvmteam1@gmail.com"
+student4 = Student.create firstName: "Aulis", lastName: "Homelius", email: "ohtupvmteam2@gmail.com"
+student5 = Student.create firstName: "Asko", lastName: "Vilenius", email: "ohtupvmteam3@gmail.com"
+student6 = Student.create firstName: "Sam", lastName: "Makkonen", email: "ohtupvmteam4@gmail.com"
+student7 = Student.create firstName: "Rivo", lastName: "Riitta", email: "ohtupvmteam5@gmail.com"
+student8 = Student.create firstName: "Inkeri", lastName: "Kääriäinen", email: "ohtupvmteam6@gmail.com"
 student9 = Student.create firstName: "Gootti", lastName: "Kusta"
 
 course1.students << student1

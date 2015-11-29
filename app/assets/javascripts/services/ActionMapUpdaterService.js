@@ -1,4 +1,4 @@
-ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttemptersService, AssignmentCirclesService, MapScaleService, MoveStudentCircleService, StudentIconService) {
+ProgressApp.service('ActionMapUpdaterService', function (GravatarService, AssignmentLatestAttemptersService, AssignmentCirclesService, MapScaleService, MoveStudentIconService) {
 
     var assignments; // muotoa {'id', 'number', 'location': {'x', 'y'}, latestAttempters: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
                      // latestAttemptersissa jokaisella tulee olla aina id ja location. Muut attribuutit ovat tilanteesta riippuen olemassa tai sitten ei, jos niitä ei ko. doerin kohdalla tarvita
@@ -90,20 +90,20 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     function doUpdate() {
         var studentsToMove = movingStudents();
 
-        if (studentsToMove.length > 0) {
-            readyForNextUpdate = false;
-
-            console.log("moving students during this interval")
-            console.log(studentsToMove)
-
-            setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(studentsToMove);
-            setStudentsWaitingForMoving(studentsToMove);
-
-            removeMovingStudentsFromTheirOriginalAssingmentsLatestAttempters(studentsToMove);
-        }
-        else {
+        if (studentsToMove.length == 0) {
             placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
+            return;
         }
+
+        readyForNextUpdate = false;
+        
+        console.log("moving students during this interval")
+        console.log(studentsToMove)
+
+        setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(studentsToMove);
+        setStudentsWaitingForMoving(studentsToMove);
+
+        removeMovingStudentsFromTheirOriginalAssingmentsLatestAttempters(studentsToMove);
     }
 
     function studentInMovingStudents(student, movingStudents) {
@@ -115,10 +115,9 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         return false;
     }
 
-    function createStudentCircleInPosition(student, scaledPosition) {
-        var circle = new paper.Path.Circle(new paper.Point(scaledPosition.x, scaledPosition.y), MapScaleService.scaleByDefaultWidth(15));
-        circle.fillColor = StudentIconService.colorOfCircleOfStudent(student);
-        studentLayer.appendBottom(circle);
+    function createStudentIconInPosition(student, scaledPosition) {
+        var icon = GravatarService.gravatarImage(student);
+        studentLayer.appendBottom(icon);
 
         paper.view.update();
     }    
@@ -203,14 +202,14 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     */
 
     function placeStudentToWaitingQueue(student, queue, destinationAssignment) {
-        var circle = getStudentCircle(student);
-        circle.bringToFront();
+        var icon = getStudentIcon(student);
+        icon.bringToFront();
 
         var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
 
-        var movingInfo = {'circle': circle,
+        var movingInfo = {'icon': icon,
                           'destinationAssignment': destinationAssignment,
-                          'startPosition': circle.position,
+                          'startPosition': icon.position,
                           'endPosition': endPosition,
                           'student': student,
                           'speed': minSpeed }
@@ -218,7 +217,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         queue.push(movingInfo);
     }
 
-    function getStudentCircle(student) {
+    function getStudentIcon(student) {
         var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
         var location = AssignmentLatestAttemptersService.getLocationOfStudent(student, originalAssignment);
 
@@ -271,7 +270,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
 
             if (studentToAdd) {
                 AssignmentLatestAttemptersService.addStudentToLatestAttemptersWithLocation(studentToAdd, originalAssignment, attempter.location);
-                createStudentCircleInPosition(studentToAdd, attempter.location);
+                createStudentIconInPosition(studentToAdd, attempter.location);
             }
         }
     }    
@@ -352,19 +351,19 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
     function moveNextStudent() {
         var movingInfo = movingQueue.shift(); // pop from queue
 
-        var circle = movingInfo.circle;
+        var icon = movingInfo.icon;
         var endPosition = movingInfo.endPosition;
 
-        var newSpeed = MoveStudentCircleService.moveCircle(circle, movingInfo.startPosition, endPosition, movingInfo.speed, minSpeed);
+        var newSpeed = MoveStudentIconService.moveIcon(icon, movingInfo.startPosition, endPosition, movingInfo.speed, minSpeed);
         movingInfo.speed = newSpeed;
 
-        if (MoveStudentCircleService.hasReachedDestination(circle, endPosition)) {
+        if (MoveStudentIconService.hasReachedDestination(icon, endPosition)) {
             updateViewAfterStudentHasReachedDestination(movingInfo);
             return;
         }
 
         else if (! movingInfo.studentRemovedFromEndPosition &&
-                 MoveStudentCircleService.approachingDestination(circle, endPosition)) {
+                 MoveStudentIconService.approachingDestination(icon, endPosition)) {
 
             removeStudentFromEndPosition(movingInfo.destinationAssignment, endPosition);
             movingInfo.studentRemovedFromEndPosition = true;
@@ -377,7 +376,7 @@ ProgressApp.service('ActionMapUpdaterService', function (AssignmentLatestAttempt
         var endPosition = movingInfo.endPosition;
 
         markAssignmentAsDone(movingInfo.student, movingInfo.destinationAssignment, endPosition);
-        movingInfo.circle.position = endPosition;
+        movingInfo.icon.position = endPosition;
 
         paper.view.update();
 
