@@ -126,10 +126,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                 for (var i = 0; i < paths.length; i++) {
                     var start = paths[i].firstSegment.point;
-                    //radius + arrowhead size scaled
-                    var radius = HOVERED_CIRCLE.radius + 16*scale;
                     //finds the edge of the target assignment circle from the dependent assignment
-                    var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
+                    var circleEdge = getCircleEdge(HOVERED_CIRCLE, start);
 
                     var vector = circleEdge.subtract(start);
 
@@ -137,9 +135,18 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
 
                     if (paths[i].length < vectorLength) {
                         vector = vector.normalize().multiply(event.delta);
-                        growPath(start, end, paths[i], arrowheads[i], vector, vectorLength, circleEdge);
+                        growPath(paths[i], arrowheads[i], vector, vectorLength, circleEdge);
                     }
                 }
+            }
+
+            //returns the point near the target circle where a dependency arrow ought to stop
+            function getCircleEdge(circle, start){
+                //radius + arrowhead size scaled
+                var radius = circle.radius + 17*scale;
+                var end = circle.position;
+                var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
+                return circleEdge;
             }
 
             function moveArrow(arrow, position){
@@ -147,7 +154,7 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             }
 
 
-            function growPath(start, end, path, arrowH, position, vectorLength, circleEdge) {
+            function growPath(path, arrowH, position, vectorLength, circleEdge) {
                 //path's actual latest point
                 var lastPos = path.lastSegment.point;
 
@@ -374,12 +381,24 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                 var triangle = new paper.Path.RegularPolygon(startsAt.position, 3, size);
                 triangle.fillColor = '#F2D27E';
                 //triangle.fillColor.alpha = 0.8;
-                var angle = Math.atan2(pointsAt.position.y - startsAt.position.y, pointsAt.position.x - startsAt.position.x);
+                var edge = getCircleEdge(pointsAt, startsAt.position);
+                var angle = Math.atan2(edge.y - startsAt.position.y, edge.x - startsAt.position.x);
                 angle = angle*(180/Math.PI);
                 if (angle < 0){
                     angle = 360 - (-angle);
                 }
+                triangle.pivot = startsAt.position;
                 triangle.rotate(90+angle);
+/*
+                var vector  = edge.subtract(startsAt.position);
+                var arrowVector = vector.normalize(18);
+                var path2 = new paper.Path({
+                    segments: [edge.add(arrowVector.rotate(145)), edge, edge.add(arrowVector.rotate(-145))],
+                    fillColor: '#F2D27E',
+                    strokeWidth: 10,
+                });
+                path2.scale(1.3);*/
+
             }
 
             function drawSmoothPaperPaths() {
