@@ -143,7 +143,8 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             //returns the point near the target circle where a dependency arrow ought to stop
             function getCircleEdge(circle, start){
                 //radius + arrowhead size scaled
-                var radius = circle.radius + 17*scale;
+                var scaleToOne = window.innerWidth/900;
+                var radius = circle.radius + 17*scaleToOne;
                 var end = circle.position;
                 var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
                 return circleEdge;
@@ -312,8 +313,9 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
             function setDependencyFunctions(assignment, item) {
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
+                        var scaleToOne = window.innerWidth/900;
                         var dependent = AssignmentDependenciesService.findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var dependentCircle = new paper.Path.Circle([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y], 50);
+                        var dependentCircle = new paper.Path.Circle([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y], 50*scaleToOne);
                         var originalCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
 
                         if (dependentCircle) {
@@ -324,13 +326,13 @@ ProgressApp.directive('paperjsmap', function (AssignmentDependenciesService) {
                             dependencyArrowLayer.activate();
                             var path = new paper.Path();
                             path.add(startingPoint);
-                            path.strokeWidth = 10 * scale;
+                            path.strokeWidth = 10 * scaleToOne;
                             path.strokeColor = '#F2D27E';
                             //path.strokeColor.alpha = 0.8;
                             path.shadowColor = 'black';
                             path.shadowOffset = [5,5];
 
-                            createArrowhead(item, originalCircle, 15*scale);
+                            createArrowhead(item, originalCircle, 15*scaleToOne);
 
                             pathLayer.addChild(dependentCircle);
 
