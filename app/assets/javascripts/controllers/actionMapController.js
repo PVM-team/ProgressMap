@@ -21,8 +21,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         $scope.assignments = data["assignments"];
         assignmentsForUpdate = data["assignments_for_update"];
 
-        console.log(data);
-
         assignLatestAttemptersForAssignments();
 
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
@@ -37,9 +35,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
                 $scope.students = data["students"];
                 assignmentsForUpdate = data["assignments_for_update"];
-
-                console.log(data);
-
             })
         }, 20000);
 

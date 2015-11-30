@@ -480,7 +480,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     */
 
     function endInterval() {
-        updateDoersForEachAssignment(); 
+        updateDoersForEachAssignment();
         readyForNextUpdate = true;
     }
 
@@ -489,7 +489,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         päivitetään ko. assignmentin doers.
     */
 
-    // kelataan assignmentit läpi ja tarkistetaan, onko 'doers' lista sama kuin täällä. Jos ei niin päivitetään sitä.
     function updateDoersForEachAssignment() {
 
         for (var i = 0; i < assignments.length; i++) {
@@ -497,28 +496,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
             if (assignments[i].doers.length != new_assignments[i].doers.length) {
                 assignments[i].doers = new_assignments[i].doers;
                 AssignmentCirclesService.updateCircleAfterNewDoer(assignments[i], students, assignmentLayer, percentageLayer);
-
-                /*var missingStudents = studentsMissingFromDoersOfAssignment(assignments[i], new_assignments[i]);
-
-                for (var j = 0; j < missingStudents.length; j++) {
-                    assignments[i].doers.push(missingStudents[j]);
-                    AssignmentCirclesService.updateCircleAfterNewDoer(assignments[i], students, assignmentLayer, percentageLayer);
-                } */
             }
         }
     }
-
-    /*function studentsMissingFromDoersOfAssignment(assignment, assignmentToCompareTo) {
-        var missingStudents = [];
-
-        for (var i = 0; i < assignmentToCompareTo.doers.length; i++) {
-            var student = assignmentToCompareTo.doers[i];
-
-            if (! studentIsInDoersOfAssignment(student, assignment)) {
-                missingStudents.push(student);
-            }
-        }
-
-        return missingStudents;
-    } */
 })
