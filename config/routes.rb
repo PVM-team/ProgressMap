@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   get 'map/init', to: 'map#init'
   get 'map/action_init', to: 'map#action_init'
-  get 'map/action_students', to: 'map#action_students'
+  get 'map/action_update', to: 'map#action_update'
 
   get 'teachers/exists', to: 'teachers#exists'
 

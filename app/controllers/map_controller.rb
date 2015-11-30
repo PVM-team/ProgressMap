@@ -8,31 +8,25 @@ class MapController < ApplicationController
 
 		if course
 			@course << course
-
-			if at_least_20_seconds_passed_since_cache_update
-				get_students_from_database_and_write_information_to_cache(course)
-			
-			else
-				@students = Rails.cache.read(cache_key(course))
-				get_students_from_database_and_write_information_to_cache(course) unless @students
-			end
-
 			@assignments = course.assignments.order(:number)
+
+			update_cache(course) if at_least_20_seconds_passed_since_cache_update or not students_from_cache(course)
+
+			@assignments_for_update = assignments_for_update_from_cache(course)
+			@students = students_from_cache(course)
 		end
 
 		@current_student << student if student
 	end
 
 
-	def action_students
+	def action_update
+		course = Course.find_by id: params[:course_id]
 
-		if at_least_20_seconds_passed_since_cache_update
-			course = Course.find_by id: params[:course_id]
-			get_students_from_database_and_write_information_to_cache(course)
-		
-		else
-			@students = Rails.cache.read(params[:course_name] + params[:course_id].to_s)
-		end
+		update_cache(course) if at_least_20_seconds_passed_since_cache_update
+
+		@assignments_for_update = assignments_for_update_from_cache(course)
+		@students = students_from_cache(course)
 	end
 
 
@@ -53,20 +47,37 @@ class MapController < ApplicationController
 
 	private 
 
+		def assignments_for_update_from_cache(course)
+			Rails.cache.read(cache_key(course, "assignments_for_update"))
+		end
+
+		def students_from_cache(course)
+			Rails.cache.read(cache_key(course, "students"))
+		end
+
 		def at_least_20_seconds_passed_since_cache_update
 			return true unless session[:database_called]
 			Time.now - 20 > session[:database_called]
 		end
 
-		def get_students_from_database_and_write_information_to_cache(course)
-			@students = course.students
-
-			Rails.cache.write(cache_key(course), @students)
+		def update_cache(course)
+			Rails.cache.write(cache_key(course, "assignments_for_update"), assignments_for_update(course))
+			Rails.cache.write(cache_key(course, "students"), course.students)
 			session[:database_called] = Time.now
 		end
 
-		# later on possible token or something similar
-		def cache_key(course)
-			course.name + course.id.to_s 
+
+		def assignments_for_update(course)
+			assignments_for_update = []
+
+			course.assignments.order(:number).each do |assignment|
+				assignments_for_update << {'id': assignment.id, 'number': assignment.number, 'doers': assignment.doers}
+			end
+
+			assignments_for_update
+		end
+
+		def cache_key(course, string)
+			course.name + course.id.to_s + string
 		end
 end

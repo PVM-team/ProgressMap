@@ -4,6 +4,8 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     var self = this;
     var maxStudentsToShowAroundAssignment = 9;
 
+    var assignmentsForUpdate;
+
     var backendCaller;
     var updater;
 
@@ -17,28 +19,33 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
         $scope.assignments = data["assignments"];
+        assignmentsForUpdate = data["assignments_for_update"];
 
-        sortAssignmentsByNumber();
+        console.log(data);
+
         assignLatestAttemptersForAssignments();
 
         // alustetaan intervalit täällä, kun kurssin tiedot on ensin haettu kannasta
 
         backendCaller = setInterval(function() {
             var data = {
-                course_id: $scope.course.id,
-                course_name: $scope.course.name
+                course_id: $scope.course.id
             }
 
-            httpService.getData('/map/action_students.json', { params: data }).then(function (data) {
+            httpService.getData('/map/action_update.json', { params: data }).then(function (data) {
                 console.log("got new data from backend")
 
                 $scope.students = data["students"];
+                assignmentsForUpdate = data["assignments_for_update"];
+
+                console.log(data);
+
             })
         }, 20000);
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {
-                ActionMapUpdaterService.update($scope.students, $scope.assignments);
+                ActionMapUpdaterService.update($scope.students, assignmentsForUpdate);
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
     })
@@ -54,18 +61,11 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         }
     });
 
-    function sortAssignmentsByNumber() {
-        $scope.assignments.sort(function (a, b) {
-            return a.number - b.number;
-        })
-    }
-
     function assignLatestAttemptersForAssignments() {
         addLatestAttemptersArrayForEachAssignment();
         addEachStudentToLatestAttemptersOfAssignmentTheyBelong();
         sortLatestAttemptersForEachAssignment();
         removeStudentsFromLatestAttemptersIfThereAreTooMany();
-
     }
 
     function addLatestAttemptersArrayForEachAssignment() {
@@ -137,6 +137,6 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     } */
 
     function validRequest(data) {
-        return data['course'][0]
+        return data['course'][0];
     }    
 })

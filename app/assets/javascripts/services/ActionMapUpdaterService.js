@@ -492,5 +492,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
             if (assignments[i].doers.length != new_assignments[i].doers.length) {
                 // päivitä doers ja circlen 'look'
             }
+        }
     }
 })
