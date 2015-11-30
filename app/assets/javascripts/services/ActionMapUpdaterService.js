@@ -19,7 +19,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     var normalWaitingQueue = [];
     var movingQueue = [];
     var movingInterval;
-    var intervalLength = 60000;
+    var intervalLength = 20000;
     var minSpeed = 90;
     var maxStudentsToMoveAtTheSameTime = 3; // 1 <= maxStudentsToMoveAtTheSameTime <= maxStudentsToShowAroundAssignment
 
@@ -124,6 +124,8 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         studentLayer.appendBottom(icon);
 
         paper.view.update();
+
+        return icon;
     }
 
     function movingStudents() {
@@ -207,13 +209,17 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
     function placeStudentToWaitingQueue(student, queue, destinationAssignment) {
         var position = positionOfStudentIconOnMap(student);
+        var icon;
 
-        if (! position) {
-            position = positionWhereToPutMovingStudentThatIsNotShownOnTheMap(student);
-            createStudentIconInPosition(position);
+        if (position) {
+            icon = getItemFromStudentLayer(position);
         }
 
-        var icon = getItemFromStudentLayer(position);
+        else {
+            position = positionWhereToPutMovingStudentThatIsNotShownOnTheMap(student);
+            icon = createStudentIconInPosition(student, position); // ota ikoni tätä kautta äläkä hae studentLayeriltä 'getItemFromStudentLayer' funktiolla. muuten joutuu tekemään taas 'timeoutin' tms. odottaakseen ikonin latautumista
+        }
+
         icon.bringToFront();
 
         var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
@@ -231,7 +237,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     function positionOfStudentIconOnMap(student) {
         var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
 
-        if (originalAssignment && AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(originalAssignment)) {
+        if (originalAssignment && AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, originalAssignment)) {
             return AssignmentLatestAttemptersService.getLocationOfStudent(student, originalAssignment);
         }
     }
@@ -240,9 +246,11 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
 
         if (originalAssignment) { // tehnyt ainakin yhden tehtävän kurssin aikana
-            return originalAssignment.location; // lähde liikkeelle tehtävän päältä
+            return randomPositionCloseToLocation(originalAssignment.location);
         }
-        return {'x': assignments[0].location.x - 100, 'y': assignments[0].location.y - 100 }; // start position kurssin ekan tehtävän tehdessä
+
+        var location = {'x': assignments[0].location.x - 50, 'y': assignments[0].location.y + 50};
+        return randomPositionCloseToLocation(location); // korvaa 'START' ruudulla?
     }
 
     /*
@@ -362,6 +370,8 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
                 moveStudentsWhichAreNotShownOnTheMap();
                 return;
             }
+
+            readyForNextUpdate = true;
         }
     }
 
@@ -439,5 +449,22 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         }
 
         return movingStudents;
+    }
+
+    /*
+        Palauttaa randomillä lokaation, jonka 'x' ja 'y' attribuutit löytyvät siltä alueelta,  jossa latestAttemptersit olisivat
+        assignmentille, jonka location on saatu parametrina. Parametrina ei saada assignmenttia, sillä tätä hyödynnetään myös
+        tapaukseen, jolloin henkilö tekee kurssin ekan tehtävän ja originalAssignment ei ole ko. studentille määritelty.
+
+        Liittyy liikkumiseen, jolloin henkilö ei näy kartalla - määrittää lähtöposition, johon hlö sijoitetaan.
+    */
+
+    function randomPositionCloseToLocation(location) {
+        var x = location.x + MapScaleService.scaleByDefaultWidth(50 + Math.random() * 30 * 3); // 3 hlöä näytetään vierekkäin
+        var y = location.y + Math.random() * 30 * 3; // 3 allekkain
+
+        // ol. että näytetään tehtävän ympärillä maksimissaan 3x3 opiskelijaa
+
+        return {'x': x, 'y': y};
     }
 })

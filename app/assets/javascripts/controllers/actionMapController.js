@@ -34,7 +34,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
                 $scope.students = data["students"];
             })
-        }, 60000);
+        }, 20000);
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {
