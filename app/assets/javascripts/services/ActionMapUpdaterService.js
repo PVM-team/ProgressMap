@@ -1,5 +1,7 @@
 ProgressApp.service('ActionMapUpdaterService', function (GravatarService, AssignmentLatestAttemptersService, AssignmentCirclesService, MapScaleService, MoveStudentIconService) {
 
+    var new_assignments; // tehtävälistä joka saadaan parametrina intervalia kutsuttaessa
+
     var assignments; // muotoa {'id', 'number', 'location': {'x', 'y'}, latestAttempters: {'id', 'location', 'reserved', 'leaving', 'dummy'}}
                      // latestAttemptersissa jokaisella tulee olla aina id ja location. Muut attribuutit ovat tilanteesta riippuen olemassa tai sitten ei, jos niitä ei ko. doerin kohdalla tarvita
 
@@ -58,12 +60,15 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     }
 
 
-    this.update = function(new_students) {
+    this.update = function(new_students, new_assign) {
+        new_assignments = new_assign;
+
         if (! students) {
             students = new_students;
             return;
         }
 
+        readyForNextUpdate = false;
         var update = false;
 
         for (var i = 0; i < students.length; i++) {
@@ -79,6 +84,10 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         if (update) {
             doUpdate();
         }
+
+        else {
+            endInterval();
+        }
     }
 
     /*
@@ -90,7 +99,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     */
 
     function doUpdate() {
-        readyForNextUpdate = false;
         studentsWhichAreNotShownOnTheMapMoved = false;
 
         var studentsToMove = movingStudents();
@@ -365,10 +373,9 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         }
 
         else if (normalWaitingQueue.length == 0 && endlessWaitingQueue.length == 0) {
-            
+
             if (studentsWhichAreNotShownOnTheMapMoved) {
-                readyForNextUpdate = true;
-                return;
+                endInterval();
             }
             
             moveStudentsWhichAreNotShownOnTheMap();
@@ -420,8 +427,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         var movingStudents = getMovingStudentsWhichAreNotShownOnTheMap();
 
         if (movingStudents.length == 0) {
-            readyForNextUpdate = true;
-            return;
+            endInterval();
         }
 
         setStudentsWaitingForMoving(movingStudents);
@@ -466,5 +472,24 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         // ol. että näytetään tehtävän ympärillä maksimissaan 3x3 opiskelijaa
 
         return {'x': x, 'y': y};
+    }
+
+    /*
+        Jokaisen intervalin suoritus päättyy tällä samalla tavalla.
+    */
+
+    function endInterval() {
+        updateDoersForEachAssignment(); 
+        readyForNextUpdate = true;
+    }
+
+    // kelataan assignmentit läpi ja tarkistetaan, onko 'doers' lista sama kuin täällä. Jos ei niin päivitetään sitä.
+    function updateDoersForEachAssignment() {
+
+        for (var i = 0; i < new_assignments.length; i++) {
+
+            if (assignments[i].doers.length != new_assignments[i].doers.length) {
+                // päivitä doers ja circlen 'look'
+            }
     }
 })

@@ -38,7 +38,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {
-                ActionMapUpdaterService.update($scope.students);
+                ActionMapUpdaterService.update($scope.students, $scope.assignments);
             }
         }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
     })
@@ -115,7 +115,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         })
     }
 
-    $scope.locationOfStudentInMap = function(student, assignment) {
+    /*$scope.locationOfStudentInMap = function(student, assignment) {
         var studentButtonWidth = 25;
         var studentButtonHeight = 25;
         var radius = 40;
@@ -134,7 +134,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
             angle += step;
         }
-    }
+    } */
 
     function validRequest(data) {
         return data['course'][0]
