@@ -83,11 +83,10 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
         if (update) {
             doUpdate();
+            return;
         }
 
-        else {
-            endInterval();
-        }
+        endInterval();
     }
 
     /*
@@ -376,6 +375,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
             if (studentsWhichAreNotShownOnTheMapMoved) {
                 endInterval();
+                return;
             }
             
             moveStudentsWhichAreNotShownOnTheMap();
@@ -428,6 +428,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
         if (movingStudents.length == 0) {
             endInterval();
+            return;
         }
 
         setStudentsWaitingForMoving(movingStudents);
