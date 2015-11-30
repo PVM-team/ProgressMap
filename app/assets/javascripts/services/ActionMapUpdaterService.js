@@ -13,7 +13,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
     var readyForNextUpdate = true; // true mikäli ketään ei odotus- eikä liikkumisjonoissa
 
-    var studentsWhichAreNotShownOnTheMapMoved = false; // boolean muuttuja, joka kertoo, onko tämän intervalin aikana jo liikutettu henkilöitä jotka eivät olleet alun perin näkyvissä.
+    var studentsWhichAreNotShownOnTheMapMoved = false; // boolean muuttuja, joka kertoo, onko tämän intervalin aikana jo liikutettu henkilöitä jotka eivät olleet alun perin näkyvissä. liittyy 'readyForNextUpdaten' toimintaan että saadaan se pidettyä oikein 'true' tai 'false' arvoisena.
 
     var endlessWaitingQueue = [];
     var normalWaitingQueue = [];
@@ -366,12 +366,12 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
         else if (normalWaitingQueue.length == 0 && endlessWaitingQueue.length == 0) {
             
-            if (! studentsWhichAreNotShownOnTheMapMoved) {
-                moveStudentsWhichAreNotShownOnTheMap();
+            if (studentsWhichAreNotShownOnTheMapMoved) {
+                readyForNextUpdate = true;
                 return;
             }
-
-            readyForNextUpdate = true;
+            
+            moveStudentsWhichAreNotShownOnTheMap();
         }
     }
 
