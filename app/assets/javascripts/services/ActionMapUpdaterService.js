@@ -484,14 +484,41 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         readyForNextUpdate = true;
     }
 
+    /*
+        Kelataan kaikki nykyiset assignmentit läpi ja jos 'doers'ien määrä ei täsmää oikeaan tilaan (new_assignments),
+        päivitetään ko. assignmentin doers.
+    */
+
     // kelataan assignmentit läpi ja tarkistetaan, onko 'doers' lista sama kuin täällä. Jos ei niin päivitetään sitä.
     function updateDoersForEachAssignment() {
 
-        for (var i = 0; i < new_assignments.length; i++) {
+        for (var i = 0; i < assignments.length; i++) {
 
             if (assignments[i].doers.length != new_assignments[i].doers.length) {
-                // päivitä doers ja circlen 'look'
+                assignments[i].doers = new_assignments[i].doers;
+                AssignmentCirclesService.updateCircleAfterNewDoer(assignments[i], students, assignmentLayer, percentageLayer);
+
+                /*var missingStudents = studentsMissingFromDoersOfAssignment(assignments[i], new_assignments[i]);
+
+                for (var j = 0; j < missingStudents.length; j++) {
+                    assignments[i].doers.push(missingStudents[j]);
+                    AssignmentCirclesService.updateCircleAfterNewDoer(assignments[i], students, assignmentLayer, percentageLayer);
+                } */
             }
         }
     }
+
+    /*function studentsMissingFromDoersOfAssignment(assignment, assignmentToCompareTo) {
+        var missingStudents = [];
+
+        for (var i = 0; i < assignmentToCompareTo.doers.length; i++) {
+            var student = assignmentToCompareTo.doers[i];
+
+            if (! studentIsInDoersOfAssignment(student, assignment)) {
+                missingStudents.push(student);
+            }
+        }
+
+        return missingStudents;
+    } */
 })
