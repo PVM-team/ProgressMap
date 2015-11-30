@@ -8,6 +8,11 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
     var updater;
 
     httpService.getData('/map/action_init.json', { params: { course_id: $routeParams.course_id } }).then(function (data) {
+        if (!validRequest(data)) {
+            $location.path("/");
+            return;
+        }
+
         $scope.course = data["course"][0];
 
         $scope.students = data["students"];         // tulee suorittaa ennen "$scope.assignments =" riviä liittyen direktiivin paperjsactionmap toimintaan.
@@ -29,7 +34,7 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
 
                 $scope.students = data["students"];
             })
-        }, 40000);
+        }, 20000);
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {
@@ -130,4 +135,8 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
             angle += step;
         }
     }
+
+    function validRequest(data) {
+        return data['course'][0]
+    }    
 })

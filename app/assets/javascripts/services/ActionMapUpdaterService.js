@@ -17,7 +17,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     var normalWaitingQueue = [];
     var movingQueue = [];
     var movingInterval;
-    var intervalLength = 40000;
+    var intervalLength = 20000;
     var minSpeed = 90;
     var maxStudentsToMoveAtTheSameTime = 5; // 1 <= maxStudentsToMoveAtTheSameTime <= maxStudentsToShowAroundAssignment
 
@@ -115,12 +115,13 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         return false;
     }
 
-    function createStudentIconInPosition(student, scaledPosition) {
+    function createStudentIconInPosition(student, position) {
         var icon = GravatarService.gravatarImage(student);
+        icon.position = position;
         studentLayer.appendBottom(icon);
 
         paper.view.update();
-    }    
+    }
 
     function movingStudents() {
         var movingStudents = [];
@@ -278,8 +279,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     function markAssignmentAsDone(student, assignment, position) {
         AssignmentLatestAttemptersService.addStudentToLatestAttemptersWithLocation(student, assignment, position);
 
-        console.log(student.lastDoneAssignment)
-
         if (student.lastDoneAssignment.complete) {
             assignment.doers.push(student);
             AssignmentCirclesService.updateCircleAfterNewDoer(assignment, students, assignmentLayer, percentageLayer);
@@ -406,7 +405,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
                     markAssignmentAsDone(student, destinationAssignment, endPosition);
                     removeStudentFromEndPosition(destinationAssignment, endPosition);
-                    createStudentCircleInPosition(student, endPosition);
+                    createStudentIconInPosition(student, endPosition);
                 }
             }
         }
