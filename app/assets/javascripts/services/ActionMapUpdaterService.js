@@ -17,9 +17,9 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     var normalWaitingQueue = [];
     var movingQueue = [];
     var movingInterval;
-    var intervalLength = 20000;
+    var intervalLength = 60000;
     var minSpeed = 90;
-    var maxStudentsToMoveAtTheSameTime = 5; // 1 <= maxStudentsToMoveAtTheSameTime <= maxStudentsToShowAroundAssignment
+    var maxStudentsToMoveAtTheSameTime = 3; // 1 <= maxStudentsToMoveAtTheSameTime <= maxStudentsToShowAroundAssignment
 
     var assignmentLayer;
     var percentageLayer;
@@ -298,10 +298,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
     function removeItemFromPosition(position) {
         var item = getItemFromStudentLayer(position);
-
-        console.log("removing item")
-
-        console.log(item)
 
         if (item) {
             item.remove();
