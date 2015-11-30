@@ -13,6 +13,8 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
     var readyForNextUpdate = true; // true mikäli ketään ei odotus- eikä liikkumisjonoissa
 
+    var studentsWhichAreNotShownOnTheMapMoved = false; // boolean muuttuja, joka kertoo, onko tämän intervalin aikana jo liikutettu henkilöitä jotka eivät olleet alun perin näkyvissä.
+
     var endlessWaitingQueue = [];
     var normalWaitingQueue = [];
     var movingQueue = [];
@@ -88,19 +90,20 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     */
 
     function doUpdate() {
+        readyForNextUpdate = false;
+        studentsWhichAreNotShownOnTheMapMoved = false;
+
         var studentsToMove = movingStudents();
 
         if (studentsToMove.length == 0) {
-            placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
+            moveStudentsWhichAreNotShownOnTheMap();
             return;
         }
-
-        readyForNextUpdate = false;
         
         console.log("moving students during this interval")
         console.log(studentsToMove)
 
-        setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(studentsToMove);
+        setLeavingAttributesForMovingStudents(studentsToMove);
         setStudentsWaitingForMoving(studentsToMove);
 
         removeMovingStudentsFromTheirOriginalAssingmentsLatestAttempters(studentsToMove);
@@ -203,7 +206,14 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     */
 
     function placeStudentToWaitingQueue(student, queue, destinationAssignment) {
-        var icon = getStudentIcon(student);
+        var position = positionOfStudentIconOnMap(student);
+
+        if (! position) {
+            position = positionWhereToPutMovingStudentThatIsNotShownOnTheMap(student);
+            createStudentIconInPosition(position);
+        }
+
+        var icon = getItemFromStudentLayer(position);
         icon.bringToFront();
 
         var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
@@ -218,11 +228,21 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         queue.push(movingInfo);
     }
 
-    function getStudentIcon(student) {
+    function positionOfStudentIconOnMap(student) {
         var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
-        var location = AssignmentLatestAttemptersService.getLocationOfStudent(student, originalAssignment);
 
-        return getItemFromStudentLayer(location);
+        if (originalAssignment && AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(originalAssignment)) {
+            return AssignmentLatestAttemptersService.getLocationOfStudent(student, originalAssignment);
+        }
+    }
+
+    function positionWhereToPutMovingStudentThatIsNotShownOnTheMap(student) {
+        var originalAssignment = AssignmentLatestAttemptersService.originalAssignment(student, assignments);
+
+        if (originalAssignment) { // tehnyt ainakin yhden tehtävän kurssin aikana
+            return originalAssignment.location; // lähde liikkeelle tehtävän päältä
+        }
+        return {'x': assignments[0].location.x - 100, 'y': assignments[0].location.y - 100 }; // start position kurssin ekan tehtävän tehdessä
     }
 
     /*
@@ -239,7 +259,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         resetMovingInterval();
     }
 
-    function setLeavingAttributesForAssignmentsLatestAttemptersMovingStudents(movingStudents) {
+    function setLeavingAttributesForMovingStudents(movingStudents) {
         for (var i = 0; i < movingStudents.length; i++) {
             var student = movingStudents[i];
 
@@ -337,8 +357,11 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         }
 
         else if (normalWaitingQueue.length == 0 && endlessWaitingQueue.length == 0) {
-            placeStudentsOnMapWhichAreNotThereYetButNowShouldBe();
-            readyForNextUpdate = true;
+            
+            if (! studentsWhichAreNotShownOnTheMapMoved) {
+                moveStudentsWhichAreNotShownOnTheMap();
+                return;
+            }
         }
     }
 
@@ -383,7 +406,20 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         }
     }
 
-    function placeStudentsOnMapWhichAreNotThereYetButNowShouldBe() {
+    function moveStudentsWhichAreNotShownOnTheMap() {
+        var movingStudents = getMovingStudentsWhichAreNotShownOnTheMap();
+
+        if (movingStudents.length == 0) {
+            readyForNextUpdate = true;
+            return;
+        }
+
+        setStudentsWaitingForMoving(movingStudents);
+        studentsWhichAreNotShownOnTheMapMoved = true;
+    }
+
+    function getMovingStudentsWhichAreNotShownOnTheMap() {
+        var movingStudents = [];
 
         for (var i = 0; i < students.length; i++) {
             var student = students[i];
@@ -397,14 +433,11 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
                     ! AssignmentLatestAttemptersService.studentIsInLatestAttemptersOfAssignment(student, destinationAssignment) &&
                     AssignmentLatestAttemptersService.studentShouldBeInLatestAttemptersOfAssignment(student, destinationAssignment)) {
 
-                    var endPosition = AssignmentLatestAttemptersService.nextPositionToMoveToAroundAssignment(student, destinationAssignment);
-
-                    markAssignmentAsDone(student, destinationAssignment, endPosition);
-                    removeStudentFromEndPosition(destinationAssignment, endPosition);
-                    createStudentIconInPosition(student, endPosition);
+                    movingStudents.push(student);
                 }
             }
         }
-        console.log(readyForNextUpdate)
+
+        return movingStudents;
     }
 })
