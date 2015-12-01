@@ -24,7 +24,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
     function createAssignmentNumber(index, location, textLayer) {
         textLayer.activate();
         var text = new paper.PointText({
-            point: [location.x, location.y+6],
+            point: [location[0], location[1]+6],
             content: index + 1,
             fillColor: 'black',
             fontSize: 20,
@@ -33,7 +33,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
     }
 
     this.createActionMapAssignment = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
-        var location = assignment.location;
+        var location = [assignment.location.x, assignment.location.y];
 
         var percentageCompleted = calculateCompletionPercentage(assignment.doers.length, students.length);
 
