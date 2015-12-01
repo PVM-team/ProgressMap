@@ -1,4 +1,4 @@
-ProgressApp.directive('studentmap', function () {
+ProgressApp.directive('studentmap', function (MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -109,7 +109,7 @@ ProgressApp.directive('studentmap', function () {
             //returns the point near the target circle where a dependency arrow ought to stop
             function getCircleEdge(circle, start) {
                 //radius + arrowhead size scaled
-                var radius = (circle.length / (2 * Math.PI)) + 17 * scaleToDefault();
+                var radius = (circle.length / (2 * Math.PI)) + 17 * MapScaleService.scaleToDefault();
                 var end = circle.position;
                 var circleEdge = end.add((start.subtract(end)).normalize().multiply(radius));
                 return circleEdge;
@@ -185,19 +185,11 @@ ProgressApp.directive('studentmap', function () {
                 textLayer.locked = true;
             }
 
-            function getScale() {
-                return window.innerWidth / previousWindowWidth;
-            }
-
-            function scaleToDefault() {
-                return window.innerWidth / 1100;
-            }
-
             function scaleItems(layer) {
                 var items = layer.children;
                 for (var i = 0; i < items.length; i++) {
                     items[i].position.x = getRelativeX(items[i].position.x);
-                    items[i].scale(getScale());
+                    items[i].scale(MapScaleService.getScale());
                 }
             }
 
@@ -288,7 +280,7 @@ ProgressApp.directive('studentmap', function () {
 
             function createDependencyLight(originalCircle) {
                 lightLayer.activate();
-                var dependencyLightCircle = new paper.Path.Circle(originalCircle.position, 50 * scaleToDefault());
+                var dependencyLightCircle = new paper.Path.Circle(originalCircle.position, 50 * MapScaleService.scaleToDefault());
 
                 DEPENDENTS.push(dependencyLightCircle);
                 ORIGINALS.push(originalCircle);
@@ -311,12 +303,12 @@ ProgressApp.directive('studentmap', function () {
                 dependencyLineLayer.activate();
                 var path = new paper.Path();
                 path.add(startingPoint);
-                path.strokeWidth = 10 * scaleToDefault();
+                path.strokeWidth = 10 * MapScaleService.scaleToDefault();
                 path.strokeColor = '#F2D27E';
                 path.shadowColor = 'black';
                 path.shadowOffset = [5, 5];
 
-                createArrowhead(startingPoint, endCircle, 15 * scaleToDefault());
+                createArrowhead(startingPoint, endCircle, 15 * MapScaleService.scaleToDefault());
             }
 
             function createArrowhead(startsAt, endCircle, size) {
