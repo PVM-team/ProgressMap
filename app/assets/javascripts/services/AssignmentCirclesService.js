@@ -32,7 +32,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
         });
     }
 
-    this.initializeActionMapAssignmentCircle = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
+    this.createActionMapAssignment = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
         var location = assignment.location;
 
         var percentageCompleted = calculateCompletionPercentage(assignment.doers.length, students.length);

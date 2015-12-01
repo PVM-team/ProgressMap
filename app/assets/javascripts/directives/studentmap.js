@@ -8,7 +8,6 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
         },
         link: function (scope, element, attrs) {
 
-            var previousWindowWidth = 1100;
             var mapInitialized = false;
 
             //dependent circles of circle mouse is currently hovering over
@@ -186,7 +185,7 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
             function scaleItems(layer) {
                 var items = layer.children;
                 for (var i = 0; i < items.length; i++) {
-                    items[i].position.x = getRelativeX(items[i].position.x);
+                    items[i].position.x = MapScaleService.getRelativeX(items[i].position.x);
                     items[i].scale(MapScaleService.getScale());
                 }
             }
@@ -195,9 +194,9 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 var path = pathLayer.getFirstChild();
                 var segments = path.segments;
                 for (var i = 0; i < segments.length; i++) {
-                    segments[i].point.x = getRelativeX(segments[i].point.x);
+                    segments[i].point.x = MapScaleService.getRelativeX(segments[i].point.x);
                 }
-                path.strokeWidth = (path.strokeWidth / previousWindowWidth) * window.innerWidth;
+                path.strokeWidth = (path.strokeWidth / MapScaleService.getPreviousWindowWidth()) * window.innerWidth;
             }
 
             function placeCirclesOnAssignmentLocations() {
@@ -226,7 +225,7 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 item.onMouseEnter = function (event) {
                     for (var i = 0; i < assignment.dependencies.length; i++) {
                         var dependent = findAssignmentById(scope.assignments, assignment.dependencies[i].id);
-                        var originalCircle = assignmentLayer.hitTest([getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
+                        var originalCircle = assignmentLayer.hitTest([MapScaleService.getRelativeXFromDefaultSize(dependent.location.x), dependent.location.y]).item;
 
                         if (originalCircle) {
                             createDependencyLight(originalCircle);
@@ -310,7 +309,7 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 setAllUndone();
                 for (var i = 0; i < scope.doneAssignments.length; i++) {
                     //scope.doneAssignments stores locations with an assumed map width of 1100
-                    var relativeX = getRelativeXFromDefaultSize(scope.doneAssignments[i].location.x);
+                    var relativeX = MapScaleService.getRelativeXFromDefaultSize(scope.doneAssignments[i].location.x);
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, scope.doneAssignments[i].location.y]).item;
                     if (assignmentCircle) {
                         assignmentCircle.fillColor = getDoneFillColor(assignmentCircle);
@@ -323,7 +322,7 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 var locations = getLocations();
                 for (var i = 0; i < locations.length; i++) {
                     //scope.assignments stores locations with an assumed map width of 1100
-                    var relativeX = getRelativeXFromDefaultSize(locations[i][0]);
+                    var relativeX = MapScaleService.getRelativeXFromDefaultSize(locations[i][0]);
                     var assignmentCircle = assignmentLayer.hitTest([relativeX, locations[i][1]]).item;
                     assignmentCircle.fillColor = getUndoneFillColor(assignmentCircle);
                 }
@@ -349,16 +348,6 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                     origin: assignmentCircle.position,
                     destination: assignmentCircle.bounds.rightCenter
                 };
-            }
-
-            //the x-position of something in the current window width, relative to the default width of 1100
-            function getRelativeXFromDefaultSize(x) {
-                return (x / 1100) * window.innerWidth;
-            }
-
-            //the x-position of something in the current window width relative to the previous window width
-            function getRelativeX(x) {
-                return (x / previousWindowWidth) * window.innerWidth;
             }
 
             var smoothConfig = {
