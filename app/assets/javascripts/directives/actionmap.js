@@ -102,14 +102,14 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                 var lateralPositionOffset = 50;
                 var location = assignment.location;
 
+                studentLayer.activate()
+
                 for (var j = 0; j < assignment.latestAttempters.length; j++) {
                     var studentLocation = new paper.Point(location.x + lateralPositionOffset, location.y + verticalPositionOffset);
                     var student = assignment.latestAttempters[j];
 
                     var studentIcon = GravatarService.gravatarImage(student);
                     studentIcon.position = studentLocation;
-
-                    studentLayer.addChild(studentIcon);
 
                     ActionMapUpdaterService.initializeLatestDoer(student, studentLocation);
 
@@ -136,7 +136,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                 pathLayer.addChild(path);
 
                 //beige vaihtoehto
-               // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
+                // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
                 //path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
                 path.style = {
                     strokeColor: '#48003A',

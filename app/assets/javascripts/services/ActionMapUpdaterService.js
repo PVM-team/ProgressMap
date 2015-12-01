@@ -467,7 +467,7 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     */
 
     function randomPositionCloseToLocation(location) {
-        var x = location.x + MapScaleService.scaleByDefaultWidth(50 + Math.random() * 30 * 3); // 3 hlöä näytetään vierekkäin
+        var x = location.x + MapScaleService.getRelativeXFromDefaultSize(50 + Math.random() * 30 * 3); // 3 hlöä näytetään vierekkäin
         var y = location.y + Math.random() * 30 * 3; // 3 allekkain
 
         // ol. että näytetään tehtävän ympärillä maksimissaan 3x3 opiskelijaa

@@ -74,13 +74,13 @@ describe('MoveStudentIconService', function () {
         
         MapScaleServiceMock = (function () {
             return {
-                scaleByDefaultWidth: function (x) {
+                getRelativeXFromDefaultSize: function (x) {
                     return x*10000
                 }
             }
         })();
 
-    spyOn(MapScaleServiceMock, 'scaleByDefaultWidth').and.callThrough();
+    spyOn(MapScaleServiceMock, 'getRelativeXFromDefaultSize').and.callThrough();
 
         inject(function (_MoveStudentIconService_, MapScaleService) {
             service = _MoveStudentIconService_;

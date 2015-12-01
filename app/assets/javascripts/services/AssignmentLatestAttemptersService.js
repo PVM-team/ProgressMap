@@ -219,7 +219,7 @@ ProgressApp.service('AssignmentLatestAttemptersService', function (MapScaleServi
 
     function positionOfNewStudentAroundAssignment(student, assignment) {
         var location = assignment.location;
-        var lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
+        var lateralPositionOffset = MapScaleService.getRelativeXFromDefaultSize(50);
         var verticalPositionOffset = 0;
 
         var position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };
@@ -238,11 +238,11 @@ ProgressApp.service('AssignmentLatestAttemptersService', function (MapScaleServi
                 return position;
             }
 
-            lateralPositionOffset += MapScaleService.scaleByDefaultWidth(30);
+            lateralPositionOffset += MapScaleService.getRelativeXFromDefaultSize(30);
 
             if ((i + 1) % maxStudentsInRow == 0) {
                 verticalPositionOffset += 30;
-                lateralPositionOffset = MapScaleService.scaleByDefaultWidth(50);
+                lateralPositionOffset = MapScaleService.getRelativeXFromDefaultSize(50);
             }
 
             position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };            

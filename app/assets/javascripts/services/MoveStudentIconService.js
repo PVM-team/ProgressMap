@@ -1,7 +1,7 @@
 ProgressApp.service('MoveStudentIconService', function (MapScaleService) {
 
 	this.hasReachedDestination = function(icon, destination) {
-        return distanceToDestination(icon, destination) < MapScaleService.scaleByDefaultWidth(1);
+        return distanceToDestination(icon, destination) < MapScaleService.getRelativeXFromDefaultSize(1);
     }
 
     /*
@@ -9,7 +9,7 @@ ProgressApp.service('MoveStudentIconService', function (MapScaleService) {
     */
 
     this.approachingDestination = function(icon, destination) {
-        return distanceToDestination(icon, destination) < MapScaleService.scaleByDefaultWidth(30);
+        return distanceToDestination(icon, destination) < MapScaleService.getRelativeXFromDefaultSize(30);
     }
 
     function distanceToDestination(icon, destination) {

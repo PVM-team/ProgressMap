@@ -16,7 +16,7 @@ describe('AssignmentLatestAttemptersService', function ($provide) {
         mapScaleServiceMock = (function() {
 
             return {
-                scaleByDefaultWidth: function(x) {
+                getRelativeXFromDefaultSize: function(x) {
                     return x;
                 }
             }
