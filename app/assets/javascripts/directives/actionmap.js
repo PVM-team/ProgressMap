@@ -1,4 +1,4 @@
-ProgressApp.directive('actionmap', function (GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, MapScaleService) {
+ProgressApp.directive('actionmap', function (PathService, GravatarService, CanvasService, AssignmentCirclesService, ActionMapUpdaterService, MapScaleService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -16,9 +16,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                 lanczosFilterSize: 10,
                 cubicTension: 0
             };
-            
 
-            var path;
             paper.install(window);
             paper.setup(element[0]);
 
@@ -32,7 +30,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
 
                 if (newval && !mapInitialized) {
                     CanvasService.initiatePaperCanvas(element[0], scope.assignments.length, 1000);
-                    drawSmoothPaperPaths();
+                    PathService.drawSmoothPaperPaths(getLocations(), pathLayer);
                     placeCirclesOnAssignmentLocations();
                     placeLatestStudents();
 
@@ -83,6 +81,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
             }
 
             function scalePathByWidth() {
+                var path = pathLayer.firstChild;
                 var segments = path.segments;
 
                 for (var i = 0; i < segments.length; i++) {
@@ -128,38 +127,6 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                 }
             }
 
-            function drawSmoothPaperPaths() {
-                var locations = getLocations(scope.assignments);
-
-                var lastIndex = locations.length - 1;
-                path = new paper.Path();
-                pathLayer.addChild(path);
-
-                //beige vaihtoehto
-                // path.strokeColor = new paper.Color(0.64, 0.58, 0.50);
-                //path.strokeColor = new paper.Color(0.5, 0.1, 0.7);
-                path.style = {
-                    strokeColor: '#48003A',
-                    strokeWidth: 20,
-                    strokeJoin: 'round',
-                    shadowColor: 'black',
-                    shadowBlur: 7,
-                    shadowOffset: [5,5]
-                };
-                path.opacity = 0.64;
-
-
-                if (locations.length >= 2) {
-                    path.add(locations[0]);
-
-                    for (var i = 0; i < lastIndex; i++) {
-                        drawSmoothPaperCurve(i, locations, path);
-                    }
-                }
-                path.simplify(); // nopeuttaa liikkumista jatkossa. alussa hidas operaatio.
-                pathLayer.addChild(path);
-            }
-
             function getLocations() {
                 var locations = [];
 
@@ -167,32 +134,6 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
                     locations.push([scope.assignments[i].location.x, scope.assignments[i].location.y]);
                 }
                 return locations;
-            }
-
-            function distance(a, b) {
-                return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-            }
-
-            function drawSmoothPaperCurve(i, locations) {
-                var ref, ref2, start, end, pieceLength, wat;
-
-                var s = Smooth(locations, smoothConfig);
-                var averageLineLength = 1;
-                var pieceCount = 2;
-                ref = 1 / pieceCount;
-
-                for (var j = 0; j < 1; j += ref) {
-                    ref2 = [s(i + j), s(i + j + pieceCount)];
-                    start = ref2[0];
-                    end = ref2[1];
-                    pieceLength = distance(start, end);
-                    wat = averageLineLength / pieceLength;
-
-                    for (var u = 0; 0 <= 1 / pieceCount ? u < 1 / pieceCount : u > 1 / pieceCount; u += wat) {
-                        path.add(s(i + j + u));
-                    }
-                }
-                return path.add(s(i + 1));
             }
         }
     }
