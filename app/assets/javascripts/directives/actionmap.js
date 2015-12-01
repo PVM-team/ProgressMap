@@ -124,7 +124,7 @@ ProgressApp.directive('actionmap', function (GravatarService, CanvasService, Ass
 
             function placeCirclesOnAssignmentLocations() {
                 for (var i = 0; i < scope.assignments.length; i++) {
-                    AssignmentCirclesService.initializeCircle(scope.assignments[i], scope.students, assignmentLayer, percentageLayer, labelLayer);
+                    AssignmentCirclesService.initializeActionMapAssignmentCircle(scope.assignments[i], scope.students, assignmentLayer, percentageLayer, labelLayer);
                 }
             }
 

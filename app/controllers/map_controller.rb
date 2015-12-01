@@ -10,7 +10,7 @@ class MapController < ApplicationController
 			@course << course
 			@assignments = course.assignments.order(:number)
 
-			update_cache(course) if at_least_20_seconds_passed_since_cache_update or not students_from_cache(course)
+			update_cache(course)
 
 			@assignments_for_update = assignments_for_update_from_cache(course)
 			@students = students_from_cache(course)

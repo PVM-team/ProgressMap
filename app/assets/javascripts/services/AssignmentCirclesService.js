@@ -1,88 +1,97 @@
 ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
-    this.initializeCircle = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
-        var location = assignment.location;
-        var percentageCompleted = assignment.doers.length / students.length * 100;
+    this.createAssignmentCircle = function(assLayer, textLayer, location, index){
+        assLayer.activate();
+        var assignmentCircle = new paper.Path.Circle(location, 35);
+        createAssignmentNumber(index, location, textLayer);
+        return assignmentCircle;
+    }
 
-        var circle = new paper.Path.Circle(location, 35);
-        assignmentLayer.addChild(circle);
+    this.setStudentAssignmentCircleStyle = function(assignmentCircle) {
+        setBaseStyle(assignmentCircle);
+        assignmentCircle.fillColor = '#f18c3a';
+    }
 
-        circle.style = {
-            fillColor: {
-                    gradient: {
-                        stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
-                        radial: true
-                    },
-                    origin: circle.position,
-                    destination: circle.bounds.rightCenter
-            },
+    function setBaseStyle(assignmentCircle){
+        assignmentCircle.style = {
             shadowColor: 'black',
             shadowBlur: 12,
-            shadowOffset: [5,5]
+            shadowOffset: [5, 5]
         }
-        
-        var color = circle.fillColor;
-             
-        for(var i = 0; i < color.gradient.stops.length; i++) {
+        assignmentCircle.opacity = 0.8;
+    }
 
-            color.gradient.stops[i].color.hue += (percentageCompleted * 0.6) ;
-        }
-
-        circle.opacity = 0.8;
-        //assignment numbers over assignment circles
+    function createAssignmentNumber(index, location, textLayer) {
+        textLayer.activate();
         var text = new paper.PointText({
-            point: [location.x, location.y+6],
-            content: assignment.number,
+            point: location,
+            content: index + 1,
             fillColor: 'black',
             fontSize: 20,
             justification: 'center'
-
-
         });
-        labelLayer.addChild(text);
+    }
 
-        //percentage over assignment circles
-        var percentageLocationPoint = {'x': location.x, 'y': location.y + 30};
+    this.initializeActionMapAssignmentCircle = function (assignment, students, assignmentLayer, percentageLayer, labelLayer) {
+        var location = assignment.location;
 
+        var percentageCompleted = calculateCompletionPercentage(assignment.doers.length, students.length);
+
+        var circle = this.createAssignmentCircle(assignmentLayer, labelLayer, location, assignment.number-1);
+        setActionMapAssignmentStyle(circle, percentageCompleted);
+        var percentageLocation = {'x': location.x, 'y': location.y + 30};
+        createPercentageNumber(percentageLocation, percentageCompleted, percentageLayer);
+        paper.view.update();
+    }
+
+
+    function setActionMapAssignmentStyle(circle, percentageCompleted){
+        setBaseStyle(circle);
+        circle.style = {
+            fillColor: {
+                gradient: {
+                    stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
+                    radial: true
+                },
+                origin: circle.position,
+                destination: circle.bounds.rightCenter
+            }
+        }
+        var color = circle.fillColor;
+
+        for(var i = 0; i < color.gradient.stops.length; i++) {
+            color.gradient.stops[i].color.hue += (percentageCompleted * 0.6) ;
+        }
+    }
+
+    function createPercentageNumber(location, percentage, layer){
+        layer.activate();
         var percentage = new paper.PointText({
-            point: percentageLocationPoint,
-            content: Math.floor(percentageCompleted) + "%",
+            point: location,
+            content: Math.floor(percentage) + "%",
             fillColor: 'black',
             justification: 'center'
         });
-        percentageLayer.addChild(percentage);
-        paper.view.update();
     }
 
 
     this.updateCircleAfterNewDoer = function (assignment, students, assignmentLayer, percentageLayer) {
         var circle = assignmentLayer.children[assignment.number - 1];
-        var percentageCompleted = assignment.doers.length / students.length * 100;
-
-        //circle.fillColor = 'yellow';
+        var percentageCompleted = calculateCompletionPercentage(assignment.doers.length, students.length);
 
         if (Math.floor(percentageCompleted) <= 100) {
             percentageLayer.children[assignment.number - 1].content = Math.floor(percentageCompleted) + "%";
 
-            circle.style = {
-                fillColor: {
-                    gradient: {
-                        stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
-                        radial: true
-                    },
-                    origin: circle.position,
-                    destination: circle.bounds.rightCenter
-                },
-                shadowColor: 'black',
-                shadowBlur: 12,
-                shadowOffset: [5,5]
-            }
-            var color = circle.fillColor;
-
-            for(var i = 0; i < color.gradient.stops.length; i++) {
-                color.gradient.stops[i].color.hue += (percentageCompleted * 0.6) ;
-            }
+            setActionMapAssignmentStyle(circle, percentageCompleted);
         }
         paper.view.update();
+    }
+
+    function calculateCompletionPercentage(doersAmount, studentsAmount){
+        var percentageCompleted = doersAmount / studentsAmount * 100;
+        if (isNaN(percentageCompleted)){
+            percentageCompleted = 0;
+        }
+        return percentageCompleted;
     }
 })

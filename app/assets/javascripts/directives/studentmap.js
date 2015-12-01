@@ -1,4 +1,4 @@
-ProgressApp.directive('studentmap', function (MapScaleService) {
+ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCirclesService) {
     return {
         restrict: 'A',
         transclude: true,
@@ -9,7 +9,6 @@ ProgressApp.directive('studentmap', function (MapScaleService) {
         link: function (scope, element, attrs) {
 
             var previousWindowWidth = 1100;
-            var scale = 1;
             var mapInitialized = false;
 
             //dependent circles of circle mouse is currently hovering over
@@ -142,8 +141,7 @@ ProgressApp.directive('studentmap', function (MapScaleService) {
                     scaleItems(assignmentLayer);
                     scaleItems(textLayer);
                     scalePathByWidth();
-                    scale = window.innerWidth / previousWindowWidth;
-                    previousWindowWidth = window.innerWidth;
+                    MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
             }
 
@@ -206,13 +204,10 @@ ProgressApp.directive('studentmap', function (MapScaleService) {
                 var locations = getLocations();
 
                 for (var i = 0; i < locations.length; i++) {
-                    assignmentLayer.activate();
-                    var assignmentCircle = new paper.Path.Circle(locations[i], 35);
+                    var circle = AssignmentCirclesService.createAssignmentCircle(assignmentLayer, textLayer, locations[i], i);
+                    AssignmentCirclesService.setStudentAssignmentCircleStyle(circle);
+                    setMouseEventFunctions(scope.assignments[i], circle);
 
-                    setAssignmentCircleStyle(assignmentCircle);
-                    setMouseEventFunctions(scope.assignments[i], assignmentCircle);
-
-                    createAssignmentNumber(i, locations);
                 }
             }
 
@@ -224,28 +219,6 @@ ProgressApp.directive('studentmap', function (MapScaleService) {
                     locations.push([scope.assignments[i].location.x, scope.assignments[i].location.y]);
                 }
                 return locations;
-            }
-
-            function setAssignmentCircleStyle(assignmentCircle) {
-                assignmentCircle.style = {
-                    fillColor: '#f18c3a',
-                    shadowColor: 'black',
-                    shadowBlur: 12,
-                    shadowOffset: [5, 5]
-                }
-                assignmentCircle.opacity = 0.8;
-            }
-
-            function createAssignmentNumber(index, locations) {
-                textLayer.activate();
-                //assignment numbers over assignment circles
-                var text = new paper.PointText({
-                    point: [locations[index][0], locations[index][1] + 6],
-                    content: index + 1,
-                    fillColor: 'black',
-                    fontSize: 20,
-                    justification: 'center'
-                });
             }
 
             //functions to be called when an assignment circle is hovered over, and when mouse leaves an assignment circle
