@@ -24,7 +24,7 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
     function createAssignmentNumber(index, location, textLayer) {
         textLayer.activate();
         var text = new paper.PointText({
-            point: location,
+            point: [location.x, location.y+6],
             content: index + 1,
             fillColor: 'black',
             fontSize: 20,
