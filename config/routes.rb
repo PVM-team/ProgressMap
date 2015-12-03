@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:create, :destroy, :show]
   resources :courses, only: [:create, :show]
-  resources :teachers, only: [:create]
+  resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]
   resources :students, only: [:create, :show, :destroy]                                 # create = API call
   resources :students_tasks, only: [:create]                                            # create = API call
