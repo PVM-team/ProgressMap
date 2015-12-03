@@ -1,31 +1,19 @@
 class TeachersController < ApplicationController
 
-    def exists
-        if Teacher.find_by email: params[:email]
-            render plain: true
-        else
-            render plain: false
-        end
-    end
-
-
     def show
-        teacher = Teacher.find_by id: params[:teacher_id]
+        teacher = Teacher.find_by email: params[:email]
         @teacher = []
 
-        if teacher
-            @courses = teacher.courses
-
-            @teacher << teacher
-        end
-
+        @teacher << teacher if teacher
         render 'teachers/show.json.jbuilder'
     end
 
     def create
-        @teacher = Teacher.new :email => params[:email], :name => params[:name]
-        @teacher.save
-        
-        render json: @teacher
+        teacher = Teacher.new :email => params[:email], :name => params[:name]
+        teacher.save
+        @teacher = []
+
+        @teacher << teacher
+        render 'teachers/show.json.jbuilder'
     end
 end

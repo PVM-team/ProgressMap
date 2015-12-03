@@ -1,4 +1,6 @@
 ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, ActionMapUpdaterService) {
+    // piilottaa navigaatiopalkin. ongelmia tulee kuitenkin jos actionmapin refreshaa, koska yrittää silloin päästä käsiksi googlen "sign in" -nappulaan
+    $scope.$parent.showNavigation = false;
     "use strict";
 
     var self = this;

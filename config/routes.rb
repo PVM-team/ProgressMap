@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   get 'map/action_init', to: 'map#action_init'
   get 'map/action_students', to: 'map#action_students'
 
-  get 'teachers/exists', to: 'teachers#exists'
 
   put 'courses/edit_name', to: 'courses#edit_name'
   put 'assignments/edit_name', to: 'assignments#edit_name'
