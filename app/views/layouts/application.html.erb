@@ -1,35 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
- 	<title>ProgressMap</title>
- 	<%= stylesheet_link_tag    'application', media: 'all' %>
- 	<%= javascript_include_tag 'application' %>
- 	<%= csrf_meta_tags %>
+    <head>
+        <meta name="google-signin-scope" content="profile email">
+        <meta name="google-signin-client_id" content="82787103942-3sas1raad518muve5kbojjoh1jrb0f8p.apps.googleusercontent.com">
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
 
-    <meta charset="utf-8">
+        <title>ProgressMap</title>
+        <%= stylesheet_link_tag    'application', media: 'all' %>
+        <%= javascript_include_tag 'application' %>
+        <%= csrf_meta_tags %>
 
-    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-</head>
+        <meta charset="utf-8">
 
-<body ng-app="ProgressApp" ng-controller="ApplicationController">
+        <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    </head>
 
-	<div ng-view></div>
+    <body ng-app="ProgressApp" ng-controller="ApplicationController">
+        <!-- Navigation -->
+        <div ng-if="showNavigation">
+            <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+                <div class="container topnav">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand topnav" href="#/index">Pääsivu</a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul id="navigation-links" class="nav navbar-nav navbar-right">
+                            <li><a class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></a></li>
+                            <li><a ng-click="teacherInfo()">Opettajalle</a></li>
+                            <li ng-if="signedIn"><a ng-click="ownPage()">Omat kurssit</a></li>
+                            <li ng-if="signedIn"><a ng-click="signOut()">Kirjaudu ulos</a></li>
+                            <!-- Navigation links placed here in IndexController code -->
+                        </ul>
+                    </div>
+                            <!-- Navigation links placed here in IndexController code -->
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container -->
+            </nav>
+        </div>
 
-	<!-- Muuttujat laitettava ' ' -sisälle sen sijaan että käyttäisi "" -merkkejä. -->
 
-	<!-- <script src="assets/javascripts/controllers/MainController.js"></script>
-	<script src="assets/javascripts/controllers/MapController.js"></script> -->
 
-	<!-- Jos script src rivit tarvitaan ja ne eivät ole aakkosjärjestyksessä, testaa fiksaako se ongelman "ProgressApp" not defined -->
+        <div ng-view></div>
 
-	<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
-	-->
-         <!-- <script src="vendor/assets/bower_components/angular/angular.min.js"></script>
-	 <script src="vendor/assets/bower_components/angular-route/angular-route.min.js"></script>
-	 
+        <!-- Muuttujat laitettava ' ' -sisälle sen sijaan että käyttäisi "" -merkkejä. -->
 
-	<script src="assets/javascripts/controllers/MainController.js"></script>
-	<script src="assets/javascripts/controllers/MapController.js"></script>
-	<script src="assets/javascripts/app.js"></script> -->
-</body>
+        <!-- <script src="assets/javascripts/controllers/MainController.js"></script>
+        <script src="assets/javascripts/controllers/MapController.js"></script> -->
+
+        <!-- Jos script src rivit tarvitaan ja ne eivät ole aakkosjärjestyksessä, testaa fiksaako se ongelman "ProgressApp" not defined -->
+
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+        -->
+        <!-- <script src="vendor/assets/bower_components/angular/angular.min.js"></script>
+        <script src="vendor/assets/bower_components/angular-route/angular-route.min.js"></script>
+
+
+        <script src="assets/javascripts/controllers/MainController.js"></script>
+        <script src="assets/javascripts/controllers/MapController.js"></script>
+        <script src="assets/javascripts/app.js"></script> -->
+    </body>
 </html>

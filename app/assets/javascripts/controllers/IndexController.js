@@ -1,6 +1,6 @@
 ProgressApp.controller('IndexController', function($scope, $location, $compile, httpService, SessionService) {
     window.onSignIn = onSignIn;
-    placeNavigationLinksInHTML();
+   // placeNavigationLinksInHTML();
 
     function placeNavigationLinksInHTML() {
         var parent = $("#navigation-links");
@@ -47,13 +47,13 @@ ProgressApp.controller('IndexController', function($scope, $location, $compile, 
         // $location.path('/info_to_teachers');
     }
 
-    function onSignIn(googleUser) {
+    /*function onSignIn(googleUser) {
         SessionService.signIn(googleUser);
         $location.path("/");
-    }
+    }*/
 
-     $scope.signOut = function () {
+    /* $scope.signOut = function () {
         SessionService.signOut();
         $location.path("/");
-    }
+    }*/
 })
