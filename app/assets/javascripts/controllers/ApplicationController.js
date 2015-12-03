@@ -24,11 +24,7 @@ ProgressApp.controller('ApplicationController', function ($scope, $routeParams, 
 
                 $scope.currentUser = teacherData[0];
                 $scope.signedIn = true;
-            }).then(function() {
-                for(var i = 0; i < $scope.currentUser.courses.length; i++) {
-                    console.log($scope.currentUser.courses[i]);
-                }
-            });
+            })
         };
     };
 
@@ -43,11 +39,10 @@ ProgressApp.controller('ApplicationController', function ($scope, $routeParams, 
     }
 
     $scope.teacherInfo = function() {
-        console.log('opettajalle')
+        //"Opettajalle"-linkin toiminta
     }
 
     $scope.ownPage = function() {
-        console.log('oma sivu');
         $location.path('/course_list');
     }
 

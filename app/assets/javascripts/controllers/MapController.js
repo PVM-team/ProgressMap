@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService, SessionService) {
+ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
     $scope.buttonClicked = false;
 

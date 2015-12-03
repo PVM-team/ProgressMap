@@ -1,1 +1,7 @@
-<p> moi moi moi </p>
+<div class="container">
+    <h2>Omat kurssini</h2>
+<ul class="list-group">
+    <a ng-click="moveToCourseDetails(course)" class="list-group-item" ng-repeat="course in currentUser.courses"> {{ course.name }} </a>
+</ul>
+
+</div>
