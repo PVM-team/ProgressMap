@@ -91,10 +91,13 @@ class CoursesController < ApplicationController
     def create
         @course = Course.new(course_params)
         assignments = params[:assignments]
+        teacher = Teacher.find_by email: params[:teacherEmail]
 
-        if @course.valid? && validate_assignment_count(assignments.length)
+        if teacher && @course.valid? && validate_assignment_count(assignments.length)
             @course.save
             assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
+            teacher.courses << @course
+            teacher.save
         end
 
         render json: @course

@@ -1,16 +1,21 @@
 ProgressApp.controller('NewCourseController', function ($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
-
     $scope.assignments = [];
-
     $scope.createCourse = function () {
-
+        var teacher = $scope.currentUser;
+      
         var newCourse = {
             name: $scope.name,
-            assignments: $scope.assignments
+            assignments: $scope.assignments,
+            teacherEmail: teacher.email
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {
             var path = "/map/" + data.id;
+            var addedCourse = {
+                id: data.id,
+                name: data.name
+            }
+            location.reload();
             $location.path(path);
         })
     }

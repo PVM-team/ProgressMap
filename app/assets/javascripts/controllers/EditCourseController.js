@@ -1,5 +1,25 @@
 ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
+
+    var hasCourse = false;
+
+    $scope.currentUser = SessionService.getCurrentUser();
+
+    if ($scope.currentUser) {
+        var userCourses = $scope.currentUser.courses;
+        for (var i = 0; i < userCourses.length; i++) {
+            console.log(i);
+            if ($routeParams.course_id == userCourses[i].id){
+                hasCourse = true;
+                break;
+            }
+        }
+    }
+
+    if (hasCourse == false) {
+        $location.path('/');
+    }
+
     $scope.mutex = false;
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
@@ -7,7 +27,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             $location.path("/");
             return;
         }
-
         $scope.course = data['course'][0];
         $scope.assignments = data["assignments"];
         $scope.students = data["students"];
@@ -61,6 +80,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         }
         return dependencyList;
     }
+
 
     $scope.givenNamesAreCorrect = function(assignment) {
         var dependenciesNames = assignment.dependencyText.split(",");
