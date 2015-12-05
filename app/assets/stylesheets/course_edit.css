@@ -1,8 +1,12 @@
-#go-to-course-page {
+.course-name {
+	font-style: italic;
 	color: blue;
-	text-decoration: underline;
 }
 
-canvas {
-    background: rgba(30, 85, 205, 0.50);
+.small-top-margin {
+	margin-top: 8px; 
+}
+
+.small-left-margin {
+	margin-left: 8px;
 }

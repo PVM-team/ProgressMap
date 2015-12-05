@@ -16,8 +16,6 @@ ProgressApp.service('GravatarService', function (MapScaleService) {
         var img = new paper.Raster(iconSrc);
 
         img.onLoad = function () {
-            console.log(img)
-
             img.size.width = MapScaleService.scaleByDefaultWidth(25);
             img.size.height = 30;
         }

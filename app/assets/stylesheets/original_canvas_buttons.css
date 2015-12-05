@@ -1,5 +1,7 @@
-canvas {
-    background: rgba(30, 85, 205, 0.50);
+#mapElements {
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .button {
@@ -12,10 +14,6 @@ canvas {
 
     font-weight: bold;
     font-size: 16px;
-}
-
-.cannot-reach-task {
-    background: #9DAFA0; /* Grey */
 }
 
 .undone-task {
@@ -46,13 +44,6 @@ canvas {
     box-shadow: rgba(43, 153, 55, 0.21) 0px 2px;
 }
 
-.amount-of-doers {
-    position: absolute;
-}
-
-#errorMsg {
-    color: red;
-}
 
 .done-task.dependent {
     background: #ffd700;
@@ -62,31 +53,4 @@ canvas {
 .undone-task.dependent{
     background: #fbe3cc;
     box-shadow: 1px 1px 20px 10px rgba(225, 189, 47, 0.86);
-}
-
-.action-button {
-    /* Determined by used browser, which background color value to pick */
-
-    background: rgba(211, 208, 210, 0.97);
-    background: -moz-linear-gradient(top, rgba(211, 208, 210, 0.97) 0%, rgba(213, 204, 196, 0.94) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(211, 208, 210, 0.97)), color-stop(100%, rgba(213, 204, 196, 0.94)));
-    background: -webkit-linear-gradient(top, rgba(211, 208, 210, 0.97) 0%, rgba(213, 204, 196, 0.94) 100%);
-    background: -o-linear-gradient(top, rgba(211, 208, 210, 0.97) 0%, rgba(213, 204, 196, 0.94) 100%);
-    background: -ms-linear-gradient(top, rgba(211, 208, 210, 0.97) 0%, rgba(213, 204, 196, 0.94) 100%);
-    background: linear-gradient(to bottom, rgba(211, 208, 210, 0.97) 0%, rgba(213, 204, 196, 0.94) 100%);
-
-    border-color: rgba(211, 208, 210, 0.97);
-    box-shadow: rgba(211, 208, 210, 0.97) 0px 1px;
-}
-
-.student-button {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    border-style: solid;
-    border-width: 2px;
-
-    font-weight: bold;
-    font-size: 16px;
 }

@@ -103,12 +103,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     }
 
     $scope.viewAsStudent = function (student) {
-        try {
-            $scope.currentStudent = student;
-        }
-        catch (err) {
-            document.getElementById("errorMsg").innerHTML = err
-        }
+        $scope.currentStudent = student;
         $scope.doneAssignments = setDoneAssignments();
     }
 
