@@ -7,9 +7,10 @@ ProgressApp.controller('NewCourseController', function($rootScope, $scope, $loca
     }
 
     $scope.assignments = [];
+
     $scope.createCourse = function () {
-        var teacher = $scope.currentUser;
-      
+        var teacher = $rootScope.currentUser;
+
         var newCourse = {
             name: $scope.name,
             assignments: $scope.assignments,

@@ -1,6 +1,6 @@
 describe('EditCourseController', function () {
 
-    var controller, scope;
+    var controller, scope, rootScope;
     var httpServiceMock;
     var CanvasServiceMock;
     var location;
@@ -103,17 +103,21 @@ describe('EditCourseController', function () {
 
 
         inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
+            rootScope = $rootScope;
+            //rootScope.currentUser = {'name': 'Teppo', 'courses': [], 'email': 'matti_ja_teppo@hotmail.swe'};
+
             scope = $rootScope.$new();
             location = $location;
             spyOn(location, 'path');
             controller = $controller('EditCourseController', {
+                $rootScope: rootScope,
                 $scope: scope,
                 $routeParams: $routeParams,
                 httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock
             });
-
         });
+        rootScope.currentUser = {'name': 'Teppo', 'courses': [], 'email': 'matti_ja_teppo@hotmail.swe'};
     })
 
     describe('changeDependenciesOfAssignment', function() {

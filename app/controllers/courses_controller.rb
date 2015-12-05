@@ -97,7 +97,6 @@ class CoursesController < ApplicationController
             @course.save
             assignments.each { |assignment_json| add_assignment_to_course(assignment_json) }
             teacher.courses << @course
-            teacher.save
         end
 
         render json: @course

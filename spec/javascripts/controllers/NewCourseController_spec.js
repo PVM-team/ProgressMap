@@ -1,5 +1,5 @@
 describe('NewCourseController', function () {
-    var controller, scope;
+    var controller, scope, rootScope;
     var httpServiceMock;
     var CanvasServiceMock;
 
@@ -39,23 +39,28 @@ describe('NewCourseController', function () {
         spyOn(httpServiceMock, 'postData').and.callThrough();
 
         inject(function ($controller, $rootScope, httpService, CanvasService) {
+            rootScope = $rootScope;
+            //rootScope.currentUser = {'name': 'Teppo', 'courses': [], 'email': 'matti_ja_teppo@hotmail.swe'};
+            
             scope = $rootScope.$new();
+
             controller = $controller('NewCourseController', {
+                $rootScope: rootScope,
                 $scope: scope,
                 httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock
             });
-
         });
 
         scope.name = "Test";
         scope.assignments = [];
+        rootScope.currentUser = {'name': 'Teppo', 'courses': [], 'email': 'matti_ja_teppo@hotmail.swe'};
     })
 
     describe ('calling createCourse', function(){
         it ('should call on httpServiceMock.postData with parameters found in scope', function(){
             scope.createCourse();
-            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', { name: 'Test', assignments: [] });
+            expect(httpServiceMock.postData).toHaveBeenCalledWith('/courses', { name: 'Test', assignments: [], teacherEmail: 'matti_ja_teppo@hotmail.swe' });
         })
     })
 
