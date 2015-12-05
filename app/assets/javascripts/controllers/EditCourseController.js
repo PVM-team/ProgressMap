@@ -1,32 +1,14 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('EditCourseController', function($rootScope, $scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+    $rootScope.showNavigation = true;
 
-
-    var hasCourse = false;
-
-    $scope.currentUser = SessionService.getCurrentUser();
-
-    if ($scope.currentUser) {
-        var userCourses = $scope.currentUser.courses;
-        for (var i = 0; i < userCourses.length; i++) {
-            console.log(i);
-            if ($routeParams.course_id == userCourses[i].id){
-                hasCourse = true;
-                break;
-            }
-        }
-    }
-
-    if (hasCourse == false) {
-        $location.path('/');
+    if (! userHasRightToSeeThisView()) {
+        $location.path('/'); 
+        return;
     }
 
     $scope.mutex = false;
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
-        if (! validRequest(data)) {
-            $location.path("/");
-            return;
-        }
         $scope.course = data['course'][0];
         $scope.assignments = data["assignments"];
         $scope.students = data["students"];
@@ -119,6 +101,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         httpService.putData('/courses/edit_name', data).then(function (data) {
             $scope.course.name = data['course'].name;
+            editNameOfTheCourseInCoursesOfCurrentUser();
         })
     }
 
@@ -183,10 +166,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         httpService.deleteData('students/' + student.id).then(function (data) {
             $scope.students.splice(index, 1);
         })
-    }
-
-    function validRequest(data) {
-        return data['course'][0];
     }
 
     function locationOfLastAssignment() {
@@ -269,5 +248,29 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             style = 'none';
         }
         $("#add-assignment-btn").css('display', style);
+    }
+
+    function userHasRightToSeeThisView() {
+        var teacher = $rootScope.currentUser;
+
+        if (teacher) {
+            var courses = teacher.courses;
+            
+            for (var i = 0; i < courses.length; i++) {
+                if (courses[i].id == $routeParams.course_id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function editNameOfTheCourseInCoursesOfCurrentUser() {
+        for (var i = 0; i < $rootScope.currentUser.courses.length; i++) {
+            if ($rootScope.currentUser.courses[i].id == $scope.course.id) {
+                $rootScope.currentUser.courses[i].name = $scope.course.name
+                return;
+            }
+        }
     }
 })

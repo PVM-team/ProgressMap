@@ -1,7 +1,6 @@
-ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $location, httpService, CanvasService, ActionMapUpdaterService) {
+ProgressApp.controller('ActionMapController', function($rootScope, $scope, $routeParams, $location, httpService, CanvasService, ActionMapUpdaterService) {
     // piilottaa navigaatiopalkin. ongelmia tulee kuitenkin jos actionmapin refreshaa, koska yrittää silloin päästä käsiksi googlen "sign in" -nappulaan
-    $scope.$parent.showNavigation = true;
-    "use strict";
+    $rootScope.showNavigation = false;
 
     var self = this;
     var maxStudentsToShowAroundAssignment = 9;
@@ -110,26 +109,5 @@ ProgressApp.controller('ActionMapController', function ($scope, $routeParams, $l
         assignment.latestAttempters.sort(function (a, b) {
             return new Date(b.lastDoneAssignment.timestamp) - new Date(a.lastDoneAssignment.timestamp);
         })
-    }
-
-    $scope.locationOfStudentInMap = function(student, assignment) {
-        var studentButtonWidth = 25;
-        var studentButtonHeight = 25;
-        var radius = 40;
-
-        var step = 2 * Math.PI / assignment.latestAttempters.length;
-        var angle = 0;
-
-        for (var i = 0; i < assignment.latestAttempters.length; i++) {
-
-            if (student.id == assignment.latestAttempters[i].id) {
-                var x = Math.round(assignment.location.x + radius * Math.cos(angle) - studentButtonWidth / 2);
-                var y = Math.round(assignment.location.y + radius * Math.sin(angle) - studentButtonHeight / 2);
-
-                return { top: y + 'px', left: x + 'px' };
-            }
-
-            angle += step;
-        }
     }
 })

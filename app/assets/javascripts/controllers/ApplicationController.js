@@ -1,26 +1,26 @@
-ProgressApp.controller('ApplicationController', function ($scope, $routeParams, $location, httpService) {
-        $scope.showNavigation = true;
-        window.onSignIn = onSignIn;
+ProgressApp.controller('ApplicationController', function($rootScope, $scope, $routeParams, $location, httpService) {
+    $rootScope.showNavigation = true;
+    window.onSignIn = onSignIn;
 
     function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
 
-        var teacher = {
+        var data = {
             name: profile.getName(),
             email: profile.getEmail()
         };
 
 
-        httpService.getData('/teachers/show', { params: teacher }).then(function(data) {
-            var teacherData = data['teacher'];
+        httpService.getData('/teachers/show', { params: data }).then(function(data) {
+            var teacher = data['teacher'][0];
 
-            if (teacherData.length == 0) {
+            if (! teacher) {
                 httpService.postData('/teachers', teacher).then(function(data) {
-                    teacherData = data['teacher'];
+                    teacher = data['teacher'][0];
                 });
             }
 
-            $scope.currentUser = teacherData[0];
+            $rootScope.currentUser = teacher;
             $scope.signedIn = true;
         })
     };
@@ -29,10 +29,9 @@ ProgressApp.controller('ApplicationController', function ($scope, $routeParams, 
         var auth2 = gapi.auth2.getAuthInstance();
 
         auth2.signOut();
-        $scope.currentUser.courses = [];
-        $scope.currentUser = null;
+        $rootScope.currentUser = undefined;
         $scope.signedIn = false;
-        $location.path('/index');
+        $location.path('/');
     }
 
     $scope.teacherInfo = function() {

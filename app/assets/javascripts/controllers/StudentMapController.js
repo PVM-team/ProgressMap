@@ -1,8 +1,9 @@
-ProgressApp.controller('StudentMapController', function ($scope, $routeParams, $location, AssignmentDependenciesService, CanvasService, httpService) {
+ProgressApp.controller('StudentMapController', function($rootScope, $scope, $routeParams, $location, AssignmentDependenciesService, CanvasService, httpService) {
+    $rootScope.showNavigation = false;
 
     httpService.getData('/students/show', { params: { token: $routeParams.token }}).then(function (data) {
 
-        if (!validRequest(data)) {
+        if (! validRequest(data)) {
             $location.path("/");
             return;
         }

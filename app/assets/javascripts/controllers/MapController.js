@@ -1,4 +1,4 @@
-ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('MapController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
 
     $scope.buttonClicked = false;
 
@@ -13,7 +13,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }).then(function (data) {
 
         if (!validRequest(data)) {
-            $location.path("/");     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
+            $location.path("/");
             return;
         }
 
