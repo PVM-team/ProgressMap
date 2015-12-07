@@ -1,9 +1,8 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, $window, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
 
     if (! userHasRightToSeeThisView()) {
-        $location.path('/'); 
-        return;
+        $window.location.href = '/';
     }
 
     $scope.mutex = false;

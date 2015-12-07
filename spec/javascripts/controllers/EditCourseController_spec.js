@@ -3,8 +3,11 @@ describe('EditCourseController', function () {
     var httpServiceMock;
     var CanvasServiceMock;
     var location;
+    var windowMock;
     var assignmentOne = {"id": 1, "name": 'one', "number": 1, "location": {"id": 1, "x": 110, "y": 140}, "doers": [{"id": 2}, {"id": 1}], "dependencies": []};
     var assignmentTwo = {"id": 2, "name": 'two', "number": 2, "location": {"id": 2, "x": 330, "y": 210}, "doers": [{"id": 1}], "dependencies": []};
+
+    var course = {"id": 1, "name": 'ohtu'};
 
     var assignments;
 
@@ -14,7 +17,7 @@ describe('EditCourseController', function () {
         httpServiceMock = (function () {
             var data = {};
 
-            data.course = [{"id": 1, "name": 'ohtu'}];
+            data.course = [course];
             data.assignments = [assignmentOne, assignmentTwo,
                                 {"id": 3, "name": 'three', "number": 3, "location": {"id": 3, "x": 700, "y": 130}, "doers": [{"id": 1}], "dependencies": [assignmentOne, assignmentTwo]}];
             data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
@@ -100,6 +103,12 @@ describe('EditCourseController', function () {
             }
         })();
 
+        windowMock = {
+            location: {
+                href: ''
+            }
+        };
+
 
         inject(function ($controller, $rootScope, $routeParams, httpService, CanvasService, $location) {
             scope = $rootScope.$new();
@@ -109,11 +118,12 @@ describe('EditCourseController', function () {
             controller = $controller('EditCourseController', {
                 $scope: scope,
                 $routeParams: $routeParams,
+                $window: windowMock,
                 httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock
             });
         });
-        scope.currentUser = {'name': 'Teppo', 'courses': [], 'email': 'matti_ja_teppo@hotmail.swe'};
+        scope.currentUser = {'name': 'Teppo', 'courses': [course], 'email': 'matti_ja_teppo@hotmail.swe'};
     })
 
     describe('changeDependenciesOfAssignment', function() {

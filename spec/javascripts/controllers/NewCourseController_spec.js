@@ -1,5 +1,6 @@
 describe('NewCourseController', function () {
     var controller, scope;
+    var windowMock;
     var httpServiceMock;
     var CanvasServiceMock;
 
@@ -36,12 +37,20 @@ describe('NewCourseController', function () {
             }
         })();
 
+        windowMock = {
+            location: {
+                href: ''
+            }
+        };
+
         spyOn(httpServiceMock, 'postData').and.callThrough();
 
-        inject(function ($controller, $rootScope, httpService, CanvasService) {
+        inject(function ($controller, $rootScope, $window, httpService, CanvasService) {
             scope = $rootScope.$new();
+
             controller = $controller('NewCourseController', {
                 $scope: scope,
+                $window: windowMock,
                 httpService: httpServiceMock,
                 CanvasService: CanvasServiceMock
             });

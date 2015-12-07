@@ -1,9 +1,8 @@
-ProgressApp.controller('NewCourseController', function($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('NewCourseController', function($scope, $window, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
     
     if (! $scope.currentUser) {
-        $location.path('/');
-        return;
+        $window.location.href = '/';
     }
 
     $scope.assignments = [];
@@ -23,8 +22,7 @@ ProgressApp.controller('NewCourseController', function($scope, $location, httpSe
                 id: data.id,
                 name: data.name
             }
-            location.reload();
-            $location.path(path);
+            $window.location.href = path;
         })
     }
 
