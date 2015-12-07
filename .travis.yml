@@ -16,7 +16,9 @@ script:
 #- bundle exec rspec -fd spec/features/stories/sprint2/as_a_teacher_I_want_to_create_a_course_spec.rb -- requires logging in
 #- bundle exec rspec -fd spec/features/stories/sprint5/dependency_editing_spec.rb -- requires logging in
 - bundle exec rspec -fd spec/models
-- karma start karma.conf.js --single-run
+
+- bundle exec rake teaspoon
+#- karma start karma.conf.js --single-run
 
 deploy:
   provider: heroku
@@ -33,9 +35,9 @@ before_install:
  - sh -e /etc/init.d/xvfb start
 
 before_script:
- - npm install karma-jasmine --save-dev       
- - npm install karma --save-dev
- - npm install karma-chrome-launcher --save-dev
- - npm install -g karma-cli
+ #- npm install karma-jasmine --save-dev       
+ #- npm install karma --save-dev
+ #- npm install karma-chrome-launcher --save-dev
+ #- npm install -g karma-cli
 
- - npm install karma karma-coverage --save-dev
+ #- npm install karma karma-coverage --save-dev
