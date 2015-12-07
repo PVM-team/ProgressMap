@@ -26,7 +26,7 @@ ProgressApp.service('InfoModalService', function($uibModal) {
     switch(type) {
       case 'success': return "green";
       case 'warning': return "yellow";
-      case 'error': return "red";
+      case 'danger': return "red";
       default: return "blue";
     }
   }

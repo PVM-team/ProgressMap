@@ -12,3 +12,7 @@ li {
 li:nth-child(odd) {
     margin-right: 0;
 }
+
+.delete-margin-top {
+	margin-top: 20px;
+}
