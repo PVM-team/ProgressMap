@@ -19,7 +19,19 @@ class AssignmentsController < ApplicationController
 		end
 
 		render 'assignments/show.json.jbuilder'
-	end
+  end
+
+  def edit
+    assignment= Assignment.find params[:assignment_id]
+    assignment.name = params[:name]
+    assignment.number = params[:number]
+    assignment.dependencies.destroy_all
+    dependencies_json_array = params[:dependencies]
+    add_dependencies_to_assignment(dependencies_json_array, assignment)
+    assignment.save
+
+    render 'assignments/show.json.jbuilder'
+  end
 
 	def destroy
 		assignment = Assignment.find params[:id]
@@ -27,26 +39,6 @@ class AssignmentsController < ApplicationController
 
 		render plain: "Assignment deleted"
 	end
-
-  def edit_name
-      assignment= Assignment.find params[:assignment_id]
-      assignment.name = params[:name]
-      assignment.save
-        
-      render 'assignments/show.json.jbuilder'
-  end
-
-  def edit_dependencies
-      assignment = Assignment.find params[:assignment_id]
-      assignment.dependencies.destroy_all
-      dependencies_json_array = params[:dependencies]
-      add_dependencies_to_assignment(dependencies_json_array, assignment)
-      assignment.save
-
-      render 'assignments/show.json.jbuilder'
-
-  end
-
 
   def decrease_numbers
       course = Course.find_by id: params[:course_id]
