@@ -1,8 +1,7 @@
-ProgressApp.controller('CourseListController', function($rootScope, $scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
-    $rootScope.showNavigation = true;
-    $scope.teacher = $rootScope.currentUser;
+ProgressApp.controller('CourseListController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+    $scope.showNavigation = true;
 
-    if (! $scope.teacher) {
+    if (! $scope.currentUser) {
         $location.path('/');
         return;
     }

@@ -1,3 +1,3 @@
-ProgressApp.controller('IndexController', function($rootScope) {
-    $rootScope.showNavigation = true;
+ProgressApp.controller('IndexController', function($scope) {
+    $scope.showNavigation = true;
 })

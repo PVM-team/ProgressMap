@@ -1,5 +1,5 @@
-ProgressApp.controller('EditCourseController', function($rootScope, $scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
-    $rootScope.showNavigation = true;
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+    $scope.showNavigation = true;
 
     if (! userHasRightToSeeThisView()) {
         $location.path('/'); 
@@ -251,7 +251,7 @@ ProgressApp.controller('EditCourseController', function($rootScope, $scope, $rou
     }
 
     function userHasRightToSeeThisView() {
-        var teacher = $rootScope.currentUser;
+        var teacher = $scope.currentUser;
 
         if (teacher) {
             var courses = teacher.courses;
@@ -266,9 +266,9 @@ ProgressApp.controller('EditCourseController', function($rootScope, $scope, $rou
     }
 
     function editNameOfTheCourseInCoursesOfCurrentUser() {
-        for (var i = 0; i < $rootScope.currentUser.courses.length; i++) {
-            if ($rootScope.currentUser.courses[i].id == $scope.course.id) {
-                $rootScope.currentUser.courses[i].name = $scope.course.name
+        for (var i = 0; i < $scope.currentUser.courses.length; i++) {
+            if ($scope.currentUser.courses[i].id == $scope.course.id) {
+                $scope.currentUser.courses[i].name = $scope.course.name
                 return;
             }
         }

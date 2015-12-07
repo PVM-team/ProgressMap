@@ -12,7 +12,7 @@
     	</tr>
   	</thead>
 
-  	<tbody ng-repeat="course in teacher.courses">
+  	<tbody ng-repeat="course in currentUser.courses">
   		<tr class="listing-own-courses">
   			<td><a ng-click="moveToCourseActionMap(course)">{{ course.name }}</a></td>
   			<td><button class="btn btn-success" ng-click="moveToEditCourseView(course)">Editoi</button></td>

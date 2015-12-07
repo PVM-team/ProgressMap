@@ -1,5 +1,4 @@
 describe('StudentMapController', function () {
-
     var controller, scope;
     var CanvasServiceMock;
     var httpServiceMock;

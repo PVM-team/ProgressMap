@@ -1,7 +1,7 @@
-ProgressApp.controller('NewCourseController', function($rootScope, $scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
-    $rootScope.showNavigation = true;
+ProgressApp.controller('NewCourseController', function($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
+    $scope.showNavigation = true;
     
-    if (! $rootScope.currentUser) {
+    if (! $scope.currentUser) {
         $location.path('/');
         return;
     }
@@ -9,7 +9,7 @@ ProgressApp.controller('NewCourseController', function($rootScope, $scope, $loca
     $scope.assignments = [];
 
     $scope.createCourse = function () {
-        var teacher = $rootScope.currentUser;
+        var teacher = $scope.currentUser;
 
         var newCourse = {
             name: $scope.name,

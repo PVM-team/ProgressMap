@@ -1,5 +1,4 @@
 ProgressApp.controller('MapController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
-
     $scope.buttonClicked = false;
 
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.

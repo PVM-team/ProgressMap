@@ -1,4 +1,4 @@
-ProgressApp.controller('ApplicationController', function($rootScope, $scope, $routeParams, $location, httpService) {
+ProgressApp.controller('ApplicationController', function($rootScope, $routeParams, $location, httpService) {
     $rootScope.showNavigation = true;
     window.onSignIn = onSignIn;
 
@@ -21,24 +21,24 @@ ProgressApp.controller('ApplicationController', function($rootScope, $scope, $ro
             }
 
             $rootScope.currentUser = teacher;
-            $scope.signedIn = true;
+            $rootScope.signedIn = true;
         })
     };
 
-    $scope.signOut = function() {
+    $rootScope.signOut = function() {
         var auth2 = gapi.auth2.getAuthInstance();
 
         auth2.signOut();
         $rootScope.currentUser = undefined;
-        $scope.signedIn = false;
+        $rootScope.signedIn = false;
         $location.path('/');
     }
 
-    $scope.teacherInfo = function() {
+    $rootScope.teacherInfo = function() {
         //"Opettajalle"-linkin toiminta
     }
 
-    $scope.ownPage = function() {
+    $rootScope.ownPage = function() {
         $location.path('/course_list');
     }
 
