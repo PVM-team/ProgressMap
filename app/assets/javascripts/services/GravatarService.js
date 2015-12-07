@@ -1,4 +1,4 @@
-ProgressApp.service('GravatarService', function (MapScaleService) {
+ProgressApp.service('GravatarService', function () {
 
     this.gravatarImage = function(student) {
         var value = student.email;

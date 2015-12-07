@@ -22,9 +22,9 @@ ProgressApp.directive('actionmap', function (PathService, GravatarService, Canva
 
             var pathLayer = new paper.Layer();
             var assignmentLayer = new paper.Layer();
-            var percentageLayer = new paper.Layer();
             var labelLayer = new paper.Layer();
             var studentLayer = new paper.Layer();
+            var percentageLayer = new paper.Layer();
 
             scope.$watch('assignments', function (newval, oldval) {
 
@@ -47,11 +47,11 @@ ProgressApp.directive('actionmap', function (PathService, GravatarService, Canva
                 if (MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
 
                     updateCanvasWidth();
-                    scaleItemsByWidth(labelLayer);
-                    scaleItemsByWidth(assignmentLayer);
-                    scaleItemsByWidth(studentLayer);
-                    scaleItemsByWidth(percentageLayer);
-                    scalePathByWidth();
+                    MapScaleService.scaleItemsByWidth(labelLayer);
+                    MapScaleService.scaleItemsByWidth(assignmentLayer);
+                    MapScaleService.scaleItemsByWidth(studentLayer);
+                    MapScaleService.scaleItemsByWidth(percentageLayer);
+                    MapScaleService.scalePath(pathLayer);
 
                     ActionMapUpdaterService.updateAssignmentLocations();
                     ActionMapUpdaterService.updateAssignmentsLatestAttemptersLocations();
@@ -68,26 +68,6 @@ ProgressApp.directive('actionmap', function (PathService, GravatarService, Canva
                 paper.view.viewSize.width = width;
 
                 paper.view.draw();
-            }
-
-            function scaleItemsByWidth(layer) {
-                var items = layer.children;
-
-                for (var i = 0; i < items.length; i++) {
-                    items[i].position.x = MapScaleService.getRelativeX(items[i].position.x);
-                    items[i].scale(window.innerWidth / MapScaleService.getPreviousWindowWidth());
-
-                }
-            }
-
-            function scalePathByWidth() {
-                var path = pathLayer.firstChild;
-                var segments = path.segments;
-
-                for (var i = 0; i < segments.length; i++) {
-                    segments[i].point.x = MapScaleService.getRelativeX(segments[i].point.x);
-                }
-                path.strokeWidth = (path.strokeWidth / MapScaleService.getPreviousWindowWidth()) * window.innerWidth;
             }
 
             function placeLatestStudents() {

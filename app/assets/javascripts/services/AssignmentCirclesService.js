@@ -39,16 +39,15 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
         var circle = this.createAssignmentCircle(assignmentLayer, labelLayer, location, assignment.number-1);
         setActionMapAssignmentStyle(circle, percentageCompleted);
-        var percentageLocation = {'x': location.x, 'y': location.y + 30};
-        createPercentageNumber(percentageLocation, percentageCompleted, percentageLayer);
+        createPercentageNumber(location, percentageCompleted, percentageLayer);
         paper.view.update();
     }
 
 
     function setActionMapAssignmentStyle(circle, percentageCompleted){
         setBaseStyle(circle);
-        circle.style = {
-            fillColor: {
+        circle.fillColor =
+             {
                 gradient: {
                     stops: [['#ffca6a',0.1], ['#ffb93a', 0.4], ['#a96d00', 1]],
                     radial: true
@@ -56,7 +55,6 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
                 origin: circle.position,
                 destination: circle.bounds.rightCenter
             }
-        }
         var color = circle.fillColor;
 
         for(var i = 0; i < color.gradient.stops.length; i++) {
@@ -66,8 +64,8 @@ ProgressApp.service('AssignmentCirclesService', function (MapScaleService) {
 
     function createPercentageNumber(location, percentage, layer){
         layer.activate();
-        var percentage = new paper.PointText({
-            point: location,
+        var p = new paper.PointText({
+            point: [location[0], location[1] + 30],
             content: Math.floor(percentage) + "%",
             fillColor: 'black',
             justification: 'center'
