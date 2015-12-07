@@ -1,9 +1,9 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, $window, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, $window, $uibModal, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
 
-    if (! userHasRightToSeeThisView()) {
-        $window.location.href = '/';
-    }
+    //if (! userHasRightToSeeThisView()) {
+    //    $window.location.href = '/';
+    //}
 
     $scope.mutex = false;
 
@@ -14,7 +14,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         $scope.name = $scope.course.name;
 
-        for (var i = 0; i < $scope.assignments.length; i++) {
+        /*for (var i = 0; i < $scope.assignments.length; i++) {
             var assignment = $scope.assignments[i];
 
             assignment['dependencyText'] = "";
@@ -28,15 +28,88 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                     assignment['dependencyText'] += ",";
                 }
             }
-        }
+        } */
 
-        setDisplayOfNewAssignmentButton();
+        //setDisplayOfNewAssignmentButton();
 
         CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
     })
 
-    $scope.changeDependenciesOfAssignment = function(assignment) {
+    $scope.editCourseName = function() {
+        var data = {
+            course_id: $scope.course.id,
+            name: $scope.name
+        }
+
+        httpService.putData('/courses/edit_name', data).then(function (data) {
+            $scope.course.name = data['course'].name;
+            editNameOfTheCourseInCoursesOfCurrentUser();
+        })
+    }
+
+    $scope.newAssignmentModal = function() {
+
+    }
+
+    $scope.editAssignmentModal = function(assignment) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'templates/modals/edit_assignment.html',
+            controller: 'EditAssignmentController', // sivun alaosassa
+            size: 'md',
+            //backdrop: 'static',
+            scope: $scope,
+            resolve: {
+                assignment: function () {
+                    return assignment;
+                }
+            }
+        });
+    }
+
+    $scope.newStudentModal = function() {
+        
+    }
+
+    $scope.editStudentModal = function(student) {
+        console.log(student);
+    }
+
+
+    $scope.showDependencies = function (assignment) {
+        //AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
+    }
+
+    $scope.hideDependencies = function (assignment) {
+        //AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
+    }
+
+    function userHasRightToSeeThisView() {
+        var teacher = $scope.currentUser;
+
+        if (teacher) {
+            var courses = teacher.courses;
+            
+            for (var i = 0; i < courses.length; i++) {
+                if (courses[i].id == $routeParams.course_id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function editNameOfTheCourseInCoursesOfCurrentUser() {
+        for (var i = 0; i < $scope.currentUser.courses.length; i++) {
+            if ($scope.currentUser.courses[i].id == $scope.course.id) {
+                $scope.currentUser.courses[i].name = $scope.course.name
+                return;
+            }
+        }
+    }
+
+
+    /*$scope.changeDependenciesOfAssignment = function(assignment) {
         var index = $scope.assignments.indexOf(assignment);
         var dependencyList = parseDependencies(assignment);
         var data = {
@@ -90,29 +163,9 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
     $scope.goToCoursePage = function() {
         $location.path("/map/" + $scope.course.id);
-    }
+    } */
 
-    $scope.editCourseName = function() {
-        var data = {
-            course_id: $scope.course.id,
-            name: $scope.name
-        }
-
-        httpService.putData('/courses/edit_name', data).then(function (data) {
-            $scope.course.name = data['course'].name;
-            editNameOfTheCourseInCoursesOfCurrentUser();
-        })
-    }
-
-    $scope.showDependencies = function (assignment) {
-        //AssignmentDependenciesService.showDependencies(assignment, $scope.assignments);
-    }
-
-    $scope.hideDependencies = function (assignment) {
-        //AssignmentDependenciesService.hideDependencies(assignment, $scope.assignments);
-    }
-
-    $scope.addAssignment = function() {
+    /*$scope.addAssignment = function() {
         $scope.mutex = true;
 
         var previousLocation = locationOfLastAssignment();
@@ -247,29 +300,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             style = 'none';
         }
         $("#add-assignment-btn").css('display', style);
-    }
+    } */
+})
 
-    function userHasRightToSeeThisView() {
-        var teacher = $scope.currentUser;
-
-        if (teacher) {
-            var courses = teacher.courses;
-            
-            for (var i = 0; i < courses.length; i++) {
-                if (courses[i].id == $routeParams.course_id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    function editNameOfTheCourseInCoursesOfCurrentUser() {
-        for (var i = 0; i < $scope.currentUser.courses.length; i++) {
-            if ($scope.currentUser.courses[i].id == $scope.course.id) {
-                $scope.currentUser.courses[i].name = $scope.course.name
-                return;
-            }
-        }
-    }
+ProgressApp.controller('EditAssignmentController', function($scope, $uibModalInstance, assignment) {
+    console.log("called")
+    console.log(assignment)
 })

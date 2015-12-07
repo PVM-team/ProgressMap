@@ -20,3 +20,15 @@
 a[ng-click] {
     cursor: pointer;
 }
+
+.modal {
+	display: block;
+}
+
+.modal-dialog {
+	height: 100%;
+}
+
+.modal-content {
+	height: 100%;
+}

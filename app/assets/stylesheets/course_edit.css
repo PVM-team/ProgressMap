@@ -1,6 +1,10 @@
-.course-name {
+.name {
 	font-style: italic;
 	color: blue;
+}
+
+.no-left-padding {
+	padding-left: 0px;
 }
 
 .small-top-margin {
@@ -9,4 +13,8 @@
 
 .small-left-margin {
 	margin-left: 8px;
+}
+
+.title-top-margin {
+	margin-top: 20px;
 }
