@@ -56,8 +56,8 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         var modalInstance = $uibModal.open({
             templateUrl: 'templates/modals/edit_assignment.html',
             controller: 'EditAssignmentController', // sivun alaosassa
-            size: 'md',
-            //backdrop: 'static',
+            size: 'lg',
+            backdrop: 'static',
             scope: $scope,
             resolve: {
                 assignment: function () {
@@ -304,6 +304,21 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 })
 
 ProgressApp.controller('EditAssignmentController', function($scope, $uibModalInstance, assignment) {
-    console.log("called")
-    console.log(assignment)
+    $scope.assignment = assignment;
+    $scope.new_dependencies = [];
+
+    for (var i = 0; i < assignment.dependencies.length; i++) {
+        
+    }
+
+
+    $scope.editAssignment = function() {
+        console.log($scope.new_name)
+        console.log($scope.new_number)
+        console.log($scope.new_dependencies)
+    }
+
+    $scope.back = function() {
+        $uibModalInstance.close();
+    }
 })

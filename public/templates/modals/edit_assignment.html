@@ -1,17 +1,35 @@
+<link rel="stylesheet" type="text/css" href="assets/modal.css">
+
 <div class="modal-header">
-    <h3 class="modal-title">I'm a modal!</h3>
+
+	<h3 class="modal-title">{{ assignment.name }} 
+		<span class="pull-right">
+			<img id="cancel-img" src="http://findicons.com/files/icons/2146/realistik_reloaded/128/stop.png" ng-click="back()"></img>
+		</span>
+	</h3>
 </div>
-        
-<div class="modal-body">
-    <ul>
-        <li ng-repeat="item in items">
-            <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
-        </li>
-    </ul>
-    Selected: <b>{{ selected.item }}</b>
-        
-</div>
-<div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-</div>
+
+<form name="editAssignmentForm">
+
+	<div class="modal-body">
+
+		<div class="col-xs-12">
+			<label class="col-xs-3">Nimi</label>
+			<input name="assignmentName" type="text" ng-model="new_name" required minlength="2">
+		</div>
+
+		<div class="col-xs-12">
+			<label class="col-xs-3">Numero</label>
+			
+			<input type="number" min="1" ng-model="new_number">
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<div class="col-xs-12">
+			<button class="btn btn-success" ng-disabled="editAssignmentForm.$invalid" ng-click="editAssignment();">Muokkaa tehtävää</button>
+
+			<span id="error-notice"></span>
+		</div>
+	</div>
+</form>
