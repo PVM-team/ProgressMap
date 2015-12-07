@@ -1,4 +1,4 @@
-describe('EditCourseController', function () {
+/* describe('EditCourseController', function () {
     var controller, scope;
     var httpServiceMock;
     var CanvasServiceMock;
@@ -290,4 +290,4 @@ describe('EditCourseController', function () {
             expect(location.path).toHaveBeenCalledWith('/map/1');
         })
     })
-})
+}) */

@@ -1,21 +1,21 @@
 class AssignmentsController < ApplicationController
 
 	def create
-		course = Course.find(params[:course_id])
-		location_json = params[:location]
+		course = Course.find params[:course_id]
+		location = params[:location]
 		number = params[:number]
-		dependencies_json_array = params[:dependencies]
 
-		@assignment = []
+    @assignment = []
 
 		if course
-			assignment = Assignment.create name: "tehtävä" + number.to_s, number: number
-			assignment.location = Location.create x: location_json[:x], y: location_json[:y]
+			assignment = Assignment.create name: params[:name], number: params[:number]
+			assignment.location = Location.create x: location[:x], y: location[:y]
       
-      add_dependencies_to_assignment(dependencies_json_array, assignment)
-			
       course.assignments << assignment
-			@assignment << assignment
+      
+      add_dependencies(assignment, params[:dependencies])
+			
+      @assignment << assignment
 		end
 
 		render 'assignments/show.json.jbuilder'
@@ -32,9 +32,13 @@ class AssignmentsController < ApplicationController
     assignment = Assignment.find params[:id]
     assignment.name = params[:name]
     assignment.number = params[:number]
-    update_dependencies(assignment, params[:dependencies])
+
+    assignment.dependencies.destroy_all
+    add_dependencies(assignment, params[:dependencies])
 
     assignment.save
+    @assignment = [assignment]
+
     render 'assignments/show.json.jbuilder'
   end
 
@@ -78,23 +82,14 @@ class AssignmentsController < ApplicationController
       next_prev
   end
 
-  def add_dependencies_to_assignment(dependencies_json_array, assignment)
-    if dependencies_json_array
-      dependencies_json_array.each do |dependency_json|
-        dependency = Assignment.find_by id: dependency_json[:id]
-
-        assignment.dependencies << dependency if dependency
-      end
-    end
-  end
-
-  def update_dependencies(assignment, new_dependencies)
-    assignment.dependencies.destroy_all
+  def add_dependencies(assignment, new_dependencies)
     course_assignments = assignment.course.assignments.sort_by {|a| a.number}
 
-    new_dependencies.each do |dependency|
-      a = course_assignments[dependency["number"] - 1]
-      assignment.dependencies << a
+    if new_dependencies
+      new_dependencies.each do |dependency|
+        a = course_assignments[dependency["number"] - 1]
+        assignment.dependencies << a
+      end
     end
   end
 end

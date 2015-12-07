@@ -13,7 +13,6 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
 
         if (!validRequest(data)) {
             $location.path("/");
-            return;
         }
 
         $scope.course = data["course"][0];

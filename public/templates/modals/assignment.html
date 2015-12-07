@@ -3,26 +3,26 @@
 
 <div class="modal-header">
 
-	<h3 class="modal-title">{{ assignment.name }} 
+	<h3 class="modal-title">{{ original_name }} 
 		<span class="pull-right">
 			<img id="cancel-img" src="http://findicons.com/files/icons/2146/realistik_reloaded/128/stop.png" ng-click="back()"></img>
 		</span>
 	</h3>
 </div>
 
-<form name="editAssignmentForm">
+<form name="assignmentForm">
 
 	<div class="modal-body">
 
 		<div class="col-xs-12">
 			<label class="col-xs-3">Nimi</label>
-			<input type="text" value="{{ assignment.name }}" required minlength="2">
+			<input type="text" ng-model="new_name" value="{{ new_name }}" required minlength="2">
 		</div>
 
 		<div class="col-xs-12">
 			<label class="col-xs-3">Numero</label>
 			
-			<input type="number" value="{{ assignment.number }}" min="1">
+			<input type="number" ng-model="new_number" value="{{ new_number }}" disabled>
 		</div>
 
 		<div class="col-xs-12">
@@ -31,9 +31,7 @@
 			<div id="dependencies" class="col-xs-12">
 
 				<ul ng-repeat="a in assignments">
-					<tr>
-						{{ a.number}} <input type="checkbox" ng-checked="originalDependency(a)"></input>
-					</tr>
+					<li>{{ a.number}} <input type="checkbox" ng-checked="originalDependency(a)"></input></li>
 				</ul>
 			</div>
 		</div>
@@ -41,9 +39,9 @@
 
 	<div class="modal-footer">
 		<div class="col-xs-12">
-			<button class="btn btn-success" ng-disabled="editAssignmentForm.$invalid" ng-click="editAssignment();">Muokkaa tehtävää</button>
+			<button ng-if="new_record" class="btn btn-success" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Luo tehtävä</button>
 
-			<span id="error-notice"></span>
+			<button ng-if="! new_record" class="btn btn-info" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Muokkaa tehtävää</button>
 		</div>
 	</div>
 </form>

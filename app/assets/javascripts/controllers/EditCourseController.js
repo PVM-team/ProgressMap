@@ -1,11 +1,10 @@
-ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, $window, $uibModal, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('EditCourseController', function($scope, $routeParams, $location, $uibModal, httpService, InfoModalService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
+    $scope.mutex = true;
 
-    //if (! userHasRightToSeeThisView()) {
-    //    $window.location.href = '/';
-    //}
-
-    $scope.mutex = false;
+    if (! userHasRightToSeeThisView()) {
+        $location.path('/');
+    }
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         $scope.course = data['course'][0];
@@ -14,29 +13,15 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
         $scope.name = $scope.course.name;
 
-        /*for (var i = 0; i < $scope.assignments.length; i++) {
-            var assignment = $scope.assignments[i];
-
-            assignment['dependencyText'] = "";
-
-
-            for (var j = 0; j < assignment.dependencies.length; j++) {
-
-                assignment['dependencyText'] += assignment.dependencies[j].name;
-
-                if (j < assignment.dependencies.length - 1) {
-                    assignment['dependencyText'] += ",";
-                }
-            }
-        } */
-
-        //setDisplayOfNewAssignmentButton();
-
         CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
         CanvasService.drawSmoothPaths($scope.assignments);
+
+        $scope.mutex = false;
     })
 
     $scope.editCourseName = function() {
+        $scope.mutex = true;
+
         var data = {
             course_id: $scope.course.id,
             name: $scope.name
@@ -45,26 +30,37 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         httpService.putData('/courses/edit_name', data).then(function (data) {
             $scope.course.name = data['course'].name;
             editNameOfTheCourseInCoursesOfCurrentUser();
+
+            InfoModalService.newInfoModal("Kurssin nimi vaihdettu onnistuneesti.", "success");
+            $scope.mutex = false;
         })
     }
 
     $scope.newAssignmentModal = function() {
-
+        assignmentModal({ name: "", number: $scope.assignments.length + 1, dependencies: [] }, true);
     }
 
     $scope.editAssignmentModal = function(assignment) {
+        assignmentModal(assignment);
+    }
+
+    function assignmentModal(assignment, new_record) {
         var modalInstance = $uibModal.open({
-            templateUrl: 'templates/modals/edit_assignment.html',
-            controller: 'EditAssignmentController', // sivun alaosassa
+            templateUrl: 'templates/modals/assignment.html',
+            controller: 'AssignmentController', // sivun alaosassa
             size: 'lg',
             scope: $scope,
             resolve: {
                 assignment: function () {
                     return assignment;
+                },
+                new_record: function() {
+                    return new_record;
                 }
             }
-        });
+        });        
     }
+
 
     $scope.newStudentModal = function() {
         
@@ -108,93 +104,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
 
-    /*$scope.changeDependenciesOfAssignment = function(assignment) {
-        var index = $scope.assignments.indexOf(assignment);
-        var dependencyList = parseDependencies(assignment);
-        var data = {
-            assignment_id: assignment.id,
-            dependencies: dependencyList
-        }
-
-        httpService.putData('assignments/edit_dependencies', data).then(function(data) {
-            $scope.assignments[index].dependencies = dependencyList;
-        });
-    }
-
-    function parseDependencies(assignment) {
-        var dependenciesNames = assignment.dependencyText.split(",");
-        var dependencyList = [];
-        for (var i = 0; i < dependenciesNames.length; i++) {
-            for (var j = 0; j < $scope.assignments.length; j++) {
-                if (dependenciesNames[i] == $scope.assignments[j].name) {
-                    dependencyList.push($scope.assignments[j]);
-                }
-            }
-        }
-        return dependencyList;
-    }
-
-
-    $scope.givenNamesAreCorrect = function(assignment) {
-        var dependenciesNames = assignment.dependencyText.split(",");
-        var index = $scope.assignments.indexOf(assignment);
-        for (var i = 0; i < dependenciesNames.length; i++) {
-            var validName = false;
-            for (var j = 0; j < $scope.assignments.length; j++) {
-                if (dependenciesNames[i] == $scope.assignments[j].name && j != index) {
-                    validName = true;
-                }
-            }
-            if (!validName) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    $scope.changeNameOfAssignment = function(assignment) {
-        var data = {
-            assignment_id: assignment.id,
-            name: assignment.name
-        }
-        httpService.putData('assignments/edit_name', data).then(function(data) {})
-    }
-
-    $scope.goToCoursePage = function() {
-        $location.path("/map/" + $scope.course.id);
-    } */
-
-    /*$scope.addAssignment = function() {
-        $scope.mutex = true;
-
-        var previousLocation = locationOfLastAssignment();
-
-        var location = CanvasService.locationOfNewAssignment($scope.assignments.length, previousLocation);
-
-        var data = {
-            course_id: $scope.course.id,
-            number: $scope.assignments.length + 1,
-            location: location,
-            dependencies: []
-        }
-
-        httpService.postData('/assignments', data).then(function (data) {
-            $scope.assignments.push(data['assignment'][0]);
-
-            setDisplayOfNewAssignmentButton();
-
-            if (CanvasService.lastLevelFull($scope.assignments.length - 1)) {
-                moveAllLocationsDownByOneLevel();
-            }
-
-            else {
-                reDrawCanvas();
-                $scope.mutex = false;
-            }
-        })
-    }
-
-    $scope.deleteAssignment = function(assignment) {
+    /* $scope.deleteAssignment = function(assignment) {
         $scope.mutex = true;
 
         var number = assignment.number;
@@ -219,15 +129,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         })
     }
 
-    function locationOfLastAssignment() {
-        for (var i = $scope.assignments.length - 1; i >= 0; i--) {
-            if ($scope.assignments[i].number == $scope.assignments.length) {
-                return $scope.assignments[i].location;
-            }
-        }
-        return null;
-    }
-
     function decreaseNumbersOfFollowingAssignments(number, location) {
         var data = {
             course_id: $scope.course.id,
@@ -247,6 +148,143 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                 $scope.mutex = false;
             }
         })
+    } */
+})
+
+ProgressApp.controller('AssignmentController', function($scope, $uibModalInstance, InfoModalService, CanvasService, httpService, assignment, new_record) {
+    $scope.original_name = assignment.name;
+
+    if ($scope.original_name.length == 0) {
+        $scope.original_name = "Uusi tehtävä";
+    }
+
+    $scope.new_name = assignment.name;
+    $scope.new_number = assignment.number;
+    $scope.new_record = new_record;
+
+    var originalDependencies = originalDependencies();
+
+
+    function originalDependencies() {
+        var original = [];
+
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            original.push(false);
+        }
+
+        for (var i = 0; i < assignment.dependencies.length; i++) {
+            original[assignment.dependencies[i].number - 1] = true;
+        }
+
+        return original;
+    }
+
+    $scope.originalDependency = function(assignment) {
+        return originalDependencies[assignment.number - 1];
+    }
+
+    $scope.back = function() {
+        $uibModalInstance.close();
+    }
+
+    $scope.submitData = function() {
+        $scope.mutex = true;
+
+        var params = {
+            name: $scope.new_name,
+            number: $scope.new_number,
+            dependencies: numberArray(selectedDependencies())
+        }
+
+        if (new_record) {
+            createAssignment(params);
+            return;
+        }
+
+        updateAssignment(params);
+    }
+
+    /*
+        Hakee jokaiselta <input type=checkbox ...> elementiltä attribuutin 'checked' arvon ja palauttaa tämän [true / false] taulukkona.
+    */
+
+    function selectedDependencies() {
+        var selected = [];
+        var ul_tags = $("#dependencies").children();
+
+        for (var i = 0; i < ul_tags.length; i++) {
+            selected.push(ul_tags[i].children[0].children[0].checked);
+        }
+
+        return selected;
+    }
+
+    /*
+        Kääntää [true / false] muotoisen riippuvuus/esitieto -taulukon numeromuotoiseksi.
+        Esim. [false, true, true, false, false] tarkoittaa, että esitiedoiksi valittu tehtävät '2' ja '3' ja palauttaa
+        arrayn [{'number': 2}, {'number': 3}].
+    */
+
+    function numberArray(selectedDependencies) {
+        var numberArray = [];
+
+        for (var i = 0; i < selectedDependencies.length; i++) {
+            if (selectedDependencies[i]) {
+                numberArray.push({'number': i + 1});
+            }
+        }
+
+        return numberArray;
+    }
+
+
+    function createAssignment(assignmentParams) {
+        var previousLocation = locationOfLastAssignment();
+        var location = CanvasService.locationOfNewAssignment($scope.assignments.length, previousLocation);
+
+        var data = {
+            course_id: $scope.course.id,
+            location: location,
+            name: assignmentParams.name,
+            number: assignmentParams.number,
+            dependencies: assignmentParams.dependencies
+        }
+
+        $uibModalInstance.close();
+
+        httpService.postData('/assignments', data).then(function (data) {
+            InfoModalService.newInfoModal("Tehtävä luotu onnistuneesti.", "success");
+            $scope.assignments.push(data['assignment'][0]);
+
+            if (CanvasService.lastLevelFull($scope.assignments.length - 1)) {
+                moveAllLocationsDownByOneLevel();
+            }
+
+            else {
+                reDrawCanvas();
+                $scope.mutex = false;
+            }
+        })
+    }
+
+    function updateAssignment(assignmentParams) {
+        $uibModalInstance.close();
+
+        httpService.putData('/assignments/' + assignment.id, assignmentParams).then(function (data) {
+            InfoModalService.newInfoModal("Tehtävän tiedot päivitetty.");
+            $scope.assignments[assignment.number - 1] = data['assignment'][0];
+
+            $scope.mutex = false;
+        })
+    }
+
+
+    function locationOfLastAssignment() {
+        for (var i = $scope.assignments.length - 1; i >= 0; i--) {
+            if ($scope.assignments[i].number == $scope.assignments.length) {
+                return $scope.assignments[i].location;
+            }
+        }
     }
 
     function moveAllLocationsUpByOneLevel() {
@@ -290,79 +328,5 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
         if (canvasArray && canvasArray[0]) {
             canvasArray[0].remove();
         }
-    }
-
-    function setDisplayOfNewAssignmentButton() {
-        var style = 'inline';
-
-        if ($scope.assignments.length >= 500) {
-            style = 'none';
-        }
-        $("#add-assignment-btn").css('display', style);
-    } */
-})
-
-ProgressApp.controller('EditAssignmentController', function($scope, $uibModalInstance, httpService, assignment) {
-    $scope.assignment = assignment;
-    var originalDependencies = originalDependencies();
-
-    $scope.editAssignment = function() {
-        console.log($scope.assignment)
-        var dependencies = [];
-
-        var ul_tags = $("#dependencies").children();
-        for (var i = 0; i < ul_tags.length; i++) {
-            dependencies.push(ul_tags[i].children[0].checked);
-        }
-
-        var data = {
-            name: $scope.assignment.name,
-            number: $scope.assignment.number,
-            dependencies: numberArray(dependencies)
-        }
-
-        console.log(data)
-
-        httpService.putData('/assignments/' + assignment.id, data).then(function (data) {
-            // näytä onnistumisviesti?
-        })
-    }
-
-
-    $scope.back = function() {
-        $uibModalInstance.close();
-    }
-
-    $scope.originalDependency = function(a) {
-        return originalDependencies[a.number - 1];
-    }
-
-    $scope.modelForCheckbox = function(a) {
-        return a.number + a.name;
-    }
-
-    function originalDependencies() {
-        var original = [];
-
-        for (var i = 0; i < $scope.assignments.length; i++) {
-            original.push(false);
-        }
-
-        for (var i = 0; i < assignment.dependencies.length; i++) {
-            original[assignment.dependencies[i].number - 1] = true;
-        }
-
-        return original;
-    }
-
-    function numberArray(dependencies) {
-        var numberArray = [];
-        
-        for (var i = 0; i < dependencies.length; i++) {
-            if (dependencies[i]) {
-                numberArray.push({'number': i + 1});
-            }
-        }
-        return numberArray;
     }
 })

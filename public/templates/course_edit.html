@@ -17,7 +17,7 @@
                 Kurssin nimi tulee olla väh. 2 merkkiä pitkä
             </span>
 
-            <button class="btn btn-warning change-course-name col-md-2 col-sm-3 col-xs-4 col-sm-offset-1 col-xs-offset-8" ng-disabled="editCourseForm.$invalid" ng-click="editCourseName();">Vaihda nimeä</button>
+            <button class="btn btn-warning change-course-name col-md-2 col-sm-3 col-xs-4 col-sm-offset-1 col-xs-offset-8" ng-disabled="mutex || editCourseForm.$invalid" ng-click="editCourseName();">Vaihda nimeä</button>
         </form>
     </div>
 
@@ -26,11 +26,11 @@
 
         <ul>
             <li ng-repeat='assignment in assignments'>
-                <a href="" ng-click="editAssignmentModal(assignment)" data-toggle="modal" href="#myModal">{{ assignment.number }}.  {{ assignment.name }}</a>
+                <a href="" ng-click="editAssignmentModal(assignment)" ng-disabled="mutex" data-toggle="modal" href="#myModal">{{ assignment.number }}.  {{ assignment.name }}</a>
             </li>
         </ul>
 
-        <button class="btn btn-primary" ng-click='newAssignmentModal();'>Lisää tehtävä</button>
+        <button class="btn btn-primary" ng-disabled="mutex" ng-click='newAssignmentModal();'>Lisää tehtävä</button>
 
         <h4 class="title-top-margin">Opiskelijat</h4>
 
@@ -40,7 +40,7 @@
             </li>
         </ul>
 
-        <button class="btn btn-success" ng-click='newStudentModal();'>Lisää opiskelija</button>
+        <button class="btn btn-success" ng-disabled="mutex" ng-click='newStudentModal();'>Lisää opiskelija</button>
     </div>
 
     <h4>Kurssikartta</h4>

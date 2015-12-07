@@ -1,13 +1,14 @@
 ul {
     width: 100%;
+    list-style-type: none;
 }
 
-tr {
+li {
     float:left;
     margin: 0 10px 10px 0;
     width: 45px;
 }
 
-tr:nth-child(odd) {
+li:nth-child(odd) {
     margin-right: 0;
 }
