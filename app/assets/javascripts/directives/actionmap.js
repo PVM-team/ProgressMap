@@ -47,10 +47,10 @@ ProgressApp.directive('actionmap', function (PathService, GravatarService, Canva
                 if (MapScaleService.getPreviousWindowWidth() != window.innerWidth) {
 
                     updateCanvasWidth();
-                    MapScaleService.scaleItemsByWidth(labelLayer);
-                    MapScaleService.scaleItemsByWidth(assignmentLayer);
-                    MapScaleService.scaleItemsByWidth(studentLayer);
-                    MapScaleService.scaleItemsByWidth(percentageLayer);
+                    MapScaleService.scaleItems(labelLayer);
+                    MapScaleService.scaleItems(assignmentLayer);
+                    MapScaleService.scaleItems(studentLayer);
+                    MapScaleService.scaleItems(percentageLayer);
                     MapScaleService.scalePath(pathLayer);
 
                     ActionMapUpdaterService.updateAssignmentLocations();

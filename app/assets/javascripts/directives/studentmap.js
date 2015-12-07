@@ -134,12 +134,13 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 }
             }
 
+
             window.onresize = function () {
                 if (mapInitialized) {
                     updateCanvasWidth();
-                    scaleItems(assignmentLayer);
-                    scaleItems(textLayer);
-                    scalePathByWidth();
+                    MapScaleService.scaleItems(assignmentLayer);
+                    MapScaleService.scaleItems(textLayer);
+                    MapScaleService.scalePath(pathLayer);
                     MapScaleService.setPreviousWindowWidth(window.innerWidth);
                 }
             }
@@ -180,23 +181,6 @@ ProgressApp.directive('studentmap', function (MapScaleService, AssignmentCircles
                 arrowheadLayer = new paper.Layer();
                 textLayer = new paper.Layer();
                 textLayer.locked = true;
-            }
-
-            function scaleItems(layer) {
-                var items = layer.children;
-                for (var i = 0; i < items.length; i++) {
-                    items[i].position.x = MapScaleService.getRelativeX(items[i].position.x);
-                    items[i].scale(MapScaleService.getScale());
-                }
-            }
-
-            function scalePathByWidth() {
-                var path = pathLayer.getFirstChild();
-                var segments = path.segments;
-                for (var i = 0; i < segments.length; i++) {
-                    segments[i].point.x = MapScaleService.getRelativeX(segments[i].point.x);
-                }
-                path.strokeWidth = (path.strokeWidth / MapScaleService.getPreviousWindowWidth()) * window.innerWidth;
             }
 
             function placeCirclesOnAssignmentLocations() {

@@ -28,7 +28,7 @@ ProgressApp.service('MapScaleService', function () {
         return window.innerWidth / defaultWindowWidth;
     }
 
-    this.scaleItemsByWidth = function(layer) {
+    this.scaleItems = function(layer) {
         var items = layer.children;
         for (var i = 0; i < items.length; i++) {
             items[i].position.x = this.getRelativeX(items[i].position.x);
