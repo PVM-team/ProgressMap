@@ -57,7 +57,6 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
             templateUrl: 'templates/modals/edit_assignment.html',
             controller: 'EditAssignmentController', // sivun alaosassa
             size: 'lg',
-            backdrop: 'static',
             scope: $scope,
             resolve: {
                 assignment: function () {
@@ -303,22 +302,67 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     } */
 })
 
-ProgressApp.controller('EditAssignmentController', function($scope, $uibModalInstance, assignment) {
+ProgressApp.controller('EditAssignmentController', function($scope, $uibModalInstance, httpService, assignment) {
     $scope.assignment = assignment;
-    $scope.new_dependencies = [];
-
-    for (var i = 0; i < assignment.dependencies.length; i++) {
-        
-    }
-
+    var originalDependencies = originalDependencies();
 
     $scope.editAssignment = function() {
-        console.log($scope.new_name)
-        console.log($scope.new_number)
-        console.log($scope.new_dependencies)
+        console.log($scope.assignment)
+        var dependencies = [];
+
+        var ul_tags = $("#dependencies").children();
+        for (var i = 0; i < ul_tags.length; i++) {
+            dependencies.push(ul_tags[i].children[0].checked);
+        }
+
+        var data = {
+            name: $scope.assignment.name,
+            number: $scope.assignment.number,
+            dependencies: numberArray(dependencies)
+        }
+
+        console.log(data)
+
+        httpService.putData('/assignments/' + assignment.id, data).then(function (data) {
+            // näytä onnistumisviesti?
+        })
     }
+
 
     $scope.back = function() {
         $uibModalInstance.close();
+    }
+
+    $scope.originalDependency = function(a) {
+        return originalDependencies[a.number - 1];
+    }
+
+    $scope.modelForCheckbox = function(a) {
+        return a.number + a.name;
+    }
+
+    function originalDependencies() {
+        var original = [];
+
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            original.push(false);
+        }
+
+        for (var i = 0; i < assignment.dependencies.length; i++) {
+            original[assignment.dependencies[i].number - 1] = true;
+        }
+
+        return original;
+    }
+
+    function numberArray(dependencies) {
+        var numberArray = [];
+        
+        for (var i = 0; i < dependencies.length; i++) {
+            if (dependencies[i]) {
+                numberArray.push({'number': i + 1});
+            }
+        }
+        return numberArray;
     }
 })

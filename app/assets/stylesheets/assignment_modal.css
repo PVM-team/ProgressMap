@@ -1,0 +1,13 @@
+ul {
+    width: 100%;
+}
+
+tr {
+    float:left;
+    margin: 0 10px 10px 0;
+    width: 45px;
+}
+
+tr:nth-child(odd) {
+    margin-right: 0;
+}

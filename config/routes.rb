@@ -6,10 +6,7 @@ Rails.application.routes.draw do
   get 'map/action_init', to: 'map#action_init'
   get 'map/action_students', to: 'map#action_students'
 
-
   put 'courses/edit_name', to: 'courses#edit_name'
-  put 'assignments/edit_name', to: 'assignments#edit_name'
-  put 'assignments/edit_dependencies', to: 'assignments#edit_dependencies'
 
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'
@@ -18,7 +15,7 @@ Rails.application.routes.draw do
 
   post 'courses/create', to: 'courses#create_from_outside'                              # API call
 
-  resources :assignments, only: [:create, :destroy, :show]
+  resources :assignments, only: [:create, :destroy, :show, :update]
   resources :courses, only: [:create, :show]
   resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]

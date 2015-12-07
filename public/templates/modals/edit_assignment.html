@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="assets/modal.css">
+<link rel="stylesheet" type="text/css" href="assets/assignment_modal.css">
 
 <div class="modal-header">
 
@@ -15,13 +16,26 @@
 
 		<div class="col-xs-12">
 			<label class="col-xs-3">Nimi</label>
-			<input name="assignmentName" type="text" ng-model="new_name" required minlength="2">
+			<input type="text" value="{{ assignment.name }}" required minlength="2">
 		</div>
 
 		<div class="col-xs-12">
 			<label class="col-xs-3">Numero</label>
 			
-			<input type="number" min="1" ng-model="new_number">
+			<input type="number" value="{{ assignment.number }}" min="1">
+		</div>
+
+		<div class="col-xs-12">
+			<label class="col-xs-3">Esitiedot</label>
+			
+			<div id="dependencies" class="col-xs-12">
+
+				<ul ng-repeat="a in assignments">
+					<tr>
+						{{ a.number}} <input type="checkbox" ng-checked="originalDependency(a)"></input>
+					</tr>
+				</ul>
+			</div>
 		</div>
 	</div>
 

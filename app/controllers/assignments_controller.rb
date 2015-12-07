@@ -21,24 +21,23 @@ class AssignmentsController < ApplicationController
 		render 'assignments/show.json.jbuilder'
   end
 
-  def edit
-    assignment= Assignment.find params[:assignment_id]
-    assignment.name = params[:name]
-    assignment.number = params[:number]
-    assignment.dependencies.destroy_all
-    dependencies_json_array = params[:dependencies]
-    add_dependencies_to_assignment(dependencies_json_array, assignment)
-    assignment.save
-
-    render 'assignments/show.json.jbuilder'
-  end
-
 	def destroy
 		assignment = Assignment.find params[:id]
 		assignment.destroy if assignment
 
 		render plain: "Assignment deleted"
 	end
+
+  def update
+    assignment = Assignment.find params[:id]
+    assignment.name = params[:name]
+    assignment.number = params[:number]
+    update_dependencies(assignment, params[:dependencies])
+
+    assignment.save
+    render 'assignments/show.json.jbuilder'
+  end
+
 
   def decrease_numbers
       course = Course.find_by id: params[:course_id]
@@ -86,6 +85,16 @@ class AssignmentsController < ApplicationController
 
         assignment.dependencies << dependency if dependency
       end
+    end
+  end
+
+  def update_dependencies(assignment, new_dependencies)
+    assignment.dependencies.destroy_all
+    course_assignments = assignment.course.assignments.sort_by {|a| a.number}
+
+    new_dependencies.each do |dependency|
+      a = course_assignments[dependency["number"] - 1]
+      assignment.dependencies << a
     end
   end
 end
