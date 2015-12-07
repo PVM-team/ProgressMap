@@ -44,6 +44,17 @@ class StudentsController < ApplicationController
     render 'students/show.json.jbuilder'
   end
 
+  def edit
+    student = Student.find params[:student_id]
+    student.firstName = params[:firstName]
+    student.lastName = params[:lastName]
+    student.email = params[:email]
+    student.save
+
+    render 'students/show.json.jbuilder'
+  end
+
+
   def destroy
     student = Student.find_by id: params[:id]
     course_name = student.course.name
