@@ -1,9 +1,8 @@
-ProgressApp.controller('CourseListController', function($scope, $routeParams, $window, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('CourseListController', function($scope, $routeParams, $window, $location, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
 
     if (! $scope.currentUser) {
-        $window.location.path = '/';
-        return;
+        $window.location.href = '/';
     }
 
     $scope.moveToCourseActionMap = function(course) {
