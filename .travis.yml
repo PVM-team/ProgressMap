@@ -27,7 +27,7 @@ deploy:
   app: progressmap
   on:
     repo: VihavaisenKurpitsat/ProgressMap
-  run: "rake db:migrate db:reset db:seed"
+  run: "rake db:migrate"
 
 before_install:
  - export CHROME_BIN=chromium-browser

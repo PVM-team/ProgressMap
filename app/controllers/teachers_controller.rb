@@ -11,9 +11,8 @@ class TeachersController < ApplicationController
     def create
         teacher = Teacher.new :email => params[:email], :name => params[:name]
         teacher.save
-        @teacher = []
-
-        @teacher << teacher
+        
+        @teacher = [teacher]
         render 'teachers/show.json.jbuilder'
     end
 end

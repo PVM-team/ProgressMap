@@ -5,23 +5,23 @@ ProgressApp.controller('ApplicationController', function($rootScope, $routeParam
     function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
 
-        var data = {
+        var httpData = {
             name: profile.getName(),
             email: profile.getEmail()
         };
 
 
-        httpService.getData('/teachers/show', { params: data }).then(function(data) {
+        httpService.getData('/teachers/show', { params: httpData }).then(function(data) {
             var teacher = data['teacher'][0];
 
-            if (! teacher) {
-                httpService.postData('/teachers', teacher).then(function(data) {
-                    teacher = data['teacher'][0];
-                });
+            if (teacher) {
+                logIn(teacher);
+                return;
             }
 
-            $rootScope.currentUser = teacher;
-            $rootScope.signedIn = true;
+            httpService.postData('/teachers', httpData).then(function(data) {
+                logIn(data['teacher'][0]);
+            });
         })
     };
 
@@ -42,4 +42,8 @@ ProgressApp.controller('ApplicationController', function($rootScope, $routeParam
         $location.path('/course_list');
     }
 
-});
+    function logIn(teacher) {
+        $rootScope.currentUser = teacher;
+        $rootScope.signedIn = true;
+    }
+})

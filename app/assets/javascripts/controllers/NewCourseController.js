@@ -1,5 +1,6 @@
 ProgressApp.controller('NewCourseController', function($scope, $location, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
+    $scope.buttonClicked = false;
     
     if (! $scope.currentUser) {
         $location.path("/");
@@ -8,6 +9,8 @@ ProgressApp.controller('NewCourseController', function($scope, $location, httpSe
     $scope.assignments = [];
 
     $scope.createCourse = function () {
+        $scope.buttonClicked = true;
+        
         var teacher = $scope.currentUser;
 
         var newCourse = {
@@ -17,7 +20,7 @@ ProgressApp.controller('NewCourseController', function($scope, $location, httpSe
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {
-            $location.path("/map/" + data.id);
+            $location.path("/course/" + data.id + "/edit");
         })
     }
 
