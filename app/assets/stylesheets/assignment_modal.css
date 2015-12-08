@@ -1,0 +1,18 @@
+ul {
+    width: 100%;
+    list-style-type: none;
+}
+
+li {
+    float:left;
+    margin: 0 10px 10px 0;
+    width: 45px;
+}
+
+li:nth-child(odd) {
+    margin-right: 0;
+}
+
+.delete-margin-top {
+	margin-top: 20px;
+}

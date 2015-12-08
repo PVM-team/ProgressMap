@@ -10,9 +10,25 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
+
  *= require_self
  */
 
 /* @import "bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
    @import "bootstrap-sass-official/assets/stylesheets/bootstrap"; */
+
+a[ng-click] {
+    cursor: pointer;
+}
+
+.modal {
+	display: block;
+}
+
+.modal-dialog {
+	height: 70%;
+}
+
+.modal-content {
+	height: 70%;
+}

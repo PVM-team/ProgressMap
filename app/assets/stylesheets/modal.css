@@ -1,0 +1,9 @@
+#cancel-img {
+	width: 28px;
+	cursor: pointer;
+}
+
+#error-notice {
+	margin-top: 10px;
+	color: red;
+}

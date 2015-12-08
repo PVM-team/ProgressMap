@@ -1,0 +1,24 @@
+<link rel="stylesheet" type="text/css" href="assets/navigation_bar.css">
+<link rel="stylesheet" type="text/css" href="assets/course_list.css">
+
+<div class="container">
+  <h2 class="my-courses">Omat kurssini</h2>
+
+	<table class="table table-hover">
+  	<thead>
+    	<tr>
+      		<th>Action kartta</th>
+      		<th>Editointinäkymä<th>
+    	</tr>
+  	</thead>
+
+  	<tbody ng-repeat="course in currentUser.courses">
+  		<tr class="listing-own-courses">
+  			<td><a ng-click="moveToCourseActionMap(course)">{{ course.name }}</a></td>
+  			<td><button class="btn btn-success" ng-click="moveToEditCourseView(course)">Editoi</button></td>
+  		</tr>
+  	</tbody>
+  </table>
+
+  <button class="btn btn-info new-course-btn" ng-click="createNewCourse()">Luo uusi kurssi</button>
+</div>

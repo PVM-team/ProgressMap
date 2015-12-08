@@ -6,11 +6,7 @@ Rails.application.routes.draw do
   get 'map/action_init', to: 'map#action_init'
   get 'map/action_update', to: 'map#action_update'
 
-  get 'teachers/exists', to: 'teachers#exists'
-
   put 'courses/edit_name', to: 'courses#edit_name'
-  put 'assignments/edit_name', to: 'assignments#edit_name'
-  put 'assignments/edit_dependencies', to: 'assignments#edit_dependencies'
 
   post 'assignments/decrease_numbers', to: 'assignments#decrease_numbers'
   post 'locations/move', to: 'locations#move'
@@ -18,12 +14,13 @@ Rails.application.routes.draw do
   post 'students_tasks/update', to: 'students_tasks#update'
 
   post 'courses/create', to: 'courses#create_from_outside'                              # API call
+  post 'students/create', to: 'students#create_from_outside'                            # API call
 
-  resources :assignments, only: [:create, :destroy, :show]
+  resources :assignments, only: [:create, :destroy, :show, :update]
   resources :courses, only: [:create, :show]
-  resources :teachers, only: [:create]
+  resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]
-  resources :students, only: [:create, :show, :destroy]                                 # create = API call
+  resources :students, only: [:create, :show, :destroy, :update]
   resources :students_tasks, only: [:create]                                            # create = API call
   resource :session, only: [:new, :create, :delete]
 

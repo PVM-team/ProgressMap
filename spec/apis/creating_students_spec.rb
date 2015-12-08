@@ -114,7 +114,7 @@ end
 
 def create_student(course_token, firstName, lastName)
   json_params = {:course_token => course_token, :firstName => firstName, :lastName => lastName }.to_json
-  response = post("/students", json_params, "CONTENT_TYPE" => "application/json")
+  response = post("/students/create", json_params, "CONTENT_TYPE" => "application/json")
 
   @response = JSON.parse(response.body)
 end

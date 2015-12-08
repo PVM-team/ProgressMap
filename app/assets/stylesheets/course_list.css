@@ -1,0 +1,13 @@
+.my-courses {
+	margin-bottom: 20px;
+}
+
+.th {
+	font-size: 12pt;
+	font-style: italic;
+}
+
+.edit-course-button {
+	color: rgba(41, 173, 90, 0.95);
+	font-weight: bold;
+}

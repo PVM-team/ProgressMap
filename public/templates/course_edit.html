@@ -1,41 +1,49 @@
-<div class="small-left-margin">
-    <h2>Edit course <i id="go-to-course-page" ng-click="goToCoursePage();">{{ course.name }}</i></h2>
-</div>
+<link rel="stylesheet" type="text/css" href="assets/navigation_bar.css">
+<link rel="stylesheet" type="text/css" href="assets/canvas.css">
+<link rel="stylesheet" type="text/css" href="assets/original_canvas_buttons.css">
+<link rel="stylesheet" type="text/css" href="assets/course_edit.css">
 
-<div>
+<div class="container">
 
-    <form name="editCourseForm">
-        <div class="col-xs-12">
-            <label class="col-md-2 col-sm-3 col-xs-3">Course name</label>
+    <div class="row">
+        <h2 class="name">{{ course.name }}</h2>
+        
+        <form name="editCourseForm">
+            <h4 class="col-md-2 col-sm-3 col-xs-3 no-left-padding">Kurssin nimi</h4>
 
             <input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="name" required minlength="2">
 
             <span class="col-md-3 col-sm-3 col-xs-4 col-sm-offset-0 col-xs-offset-1" ng-show="editCourseForm.courseName.$invalid && editCourseForm.courseName.$dirty">
-                Course name should have at least 2 characters
+                Kurssin nimi tulee olla väh. 2 merkkiä pitkä
             </span>
 
-            <button class="change-course-name col-md-2 col-sm-3 col-xs-4 col-sm-offset-0 col-xs-offset-8" ng-disabled="editCourseForm.$invalid" ng-click="editCourseName();">Change name</button>
-        </div>
-    </form>
-
-    <div class="col-xs-12 small-top-margin">
-        <label class="col-md-2 col-sm-3 col-xs-4">Assignments</label>
-
-        <button id="add-assignment-btn" ng-dblclick="return;" ng-disabled="mutex" ng-click='addAssignment();'>Add a new assignment</button>
-        <section id="assignmentView" class="small-top-margin">
-            <ol>
-                <li ng-repeat='assignment in assignments'>
-                    Id: {{ assignment.id }}, Number: {{ assignment.number }}, Name: <input name="assignmentName" ng-model="assignment.name">
-                    <button ng-click='changeNameOfAssignment(assignment);'>Change Assignment Name</button>
-                    <button ng-dblclick="return;" ng-disabled="mutex" ng-click='deleteAssignment(assignment);'>Delete assignment</button>
-
-                    Edit dependencies: <input dependency="assignmentDependencies" type="text" ng-model="assignment.dependencyText">
-                    <button ng-click='changeDependenciesOfAssignment(assignment);' ng-if="givenNamesAreCorrect(assignment)">Change Assignment's Dependencies</button>
-                    <component id="msg" ng-if="!givenNamesAreCorrect(assignment)">Please enter correct assignment names, separated with commas</component>
-                </li>
-            </ol>
-        </section>
+            <button class="btn btn-warning change-course-name col-md-2 col-sm-3 col-xs-4 col-sm-offset-1 col-xs-offset-8" ng-disabled="mutex || editCourseForm.$invalid" ng-click="editCourseName();">Vaihda nimeä</button>
+        </form>
     </div>
+
+    <div class="row">
+        <h4 class="title-top-margin">Tehtävät</h4>
+
+        <ul>
+            <li ng-repeat='assignment in assignments'>
+                <a href="" ng-click="editAssignmentModal(assignment)" ng-disabled="mutex" data-toggle="modal" href="#myModal">{{ assignment.number }}.  {{ assignment.name }}</a>
+            </li>
+        </ul>
+
+        <button class="btn btn-primary" ng-disabled="mutex" ng-click='newAssignmentModal();'>Lisää tehtävä</button>
+
+        <h4 class="title-top-margin">Opiskelijat</h4>
+
+        <ul>
+            <li ng-repeat="student in students">
+                <a href="" ng-click="editStudentModal(student);">{{ student.firstName }} {{ student.lastName }}</a>
+            </li>
+        </ul>
+
+        <button class="btn btn-success" ng-disabled="mutex" ng-click='newStudentModal();'>Lisää opiskelija</button>
+    </div>
+
+    <h4>Kurssikartta</h4>
 
     <div id="mapElements" class="col-xs-12">
 
@@ -43,21 +51,5 @@
 
             <button ng-mouseover="showDependencies(assignment)" ng-mouseleave="hideDependencies(assignment)" ng-if="!assignmentCompleted(assignment);" class="button undone-task" style="top:{{assignment.location.y - 25}}px; left:{{assignment.location.x - 5}}px">{{ assignment.number }}</button>
         </div>
-    </div>
-
-    <div class="col-xs-12">
-        <label class="col-md-2 col-sm-3 col-xs-4">Students</label>
-
-        <ol>
-            <section id="students" class="col-xs-12">
-                <li ng-repeat="p in students">
-
-                    <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">{{ p.firstName }}</div>
-                    <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4 col-xs-offset-0">{{ p.lastName }}</div>
-
-                    <button class="col-lg-7 col-md-5 col-sm-5 col-xs-4 col-sm-offset-0 col-xs-offset-1" ng-click="deleteStudent(p);">Delete student</button>
-                </li>
-            </section>
-        </ol>
     </div>
 </div>

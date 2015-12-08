@@ -65,7 +65,7 @@ ProgressApp.service('CanvasService', function () {
     this.locationOfNewAssignment = function(i, prevLocation) {
         prevLocations = []
 
-        if (prevLocation != null) {
+        if (prevLocation) {
             prevLocations.push(prevLocation)
         }
 

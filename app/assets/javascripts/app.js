@@ -1,4 +1,4 @@
-var ProgressApp = angular.module('ProgressApp',['ngRoute', 'ngResource'])
+var ProgressApp = angular.module('ProgressApp',['ngRoute', 'ngResource', 'ui.bootstrap'])
 
 ProgressApp.config(['$routeProvider', function($routeProvider){
    $routeProvider
@@ -8,6 +8,7 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
            templateUrl: 'templates/index.html'
        })
        .when('/course_list', {
+           controller: 'CourseListController',
            templateUrl: 'templates/course_list.html'
        })
        .when('/map/:course_id', {

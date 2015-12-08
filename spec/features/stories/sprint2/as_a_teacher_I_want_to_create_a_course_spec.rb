@@ -25,6 +25,7 @@ context "As a teacher I want to create a course", js: true do
 
 		Given "I visit the course creation page" do
 			visit_course_creation_page
+      expect(page).to have_content "Luo kurssi"
 		end
 
 		Then "Submit button is disabled" do

@@ -1,26 +1,31 @@
-<div class="small-left-margin">
-	<h2>Create a new course</h2>
+<link rel="stylesheet" type="text/css" href="assets/navigation_bar.css">
+<link rel="stylesheet" type="text/css" href="assets/canvas.css">
+<link rel="stylesheet" type="text/css" href="assets/original_canvas_buttons.css">
+<link rel="stylesheet" type="text/css" href="assets/course_new.css">
+
+<div class="container">
+	<h2>Luo uusi kurssi</h2>
 
 	<form name="createCourseForm">
 
 		<div class="col-xs-12">
-			<label class="col-md-2 col-sm-3 col-xs-4">Course name</label>
+			<label class="col-md-2 col-sm-3 col-xs-4">Kurssin nimi</label>
 
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="courseName" type="text" ng-model="name" required minlength="2">
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.courseName.$invalid && createCourseForm.courseName.$dirty">
-				Course name should have at least 2 characters
+				Kurssin nimi tulee olla väh. 2 merkkiä pitkä
 			</span>
 		</div>
 
 		<div class="col-xs-12">
-			<label class="col-md-2 col-sm-3 col-xs-4"> Assignments </label>
+			<label class="col-md-2 col-sm-3 col-xs-4">Tehtävien lukumäärä</label>
 			<input class="col-md-2 col-sm-3 col-xs-3 col-sm-offset-0 col-xs-offset-1" name="assignmentCount" type="number" ng-model="assignmentCount" ng-change="placeAssignmentButtonsOnCanvas()" required min="1" max="499">
 			<span class="col-md-7 col-sm-5 col-xs-3 col-sm-offset-0 col-xs-offset-1" ng-show="createCourseForm.assignmentCount.$invalid && createCourseForm.assignmentCount.$dirty">
-				Number should be between 1-499
+				Tehtäviä tulisi olla 1-499 kpl.
 			</span>
 
 			<div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0">
-				<button id="shuffle-button" ng-click="placeAssignmentButtonsOnCanvas();">Generate new map</button>
+				<button id="shuffle-button" class="btn-info" ng-click="placeAssignmentButtonsOnCanvas();">Generoi uusi kartta</button>
 			</div>
 		</div>
 
@@ -33,7 +38,7 @@
 		</div>
 
 		<div class="col-xs-12">
-			<button class="create-course-button" ng-disabled="createCourseForm.$invalid" ng-click="createCourse();">Submit</button>
+			<button class="create-course-button" ng-disabled="buttonClicked || createCourseForm.$invalid" ng-click="createCourse();">Luo kurssi</button>
 		</div>
 	</form>
 </div>

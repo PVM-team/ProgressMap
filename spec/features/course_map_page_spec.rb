@@ -62,29 +62,29 @@ describe "Course map page", js: true do
           describe "and the button was marked as undone before" do
 
             before :each do
-              button = page.find('button', :text => '2')
+              button = page.find('button', :text => '3')
               expect(button['class']).to have_content "undone-task"
 
-              @doers_size = @task2.doers.length
+              @doers_size = @assignment3.doers.length
               @students_tasks_size = StudentsTask.count
 
               button.click
             end
 
-            it "it is marked as done" do
-              button = page.find('button', :text => '2')
+            xit "it is marked as done" do
+              button = page.find('button', :text => '3')
 
               expect(button['class']).to have_content "done-task"
               expect(button['class']).not_to have_content "undone-task"
             end
 
-            it "a new StudentsTask between @student2 and the assignment is created" do
-              task2 = Assignment.find(@task2.id)
+            xit "the StudentsTask between @student2 and the assignment is updated" do
+              expect(StudentsTask.count).to be(@students_tasks_size)
 
-              expect(StudentsTask.count).to be(@students_tasks_size + 1)
-              
-              expect(task2.doers.length).to be(@doers_size + 1)
-              expect(task2.doers.last).to eq(@student2)
+              assignment3 = Assignment.find(@assignment3.id)
+
+              expect(assignment3.doers.length).to be(@doers_size + 1)
+              expect(assignment3.doers.last).to eq(@student2)
             end
           end
 
@@ -93,11 +93,12 @@ describe "Course map page", js: true do
             before :each do
               button = page.find('button', :text => '1')
               expect(button['class']).to have_content "done-task"
+              expect(button['class']).not_to have_content "undone-task"
 
-              @doers_size = @task1.attempters.length
+              @doers_size = @assignment1.doers.length
               @students_tasks_size = StudentsTask.count
 
-              expect(@task1.attempters.include?(@student2)).to be(true)
+              expect(@assignment1.doers.include?(@student2)).to be(true)
 
               button.click
             end
@@ -108,10 +109,8 @@ describe "Course map page", js: true do
             end
 
             it "the StudentsTask between @student2 and the assignment is not deleted" do
-              task1 = Assignment.find(@task1.id)
-
-              expect(task1.attempters.length).to be(@doers_size)
-              expect(task1.attempters.include?(@student2)).to be(true)
+              expect(@assignment1.doers.length).to be(@doers_size)
+              expect(@assignment1.doers.include?(@student2)).to be(true)
             end
           end
         end
@@ -147,44 +146,44 @@ def course_details
   @student2 = FactoryGirl.create :student
   @student3 = FactoryGirl.create :student
 
-  @task1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
-  @task2 = FactoryGirl.create :assignment, name: "tehtävä2", number: 2
-  @task3 = FactoryGirl.create :assignment, name: "tehtävä3", number: 3
-  @task4 = FactoryGirl.create :assignment, name: "tehtävä4", number: 4
-  @task5 = FactoryGirl.create :assignment, name: "tehtävä5", number: 5
+  @assignment1 = FactoryGirl.create :assignment, name: "tehtävä1", number: 1
+  @assignment2 = FactoryGirl.create :assignment, name: "tehtävä2", number: 2
+  @assignment3 = FactoryGirl.create :assignment, name: "tehtävä3", number: 3
+  @assignment4 = FactoryGirl.create :assignment, name: "tehtävä4", number: 4
+  @assignment5 = FactoryGirl.create :assignment, name: "tehtävä5", number: 5
 
-  @task2.dependencies << @task1
-  @task3.dependencies << @task1
-  @task4.dependencies << @task1
-  @task4.dependencies << @task2
-  @task5.dependencies << @task2
-  @task5.dependencies << @task4
+  @assignment2.dependencies << @assignment1
+  @assignment3.dependencies << @assignment1
+  @assignment4.dependencies << @assignment1
+  @assignment4.dependencies << @assignment2
+  @assignment5.dependencies << @assignment2
+  @assignment5.dependencies << @assignment4
 
-  @task1.location = FactoryGirl.create :location, x: 100, y: 200
-  @task2.location = FactoryGirl.create :location, x: 360, y: 180
-  @task3.location = FactoryGirl.create :location, x: 580, y: 190
-  @task4.location = FactoryGirl.create :location, x: 630, y: 410
-  @task5.location = FactoryGirl.create :location, x: 420, y: 390
+  @assignment1.location = FactoryGirl.create :location, x: 100, y: 200
+  @assignment2.location = FactoryGirl.create :location, x: 360, y: 180
+  @assignment3.location = FactoryGirl.create :location, x: 580, y: 190
+  @assignment4.location = FactoryGirl.create :location, x: 630, y: 410
+  @assignment5.location = FactoryGirl.create :location, x: 420, y: 390
 
   @course.students << @student1
   @course.students << @student2
   @course.students << @student3
 
-  @course.assignments << @task1
-  @course.assignments << @task2
-  @course.assignments << @task3
-  @course.assignments << @task4
-  @course.assignments << @task5
+  @course.assignments << @assignment1
+  @course.assignments << @assignment2
+  @course.assignments << @assignment3
+  @course.assignments << @assignment4
+  @course.assignments << @assignment5
 
-  @student1.assignments << @task1
-  @student1.assignments << @task2
+  StudentsTask.create assignment_id: @assignment1.id, student_id: @student1.id, complete: true
+  StudentsTask.create assignment_id: @assignment2.id, student_id: @student1.id, complete: true
 
-  @student2.assignments << @task1
-  @student2.assignments << @task3
-  @student2.assignments << @task4
-  @student2.assignments << @task5
+  StudentsTask.create assignment_id: @assignment1.id, student_id: @student2.id, complete: true
+  StudentsTask.create assignment_id: @assignment3.id, student_id: @student2.id, complete: false
+  StudentsTask.create assignment_id: @assignment4.id, student_id: @student2.id, complete: true
+  StudentsTask.create assignment_id: @assignment5.id, student_id: @student2.id, complete: true
 
-  @student3.assignments << course2.assignments[0]
+  StudentsTask.create assignment_id: course2.assignments[0].id, student_id: @student3.id, complete: true
 end
 
 def visit_map_page

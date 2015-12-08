@@ -1,5 +1,4 @@
-ProgressApp.controller('MapController', function ($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService, SessionService) {
-
+ProgressApp.controller('MapController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.buttonClicked = false;
 
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
@@ -13,8 +12,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }).then(function (data) {
 
         if (!validRequest(data)) {
-            $location.path("/");     // ei lopeta suoritusta täällä - ei ole siis 'jump' koodi vaan 'call'
-            return;
+            $location.path("/");
         }
 
         $scope.course = data["course"][0];
@@ -103,12 +101,7 @@ ProgressApp.controller('MapController', function ($scope, $routeParams, $locatio
     }
 
     $scope.viewAsStudent = function (student) {
-        try {
-            $scope.currentStudent = student;
-        }
-        catch (err) {
-            document.getElementById("errorMsg").innerHTML = err
-        }
+        $scope.currentStudent = student;
         $scope.doneAssignments = setDoneAssignments();
     }
 
