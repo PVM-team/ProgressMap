@@ -63,26 +63,14 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
 
     $scope.newStudentModal = function() {
-        studentModal()
-
-        var modalInstance = $uibModal.open({
-            templateUrl: 'templates/modals/edit_student.html',
-            controller: 'NewStudentController', // sivun alaosassa
-            size: 'lg',
-            scope: $scope,
-            resolve: {
-                student: function () {
-                    return null;
-                }
-            }
-        });
+        studentModal({ firstName: "", lastName: "", email: "" }, true);
     }
 
     $scope.editStudentModal = function(student) {
         studentModal(student);
     }
 
-    function studentModal = function(student, new_record) {
+    function studentModal(student, new_record) {
         var modalInstance = $uibModal.open({
             templateUrl: 'templates/modals/student.html',
             controller: 'StudentController', // sivun alaosassa
@@ -363,7 +351,7 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 })
 
 
-ProgressApp.controller('StudentController', function($scope, $uibModalInstance, httpService, student, new_record) {
+ProgressApp.controller('StudentController', function($scope, $uibModalInstance, httpService, InfoModalService, student, new_record) {
     $scope.original_name = student.firstName + " " + student.lastName;
 
     if ($scope.original_name.length < 2) {
@@ -404,7 +392,7 @@ ProgressApp.controller('StudentController', function($scope, $uibModalInstance, 
         $uibModalInstance.close();
 
         httpService.postData('/students', data).then(function(data) {
-            $scope.students = data['student'];
+            $scope.students.push(data['student'][0]);
             InfoModalService.newInfoModal("Opiskelija luotu onnistuneesti.", "success");
 
             $scope.mutex = false;
@@ -423,9 +411,9 @@ ProgressApp.controller('StudentController', function($scope, $uibModalInstance, 
     }
 
     function updateStudentInfo() {
-        $scope.student.firstName = $scope.new_first_name;
-        $scope.student.lastName = $scope.new_last_name;
-        $scope.student.email = $scope.new_email;
+        student.firstName = $scope.new_first_name;
+        student.lastName = $scope.new_last_name;
+        student.email = $scope.new_email;
     }
 
     $scope.back = function() {
