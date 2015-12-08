@@ -28,9 +28,16 @@ class StudentsController < ApplicationController
 
   def create
     course = Course.find_by id: params[:course_id]
-    @student = Student.new(:firstName => params[:firstName], :lastName => params[:lastName], :email => params[:email])
-    course << @student
-    render  json: @student
+    @student = []
+
+    if course
+      student = Student.create :firstName => params[:firstName], :lastName => params[:lastName], :email => params[:email]
+      course.students << student
+
+      @student << student
+    end
+
+    render 'students/show.json.jbuilder'
   end
 
   def show
@@ -52,11 +59,13 @@ class StudentsController < ApplicationController
   end
 
   def update
-    student = Student.find params[:student_id]
+    student = Student.find params[:id]
     student.firstName = params[:firstName]
     student.lastName = params[:lastName]
     student.email = params[:email]
+    
     student.save
+    @student = [student]
 
     render 'students/show.json.jbuilder'
   end

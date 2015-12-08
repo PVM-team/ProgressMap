@@ -63,6 +63,8 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
 
     $scope.newStudentModal = function() {
+        studentModal()
+
         var modalInstance = $uibModal.open({
             templateUrl: 'templates/modals/edit_student.html',
             controller: 'NewStudentController', // sivun alaosassa
@@ -77,17 +79,24 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     }
 
     $scope.editStudentModal = function(student) {
+        studentModal(student);
+    }
+
+    function studentModal = function(student, new_record) {
         var modalInstance = $uibModal.open({
-            templateUrl: 'templates/modals/edit_student.html',
-            controller: 'EditStudentController', // sivun alaosassa
+            templateUrl: 'templates/modals/student.html',
+            controller: 'StudentController', // sivun alaosassa
             size: 'lg',
             scope: $scope,
             resolve: {
-                student: function () {
+                student: function() {
                     return student;
+                },
+                new_record: function() {
+                    return new_record;
                 }
             }
-        });
+        });        
     }
 
 
@@ -350,61 +359,73 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 
             InfoModalService.newInfoModal("Tehtävä poistettu onnistuneesti.", "danger");
         })
-    }    
-
-    $scope.back = function() {
-        $uibModalInstance.close();
     }
 })
 
-ProgressApp.controller('EditStudentController', function($scope, $uibModalInstance, student, httpService) {
-    $scope.student = student;
-    $scope.studentFirstName = student.firstName;
-    $scope.studentLastName = student.lastName;
-    $scope.studentEmail = student.email;
-    $scope.check = true;
 
-    $scope.editStudent = function() {
-        var data = {
-            student_id: student.id,
-            firstName: $scope.studentFirstName,
-            lastName: $scope.studentLastName,
-            email: $scope.studentEmail
+ProgressApp.controller('StudentController', function($scope, $uibModalInstance, httpService, student, new_record) {
+    $scope.original_name = student.firstName + " " + student.lastName;
+
+    if ($scope.original_name.length < 2) {
+        $scope.original_name = "Uusi opiskelija";
+    }
+
+    $scope.new_first_name = student.firstName;
+    $scope.new_last_name = student.lastName;
+    $scope.new_email = student.email;
+    $scope.new_record = new_record;
+
+
+    $scope.submitData = function() {
+        $scope.mutex = true;
+
+        var params = {
+            firstName: $scope.new_first_name,
+            lastName: $scope.new_last_name,
+            email: $scope.new_email
         }
-        httpService.putData('/students/update', data).then(function(data) {
-            updateStudentInfo();
-        })
+
+        if (new_record) {
+            createStudent(params);
+            return;
+        }
+
+        updateStudent(params);
     }
 
-    function updateStudentInfo() {
-        $scope.student.firstName = $scope.studentFirstName;
-        $scope.student.lastName = $scope.studentLastName;
-        $scope.student.email = $scope.studentEmail;
-    }
-
-    $scope.back = function() {
-        $uibModalInstance.close();
-    }
-})
-
-ProgressApp.controller('NewStudentController', function($scope, $uibModalInstance, student, httpService) {
-    $scope.check = false;
-
-    $scope.createStudent = function() {
+    function createStudent(params) {
         var data = {
             course_id: $scope.course.id,
-            firstName: $scope.studentFirstName,
-            lastName: $scope.studentLastName,
-            email: $scope.studentEmail
+            firstName: params.firstName,
+            lastName: params.lastName,
+            email: params.email
         }
 
         $uibModalInstance.close();
 
         httpService.postData('/students', data).then(function(data) {
             $scope.students = data['student'];
-
             InfoModalService.newInfoModal("Opiskelija luotu onnistuneesti.", "success");
+
+            $scope.mutex = false;
         })
+    }
+
+    function updateStudent(params) {
+        $uibModalInstance.close();
+
+        httpService.putData('/students/' + student.id, params).then(function(data) {
+            updateStudentInfo();
+            InfoModalService.newInfoModal("Opiskelijan tiedot päivitetty.");
+
+            $scope.mutex = false;
+        })
+    }
+
+    function updateStudentInfo() {
+        $scope.student.firstName = $scope.new_first_name;
+        $scope.student.lastName = $scope.new_last_name;
+        $scope.student.email = $scope.new_email;
     }
 
     $scope.back = function() {
