@@ -14,12 +14,13 @@ Rails.application.routes.draw do
   post 'students_tasks/update', to: 'students_tasks#update'
 
   post 'courses/create', to: 'courses#create_from_outside'                              # API call
+  post 'students/create', to: 'students#create_from_outside'                            # API call
 
   resources :assignments, only: [:create, :destroy, :show, :update]
   resources :courses, only: [:create, :show]
   resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]
-  resources :students, only: [:create_from_outside, :create, :show, :destroy, :update]
+  resources :students, only: [:create, :show, :destroy, :update]
   resources :students_tasks, only: [:create]                                            # create = API call
   resource :session, only: [:new, :create, :delete]
 

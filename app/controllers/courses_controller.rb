@@ -1,21 +1,6 @@
 class CoursesController < ApplicationController
     include LocationDrawer
 
-    def show
-        course = Course.find_by id: params[:course_id]
-        @course = []
-
-        if course
-            @assignments = course.assignments.order(:number)
-            @students = course.students
-
-            @course << course
-        end
-
-        render 'courses/show.json.jbuilder'
-    end
-
-
     def create_from_outside
         params = JSON.parse(request.body.read.to_s)
 
@@ -110,6 +95,19 @@ class CoursesController < ApplicationController
         render 'courses/show.json.jbuilder'
     end
 
+    def show
+        course = Course.find_by id: params[:course_id]
+        @course = []
+
+        if course
+            @assignments = course.assignments.order(:number)
+            @students = course.students
+
+            @course << course
+        end
+
+        render 'courses/show.json.jbuilder'
+    end
 
     private
 
