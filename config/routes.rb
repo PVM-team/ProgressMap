@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   resources :courses, only: [:create, :show]
   resources :teachers, only: [:create, :show]
   resources :locations, only: [:update]
-  resources :students, only: [:create, :show, :destroy]                                 # create = API call
+  resources :students, only: [:create_from_outside, :create, :show, :destroy, :update]
   resources :students_tasks, only: [:create]                                            # create = API call
   resource :session, only: [:new, :create, :delete]
 

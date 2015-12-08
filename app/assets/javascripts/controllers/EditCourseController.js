@@ -2,10 +2,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     $scope.showNavigation = true;
     $scope.mutex = true;
 
-    if (! userHasRightToSeeThisView()) {
+/*    if (! userHasRightToSeeThisView()) {
         $location.path('/');
     }
-
+*/
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         $scope.course = data['course'][0];
         $scope.assignments = data["assignments"];
@@ -63,11 +63,31 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
 
     $scope.newStudentModal = function() {
-        
+        var modalInstance = $uibModal.open({
+            templateUrl: 'templates/modals/edit_student.html',
+            controller: 'NewStudentController', // sivun alaosassa
+            size: 'lg',
+            scope: $scope,
+            resolve: {
+                student: function () {
+                    return null;
+                }
+            }
+        });
     }
 
     $scope.editStudentModal = function(student) {
-        console.log(student);
+        var modalInstance = $uibModal.open({
+            templateUrl: 'templates/modals/edit_student.html',
+            controller: 'EditStudentController', // sivun alaosassa
+            size: 'lg',
+            scope: $scope,
+            resolve: {
+                student: function () {
+                    return student;
+                }
+            }
+        });
     }
 
 
@@ -323,9 +343,7 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 
             if (CanvasService.lastLevelFull($scope.assignments.length)) {
                 moveAllLocationsUpByOneLevel();
-            }
-
-            else {
+            } else {
                 reDrawCanvas();
                 $scope.mutex = false;
             }
@@ -333,4 +351,63 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
             InfoModalService.newInfoModal("Tehtävä poistettu onnistuneesti.", "danger");
         })
     }    
+
+    $scope.back = function() {
+        $uibModalInstance.close();
+    }
+})
+
+ProgressApp.controller('EditStudentController', function($scope, $uibModalInstance, student, httpService) {
+    $scope.student = student;
+    $scope.studentFirstName = student.firstName;
+    $scope.studentLastName = student.lastName;
+    $scope.studentEmail = student.email;
+    $scope.check = true;
+
+    $scope.editStudent = function() {
+        var data = {
+            student_id: student.id,
+            firstName: $scope.studentFirstName,
+            lastName: $scope.studentLastName,
+            email: $scope.studentEmail
+        }
+        httpService.putData('/students/update', data).then(function(data) {
+            updateStudentInfo();
+        })
+    }
+
+    function updateStudentInfo() {
+        $scope.student.firstName = $scope.studentFirstName;
+        $scope.student.lastName = $scope.studentLastName;
+        $scope.student.email = $scope.studentEmail;
+    }
+
+    $scope.back = function() {
+        $uibModalInstance.close();
+    }
+})
+
+ProgressApp.controller('NewStudentController', function($scope, $uibModalInstance, student, httpService) {
+    $scope.check = false;
+
+    $scope.createStudent = function() {
+        var data = {
+            course_id: $scope.course.id,
+            firstName: $scope.studentFirstName,
+            lastName: $scope.studentLastName,
+            email: $scope.studentEmail
+        }
+
+        $uibModalInstance.close();
+
+        httpService.postData('/students', data).then(function(data) {
+            $scope.students = data['student'];
+
+            InfoModalService.newInfoModal("Opiskelija luotu onnistuneesti.", "success");
+        })
+    }
+
+    $scope.back = function() {
+        $uibModalInstance.close();
+    }
 })

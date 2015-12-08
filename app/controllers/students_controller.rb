@@ -1,10 +1,10 @@
 class StudentsController < ApplicationController
 
-  def create
+  def create_from_outside
     params = JSON.parse(request.body.read.to_s)
 
     course = Course.find_by token: params["course_token"]
-    @student = Student.new(:firstName => params["firstName"], :lastName => params["lastName"])
+    @student = Student.new(:firstName => params["firstName"], :lastName => params["lastName"], :email => params["email"])
 
     if course and @student.save
       course.students << @student
@@ -26,6 +26,13 @@ class StudentsController < ApplicationController
     end
   end
 
+  def create
+    course = Course.find_by id: params[:course_id]
+    @student = Student.new(:firstName => params[:firstName], :lastName => params[:lastName], :email => params[:email])
+    course << @student
+    render  json: @student
+  end
+
   def show
     @assignments = []
     @course = []
@@ -44,7 +51,7 @@ class StudentsController < ApplicationController
     render 'students/show.json.jbuilder'
   end
 
-  def edit
+  def update
     student = Student.find params[:student_id]
     student.firstName = params[:firstName]
     student.lastName = params[:lastName]

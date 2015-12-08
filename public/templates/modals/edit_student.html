@@ -1,0 +1,40 @@
+<link rel="stylesheet" type="text/css" href="assets/modal.css">
+
+<div class="modal-header">
+
+    <h3 class="modal-title">{{ student.name }}
+		<span class="pull-right">
+			<img id="cancel-img" src="http://findicons.com/files/icons/2146/realistik_reloaded/128/stop.png" ng-click="back()"></img>
+		</span>
+    </h3>
+</div>
+
+<form name="editStudentForm">
+
+    <div class="modal-body">
+
+        <div class="col-xs-12">
+            <label class="col-xs-3">Etunimi</label>
+            <input name="studentFirstName" type="text" ng-model="studentFirstName" required minlength="2">
+        </div>
+
+        <div class="col-xs-12">
+            <label class="col-xs-3">Sukunimi</label>
+            <input name="studentLastName" type="text" ng-model="studentLastName" required minlength="2">
+        </div>
+
+        <div class="col-xs-12">
+            <label class="col-xs-3">Email</label>
+            <input name="studentEmail" type="text" ng-model="studentEmail">
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <div class="col-xs-12">
+            <button class="btn btn-success" ng-disabled="editStudentForm.$invalid" ng-if="check"; ng-click="editStudent();">Muokkaa opiskelijan tietoja</button>
+            <button class="btn btn-success" ng-disabled="editStudentForm.$invalid" ng-if="!check"; ng-click="createStudent();">Luo uusi opiskelija</button>
+
+            <span id="error-notice"></span>
+        </div>
+    </div>
+</form>
