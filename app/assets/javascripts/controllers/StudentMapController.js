@@ -1,4 +1,4 @@
-ProgressApp.controller('StudentMapController', function($scope, $routeParams, $location, AssignmentDependenciesService, CanvasService, httpService) {
+ProgressApp.controller('StudentMapController', function($scope, $routeParams, $window, $location, AssignmentDependenciesService, CanvasService, httpService) {
     $scope.showNavigation = false;
 
     httpService.getData('/students/show', { params: { token: $routeParams.token }}).then(function (data) {
@@ -7,6 +7,8 @@ ProgressApp.controller('StudentMapController', function($scope, $routeParams, $l
             $location.path("/");
             return;
         }
+
+        //$window.location.reload();
 
         $scope.assignments = data["assignments"];
         $scope.course = data["course"][0];
