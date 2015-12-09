@@ -4,6 +4,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
 
     if (! userHasRightToSeeThisView()) {
         $location.path('/');
+        return;
     }
 
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {

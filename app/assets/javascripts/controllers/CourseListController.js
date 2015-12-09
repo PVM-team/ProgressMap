@@ -1,4 +1,4 @@
-ProgressApp.controller('CourseListController', function($scope, $routeParams, $location, httpService, CanvasService, AssignmentDependenciesService) {
+ProgressApp.controller('CourseListController', function($scope, $routeParams, $location, $window, httpService, CanvasService, AssignmentDependenciesService) {
     $scope.showNavigation = true;
 
     if (! $scope.currentUser) {
@@ -6,11 +6,12 @@ ProgressApp.controller('CourseListController', function($scope, $routeParams, $l
     }
 
     $scope.moveToCourseActionMap = function(course) {
-    	$location.path('/actionmap/' + course.id)
+    	$location.path('/actionmap/' + course.id);
+        $window.location.reload();
     }
 
     $scope.moveToEditCourseView = function(course) {
-        $location.path('/course/' + course.id + '/edit/')
+        $location.path('/course/' + course.id + '/edit/');
     }
 
     $scope.createNewCourse = function() {

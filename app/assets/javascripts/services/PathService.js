@@ -23,6 +23,8 @@ ProgressApp.service('PathService', function () {
                 drawSmoothPaperCurve(i, locations, path);
             }
         }
+
+        path.simplify(20); // nopeuttaa liikkumista jatkossa. alussa hidas operaatio.
     }
 
     function stylePath(path) {

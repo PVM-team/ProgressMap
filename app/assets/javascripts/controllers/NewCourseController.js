@@ -4,6 +4,7 @@ ProgressApp.controller('NewCourseController', function($scope, $location, httpSe
     
     if (! $scope.currentUser) {
         $location.path("/");
+        return;
     }
 
     $scope.assignments = [];

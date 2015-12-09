@@ -4,26 +4,23 @@ class MapController < ApplicationController
 		course = Course.find_by id: params[:course_id]
 		student = Student.find_by id: params[:student_id]
 		@course = []
-		@current_student = []
 
 		if course
 			@course << course
 			@assignments = course.assignments.order(:number)
 
-			update_cache(course)
+			update_cache(course) if at_least_15_seconds_passed_since_cache_update
 
 			@assignments_for_update = assignments_for_update_from_cache(course)
 			@students = students_from_cache(course)
 		end
-
-		@current_student << student if student
 	end
 
 
 	def action_update
 		course = Course.find_by id: params[:course_id]
 
-		update_cache(course) if at_least_20_seconds_passed_since_cache_update
+		update_cache(course) if at_least_15_seconds_passed_since_cache_update
 
 		@assignments_for_update = assignments_for_update_from_cache(course)
 		@students = students_from_cache(course)
@@ -55,9 +52,9 @@ class MapController < ApplicationController
 			Rails.cache.read(cache_key(course, "students"))
 		end
 
-		def at_least_20_seconds_passed_since_cache_update
+		def at_least_15_seconds_passed_since_cache_update
 			return true unless session[:database_called]
-			Time.now - 20 > session[:database_called]
+			Time.now - 15 > session[:database_called]
 		end
 
 		def update_cache(course)

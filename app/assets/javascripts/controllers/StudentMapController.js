@@ -5,6 +5,7 @@ ProgressApp.controller('StudentMapController', function($scope, $routeParams, $l
 
         if (! validRequest(data)) {
             $location.path("/");
+            return;
         }
 
         $scope.assignments = data["assignments"];

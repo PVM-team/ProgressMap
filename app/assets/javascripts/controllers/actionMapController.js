@@ -1,4 +1,4 @@
-ProgressApp.controller('ActionMapController', function($scope, $routeParams, $location, httpService, CanvasService, ActionMapUpdaterService) {
+ProgressApp.controller('ActionMapController', function($scope, $routeParams, $location, $window, httpService, CanvasService, ActionMapUpdaterService) {
     // piilottaa navigaatiopalkin. ongelmia tulee kuitenkin jos actionmapin refreshaa, koska yrittää silloin päästä käsiksi googlen "sign in" -nappulaan
     $scope.showNavigation = false;
 
@@ -41,11 +41,16 @@ ProgressApp.controller('ActionMapController', function($scope, $routeParams, $lo
 
         updater = setInterval(function() {
             if (ActionMapUpdaterService.readyForNextUpdate()) {
+                if (ActionMapUpdaterService.amountOfStudentsHasChangedSinceLastUpdate($scope.students)) {
+                    $location.path("/actionmap/" + $scope.course.id);
+                    $window.location.reload();
+                    return;
+                }
+
                 ActionMapUpdaterService.update($scope.students, assignmentsForUpdate);
             }
-        }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.        
+        }, 3000); // kysyy 3 sekunnin välein, voidaanko tilaa päivittää.
     })
-
 
     $scope.$on("$destroy", function() {
         if (backendCaller) {

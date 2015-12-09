@@ -7,6 +7,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     httpService.getData('/map/init.json', { params: { course_id: $routeParams.course_id }}).then(function (data) {
         if (!validRequest(data)) {
             $location.path("/");
+            return;
         }
 
         $scope.course = data["course"][0];

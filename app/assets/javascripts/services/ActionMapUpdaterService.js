@@ -33,6 +33,18 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         return readyForNextUpdate;
     }
 
+    /*
+        Toimii väärin mikäli 3 sekunnin sisään kurssilta sekä poistetaan opiskelija että siihen lisätään uusi opiskelija.
+    */
+
+    this.amountOfStudentsHasChangedSinceLastUpdate = function(new_students) {
+        if (students) {
+            return students.length != new_students.length;    
+        }
+
+        return false;
+    }
+
     this.updateAssignmentLocations = function() {
         for (var i = 0; i < assignments.length; i++) {
             assignments[i].location.x = MapScaleService.getRelativeX(assignments[i].location.x);
@@ -58,7 +70,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
     this.initializeLatestDoer = function(doer, location) {
         doer['location'] = {'x': location.x, 'y': location.y};
     }
-
 
     this.update = function(new_students, new_assign) {
         new_assignments = new_assign;
