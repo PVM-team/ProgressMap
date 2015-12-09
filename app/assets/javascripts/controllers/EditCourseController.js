@@ -2,10 +2,10 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     $scope.showNavigation = true;
     $scope.mutex = true;
 
-/*    if (! userHasRightToSeeThisView()) {
+    if (! userHasRightToSeeThisView()) {
         $location.path('/');
     }
-*/
+
     httpService.getData('courses/show', { params: { course_id: $routeParams.course_id }}).then(function(data) {
         $scope.course = data['course'][0];
         $scope.assignments = data["assignments"];
