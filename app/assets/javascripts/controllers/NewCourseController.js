@@ -20,6 +20,7 @@ ProgressApp.controller('NewCourseController', function($scope, $location, httpSe
         }
 
         httpService.postData('/courses', newCourse).then(function (data) {
+            $scope.currentUser.courses.push({id: data.id, name: data.name});
             $location.path("/course/" + data.id + "/edit");
         })
     }
