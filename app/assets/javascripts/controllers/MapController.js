@@ -4,13 +4,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     // pidettäiskö täälläkin assignmentit sortattuna numeron perusteella? Ei tarvitse indexOf hakuja.
 
     //initiates map with given course id and current student id
-    httpService.getData('/map/init.json', {
-        params: {
-            course_id: $routeParams.course_id,
-            student_id: 2
-        }
-    }).then(function (data) {
-
+    httpService.getData('/map/init.json', { params: { course_id: $routeParams.course_id }}).then(function (data) {
         if (!validRequest(data)) {
             $location.path("/");
         }
@@ -75,7 +69,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
             var i = $scope.doneAssignments.indexOf(assignment);
             
             if (i >= 0) {
-                removeValueFromList($scope.doneAssignments, i);   
+                removeValueFromList($scope.doneAssignments, i);
             
                 i = $scope.assignments.indexOf(assignment);
                 var j = indexOfValueWithId($scope.assignments[i].doers, $scope.currentStudent.id);
@@ -90,13 +84,16 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
     function setDoneAssignments() {
         var doneAssignments = [];
 
-        for (var i = 0; i < $scope.assignments.length; i++) {
-            var doers = $scope.assignments[i].doers;
+        if ($scope.currentStudent) {
+            for (var i = 0; i < $scope.assignments.length; i++) {
+                var doers = $scope.assignments[i].doers;
 
-            if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
-                doneAssignments.push($scope.assignments[i])
+                if (indexOfValueWithId(doers, $scope.currentStudent.id) >= 0) {
+                    doneAssignments.push($scope.assignments[i])
+                }
             }
         }
+
         return doneAssignments;
     }
 

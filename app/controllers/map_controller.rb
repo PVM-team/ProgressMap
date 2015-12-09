@@ -32,7 +32,7 @@ class MapController < ApplicationController
 
 	def init
 		course = Course.find_by id: params[:course_id]
-		student = Student.find_by id: params[:student_id]
+		student = course.students[0]
 		@course = []
 		@current_student = []
 
