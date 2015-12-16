@@ -16,7 +16,3 @@ li:nth-child(odd) {
 ol, ul {
 	margin-top: 10px;
 }
-
-.delete-margin-top {
-	margin-top: 20px;
-}

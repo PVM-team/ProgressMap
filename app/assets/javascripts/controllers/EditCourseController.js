@@ -59,6 +59,20 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
                     return new_record;
                 }
             }
+        });
+    }
+
+    $scope.deleteAssignmentModal = function(assignment) {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'templates/modals/deleteAssignment.html',
+            controller: 'DeleteAssignmentController',
+            size: 'md',
+            scope: $scope,
+            resolve: {
+                assignment: function () {
+                    return assignment;
+                }
+            }
         });        
     }
 
@@ -272,10 +286,6 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
         }
     }
 
-    function moveAllLocationsUpByOneLevel() {
-        moveAllLocationsToDirection("up");
-    }
-
     function moveAllLocationsDownByOneLevel() {
         moveAllLocationsToDirection("down");
     }
@@ -313,6 +323,15 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
         if (canvasArray && canvasArray[0]) {
             canvasArray[0].remove();
         }
+    }
+})
+
+
+ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalInstance, httpService, CanvasService, InfoModalService, assignment) {
+    $scope.original_name = assignment.name;
+
+    $scope.back = function() {
+        $uibModalInstance.close();
     }
 
     $scope.confirmDelete = function() {
@@ -355,7 +374,47 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
             InfoModalService.newInfoModal("Tehtävä poistettu onnistuneesti.", "danger");
         })
     }
+
+    function moveAllLocationsUpByOneLevel() {
+        moveAllLocationsToDirection("up");
+    }
+
+    function moveAllLocationsToDirection(direction) {
+        var move = CanvasService.levelHeight();
+
+        if (direction === 'up') {
+            move *= -1;
+        }
+
+        var data = {
+            course_id: $scope.course.id,
+            move: move
+        }
+
+        httpService.postData('locations/move', data).then(function (data) {
+            $scope.assignments = data['assignment'];
+            reDrawCanvas();
+
+            $scope.mutex = false;
+        })
+    }
+
+    function reDrawCanvas() {
+        removeOriginalCanvas();
+
+        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
+        CanvasService.drawSmoothPaths($scope.assignments);
+    }
+
+    function removeOriginalCanvas() {
+        var canvasArray = document.getElementsByTagName("canvas");
+
+        if (canvasArray && canvasArray[0]) {
+            canvasArray[0].remove();
+        }
+    }
 })
+
 
 
 ProgressApp.controller('StudentController', function($scope, $uibModalInstance, httpService, InfoModalService, student, new_record) {

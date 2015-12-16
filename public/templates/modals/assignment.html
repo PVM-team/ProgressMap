@@ -3,7 +3,7 @@
 
 <div class="modal-header">
 
-	<h3 class="modal-title">{{ original_name }} 
+	<h3 class="modal-title">{{ original_name }}
 		<span class="pull-right">
 			<img id="cancel-img" src="http://findicons.com/files/icons/2146/realistik_reloaded/128/stop.png" ng-click="back()"></img>
 		</span>
@@ -42,13 +42,6 @@
 			<button ng-if="new_record" class="btn btn-success" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Luo tehtävä</button>
 
 			<button ng-if="! new_record" class="btn btn-info" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Tallenna muutokset</button>
-
-			<div ng-if="! new_record" class="col-xs-12 delete-margin-top">
-				<p>Jos haluat poistaa tämän tehtävän, vahvista poisto kirjoittamalla seuraavaan tekstikenttään tehtävän nimi.</p>
-				<input type="text" ng-model="$parent.confirmation">
-
-				<button class="btn btn-danger" ng-disabled="confirmDelete();" ng-click="deleteAssignment();">Poista tehtävä</button>
-			</div>
 		</div>
 	</div>
 </form>

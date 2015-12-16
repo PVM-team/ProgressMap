@@ -1,0 +1,24 @@
+<link rel="stylesheet" type="text/css" href="assets/modal.css">
+
+<div class="modal-header">
+
+	<h3 class="modal-title">{{ original_name }}
+		<span class="pull-right">
+			<img id="cancel-img" src="http://findicons.com/files/icons/2146/realistik_reloaded/128/stop.png" ng-click="back()"></img>
+		</span>
+	</h3>
+</div>
+
+<form name="deleteAssignmentForm">
+
+	<div class="modal-body">
+		<p>Jos haluat poistaa tämän tehtävän, vahvista poisto kirjoittamalla seuraavaan tekstikenttään tehtävän nimi.</p>
+	</div>
+
+	<div class="modal-footer">
+		<div class="col-xs-12">
+			<input type="text" ng-model="confirmation">
+			<button class="btn btn-danger" ng-disabled="confirmDelete();" ng-click="deleteAssignment();">Poista tehtävä</button>
+		</div>
+	</div>
+</form>
