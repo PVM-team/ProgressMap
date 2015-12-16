@@ -20,7 +20,7 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 #### Kurssin luonti
 
-Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/courses/create_ antaen seuraavanlaista dataa JSON muodossa:
+Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/courses/create_ antaen parametrina seuraavanlaista dataa JSON muodossa:
 
   * `course_name: string`
   * `assignments: taulukko tehtävistä, jotka muotoa: {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}`
@@ -35,7 +35,7 @@ Tällä hetkellä kurssi ei rekisteröidy kellekään opettajalle, joten tässä
 
 #### Opiskelijan lisääminen kurssille
 
-Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/students/create_ antaen seuraavanlaista dataa JSON muodossa:
+Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/students/create_ antaen parametrina seuraavanlaista dataa JSON muodossa:
 
   * `course_token: UUID`
   * `firstName: string`
@@ -44,7 +44,21 @@ Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön
 **Esimerkki:**
 
 >curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
->{"course_token":"8e434b72-564c-017a-d226-5188ffa5442b","firstName":"Erkki","lastName":"Mäkelä"} ' \ progressmap.herokuapp.com/students/create
+>{"course_token":"668105d1-8a37-439b-bc54-b74ede95e2c7","firstName":"Erkki","lastName":"Mäkelä"} ' \ progressmap.herokuapp.com/students/create
+
+#### Tehtävän kirjaaminen opiskelijalle yritetyksi/tehdyksi
+
+Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/students_tasks_ antaen parametrina seuraavanlaista dataa JSON muodossa:
+
+  * `course_token: UUID`
+  * `student_token: UUID`
+  * `number: int`
+  * `complete: boolean` _(Arvona 'true', jos tehtävä merkataan tehdyksi. Muussa tapauksessa arvoa tai sen olemassaoloa ei huomioda.)_
+
+**Esimerkki:**
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
+{"course_token":"2990bbc4-df73-4119-b5b9-e4266a2898ba","number":1,"student_token":"ecf3df35-28b2-4ed0-81cf-b0610a3129da","complete":true} ' \ progressmap.herokuapp.com/students_tasks
 
 
 ## Asennusohjeet
