@@ -327,7 +327,7 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 })
 
 
-ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalInstance, httpService, CanvasService, InfoModalService, assignment) {
+ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalInstance, $location, httpService, CanvasService, InfoModalService, assignment) {
     $scope.original_name = assignment.name;
 
     $scope.back = function() {
@@ -347,7 +347,6 @@ ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalI
         $uibModalInstance.close();
 
         httpService.deleteData('assignments/' + assignment.id).then(function (data) {
-            $scope.assignments.splice(number - 1, 1);
             decreaseNumbersOfFollowingAssignments(number, location);
         })        
     }
@@ -366,12 +365,8 @@ ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalI
                 moveAllLocationsUpByOneLevel();
             } 
 
-            else {
-                reDrawCanvas();
-                $scope.mutex = false;
-            }
-
             InfoModalService.newInfoModal("Tehtävä poistettu onnistuneesti.", "danger");
+            $location.path("/course/" + $scope.course.id + "/edit");
         })
     }
 
@@ -391,27 +386,7 @@ ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalI
             move: move
         }
 
-        httpService.postData('locations/move', data).then(function (data) {
-            $scope.assignments = data['assignment'];
-            reDrawCanvas();
-
-            $scope.mutex = false;
-        })
-    }
-
-    function reDrawCanvas() {
-        removeOriginalCanvas();
-
-        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
-        CanvasService.drawSmoothPaths($scope.assignments);
-    }
-
-    function removeOriginalCanvas() {
-        var canvasArray = document.getElementsByTagName("canvas");
-
-        if (canvasArray && canvasArray[0]) {
-            canvasArray[0].remove();
-        }
+        httpService.postData('locations/move', data).then(function (data) {})
     }
 })
 

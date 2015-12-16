@@ -27,7 +27,7 @@
 
         <ul>
             <li ng-repeat='assignment in assignments'>
-                <a href="" ng-click="editAssignmentModal(assignment)" ng-disabled="mutex" data-toggle="modal" href="#myModal">{{ assignment.number }}.  {{ assignment.name }}</a>
+                <a href="" ng-click="editAssignmentModal(assignment)" ng-disabled="mutex">{{ assignment.number }}.  {{ assignment.name }}</a>
 
                 <button class="btn btn-warning delete-assignment-btn" ng-click="deleteAssignmentModal(assignment)" ng-disabled="mutex">Poista</button>
             </li>
