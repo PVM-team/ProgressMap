@@ -14,7 +14,7 @@ describe "Creating Students", type: :api do
     expect(Student.count).to be(0)
   end
 
-  describe "when a HTTP post request to '/students' is done" do
+  describe "when a HTTP post request to '/students/create' is done" do
 
     describe "and the given parameters are valid" do
 

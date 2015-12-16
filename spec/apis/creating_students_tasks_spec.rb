@@ -13,7 +13,7 @@ describe "Creating StudentsTasks", type: :api do
     @tasks_in_db = StudentsTask.count
   end
 
-  describe "when a HTTP post request to '/students' is done" do
+  describe "when a HTTP post request to '/students_tasks' is done" do
 
     describe "and the given parameters are valid" do
 
