@@ -17,25 +17,29 @@ Trello: https://trello.com/pvm5
 #### Tuotantoympäristö
 Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus
 
-Suorita ohjelman juuressa terminaalikomento "bundle install", joka hakee tarvittat gemit koneellesi.
+Suorita ohjelman juuressa terminaalikomento _bundle install_, joka hakee tarvittat gemit koneellesi.
 
 #### Google API Acceess Token
-Tee Googlen sisäänkirjautumista varten oma avain ja syötä se "app/views/layouts/application.html.erb" -tiedostoon rivillä 7 sijaitsevan meta-tagin "content"-kenttään. Ohjeet avaimen luomiseen löydät täältä: https://developers.google.com/identity/protocols/OAuth2
+Tee Googlen sisäänkirjautumista varten oma avain ja syötä se _app/views/layouts/application.html.erb_ -tiedostoon rivillä 7 sijaitsevan meta-tagin _content_-kenttään. Ohjeet avaimen luomiseen löydät täältä: https://developers.google.com/identity/protocols/OAuth2
 
 ## Käyttöohjeet
 ####Testit
-######Yksikkötestit
-Yksikkötestit löytyvät "spec/javascripts" -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento "rake teaspoon"
+#####Yksikkötestit
+Yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
 
-######Capybara
-Capybara testit löytyvät "spec" kansion alta. Suorita ohjelman juuressa komento "rspec spec/" ajaaksesi kaikki capybaratestit. Suorita "rspec spec/haluamasitiedosto" ajaaksesi yksittäinen testitiedosto. 
+#####Capybara
+Capybara testit löytyvät _spec_ kansion alta. Suorita ohjelman juuressa komento _rspec spec/_ ajaaksesi kaikki capybaratestit. Suorita _rspec spec/haluamasitiedosto_ ajaaksesi yksittäinen testitiedosto. 
 
 HUOM! Jotkut capybara testeistä menevät rikki jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
 
 
-####Paikallinen palvelin
-Paikallisen palvelimen saat päälle komennolla "rails s"
+####Palvelin paikallisesti
+Paikallisen palvelimen saat päälle komennolla _rails s_
 
+####Palvelin Herokussa
+Ohjelma löytyy osoitteesta progressmap.herokuapp.com
+
+Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
 
 ## API
 
