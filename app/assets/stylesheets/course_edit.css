@@ -3,6 +3,12 @@
 	color: blue;
 }
 
+.token {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 8pt;
+}
+
 .no-left-padding {
 	padding-left: 0px;
 }

@@ -17,8 +17,7 @@ describe('MapController', function () {
             data.assignments = [{"id": 1, "location": {"id": 1, "x": 100, "y": 250}, "doers": [{"id": 2}, {"id": 1}], "number": 1},
                                 {"id": 2, "location": {"id": 2, "x": 330, "y": 180}, "doers": [{"id" : 1}], "number": 2},
                                 {"id": 3, "location": {"id": 3, "x": 500, "y": 130}, "doers": [{"id": 1}], "number": 3}];
-            data.students = [{"id": 1}, {"id": 2}, {"id": 3}];
-            data.current_student = [{"id": 2}];
+            data.students = [{"id": 2}, {"id": 1}, {"id": 3}];
 
             return {
                 getData: function(path, params){
@@ -99,7 +98,7 @@ describe('MapController', function () {
 
         it('sets scope.students to what httpService returns', function(){
             expect(scope.students.length).toBe(3);
-            expect(scope.students[0].id).toBe(1);
+            expect(scope.students[0].id).toBe(2);
         })
 
         it('sets scope.doneAssignments to those of scope.currentStudent', function(){
@@ -119,7 +118,7 @@ describe('MapController', function () {
 
         it('sets doneAssignments when student is valid', function () {
             expect(scope.doneAssignments.length).not.toBe(3);
-            scope.viewAsStudent(scope.students[0]);
+            scope.viewAsStudent(scope.students[1]);
 
             expect(scope.doneAssignments.length).toBe(3);
         });
