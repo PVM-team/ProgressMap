@@ -16,9 +16,9 @@ Trello: https://trello.com/pvm5
 
 Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
-## Asennusohjeet
 
-### Tuotantoympäristö
+## Asennusohjeet
+#### Tuotantoympäristö
 
 Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus
 
