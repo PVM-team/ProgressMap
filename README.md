@@ -22,14 +22,14 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen 'progressmap.herokuapp.com/courses/create' antaen seuraavanlaista dataa JSON muodossa:
 
-*course_name: string
-*assignments: taulukko tehtävistä, jotka muotoa {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}
-*students: taulukko opiskelijoista, jotka muotoa {'firstName': string, 'lastName': string}
+  * course_name: string
+  * assignments: taulukko tehtävistä, jotka muotoa {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}
+  * students: taulukko opiskelijoista, jotka muotoa {'firstName': string, 'lastName': string}`
 
-Esimerkki:
+**Esimerkki:**
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
-{"course_name":"Ohtuprojekti","assignments":[{"name":"Ykköstehtävä","number":1},{"name":"Kakkostehtävä","number":2},{"name":"Kolmostehtävä","number":3,"dependencies":[1]},{"name":"Nelostehtävä","number":4,"dependencies":[1,2,3]},{"name":"Viitostehtävä","number":5,"dependencies":[1,4]}],"students":[{"firstName":"Mauno","lastName":"Erkkilä"},{"firstName":"Jonne","lastName":"Kaukovaara"}]} ' \ progressmap.herokuapp.com/courses/create
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
+{"course_name":"Ohtuprojekti","assignments":[{"name":"Ykköstehtävä","number":1},{"name":"Kakkostehtävä","number":2},{"name":"Kolmostehtävä","number":3,"dependencies":[1]},{"name":"Nelostehtävä","number":4,"dependencies":[1,2,3]},{"name":"Viitostehtävä","number":5,"dependencies":[1,4]}],"students":[{"firstName":"Mauno","lastName":"Erkkilä"},{"firstName":"Jonne","lastName":"Kaukovaara"}]} ' \ progressmap.herokuapp.com/courses/create`
 
 Tällä hetkellä kurssi ei rekisteröidy kellekään opettajalle, joten tässä on puute.
 
