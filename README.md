@@ -37,7 +37,7 @@ HUOM! Jotkut capybara testeistä menevät rikki jos ajat kaikki testitiedostot s
 Paikallisen palvelimen saat päälle komennolla _rails s_
 
 ####Palvelin Herokussa
-Ohjelma löytyy osoitteesta progressmap.herokuapp.com
+Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
 
 Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
 
