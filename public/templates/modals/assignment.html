@@ -31,7 +31,7 @@
 			<div id="dependencies" class="col-xs-12">
 
 				<ul ng-repeat="a in assignments">
-					<li>{{ a.number}} <input type="checkbox" ng-checked="originalDependency(a)"></input></li>
+					<li>{{ a.number}} <input type="checkbox" ng-checked="originalDependency(a)" ng-disabled="disabledDependency(a)"></input></li>
 				</ul>
 			</div>
 		</div>

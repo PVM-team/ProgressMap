@@ -142,10 +142,9 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
     $scope.new_number = assignment.number;
     $scope.new_record = new_record;
 
-    var originalDependencies = originalDependencies();
+    var originalDependencies = originalDependencies(assignment);
 
-
-    function originalDependencies() {
+    function originalDependencies(assignment) {
         var original = [];
 
         for (var i = 0; i < $scope.assignments.length; i++) {
@@ -156,11 +155,16 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
             original[assignment.dependencies[i].number - 1] = true;
         }
 
+        original[assignment.number - 1] = "disabled";
         return original;
     }
 
     $scope.originalDependency = function(assignment) {
-        return originalDependencies[assignment.number - 1];
+        return originalDependencies[assignment.number - 1] == true;
+    }
+
+    $scope.disabledDependency = function(assignment) {
+        return originalDependencies[assignment.number - 1] == "disabled";
     }
 
     $scope.back = function() {
@@ -341,7 +345,9 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 
             if (CanvasService.lastLevelFull($scope.assignments.length)) {
                 moveAllLocationsUpByOneLevel();
-            } else {
+            } 
+
+            else {
                 reDrawCanvas();
                 $scope.mutex = false;
             }
