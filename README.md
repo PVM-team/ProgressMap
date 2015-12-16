@@ -20,7 +20,7 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 #### Kurssin luonti
 
-Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen _progressmap.herokuapp.com/courses/create_ antaen seuraavanlaista dataa JSON muodossa:
+Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/courses/create_ antaen seuraavanlaista dataa JSON muodossa:
 
   * `course_name: string`
   * `assignments: taulukko tehtävistä, jotka muotoa: {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}`
@@ -35,7 +35,7 @@ Tällä hetkellä kurssi ei rekisteröidy kellekään opettajalle, joten tässä
 
 #### Opiskelijan lisääminen kurssille
 
-Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön osoitteeseen _progressmap.herokuapp.com/students/create_ antaen seuraavanlaista dataa JSON muodossa:
+Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön osoitteeseen _/students/create_ antaen seuraavanlaista dataa JSON muodossa:
 
   * `course_token: UUID`
   * `firstName: string`
@@ -43,8 +43,8 @@ Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön
 
 **Esimerkki:**
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
-{"course_token":"8e434b72-564c-017a-d226-5188ffa5442b","firstName":"Erkki","lastName":"Mäkelä"} ' \ progressmap.herokuapp.com/students/create
+>curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
+>{"course_token":"8e434b72-564c-017a-d226-5188ffa5442b","firstName":"Erkki","lastName":"Mäkelä"} ' \ progressmap.herokuapp.com/students/create
 
 
 ## Asennusohjeet
