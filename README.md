@@ -57,8 +57,8 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
 **Esimerkki:**
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
-{"course_token":"2990bbc4-df73-4119-b5b9-e4266a2898ba","number":1,"student_token":"ecf3df35-28b2-4ed0-81cf-b0610a3129da","complete":true} ' \ progressmap.herokuapp.com/students_tasks
+>curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
+>{"course_token":"2990bbc4-df73-4119-b5b9-e4266a2898ba","number":1,"student_token":"ecf3df35-28b2-4ed0-81cf-b0610a3129da","complete":true} ' \ progressmap.herokuapp.com/students_tasks
 
 
 ## Asennusohjeet
