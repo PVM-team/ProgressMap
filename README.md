@@ -14,4 +14,8 @@ Trello: https://trello.com/pvm5
 
 ## Käyttöohjeet
 
+Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
+## Asennusohjeet
+
+Tee Googlen sisäänkirjautumista varten oma avain ja syötä se "app/views/layouts/application.html.erb" -tiedostoon rivillä 7 sijaitsevan meta-tagin "content"-kenttään. Ohjeet avaimen luomiseen löydät täältä https://developers.google.com/identity/protocols/OAuth2
