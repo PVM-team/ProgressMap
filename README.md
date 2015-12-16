@@ -19,7 +19,7 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 ## Asennusohjeet
 #### Tuotantoympäristö
-Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus
+Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus.
 Ohjelman juuressa suorita konsolissa "bundle install", joka hakee tarvittat gemit koneellesi
 
 #### Google API Acceess Token
