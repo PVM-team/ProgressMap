@@ -22,9 +22,9 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen 'progressmap.herokuapp.com/courses/create' antaen seuraavanlaista dataa JSON muodossa:
 
-  * course_name: string
-  * assignments: taulukko tehtävistä, jotka muotoa {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}
-  * students: taulukko opiskelijoista, jotka muotoa {'firstName': string, 'lastName': string}`
+  * `course_name: string`
+  * `assignments: taulukko tehtävistä, jotka muotoa {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}`
+  * `students: taulukko opiskelijoista, jotka muotoa {'firstName': string, 'lastName': string}`
 
 **Esimerkki:**
 
