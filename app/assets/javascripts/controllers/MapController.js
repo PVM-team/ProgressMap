@@ -14,7 +14,7 @@ ProgressApp.controller('MapController', function($scope, $routeParams, $location
         $scope.assignments = data["assignments"];
         $scope.students = data["students"];
 
-        $scope.currentStudent = data["current_student"][0];
+        $scope.currentStudent = $scope.students[0];
         $scope.doneAssignments = setDoneAssignments();
 
         CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));

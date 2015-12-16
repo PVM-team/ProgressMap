@@ -29,17 +29,13 @@ class MapController < ApplicationController
 
 	def init
 		course = Course.find_by id: params[:course_id]
-		student = course.students[0]
 		@course = []
-		@current_student = []
 
 		if course
 			@course << course
 			@students = course.students
 			@assignments = course.assignments.order(:number)
 		end
-
-		@current_student << student if student
 	end
 
 	private 
