@@ -20,11 +20,11 @@ Ohjelma toimii osoitteessa http://progressmap.herokuapp.com/
 
 #### Kurssin luonti
 
-Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen 'progressmap.herokuapp.com/courses/create' antaen seuraavanlaista dataa JSON muodossa:
+Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen _progressmap.herokuapp.com/courses/create_ antaen seuraavanlaista dataa JSON muodossa:
 
   * `course_name: string`
-  * `assignments: taulukko tehtävistä, jotka muotoa {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}`
-  * `students: taulukko opiskelijoista, jotka muotoa {'firstName': string, 'lastName': string}`
+  * `assignments: taulukko tehtävistä, jotka muotoa: {'name': string, 'number': int, 'dependencies': [nr, nr, nr, ...]}`
+  * `students: taulukko opiskelijoista, jotka muotoa: {'firstName': string, 'lastName': string}`
 
 **Esimerkki:**
 
@@ -32,6 +32,19 @@ Kurssin luonti onnistuu tekemällä HTTP POST pyynnön osoitteeseen 'progressmap
 >{"course_name":"Ohtuprojekti","assignments":[{"name":"Ykköstehtävä","number":1},{"name":"Kakkostehtävä","number":2},{"name":"Kolmostehtävä","number":3,"dependencies":[1]},{"name":"Nelostehtävä","number":4,"dependencies":[1,2,3]},{"name":"Viitostehtävä","number":5,"dependencies":[1,4]}],"students":[{"firstName":"Mauno","lastName":"Erkkilä"},{"firstName":"Jonne","lastName":"Kaukovaara"}]} ' \ progressmap.herokuapp.com/courses/create
 
 Tällä hetkellä kurssi ei rekisteröidy kellekään opettajalle, joten tässä on puute.
+
+#### Opiskelijan lisääminen kurssille
+
+Uuden opiskelijan lisääminen kurssille onnistuu tekemällä HTTP POST pyynnön osoitteeseen _progressmap.herokuapp.com/students/create_ antaen seuraavanlaista dataa JSON muodossa:
+
+  * `course_token: UUID`
+  * `firstName: string`
+  * `lastName: string`
+
+**Esimerkki:**
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
+{"course_token":"8e434b72-564c-017a-d226-5188ffa5442b","firstName":"Erkki","lastName":"Mäkelä"} ' \ progressmap.herokuapp.com/students/create
 
 
 ## Asennusohjeet
