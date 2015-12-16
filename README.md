@@ -23,6 +23,16 @@ Suorita ohjelman juuressa terminaalikomento _bundle install_, joka hakee tarvitt
 Tee Googlen sisäänkirjautumista varten oma avain ja syötä se _app/views/layouts/application.html.erb_ -tiedostoon rivillä 7 sijaitsevan meta-tagin _content_-kenttään. Ohjeet avaimen luomiseen löydät täältä: https://developers.google.com/identity/protocols/OAuth2
 
 ## Käyttöohjeet
+####Palvelin paikallisesti
+Paikallisen palvelimen saat päälle komennolla _rails s_
+
+####Palvelin Herokussa
+Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
+
+HUOM! Kirjautuessa Google-tunnuksilla sisälle, ohjelma luo tietokantaan uuden käyttäjän.
+
+Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
+
 ####Testit
 #####Yksikkötestit
 Yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
@@ -33,13 +43,6 @@ Capybara testit löytyvät _spec_ kansion alta. Suorita ohjelman juuressa koment
 HUOM! Jotkut capybara testeistä menevät rikki jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
 
 
-####Palvelin paikallisesti
-Paikallisen palvelimen saat päälle komennolla _rails s_
-
-####Palvelin Herokussa
-Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
-
-Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
 
 ## API
 
