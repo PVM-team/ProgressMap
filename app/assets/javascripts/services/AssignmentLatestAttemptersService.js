@@ -5,7 +5,6 @@ ProgressApp.service('AssignmentLatestAttemptersService', function (MapScaleServi
 
 	self.latestAttemptersFull = function(assignment) {
         if (assignment.latestAttempters.length > maxStudentsToShowAroundAssignment) {
-            console.log("Error! Length of latestAttempters for assignment no." + assignment.number + " = " + assignment.latestAttempters.length)
         }
 
 		return assignment.latestAttempters.length >= maxStudentsToShowAroundAssignment;
@@ -248,7 +247,6 @@ ProgressApp.service('AssignmentLatestAttemptersService', function (MapScaleServi
             position = {'x': location.x + lateralPositionOffset, 'y': location.y + verticalPositionOffset };            
         }
 
-        console.log("error when trying to find free position to move to around assignment")
     }
 
     function getStudentByLocationFromLatestAttemptersOfAssignment(assignment, location) {

@@ -118,8 +118,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
             return;
         }
         
-        console.log("moving students during this interval")
-        console.log(studentsToMove)
 
         setLeavingAttributesForMovingStudents(studentsToMove);
         setStudentsWaitingForMoving(studentsToMove);
@@ -186,12 +184,10 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
 
     function placeStudentToWait(student, destinationAssignment, ithMover, movingStudentsDuringInterval) {
         var time = waitingTime(ithMover, movingStudentsDuringInterval);
-        console.log(time)
 
         if (time < Number.MAX_VALUE) {
             placeStudentToWaitingQueue(student, normalWaitingQueue, destinationAssignment);
 
-            console.log("set timeout: " + ithMover)
 
             setTimeout(function() {
                 setNextStudentMoving(normalWaitingQueue);
@@ -351,7 +347,6 @@ ProgressApp.service('ActionMapUpdaterService', function (GravatarService, Assign
         }
 
         else {
-            console.log("item to remove not found")
         }
     }
     

@@ -32,7 +32,6 @@ ProgressApp.controller('ActionMapController', function($scope, $routeParams, $lo
             }
 
             httpService.getData('/map/action_update.json', { params: data }).then(function (data) {
-                console.log("got new data from backend")
 
                 $scope.students = data["students"];
                 assignmentsForUpdate = data["assignments_for_update"];
