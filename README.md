@@ -99,4 +99,4 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
 ## Bugit
 
-Kirjoita tänne jotain jos bugeja on...
+Studentmap?!?!?
