@@ -36,6 +36,7 @@ ProgressApp.controller('ApplicationController', function($rootScope, $routeParam
 
     $rootScope.teacherInfo = function() {
         //"Opettajalle"-linkin toiminta
+        $location.path('/teacher_info');
     }
 
     $rootScope.ownPage = function() {
