@@ -181,6 +181,16 @@ ProgressApp.controller('AssignmentController', function($scope, $location, $uibM
         return originalDependencies[assignment.number - 1] == "disabled";
     }
 
+    $scope.sameNameWithAnotherAssignment = function() {
+        var new_name = $scope.new_name;
+
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            if (new_name == $scope.assignments[i].name && new_name != assignment.name) {
+                return true;
+            }
+        }
+    }
+
     $scope.back = function() {
         $uibModalInstance.close();
     }

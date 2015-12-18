@@ -39,9 +39,9 @@
 
 	<div class="modal-footer">
 		<div class="col-xs-12">
-			<button ng-if="new_record" class="btn btn-success" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Luo tehtävä</button>
+			<button ng-if="new_record" class="btn btn-success" ng-disabled="assignmentForm.$invalid || sameNameWithAnotherAssignment()" ng-click="submitData();">Luo tehtävä</button>
 
-			<button ng-if="! new_record" class="btn btn-info" ng-disabled="assignmentForm.$invalid" ng-click="submitData();">Tallenna muutokset</button>
+			<button ng-if="! new_record" class="btn btn-info" ng-disabled="assignmentForm.$invalid || sameNameWithAnotherAssignment()" ng-click="submitData();">Tallenna muutokset</button>
 		</div>
 	</div>
 </form>
