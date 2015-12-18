@@ -1,18 +1,5 @@
 # ProgressMap
 
-## Yleistä
-
-Ajankäyttö: https://docs.google.com/spreadsheets/d/1uSZrRSVjGdinSfTB5AiUNV2NFqXXDwEZjiPDRvmksyA/edit?usp=sharing
-
-Sprint Burndown kaaviot: https://docs.google.com/spreadsheets/d/1gtdAvn2u4kb_GybwwmAqGRldjNnckgDV1hGt_PwUzjo/edit?usp=sharing
-
-Heroku: http://progressmap.herokuapp.com/
-
-Travis: https://travis-ci.org/PVM-team/ProgressMap
-
-Trello: https://trello.com/pvm5
-
-
 ## Asennusohjeet
 Kopioi tämä repo koneellesi haluamallasi tavalla.
 
@@ -26,7 +13,7 @@ Tee Googlen sisäänkirjautumista varten oma avain ja syötä se _app/views/layo
 
 ## Käyttöohjeet
 #### Palvelin paikallisesti
-Paikallisen palvelimen saat päälle komennolla _rails s_
+Paikallisen palvelimen saat päälle komennolla _rails s_.
 
 #### Palvelin Herokussa
 Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
@@ -37,13 +24,13 @@ Käytössämme on Herokun hobby tier -suunnitelma, joka rajoittaa palvelimen kä
 
 #### Testit
 ##### Yksikkötestit (front)
-Front -puolen yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
+Front -puolen yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_.
 
 ##### Yksikkötestit (backend)
-Backend -puolen yksikkötestit löytyvät _spec/models_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/models_
+Backend -puolen yksikkötestit löytyvät _spec/models_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/models_.
 
 #### API testit (backend)
-API testit löytyvät _spec/apis_ kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/apis_
+API testit löytyvät _spec/apis_ kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/apis_.
 
 #### Integraatio -ja käytettävyystestit
 Testaus on kirjoitettu Capybaralla. Testit voi suorittaa ajamalla _rspec/spec/features_. Yksittäisen testin voi suorittaa antamalla _rspec_:ille parametrina testin polun.
@@ -97,18 +84,18 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
 ## Puutteita
 
-  * Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi
+  * Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi.
 
-  * Kurssin luonti API-kutsulla ei lisää kurssia kellekkään opettajalle, eli luotuun kurssiin ei kukaan pääse käyttöliittymästä käsiksi
+  * Kurssin luonti API-kutsulla ei lisää kurssia kellekkään opettajalle, eli luotuun kurssiin ei kukaan pääse käyttöliittymästä käsiksi.
 
-  * Testaus ei ole ollut kattavaa kirjautumistoiminnallisuuden käyttöönoton jälkeen
+  * Testaus ei ole ollut kattavaa kirjautumistoiminnallisuuden käyttöönoton jälkeen.
 
 
 ## Bugit
 
   * Studentmap avautuu välillä normaalisti, toisinaan jää "jumiin".
 
-  * OSX:llä studentmap avautuu "littanana"
+  * OSX:llä studentmap avautuu "littanana".
 
   * OSX:llä studentmapin riippuvuusnuolet eivät toimi ikkunan koon muuttamisen jälkeen.
 
