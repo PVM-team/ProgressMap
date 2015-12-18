@@ -7,6 +7,10 @@ ProgressApp.config(['$routeProvider', function($routeProvider){
         controller: 'IndexController',
            templateUrl: 'templates/index.html'
        })
+       .when('/teacher_info', {
+           controller: 'IndexController',
+           templateUrl: 'templates/teacher_info.html'
+       })
        .when('/course_list', {
            controller: 'CourseListController',
            templateUrl: 'templates/course_list.html'
