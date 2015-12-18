@@ -14,6 +14,8 @@ Trello: https://trello.com/pvm5
 
 
 ## Asennusohjeet
+Kopioi tämä repo koneellesi haluamallasi tavalla.
+
 #### Tuotantoympäristö
 Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus
 
@@ -23,21 +25,21 @@ Suorita ohjelman juuressa terminaalikomento _bundle install_, joka hakee tarvitt
 Tee Googlen sisäänkirjautumista varten oma avain ja syötä se _app/views/layouts/application.html.erb_ -tiedostoon rivillä 7 sijaitsevan meta-tagin _content_-kenttään. Ohjeet avaimen luomiseen löydät täältä: https://developers.google.com/identity/protocols/OAuth2
 
 ## Käyttöohjeet
-####Palvelin paikallisesti
+#### Palvelin paikallisesti
 Paikallisen palvelimen saat päälle komennolla _rails s_
 
-####Palvelin Herokussa
+#### Palvelin Herokussa
 Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
 
 HUOM! Kirjautuessa Google-tunnuksilla sisälle, ohjelma luo tietokantaan uuden käyttäjän.
 
-Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
+Käytössämme on Herokun hobby tier -suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti. ks. https://devcenter.heroku.com/articles/heroku-postgres-plans#hobby-tier
 
-####Testit
-#####Yksikkötestit
+#### Testit
+##### Yksikkötestit
 Yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
 
-#####Capybara
+##### Capybara
 Capybara testit löytyvät _spec_ kansion alta. Suorita ohjelman juuressa komento _rspec spec/_ ajaaksesi kaikki capybaratestit. Suorita _rspec spec/haluamasitiedosto_ ajaaksesi yksittäinen testitiedosto. 
 
 HUOM! Jotkut capybara testeistä menevät rikki jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
@@ -88,7 +90,13 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 >curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
 >{"course_token":"2990bbc4-df73-4119-b5b9-e4266a2898ba","number":1,"student_token":"ecf3df35-28b2-4ed0-81cf-b0610a3129da","complete":true} ' \ progressmap.herokuapp.com/students_tasks
 
+## Puutteita
+
+  * Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi
+
+  * Kurssin luonti API-kutsulla ei lisää kurssia kenellekkään opettajalle, eli kurssiin ei kukaan pääse käyttöliittymästä käsiksi
+
 
 ## Bugit
 
-Kirjoita tänne jotain jos bugeja on...
+Studentmap?!?!?
