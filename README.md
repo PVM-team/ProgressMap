@@ -31,7 +31,7 @@ Ohjelma löytyy osoitteesta http://progressmap.herokuapp.com
 
 HUOM! Kirjautuessa Google-tunnuksilla sisälle, ohjelma luo tietokantaan uuden käyttäjän.
 
-Käytössämme on Hobby tierin suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti.
+Käytössämme on Herokun hobby tier -suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti. ks. https://devcenter.heroku.com/articles/heroku-postgres-plans#hobby-tier
 
 ####Testit
 #####Yksikkötestit
@@ -87,6 +87,12 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
 >curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '
 >{"course_token":"2990bbc4-df73-4119-b5b9-e4266a2898ba","number":1,"student_token":"ecf3df35-28b2-4ed0-81cf-b0610a3129da","complete":true} ' \ progressmap.herokuapp.com/students_tasks
+
+##Puutteita
+
+  *Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi
+
+  *Kurssin luonti API-kutsulla ei lisää kurssia kenellekkään opettajalle, eli kurssiin ei kukaan pääse käyttöliittymästä käsiksi
 
 
 ## Bugit
