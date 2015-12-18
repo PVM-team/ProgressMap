@@ -36,14 +36,19 @@ HUOM! Kirjautuessa Google-tunnuksilla sisälle, ohjelma luo tietokantaan uuden k
 Käytössämme on Herokun hobby tier -suunnitelma, joka rajoittaa palvelimen käyttöä huomattavasti. ks. https://devcenter.heroku.com/articles/heroku-postgres-plans#hobby-tier
 
 #### Testit
-##### Yksikkötestit
-Yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
+##### Yksikkötestit (front)
+Front -puolen yksikkötestit löytyvät _spec/javascripts_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rake teaspoon_
 
-##### Capybara
-Capybara testit löytyvät _spec_ kansion alta. Suorita ohjelman juuressa komento _rspec spec/_ ajaaksesi kaikki capybaratestit. Suorita _rspec spec/haluamasitiedosto_ ajaaksesi yksittäinen testitiedosto. 
+##### Yksikkötestit (backend)
+Backend -puolen yksikkötestit löytyvät _spec/models_ -kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/models_
 
-HUOM! Jotkut capybara testeistä menevät rikki jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
+#### API testit (backend)
+API testit löytyvät _spec/apis_ kansiosta. Ajaaksesi testit suorita ohjelman juuressa komento _rspec spec/apis_
 
+#### Integraatio -ja käytettävyystestit
+Testaus on kirjoitettu Capybaralla. Testit voi suorittaa ajamalla _rspec/spec/features_. Yksittäisen testin voi suorittaa antamalla _rspec_:ille parametrina testin polun.
+
+HUOM! Jotkut capybara -testeistä menevät rikki, jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
 
 
 ## API
@@ -94,7 +99,7 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
   * Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi
 
-  * Kurssin luonti API-kutsulla ei lisää kurssia kenellekkään opettajalle, eli kurssiin ei kukaan pääse käyttöliittymästä käsiksi
+  * Kurssin luonti API-kutsulla ei lisää kurssia kellekkään opettajalle, eli luotuun kurssiin ei kukaan pääse käyttöliittymästä käsiksi
 
 
 ## Bugit
