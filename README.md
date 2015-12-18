@@ -14,6 +14,8 @@ Trello: https://trello.com/pvm5
 
 
 ## Asennusohjeet
+Kopioi tämä repo koneellesi haluamallasi tavalla.
+
 #### Tuotantoympäristö
 Railsin asennus: https://github.com/mluukkai/WebPalvelinohjelmointi2015/wiki/railsin-asennus
 
