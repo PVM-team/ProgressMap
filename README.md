@@ -99,4 +99,10 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
 
 ## Bugit
 
-Studentmap?!?!?
+  * Studentmap avautuu välillä normaalisti, toisinaan jää "jumiin".
+
+  * OSX:llä studentmap avautuu "littanana"
+
+  * OSX:llä studentmapin riippuvuusnuolet eivät toimi ikkunan koon muuttamisen jälkeen.
+
+  * Googlen kirjautuminen häviää hetkellisesti sivun manuaalisen päivittämisen yhteydessä. Tämä johtaa siihen, että sovellus ohjaa käyttäjän takaisin pääsivulle.
