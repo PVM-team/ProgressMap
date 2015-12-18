@@ -403,6 +403,7 @@ ProgressApp.controller('StudentController', function($scope, $uibModalInstance, 
     $scope.new_last_name = student.lastName;
     $scope.new_email = student.email;
     $scope.new_record = new_record;
+    $scope.token = student.token;
 
 
     $scope.submitData = function() {
