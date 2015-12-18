@@ -48,7 +48,7 @@ API testit löytyvät _spec/apis_ kansiosta. Ajaaksesi testit suorita ohjelman j
 #### Integraatio -ja käytettävyystestit
 Testaus on kirjoitettu Capybaralla. Testit voi suorittaa ajamalla _rspec/spec/features_. Yksittäisen testin voi suorittaa antamalla _rspec_:ille parametrina testin polun.
 
-HUOM! Jotkut capybara -testeistä menevät rikki, jos ajat kaikki testitiedostot samaan aikaan. Kannattaa ajaa epäonnistuva testitiedosto yksittäisesti varmistuaksesi virheestä.
+HUOM! Osa testeistä ei mene läpi, sillä ne eivät toimi enää kirjautumistoiminnallisuuden käyttöönoton takia. Lisäksi capybara -testejä suorittaessa kannattaa testitiedostot ajaa yksi kerrallaan - niiden suoritus ei toimi täysin samalla lailla, jos suorittaa kaikki capybara -testit kerralla.
 
 
 ## API
@@ -100,6 +100,8 @@ Tehtävän kirjaaminen opiskelijalle yritetyksi onnistuu tekemällä HTTP POST p
   * Opettajan käyttöliittymästä ei voi tällä hetkellä merkata opiskelijoille tehtäviä tehdyksi
 
   * Kurssin luonti API-kutsulla ei lisää kurssia kellekkään opettajalle, eli luotuun kurssiin ei kukaan pääse käyttöliittymästä käsiksi
+
+  * Testaus ei ole ollut kattavaa kirjautumistoiminnallisuuden käyttöönoton jälkeen
 
 
 ## Bugit
