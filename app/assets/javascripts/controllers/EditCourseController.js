@@ -145,7 +145,7 @@ ProgressApp.controller('EditCourseController', function($scope, $routeParams, $l
     } */
 })
 
-ProgressApp.controller('AssignmentController', function($scope, $uibModalInstance, InfoModalService, CanvasService, httpService, assignment, new_record) {
+ProgressApp.controller('AssignmentController', function($scope, $location, $uibModalInstance, InfoModalService, CanvasService, httpService, assignment, new_record) {
     $scope.original_name = assignment.name;
 
     if ($scope.original_name.length == 0) {
@@ -179,6 +179,16 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
 
     $scope.disabledDependency = function(assignment) {
         return originalDependencies[assignment.number - 1] == "disabled";
+    }
+
+    $scope.sameNameWithAnotherAssignment = function() {
+        var new_name = $scope.new_name;
+
+        for (var i = 0; i < $scope.assignments.length; i++) {
+            if (new_name == $scope.assignments[i].name && new_name != assignment.name) {
+                return true;
+            }
+        }
     }
 
     $scope.back = function() {
@@ -257,12 +267,8 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
                 moveAllLocationsDownByOneLevel();
             }
 
-            else {
-                reDrawCanvas();
-                $scope.mutex = false;
-            }
-
             InfoModalService.newInfoModal("Tehtävä luotu onnistuneesti.", "success");
+            $location.path("/course/" + $scope.course.id + "/edit");
         })
     }
 
@@ -302,27 +308,7 @@ ProgressApp.controller('AssignmentController', function($scope, $uibModalInstanc
             move: move
         }
 
-        httpService.postData('locations/move', data).then(function (data) {
-            $scope.assignments = data['assignment'];
-            reDrawCanvas();
-
-            $scope.mutex = false;
-        })
-    }
-
-    function reDrawCanvas() {
-        removeOriginalCanvas();
-
-        CanvasService.initiateCanvas('canvas', $scope.assignments.length, 1000, document.getElementById("mapElements"));
-        CanvasService.drawSmoothPaths($scope.assignments);
-    }
-
-    function removeOriginalCanvas() {
-        var canvasArray = document.getElementsByTagName("canvas");
-
-        if (canvasArray && canvasArray[0]) {
-            canvasArray[0].remove();
-        }
+        httpService.postData('locations/move', data).then(function (data) {});
     }
 })
 
@@ -363,7 +349,7 @@ ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalI
 
             if (CanvasService.lastLevelFull($scope.assignments.length)) {
                 moveAllLocationsUpByOneLevel();
-            } 
+            }
 
             InfoModalService.newInfoModal("Tehtävä poistettu onnistuneesti.", "danger");
             $location.path("/course/" + $scope.course.id + "/edit");
@@ -386,7 +372,7 @@ ProgressApp.controller('DeleteAssignmentController', function($scope, $uibModalI
             move: move
         }
 
-        httpService.postData('locations/move', data).then(function (data) {})
+        httpService.postData('locations/move', data).then(function (data) {});
     }
 })
 

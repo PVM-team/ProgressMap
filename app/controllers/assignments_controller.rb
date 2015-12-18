@@ -3,7 +3,6 @@ class AssignmentsController < ApplicationController
 	def create
 		course = Course.find params[:course_id]
 		location = params[:location]
-		number = params[:number]
 
     @assignment = []
 
@@ -12,7 +11,6 @@ class AssignmentsController < ApplicationController
 			assignment.location = Location.create x: location[:x], y: location[:y]
       
       course.assignments << assignment
-      
       add_dependencies(assignment, params[:dependencies])
 			
       @assignment << assignment
